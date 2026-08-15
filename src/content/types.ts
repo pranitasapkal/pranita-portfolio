@@ -18,11 +18,52 @@ export type Block =
   | { type: 'board'; src: string; alt: string; caption?: string; tone?: 'light' | 'dark'; wide?: boolean; placeholder?: boolean }
   // Editorial showcase blocks (ADR-002) — live-rendered, reference-grade presentation.
   | { type: 'heroStats'; items: { value: string; label: string; sub?: string }[] }
-  | { type: 'challengeSolution'; challenge: string; solution: string }
+  /**
+   * Two forms. The original two-string version (CLH-03) still works; the pair form added by
+   * ADR-004 is what new writing should use — a named problem, the fix, and one sentence saying
+   * what actually changed for the user.
+   */
+  | {
+      type: 'challengeSolution'
+      /** Legacy form. */
+      challenge?: string
+      solution?: string
+      /** Pair form — e.g. "PROBLEM 1". */
+      index?: string
+      problem?: { title: string; body: string; quote?: string }
+      fix?: { title: string; body: string }
+      /** One sentence naming the change. Required whenever `problem`/`fix` are used. */
+      effect?: string
+      image?: { src: string; alt: string }
+    }
   | { type: 'phaseCards'; items: { step?: string; title: string; body: string; tags?: string[] }[] }
   | { type: 'wordList'; title?: string; items: { word: string; note?: string }[]; highlight?: number }
   | { type: 'timeline'; items: { label: string; sub?: string }[] }
   | { type: 'screensGrid'; cols?: 2 | 3; items: { src: string; alt: string; caption?: string }[] }
+  // Narrative blocks (ADR-004) — the reference template's devices.
+  /** A problem with two or more facets, one visible at a time behind a pill switcher. */
+  | { type: 'problemTabs'; items: { label: string; body: string }[] }
+  /** Full-width band carrying the problem statement / how-might-we. */
+  | { type: 'statementBand'; eyebrow: string; statement: string }
+  /** Research insights as a sticky-note board. Each note is one declarative sentence. */
+  | { type: 'insightNotes'; title?: string; notes: string[] }
+  /** Labelled toggle between two images — the state before the work and after it. */
+  | {
+      type: 'beforeAfter'
+      before: { src: string; alt: string; label: string }
+      after: { src: string; alt: string; label: string }
+      caption?: string
+    }
+  /** One screen plus callouts, each naming a change and why it was made. */
+  | {
+      type: 'annotatedShot'
+      src: string
+      alt: string
+      caption?: string
+      notes: { title?: string; body: string }[]
+    }
+  /** The NDA boundary, stated openly instead of implied by omission. */
+  | { type: 'ndaNote'; title: string; body: string }
 
 export interface StatItem {
   value: string
@@ -36,6 +77,8 @@ export interface Chapter {
   title: string
   /** Process-step name shown in the eyebrow when `title` is a claim (editorial layout), e.g. "Problem Understanding". */
   kicker?: string
+  /** Short beat name for the sticky nav, e.g. "Two failures". Falls back to `title`. */
+  navLabel?: string
   /** One giant ghost word rendered behind the chapter header (editorial layout only). */
   ghost?: string
   blocks: Block[]
@@ -81,6 +124,8 @@ export interface CaseStudy extends CaseSummary {
     team: string
     timeline: string
     platform: string
+    /** Disciplines applied, rendered as a list beside role/timeline/team. */
+    skills: string[]
   }
   tldr: {
     problem: string
@@ -96,7 +141,8 @@ export interface CaseStudy extends CaseSummary {
     rejected: string
     why: string
   }[]
-  reflection: string
+  /** Closing learnings — a short list, not a paragraph. Each title is a claim; body expands it. */
+  reflections: { title: string; body?: string }[]
   next: {
     slug: string
     title: string

@@ -28,6 +28,7 @@ export const clh: CaseStudy = {
     team: '1 PM, 1 engineering manager, central ops',
     timeline: 'Mar–Jun 2026',
     platform: 'Internal desktop panel (Chrome, ~1440×900)',
+    skills: ['Product Design', 'Information Architecture', 'Interaction Design', 'Design Systems'],
   },
   coverBoard: {
     src: '/work/clh/sot-overview.png',
@@ -480,8 +481,20 @@ export const clh: CaseStudy = {
 
   spotlights: [],
 
-  reflection:
-    "The system is in development now — the design is locked and handed off, and engineering is building it. So there is no usage number yet, and inventing one would be the easiest thing here to catch. What I can claim is structural: an architecture that held across 14 flows and 130+ screens, three navigation-breaking issues caught before they reached engineering, and a change model that makes the consequence of every edit explicit before anyone commits to it. What I want next is the measurement I don't have — time to clear the Action Required queue, before and after — and one specific answer: whether a manager who has just finished three of four trucks reads the unchanged queue as the system being strict, or as the system ignoring their work. The prototype demonstrates that rule. It does not yet teach it, and the difference will only show up on a bad Wednesday in a real month.",
+  reflections: [
+    {
+      title: 'There is no usage number, and inventing one would be the easiest thing here to catch.',
+      body: 'The design is locked and handed off; engineering is still building it. What I can claim is structural — an architecture that held across 14 flows and 130+ screens, and three navigation-breaking issues caught before they reached engineering.',
+    },
+    {
+      title: 'The measurement I want is the one I do not have.',
+      body: 'Time to clear the Action Required queue, before and after. Without it, the change model is an argument rather than a result.',
+    },
+    {
+      title: 'The prototype demonstrates the worst-case-slot rule. It does not yet teach it.',
+      body: 'A manager who has finished three of four trucks sees an unchanged queue. Whether that reads as the system being strict or as the system ignoring their work will only show up on a bad Wednesday in a real month.',
+    },
+  ],
 
   next: {
     slug: 'transporter-contract-management',

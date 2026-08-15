@@ -16,6 +16,7 @@ export const ndc: CaseStudy = {
     team: 'Product, Data Science, Analytics, Tech (linehaul pod)',
     timeline: 'TBC',
     platform: 'Desktop web ops panel (internal)',
+    skills: ['Product Design', 'Information Architecture', 'Systems Design', 'Interaction Design'],
   },
   tldr: {
     problem:
@@ -334,8 +335,20 @@ export const ndc: CaseStudy = {
     },
   ],
 
-  reflection:
-    'The honest account is that I inherited a prototype where every feature existed and nothing was usable, and most of my contribution was subtraction and sequencing rather than invention: deleting a duplicate navigation tier, collapsing six status vocabularies into one, removing a Reject button, refusing an audit log. Two things I\'d flag against myself. First, several structural calls — the route-grain review in ADR-001, the master-detail rethink in ADR-002 — were corrections I made after building the wrong thing once; the evidence was in the requirements the whole time. Second, the design is validated by spec-fidelity checks and stakeholder review, not by a planner running a live cycle through it — the <30s and ≤2-click targets are design-enforced, not field-measured, and the first real monthly cycle will tell me whether the alignment ritual I designed matches the negotiation ops leads actually have. I designed the ritual; the network hasn\'t voted yet.',
+  reflections: [
+    {
+      title: 'Most of the work was subtraction, not invention.',
+      body: 'I inherited a prototype where every feature existed and nothing was usable. Deleting a duplicate navigation tier, collapsing six status vocabularies into one, removing a Reject button, refusing an audit log — that was the contribution.',
+    },
+    {
+      title: 'Two structural calls were corrections, not insights.',
+      body: 'The route-grain review in ADR-001 and the master-detail rethink in ADR-002 both came after I had built the wrong thing once. The evidence was in the requirements the whole time.',
+    },
+    {
+      title: 'The targets are design-enforced, not field-measured.',
+      body: 'Under 30 seconds to orient and two clicks to start are validated by spec-fidelity checks and stakeholder review, not by a planner running a live cycle. I designed the ritual; the network has not voted yet.',
+    },
+  ],
 
   next: {
     slug: 'linehaul-nexus',

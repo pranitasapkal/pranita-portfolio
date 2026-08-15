@@ -18,6 +18,7 @@ export const transporter: CaseStudy = {
     team: 'Valmo Transportation (Meesho) — with PM and engineering counterparts',
     timeline: 'TBC',
     platform: 'Desktop web panel (transporter-facing)',
+    skills: ['Product Design', 'UX Research', 'Accessibility', 'Usability Testing'],
   },
   tldr: {
     problem:
@@ -391,8 +392,24 @@ export const transporter: CaseStudy = {
     },
   ],
 
-  reflection:
-    "The 2.8/5 I gave my own screens is the most useful number in this case study, and the least comfortable one. The structural thinking was done — three ADRs, a locked vocabulary, a 34-row matrix — and the screens still shipped to review with counts that contradicted each other on a single viewport and a confetti animation on a grievance flow. The lesson I took is that for this persona, spec discipline and screen discipline are different skills: rules I had written myself were violated in my own Figma files within a day, which is why the judge-mode pass is now a standing gate in my process rather than a one-off. I also carry forward a genuine open question ADR-003 raised but deferred: four lifecycle tabs may be one too many for this user, and the honest answer waits on the usability-test evidence rather than on my preference. The discipline this project taught me was not subtraction itself — cutting features is easy — but writing down why each thing was cut, so the next iteration can't quietly add it back.",
+  reflections: [
+    {
+      title: 'The 2.8/5 I gave my own screens is the most useful number here, and the least comfortable.',
+      body: 'The structural thinking was done — three ADRs, a locked vocabulary, a 34-row matrix — and the screens still reached review with counts that contradicted each other on one viewport and a confetti animation on a grievance flow.',
+    },
+    {
+      title: 'Spec discipline and screen discipline are different skills.',
+      body: 'Rules I had written myself were violated in my own Figma files within a day. That is why the judge-mode pass is now a standing gate in my process rather than a one-off.',
+    },
+    {
+      title: 'Four lifecycle tabs may be one too many for this user.',
+      body: 'ADR-003 raised it and deferred it. The honest answer waits on usability-test evidence, not on my preference.',
+    },
+    {
+      title: 'Cutting features is easy. Writing down why is the discipline.',
+      body: 'A recorded reason is what stops the next iteration quietly adding it back.',
+    },
+  ],
 
   next: {
     slug: 'placement-multi-origin',

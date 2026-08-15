@@ -22,6 +22,7 @@ export const transporterPanel: CaseStudy = {
     team: 'Valmo Transportation (Meesho) — with PM, FinOps and engineering counterparts',
     timeline: 'Sept – Nov 2025 · design review Nov 2025',
     platform: 'Desktop web panel (transporter-facing) — live',
+    skills: ['Product Design', 'UX Research', 'Information Architecture', 'Content Design'],
   },
   tldr: {
     problem:
@@ -573,8 +574,24 @@ export const transporterPanel: CaseStudy = {
     },
   ],
 
-  reflection:
-    "The lesson I keep from this module is about where design effort belongs. Five tabs, and one of them holds more than half the screens — not because Completed is visually complicated, but because it's the only tab where being wrong costs the user money he has already earned. Effort should be allocated by consequence, not by surface area. The second is about my own rules. I wrote six constraints for the listing table and shipped a version that overrules two of them. That isn't a failure of the rules; it's what rules are for — they made the cost of each violation explicit, so the compromise was chosen rather than drifted into. A rule you never break was probably never load-bearing. And the third, which I now use constantly: an empty cell is a design decision you haven't made yet. No RFQ Linked, No GPS Present, As per existing Billing Process — each started as a blank space in a table, and each one, once named, stopped generating a phone call. What's still open, and I'd rather name it than let the case study imply otherwise: Cancelled has no empty or loading state; disputes can only be raised from Completed, so a rate disagreement that's obvious at assignment time has to wait for the trip to finish; and role-based access — transporters explicitly asked to hide rate detail from their POCs — is not in this release.",
+  reflections: [
+    {
+      title: 'Effort belongs where the consequence is, not where the surface area is.',
+      body: 'One tab holds more than half the screens. Not because Completed is visually complicated, but because it is the only tab where being wrong costs the user money he has already earned.',
+    },
+    {
+      title: 'A rule you never break was probably never load-bearing.',
+      body: 'I wrote six constraints for the listing table and shipped a version that overrules two. They made the cost of each violation explicit, so the compromise was chosen rather than drifted into.',
+    },
+    {
+      title: "An empty cell is a design decision you haven't made yet.",
+      body: 'No RFQ Linked, No GPS Present, As per existing Billing Process. Each started as a blank space in a table, and each one, once named, stopped generating a phone call.',
+    },
+    {
+      title: 'Three things are still open, and I would rather name them.',
+      body: 'Cancelled has no empty or loading state. Disputes can only be raised from Completed, so a rate disagreement obvious at assignment time waits for the trip to finish. Role-based access — which transporters explicitly asked for — is not in this release.',
+    },
+  ],
 
   next: {
     slug: 'network-design-central',

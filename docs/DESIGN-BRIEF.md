@@ -38,6 +38,24 @@ Everything visual. Specifically:
 
 Prototype in `/dev/kitchen-sink` before touching pages. It already renders the primitives.
 
+### Six components written as scaffolding — yours to restyle
+
+Added by `ADR-004` so the case studies could adopt the reference template's sections. They are
+written **plain and correct, not styled to finish**: right markup, right accessibility, minimal
+visual design. Restyling them is expected work, not a correction.
+
+| Component | What it is | What it must keep |
+|---|---|---|
+| `ProblemTabs` | A problem with several facets behind a pill switcher | WAI-ARIA tabs — roving tabindex, arrow/Home/End keys, panel labelled by its tab |
+| `StatementBand` | Full-width band carrying the problem statement | Nothing structural; style freely |
+| `InsightNotes` | Research insights as a sticky-note board | It is a `<ul>`. The notes are content, not decoration |
+| `BeforeAfter` | Labelled toggle between two images | Both images stay in the DOM (`hidden`, not unmounted) so the swap never flashes; real buttons with `aria-pressed` |
+| `AnnotatedShot` | A screen plus numbered callouts | Callouts are an `<ol>` beside the image, not absolute pins — pins break narrow and are unreadable to a screen reader |
+| `NdaNote` | The NDA boundary, stated openly | Nothing structural |
+
+`ChallengeSolution` also gained a second form — a Problem → fix → **effect** triplet. The effect
+line is the point of the block; keep it visually distinct from the two columns above it.
+
 If you replace the tokens or the motion vocabulary, record it in
 `tasks/decisions/ADR-004-visual-system-v2.md` — what you replaced and why. Not bureaucracy:
 the current palette carries pre-checked contrast ratios in comments, and a new palette has to

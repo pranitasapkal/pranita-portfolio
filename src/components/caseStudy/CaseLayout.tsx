@@ -58,6 +58,7 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
                 ['Role', cs.meta.role],
                 ['Team', cs.meta.team],
                 ['Timeline', cs.meta.timeline],
+                ['Skills', cs.meta.skills.join(' · ')],
               ] as [string, string][]
             ).map(([key, val]) => (
               <div key={key} className="flex flex-col gap-0.5">
@@ -182,9 +183,25 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
               What I'd flag against myself.
             </h2>
           </div>
-          <p className="font-serif italic text-lg text-text-hi leading-relaxed max-w-[65ch]">
-            {cs.reflection}
-          </p>
+          <ul className="flex flex-col gap-6 list-none p-0 m-0 max-w-[65ch]">
+            {cs.reflections.map((r) => (
+              <li key={r.title} className="flex gap-4 border-b border-line pb-6 last:border-b-0">
+                <span className="font-mono text-signal shrink-0 pt-1" aria-hidden="true">
+                  —
+                </span>
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-display font-black text-lg md:text-xl text-text-hi tracking-tight leading-snug">
+                    {r.title}
+                  </h3>
+                  {r.body && (
+                    <p className="font-body text-sm md:text-base text-text-lo leading-relaxed">
+                      {r.body}
+                    </p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* ── NEXT CASE ────────────────────────────────────────────── */}

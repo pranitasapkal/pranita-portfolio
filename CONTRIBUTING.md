@@ -117,6 +117,10 @@ Never copy anything back in from the sibling project folders. `public/prototypes
 - **Tailwind v4, no config file.** Tokens are `@theme` entries in `src/styles/theme.css`.
 - **`Block` in `src/content/types.ts` is a closed union.** The text lane authors against it,
   so adding a block type is a shared decision: write an ADR in `tasks/decisions/` first.
+  `ADR-004` is the worked example — six narrative blocks, agreed and recorded, with the
+  components written as scaffolding for the design lane to restyle (see `docs/DESIGN-BRIEF.md`).
+  `BlockRenderer` has a `never` exhaustiveness check, so a new type without a renderer fails
+  `tsc`: types and components ship in the same commit.
 - **Two case layouts exist.** `CaseLayout.tsx` serves four cases; `EditorialCaseLayout.tsx`
   serves Contract Lifecycle Hub. `CaseStudyPage.tsx` branches on `layout === 'editorial'`.
   Whether they converge is part of the design rebuild — see `docs/DESIGN-BRIEF.md`.
