@@ -165,8 +165,8 @@ export const transporterPanel: CaseStudy = {
           title: 'The bar I set for myself — and what the shipped screens are built against',
           items: [
             {
-              word: 'No blank cells',
-              note: 'No RFQ Linked · No GPS Present · As per existing Billing Process. An absence is always a labelled value — the research said missing earnings read as anxiety, not as "pending".',
+              word: 'An absence is a value',
+              note: 'Research said a missing earnings figure reads as anxiety, not as "pending" — so every empty cell got a name: No RFQ Linked · No GPS Present · As per existing Billing Process.',
             },
             {
               word: 'Consequence before input',
