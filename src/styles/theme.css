@@ -1,9 +1,81 @@
 @import 'tailwindcss';
 
 /*
- * THE NETWORK — design tokens (Tailwind v4 @theme).
- * Palette contrast-checked against ink-0: text-hi 17:1, text-lo 7.6:1, signal 10.7:1.
- * Do not add colors outside this system.
+ * ── v2 visual system (ADR-004 §tokens) ──────────────────────────────────────
+ * Light-first with always-dark "band" folds; [data-theme="dark"] flips the
+ * surface layer, bands never flip. Set pre-paint by the inline script in
+ * index.html (localStorage 'theme' → prefers-color-scheme fallback).
+ *
+ * Contrast (WCAG AA, computed 2026-08-15 — see ADR-004 for the script):
+ *   light: text-strong/surface-0 16.83 · text-soft/surface-0 7.13 ·
+ *          text-soft/surface-1 6.59 · accent/surface-0 6.28 · white/btn 16.83
+ *   dark:  text-strong/surface-0 17.49 · text-soft/surface-0 8.32 ·
+ *          text-soft/surface-2 7.24 · accent/surface-0 8.38
+ *   band:  text 18.10 · soft 7.99 · accent 10.70
+ *   gradients: white on blue 6.28 · white on red 5.00
+ * All ≥ 4.5:1 body, ≥ 3:1 large/UI. Re-derive if any value changes.
+ */
+:root {
+  --surface-0: #ffffff;
+  --surface-1: #f6f6f4;
+  --surface-2: #ffffff;
+  --text-strong: #1d1d1f;
+  --text-soft: #55585e;
+  --line-soft: rgba(29, 29, 31, 0.12);
+  --accent: #2b4fe4;
+  --accent-deep: #2743cb;
+  --accent-ink: #ffffff; /* text on solid accent / solid dark buttons */
+  --shadow-pill: 0 8px 30px rgba(29, 29, 31, 0.10), 0 2px 8px rgba(29, 29, 31, 0.06);
+  --shadow-card: 0 20px 60px rgba(29, 29, 31, 0.12);
+}
+
+/* `.force-dark` re-declares the same custom properties on a subtree, so chrome
+   that sits on dark surfaces regardless of theme (nav on case pages) can opt in. */
+:root[data-theme='dark'],
+.force-dark {
+  --surface-0: #0b0c0e;
+  --surface-1: #131418;
+  --surface-2: #1a1c21;
+  --text-strong: #f2f2f3;
+  --text-soft: #a6a9b0;
+  --line-soft: rgba(242, 242, 243, 0.14);
+  --accent: #8fa5ff;
+  --accent-deep: #aab9ff;
+  --accent-ink: #0b0c0e;
+  --shadow-pill: 0 8px 30px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.55);
+}
+
+@theme inline {
+  /* v2 semantic colors — flip with [data-theme] */
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-strong: var(--text-strong);
+  --color-soft: var(--text-soft);
+  --color-line-soft: var(--line-soft);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-ink: var(--accent-ink);
+
+  /* Band — the always-dark folds (statement, approach). Identical in both themes. */
+  --color-band: #060607;
+  --color-band-text: #f2f2f3;
+  --color-band-soft: #9ea3ac;
+  --color-band-line: rgba(242, 242, 243, 0.14);
+  --color-band-accent: #aab9ff;
+
+  /* v2 type layers: display serif / body grotesk / mono meta / handwritten micro */
+  --font-serif-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  --font-sans: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif;
+  --font-hand: 'Caveat', cursive;
+}
+
+/*
+ * ── v1 tokens (THE NETWORK) — kept ONLY for the case-study pages ────────────
+ * The identity behind them was dropped (ADR-004); case pages still consume
+ * them and are out of scope this pass. Do not use these in v2 components.
+ * v1 contrast vs ink-0: text-hi 17:1, text-lo 7.6:1, signal 10.7:1.
  */
 @theme {
   --color-ink-0: #0a0c10;

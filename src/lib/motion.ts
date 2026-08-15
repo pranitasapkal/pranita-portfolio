@@ -20,24 +20,27 @@ export const DURATIONS = {
  * Wraps gsap.matchMedia so components always register both branches:
  * a motion branch and a reduced-motion fallback that renders the end state.
  *
- * @param motionFn   Runs when motion is allowed. Return value is ignored.
+ * Either branch may return a cleanup function; GSAP runs it when the branch
+ * stops matching or the matchMedia is reverted. That is the only correct place
+ * to tear down non-GSAP side effects (event listeners, timers) registered by a
+ * branch — doing it in a bare useEffect leaks them across a motion-pref change.
+ *
+ * @param motionFn   Runs when motion is allowed.
  * @param reducedFn  Optional. Runs under prefers-reduced-motion: reduce.
  *                   If omitted the matchMedia still registers the query
  *                   (so GSAP properly handles the branch) but does nothing.
  */
+type MotionBranch = (context: gsap.Context) => void | (() => void)
+
 export function withReducedMotion(
-  motionFn: (context: gsap.Context) => void,
-  reducedFn?: (context: gsap.Context) => void,
+  motionFn: MotionBranch,
+  reducedFn?: MotionBranch,
 ): gsap.MatchMedia {
   const mm = gsap.matchMedia()
 
-  mm.add('(prefers-reduced-motion: no-preference)', (ctx) => {
-    motionFn(ctx)
-  })
+  mm.add('(prefers-reduced-motion: no-preference)', (ctx) => motionFn(ctx))
 
-  mm.add('(prefers-reduced-motion: reduce)', (ctx) => {
-    if (reducedFn) reducedFn(ctx)
-  })
+  mm.add('(prefers-reduced-motion: reduce)', (ctx) => reducedFn?.(ctx))
 
   return mm
 }

@@ -7,7 +7,6 @@
  *   - On pathname change: ink-0 overlay fades in (280ms) over the departing page
  *     while the new page renders underneath; then fades out (370ms).
  *   - A signal-coloured progress line sweeps left→right during cover.
- *   - A mono "DISPATCHING —" label appears centred.
  *   - Rapid successive navigations are safe: each new change resets in-flight
  *     timers and restarts the animation from scratch.
  *   - Reduced-motion: overlay is never shown; instant swap.
@@ -20,12 +19,13 @@
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router'
 import { gsap } from '../../lib/gsap'
+import { usePrefersReducedMotion } from '../../lib/useMediaQuery'
 
 export function RouteTransition() {
   const location = useLocation()
+  const prefersReducedMotion = usePrefersReducedMotion()
   const overlayRef = useRef<HTMLDivElement>(null)
   const lineRef    = useRef<HTMLDivElement>(null)
-  const labelRef   = useRef<HTMLDivElement>(null)
 
   // Skip the initial mount — no transition on first page load.
   const isFirst   = useRef(true)
@@ -49,28 +49,25 @@ export function RouteTransition() {
     prevPath.current = pathname
 
     // Skip under reduced motion — instant swap, no overlay
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (prefersReducedMotion) return
 
     const overlay = overlayRef.current
     const line    = lineRef.current
-    const label   = labelRef.current
-    if (!overlay || !line || !label) return
+    if (!overlay || !line) return
 
     // ── Reset any in-flight animation ──
     timers.current.forEach(clearTimeout)
     timers.current = []
-    gsap.killTweensOf([overlay, line, label])
+    gsap.killTweensOf([overlay, line])
 
     // ── Initial state ──
     gsap.set(overlay, { opacity: 0 })
     gsap.set(line,    { scaleX: 0, transformOrigin: 'left center' })
-    gsap.set(label,   { opacity: 0 })
     overlay.style.pointerEvents = 'all'
 
     // ── Cover phase: 280ms ──
     gsap.to(overlay, { opacity: 1, duration: 0.28, ease: 'power2.inOut' })
     gsap.to(line,    { scaleX: 1, duration: 0.28, ease: 'power2.inOut' })
-    gsap.to(label,   { opacity: 1, duration: 0.14, ease: 'power2.out', delay: 0.08 })
 
     // ── Reveal phase: starts 30ms after cover completes ──
     timers.current.push(
@@ -78,7 +75,6 @@ export function RouteTransition() {
         // Release pointer-events immediately so the new page is interactive
         overlay.style.pointerEvents = 'none'
 
-        gsap.to(label,   { opacity: 0, duration: 0.15, ease: 'power2.in' })
         gsap.to(overlay, {
           opacity: 0,
           duration: 0.37,
@@ -94,7 +90,7 @@ export function RouteTransition() {
     return () => {
       timers.current.forEach(clearTimeout)
     }
-  }, [location.pathname])
+  }, [location.pathname, prefersReducedMotion])
 
   return (
     <div
@@ -106,7 +102,7 @@ export function RouteTransition() {
         position: 'fixed',
         inset: 0,
         zIndex: 9998,
-        backgroundColor: 'var(--color-ink-0)',
+        backgroundColor: 'var(--surface-0)',
         opacity: 0,
         pointerEvents: 'none',
       }}
@@ -121,32 +117,12 @@ export function RouteTransition() {
           left: 0,
           right: 0,
           height: '1px',
-          backgroundColor: 'var(--color-signal)',
+          backgroundColor: 'var(--accent)',
           transformOrigin: 'left center',
           transform: 'scaleX(0)',
         }}
       />
 
-      {/* Mono dispatch label */}
-      <div
-        ref={labelRef}
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '10px',
-          letterSpacing: '0.25em',
-          color: 'var(--color-text-lo)',
-          textTransform: 'uppercase',
-          whiteSpace: 'nowrap',
-          opacity: 0,
-        }}
-      >
-        DISPATCHING —
-      </div>
     </div>
   )
 }

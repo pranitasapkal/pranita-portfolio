@@ -6,6 +6,7 @@
  * strength: divisor applied to cursor delta (higher = weaker pull, default 3).
  */
 import { useRef, useCallback, type ReactNode } from 'react'
+import { useIsTouch, usePrefersReducedMotion } from '../../lib/useMediaQuery'
 
 interface MagneticWrapProps {
   children: ReactNode
@@ -16,12 +17,8 @@ interface MagneticWrapProps {
 export function MagneticWrap({ children, strength = 3, className = '' }: MagneticWrapProps) {
   const wrapRef = useRef<HTMLDivElement>(null)
 
-  // Check once at component level (values don't change during lifetime)
-  const isTouch =
-    typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches
-  const prefersReduced =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const isTouch = useIsTouch()
+  const prefersReduced = usePrefersReducedMotion()
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
