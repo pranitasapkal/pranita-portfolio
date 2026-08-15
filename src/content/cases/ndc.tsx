@@ -5,10 +5,10 @@
  * {*} markers preserved verbatim in all body strings — rendered as <Asterisk /> by BlockRenderer.
  */
 import type { CaseStudy } from '../types'
+import { summaries } from './summaries'
 
 export const ndc: CaseStudy = {
-  slug: 'network-design-central',
-  code: 'NDC-02',
+  ...summaries['network-design-central'],
   title: 'Network Design Central',
   oneLiner: 'The solver designs the routes. I designed the agreement.',
   meta: {

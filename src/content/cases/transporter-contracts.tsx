@@ -6,10 +6,10 @@
  * [UT-FINDINGS: ...] placeholders preserved verbatim — renderer shows a "content pending" pill.
  */
 import type { CaseStudy } from '../types'
+import { summaries } from './summaries'
 
 export const transporter: CaseStudy = {
-  slug: 'transporter-contract-management',
-  code: 'TCM-04',
+  ...summaries['transporter-contract-management'],
   title: 'Transporter Contract Management',
   oneLiner:
     'Everything that makes an ops power-tool good actively fails a user who reads slowly and trusts the screen literally — so the work was subtraction, with discipline.',

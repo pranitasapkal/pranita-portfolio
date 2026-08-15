@@ -6,10 +6,10 @@
  * Rejected-patterns block is the centerpiece of the lo-fi chapter (STEP 06); spotlights cover them too.
  */
 import type { CaseStudy } from '../types'
+import { summaries } from './summaries'
 
 export const placement: CaseStudy = {
-  slug: 'placement-multi-origin',
-  code: 'PLC-05',
+  ...summaries['placement-multi-origin'],
   title: 'Placement & Assignment — the Multi-Origin Route Builder',
   oneLiner:
     "Six percent of trips were quietly corrupting the data everyone else depended on — and the fix wasn't allowed to cost the other ninety-four percent a single click.",

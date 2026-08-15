@@ -41,10 +41,31 @@ export interface Chapter {
   blocks: Block[]
 }
 
-export interface CaseStudy {
+/**
+ * The cheap half of a case study: identity plus the home-index card copy — and nothing
+ * else. Authored in `cases/summaries.ts`, which the home page imports; keeping page prose
+ * out of it is what stops all five case studies loading on the home route. Each case file
+ * spreads its own summary, so a card and its page can never disagree about slug or code.
+ */
+export interface CaseSummary {
   slug: string
   code: string
+  /** Card title — usually shorter than the case-page `title`. */
+  cardTitle: string
+  /** Card hook — usually shorter and punchier than the page `oneLiner`. */
+  cardOneLiner: string
+  /** Three pill stats along the bottom of the card. */
+  stats: [string, string, string]
+  /** Fake URL shown in the card's browser chrome. */
+  browserSlug: string
+  /** false = card renders un-linked with an "in assembly" tag. Defaults to true. */
+  live?: boolean
+}
+
+export interface CaseStudy extends CaseSummary {
+  /** Case-page title. */
   title: string
+  /** Case-page hook — also the meta description for the route. */
   oneLiner: string
   /** Page shell: 'standard' = sticky-nav chapters (default); 'editorial' = walletsprout-style long-scroll of boards. */
   layout?: 'standard' | 'editorial'

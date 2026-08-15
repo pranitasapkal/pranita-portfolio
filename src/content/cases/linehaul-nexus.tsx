@@ -11,18 +11,18 @@
  * Diagrams: scripts/gen-clh-diagrams.mjs → dg-month / dg-model / dg-flow.
  */
 import type { CaseStudy } from '../types'
+import { summaries } from './summaries'
 
 export const clh: CaseStudy = {
-  slug: 'linehaul-nexus',
-  code: 'CLH-03',
+  ...summaries['linehaul-nexus'],
   title: 'Contract Lifecycle Hub',
+  oneLiner:
+    'Every month, 2,400 truck routes have to go from a planner’s file to a signed, running contract before the 1st. This is the system that does it.',
   layout: 'editorial',
   noindex: true,
   eyebrow: 'INTERNAL TOOL · LOGISTICS OPS · IN DEVELOPMENT',
   domain: 'B2B ops tooling',
   scale: '~2,400 contracts / month',
-  oneLiner:
-    'Every month, 2,400 truck routes have to go from a planner’s file to a signed, running contract before the 1st. This is the system that does it.',
   meta: {
     role: 'Sole designer, object model → handoff',
     team: '1 PM, 1 engineering manager, central ops',

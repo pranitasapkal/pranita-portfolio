@@ -14,7 +14,7 @@
  *
  * HeroBackdrop is kept as a named export for backwards-compatibility.
  */
-import { lazy, Suspense, useRef, useState, useEffect, useLayoutEffect, Component } from 'react'
+import { lazy, Suspense, useRef, useState, useEffect, useLayoutEffect, Component, Fragment } from 'react'
 import type { ReactNode, ErrorInfo } from 'react'
 import { MagneticWrap } from '../primitives/MagneticWrap'
 import { Asterisk }     from '../primitives/Asterisk'
@@ -22,6 +22,7 @@ import { StatCallout }  from '../primitives/StatCallout'
 import { SceneFallback } from '../three/SceneFallback'
 import { gsap }          from '../../lib/gsap'
 import { EASE, DURATIONS } from '../../lib/motion'
+import { site }           from '../../content/site'
 
 const NetworkScene = lazy(() => import('../three/NetworkScene'))
 
@@ -54,12 +55,12 @@ function PortraitPlaceholder({ width = 200, height = 258, radius = '28px' }: Por
       className="flex flex-col items-center justify-center bg-ink-2 border border-line overflow-hidden select-none"
       style={{ width, height, borderRadius: radius }}
       role="img"
-      aria-label="Portrait photograph — coming soon"
+      aria-label={site.hero.portraitAlt}
     >
       <div className="w-10 h-10 rounded-full border border-line mb-2" aria-hidden="true" />
       <div className="w-14 h-8 rounded-t-full border-t border-x border-line" aria-hidden="true" />
       <span className="font-mono text-[10px] text-text-lo tracking-[0.25em] uppercase mt-4">
-        Portrait
+        {site.hero.portraitPlaceholderLabel}
       </span>
     </div>
   )
@@ -91,7 +92,9 @@ function ScrollCue({ innerRef }: { innerRef: React.RefObject<HTMLDivElement | nu
           strokeLinejoin="round"
         />
       </svg>
-      <span className="font-mono text-[10px] text-text-lo tracking-[0.3em] uppercase">Scroll</span>
+      <span className="font-mono text-[10px] text-text-lo tracking-[0.3em] uppercase">
+        {site.hero.scrollCue}
+      </span>
     </div>
   )
 }
@@ -195,7 +198,7 @@ export function Hero() {
     <section
       ref={heroRef}
       style={{ minHeight: '150vh' }}
-      aria-label="Introduction"
+      aria-label={site.hero.sectionAriaLabel}
     >
       <div className="sticky top-0 h-screen bg-ink-0 flex flex-col justify-center overflow-hidden">
 
@@ -217,7 +220,7 @@ export function Hero() {
               whiteSpace: 'nowrap',
             }}
           >
-            THE NETWORK
+            {site.hero.ghost}
           </span>
         </div>
 
@@ -260,15 +263,19 @@ export function Hero() {
             ref={h1Ref}
             className="font-display font-black uppercase text-text-hi leading-[0.88] tracking-tight"
             style={{ fontSize: 'clamp(3rem,11vw,11rem)' }}
-            aria-label="PRANITA SAPKAL"
+            aria-label={site.hero.nameAriaLabel}
           >
-            <span className="inline-block overflow-hidden" style={{ paddingBottom: '0.1em' }}>
-              <span data-word className="inline-block" aria-hidden="true">PRANITA</span>
-            </span>
-            {' '}
-            <span className="inline-block overflow-hidden" style={{ paddingBottom: '0.1em' }}>
-              <span data-word className="inline-block" aria-hidden="true">SAPKAL<Asterisk /></span>
-            </span>
+            {site.hero.nameWords.map((word, i) => (
+              <Fragment key={word}>
+                {i > 0 && ' '}
+                <span className="inline-block overflow-hidden" style={{ paddingBottom: '0.1em' }}>
+                  <span data-word className="inline-block" aria-hidden="true">
+                    {word}
+                    {i === site.hero.nameWords.length - 1 && <Asterisk />}
+                  </span>
+                </span>
+              </Fragment>
+            ))}
           </h1>
 
           {/* Serif-italic subline */}
@@ -277,7 +284,7 @@ export function Hero() {
             className="font-serif italic text-text-lo mt-5 md:mt-7 max-w-xl leading-relaxed"
             style={{ fontSize: 'clamp(1rem,1.4vw,1.35rem)' }}
           >
-            Product designer for the systems that move things — logistics UX at Meesho (Valmo).
+            {site.hero.subline}
           </p>
 
           {/* Stats row */}
@@ -285,10 +292,9 @@ export function Hero() {
             ref={statsRef}
             className="mt-12 md:mt-16 pt-8 border-t border-line flex flex-wrap gap-8 md:gap-14"
           >
-            <StatCallout value="10,000+" label="delivery nodes planned" fuzzed />
-            <StatCallout value="5→2"     label="clicks to task start" />
-            <StatCallout value="8"       label="tools built" />
-            <StatCallout value="5"       label="flagship systems" />
+            {site.hero.stats.map((s) => (
+              <StatCallout key={s.label} value={s.value} label={s.label} fuzzed={s.fuzzed} />
+            ))}
           </div>
         </div>
 

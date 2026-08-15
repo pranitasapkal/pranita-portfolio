@@ -10,10 +10,10 @@
  * vendor/driver data); diagrams by scripts/gen-assignment-diagrams.mjs. Both write public/work/assignment/.
  */
 import type { CaseStudy } from '../types'
+import { summaries } from './summaries'
 
 export const assignment: CaseStudy = {
-  slug: 'assignment-module',
-  code: 'ASM-01',
+  ...summaries['assignment-module'],
   title: "The Assignment Module — moving a transporter's whole trip life out of WhatsApp",
   oneLiner:
     "Every trip ran on a chat thread and got paid two months later. I designed the panel that replaced both — and its hardest screen is the one where a man who reads English slowly agrees, irreversibly, to what he's owed.",
