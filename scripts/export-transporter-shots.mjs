@@ -4,11 +4,12 @@
  * Exports the Transporter Panel SOT screens from `Figma- Assignment module/` into
  * public/work/transporter-panel/ at web scale.
  *
- * NDA: the Missing Trip screen embeds photographs of REAL challans carrying a real
- * vendor name, transporter ID, driver name, phone number and addresses. That region is
- * blurred before export — the shot still shows "we point at the document", without the
- * document's contents. Every other screen uses Figma dummy data (Karan Verma /
- * TR-12345678-1234 / DL 01 AB 1234 / Prashant Patel) and is exported as-is.
+ * NDA: the Missing Trip screen embeds photographs of REAL challans. The document stays
+ * sharp — the Trip ID in its green box is the point of the screen — but the personal data
+ * on it is redacted, because it belongs to third parties: shipper name and address,
+ * transporter name and ID, delivery address, driver name and mobile number. Every other
+ * screen uses Figma dummy data (Karan Verma / TR-12345678-1234 / DL 01 AB 1234 /
+ * Prashant Patel) and is exported as-is.
  *
  * Run: node scripts/export-transporter-shots.mjs
  * Requires: python3 with Pillow (already present on this machine).
@@ -54,15 +55,28 @@ const JOBS = [
   { src: 'In-Transpit trips/In- Transit Trips.png', out: 'in-transit.png' },
   { src: 'Completed Trips/Completed Trips - Default.png', out: 'completed-default.png' },
   { src: 'Completed Trips/Confirm - Active Dispute.png', out: 'confirm-active-dispute.png' },
-  { src: 'Completed Trips/Raise Dispute - Form.png', out: 'raise-dispute-form.png', crop: [0, 0, 0.56, 1] },
+  { src: 'Completed Trips/Raise Dispute - Form.png', out: 'raise-dispute-form.png' },
+  { src: 'Completed Trips/Raise Dispute - Form Filled.png', out: 'raise-dispute-details.png' },
+  { src: 'Completed Trips/Disputes - Overview.png', out: 'disputes-list.png' },
   {
-    src: 'Completed Trips/False Missing Trip - Step 1.png',
+    src: 'Completed Trips/Missing Trip - Raise Dispute.png',
     out: 'missing-trip-challan.png',
-    crop: [0, 0, 0.56, 0.56],
-    // challan photo strip — real vendor/driver/address data, must not ship legible.
-    // Top edge sits just below the "Find your Trip ID on the Challan" caption so the
-    // instruction stays readable while the document contents do not.
-    blur: [[0.2, 0.337, 0.54, 0.52]],
+    // Uncropped, and the challan itself stays sharp — the whole point of the screen is that
+    // the Trip ID is legible inside its green box, so blanket-blurring the document destroyed
+    // the very thing the copy points at.
+    //
+    // What is redacted is only the personal data on those two sample challans, which belongs
+    // to third parties rather than to this portfolio: the shipper's name and address, the
+    // transporter's registered name and ID, the delivery address, and the driver's name and
+    // mobile number. Boxes are fractions of the full frame, measured against this exact
+    // source file — re-measure if the source screen is ever re-exported from Figma.
+    blur: [
+      [0.2578, 0.3944, 0.3492, 0.4053], // Origin Address — shipper name + street address
+      [0.4127, 0.3687, 0.527, 0.3806], // Transporter ID + registered Transporter Name
+      [0.4127, 0.4088, 0.4518, 0.4196], // From Address — delivery address
+      [0.4127, 0.4459, 0.4312, 0.4538], // Driver Name
+      [0.483, 0.4459, 0.5025, 0.4538], // Driver Contact No.
+    ],
   },
   { src: 'Cancelled trips/Cancelled Trips Page.png', out: 'cancelled-remarks.png' },
 ]
@@ -89,4 +103,4 @@ for j in jobs:
 
 console.log(`Exporting ${JOBS.length} SOT screens → public/work/transporter-panel/`)
 execFileSync('python3', ['-c', py, JSON.stringify(JOBS), SRC, OUT], { stdio: 'inherit' })
-console.log('Done. Blurred: missing-trip-challan.png (real challan data).')
+console.log('Done. Redacted: missing-trip-challan.png (personal data on the sample challans).')
