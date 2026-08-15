@@ -48,22 +48,22 @@ export const transporter: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: "Valmo — Meesho's transportation arm — issues route contracts to independent Indian transporters.\n\nA transporter receives 15–70 contracts per month, mostly in one monthly batch, each with a response deadline, a rate, a vehicle spec, and real money attached.\n\nBefore this panel, the contract lifecycle lived in phone calls and PDFs: transporters found out about new contracts from a Valmo point of contact, disagreed by calling someone, and had no single place to see what was running, what was ending, or why something disappeared.",
+          body: 'Valmo — Meesho\'s transportation arm — issues route contracts to independent Indian transporters: 15–70 a month, mostly in one batch, each with a deadline, a rate, a vehicle spec and real money attached.\n\nBefore this panel it lived in phone calls and PDFs. He heard about contracts from a Valmo contact, disagreed by calling someone, and had nowhere to see what was running, ending, or gone.',
         },
         {
           type: 'text',
-          body: "The obvious answer was an ops-style contract dashboard. That answer was wrong, and understanding why became the core of the project. This user is not an ops analyst.\n\nHe runs a small fleet from a mid-range laptop, reads slowly, comprehends critical decisions in Hindi first, and trusts the screen literally — if a chip says \"Disputes (0)\" he reads it as a fact about his business, not as an empty filter state.\n\nEvery convention that makes an internal power-tool efficient — stacked filter dropdowns, actions revealed on hover, tabs whose columns reshuffle per filter, status conveyed by color dots — either confuses him or, worse, teaches him the panel lies.",
+          body: 'The obvious answer was an ops-style dashboard. That answer was wrong, and understanding why became the project.\n\nThis user is not an analyst. He runs a small fleet from a mid-range laptop, reads slowly, comprehends decisions in Hindi first, and trusts the screen literally — if a chip says "Disputes (0)" he reads it as a fact about his business, not an empty filter.',
         },
         {
           type: 'text',
-          body: "So the design problem was not \"build a contract table.\"\n\nIt was: take a domain with a genuinely complex lifecycle — Pending → Upcoming → Active → Closed, disputes, terminations with a 3-day trip buffer, performance flags, SLA reminders — and present it so a slow, literal reader can act on it correctly, alone, on the first monthly batch day.\n\nThe whole project is subtraction: from a full ops-tool vocabulary down to what survives contact with this persona.",
+          body: 'So the problem was not "build a contract table."\n\nIt was: take a genuinely complex lifecycle — Pending → Upcoming → Active → Closed, disputes, terminations with a 3-day trip buffer, performance flags, SLA reminders — and present it so a slow, literal reader can act correctly, alone, on the first batch day.',
         },
         {
           type: 'problemTabs',
           items: [
             {
               label: 'Filters he has to assemble',
-              body: 'Stacked dropdowns assume you already know which subset you want. This user does not arrive with a query — he arrives with a question, and the panel has to answer it before he can phrase it.',
+              body: 'Stacked dropdowns assume you already know which subset you want. He does not arrive with a query — he arrives with a question, and the panel has to answer it before he can phrase it.',
             },
             {
               label: 'Actions hidden until hover',
@@ -75,7 +75,7 @@ export const transporter: CaseStudy = {
             },
             {
               label: 'Status carried by colour',
-              body: 'A coloured dot is a convention you have to be taught. Every urgency and delay signal here is a chip carrying text as well, because the colour is the decoration and the word is the message.',
+              body: 'A coloured dot is a convention you have to be taught. Every urgency signal here is a chip carrying text as well: the colour decorates, the word informs.',
             },
           ],
         },
@@ -113,11 +113,11 @@ export const transporter: CaseStudy = {
         },
         {
           type: 'text',
-          body: "The objective had two halves — one for the transporter, one for the business — and one measurable bar for each.\n\nFor the transporter: complete the four core jobs — accept a contract, reject one, find what needs action today, and check whether an active contract is in trouble — without calling support and without a walkthrough.\n\nThe proxy metrics I designed against: land on the actionable subset by default, never strand the user in an empty filtered view, and keep every row to exactly one primary CTA.\n\nSo the Urgent chip auto-selects when its count is above zero, an \"All\" fallback chip stays visible on every tab, and the correct next action is never a choice among equals.\n\nFor the business: protect SLA compliance on pending contracts (a delayed accept is a breach risk — hence deadline-based urgency at ≤48 hours), and reduce avoidable rejections by showing economic consequences before the reject action commits.",
+          body: 'The objective had two halves, one measurable bar each.\n\nFor him: accept a contract, reject one, find what needs action today, and check whether an active contract is in trouble — without calling support or being walked through it.\n\nFor the business: protect SLA compliance, since a delayed accept is a breach risk — hence deadline-based urgency at ≤48 hours — and cut avoidable rejections by showing the economics before reject commits.',
         },
         {
           type: 'text',
-          body: 'I also set an explicit quality bar for myself rather than for the user: before handoff, the screen set had to survive a judge-mode review against the locked spec, WCAG 2.1 AA, and the persona — scored, catalogued, and written into an ADR.\n\nIt scored 2.8/5 on the first pass, which is exactly what that gate was for: 27 issues, including 7 ship-blockers, caught by me instead of by engineering or by a transporter in the field.',
+          body: 'I also set a quality bar for myself, not the user: before handoff the screens had to survive a judge-mode review against the locked spec, WCAG 2.1 AA and the persona. That gate is Step 07.',
         },
         {
           type: 'statRow',
@@ -140,11 +140,11 @@ export const transporter: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: "The user is an Indian transporter — a delivery partner or small logistics operator running one to a handful of vehicles for Valmo.\n\nHe works from a mid-range laptop, not a phone; this is a desktop panel, which surprised people who assume \"low-literacy\" means \"mobile.\" His literacy is low, his comprehension of anything consequential is Hindi-first, and his mental model of the domain is three questions: which contracts do I need to act on right now, which are running, which are over.",
+          body: 'The user is an Indian transporter — a small operator running one to a handful of vehicles, from a mid-range laptop rather than a phone, which surprises people who assume "low-literacy" means "mobile".\n\nHis comprehension of anything consequential is Hindi-first, and his mental model is three questions: what needs me now, what is running, what is over.',
         },
         {
           type: 'text',
-          body: "Four traits drove every decision in this project.\n\n**He reads the screen literally.** A count that disagrees with another count on the same screen is not a rendering bug to him — it is evidence the system is untrustworthy.\n\nThis is why \"reconcile all counts to one source\" was P0 issue #1 in my self-review (I found `Pending (22)` on a card next to `Pending (10)` on a tab).\n\n**He has no tolerance for hidden navigation.** Hover-only tooltips, actions behind kebab menus, and filter states with no visible label all fail him. Everything is a named, labelled, counted view.\n\n**He fears making mistakes.** The usability-test debrief asked directly: \"Did you feel safe doing actions here, or were you scared of making mistakes?\" That fear shaped the reject warning, the typed-confirmation terminate flow, and the removal of celebratory treatment from the dispute-success modal — a grievance is not a confetti moment.\n\n**He shares his device.** Staff and points-of-contact use the same logged-in laptop, which is why the contract area got its own session passcode gate.",
+          body: 'Four traits drove every decision in this project.\n\n**He reads the screen literally.** A count that disagrees with another count on the same screen is not a rendering bug to him — it is evidence the system is untrustworthy.\n\nHence P0 issue #1 in my self-review: reconcile all counts to one source. I had shipped `Pending (22)` on a card next to `Pending (10)` on a tab.\n\n**He has no tolerance for hidden navigation.** Hover-only tooltips, actions behind kebab menus, and filter states with no visible label all fail him. Everything is a named, labelled, counted view.\n\n**He fears making mistakes.** The usability-test debrief asked directly: "Did you feel safe doing actions here, or were you scared of making mistakes?" That fear shaped the reject warning, the typed-confirmation terminate flow, and the removal of celebratory treatment from the dispute-success modal — a grievance is not a confetti moment.\n\n**He shares his device.** Staff and points-of-contact use the same logged-in laptop, which is why the contract area got its own session passcode gate.',
         },
         {
           type: 'text',
@@ -177,11 +177,11 @@ export const transporter: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'The IA is the contract lifecycle, stated plainly: four tabs — **Pending, Upcoming, Active, Closed** — in the order a contract actually moves. No dashboard-first landing, no separate "action center." The tab names are the mental model.\n\nWithin each tab, the structure follows three locked rules, each written into an ADR because each was violated in an earlier iteration.',
+          body: 'The IA is the contract lifecycle, stated plainly: four tabs — **Pending, Upcoming, Active, Closed** — in the order a contract moves. No dashboard landing, no separate action center. The tab names are the mental model.',
         },
         {
           type: 'text',
-          body: '**Chips are named views, not filter toggles (ADR-001).** Pending has `Urgent (X)` and `All Pending (X)`. Active has up to four: `Below Target`, `Disputes`, `Ending Soon`, `All Active`.\n\nAction chips hide entirely when their count is zero — a "Disputes (0)" chip is noise that invites a dead-end click — but the "All" fallback is always visible, so the user can never be stranded in a filtered view he doesn\'t understand.\n\n**Columns are invariant per tab (ADR-001 §7).** No chip ever restructures the table.\n\nAll contextual variation is carried by row-level tags, which live in exactly two places: performance tags in the Performance column, co-located with the TAT% and on-time-placement numbers they annotate; lifecycle and dispute tags under the Contract ID.\n\n**Sub-metrics on overview cards exist only if they map to a real chip (ADR-002).** That rule killed the Estimated Earnings card (not actionable), the "All: X" sub-metric (duplicates the header count), and "Starting Soon" (maps to no view). Four cards became three.',
+          body: '**Chips are named views, not filter toggles (ADR-001).** Pending has `Urgent (X)` and `All Pending (X)`. Active has up to four: `Below Target`, `Disputes`, `Ending Soon`, `All Active`.\n\nAction chips hide entirely when their count is zero — a "Disputes (0)" chip is noise that invites a dead-end click — but the "All" fallback is always visible, so the user can never be stranded in a filtered view he doesn\'t understand.\n\n**Columns are invariant per tab (ADR-001 §7).** No chip ever restructures the table.\n\nRow-level tags carry all contextual variation, in exactly two places: performance tags beside the TAT% and on-time numbers they annotate, everything else under the Contract ID.\n\n**Sub-metrics on overview cards exist only if they map to a real chip (ADR-002).** That rule killed the Estimated Earnings card (not actionable), the "All: X" sub-metric (duplicates the header count), and "Starting Soon" (maps to no view). Four cards became three.',
         },
         {
           type: 'text',
@@ -219,7 +219,7 @@ export const transporter: CaseStudy = {
         },
         {
           type: 'text',
-          body: "**Accept** — the highest-frequency action — is one click from the default landing state on batch day: the Urgent chip auto-selects when non-empty, an SLA banner explains why \"Reminder from Valmo\" rows come first, and each row carries a filled `Accept` button.\n\nThe accept modal splits into three steps (Review → Assign vehicle/driver, optional → Confirm) so the assignment decision doesn't block acceptance — assignment can also happen later from the detail view, never from the list row.",
+          body: '**Accept** — the highest-frequency action — is one click from the default landing state on batch day: the Urgent chip auto-selects when non-empty, an SLA banner explains why "Reminder from Valmo" rows come first, and each row carries a filled `Accept` button.\n\nThe accept modal splits into three steps — Review → Assign vehicle/driver, optional → Confirm — so assignment never blocks acceptance. It can also happen later from the detail view, never from the list row.',
         },
         {
           type: 'text',
@@ -340,7 +340,7 @@ export const transporter: CaseStudy = {
         },
         {
           type: 'text',
-          body: "Before handoff I ran the screen set through a judge-mode review against the locked spec, WCAG 2.1 AA, and the persona — scoring my own work as a hostile reviewer would. It scored **2.8/5**: strong skeleton, not ship-ready.\n\nThe review catalogued **27 issues** across P0/P1/P2, written into ADR-003 so none could be quietly forgotten.\n\nThe seven P0 ship-blockers included counts that disagreed across cards, tabs, and chips on the same screen; a duplicated sub-metric where Disputes should have been; Reject and Raise Dispute buttons leaking onto the view-only Upcoming detail; the confetti dispute-success modal; and Closed detail views that showed a bare contract card with no closure reason, timestamp, or next step.",
+          body: 'Before handoff I ran the screens through a judge-mode review against the locked spec, WCAG 2.1 AA and the persona, scoring my own work as a hostile reviewer would. It scored **2.8/5** — strong skeleton, not ship-ready: 27 issues, 7 of them ship-blockers.',
         },
         {
           type: 'text',
@@ -388,7 +388,7 @@ export const transporter: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: "The panel's business case rests on three levers.\n\n**SLA protection.** A pending contract that expires unanswered is a route Valmo has to re-source.\n\nThe deadline-based urgency model (≤48h), the auto-selected Urgent chip, and the \"Reminder from Valmo\" banner exist to compress response time on exactly the contracts where a delayed accept becomes an SLA breach.\n\nContracts that still expire unanswered get an honest closure label — \"No Response,\" not \"Auto rejected\" — because mislabelling the system's action as the user's erodes the trust the whole panel depends on.",
+          body: 'The panel\'s business case rests on three levers.\n\n**SLA protection.** A pending contract that expires unanswered is a route Valmo has to re-source.\n\nThe deadline-based urgency model (≤48h), the auto-selected Urgent chip and the "Reminder from Valmo" banner all exist to compress response time on the contracts where a delayed accept becomes an SLA breach.\n\nContracts that expire unanswered get an honest label — "No Response", not "Auto rejected" — because mislabelling the system\'s action as the user\'s erodes the trust the panel depends on.',
         },
         {
           type: 'text',
@@ -449,7 +449,7 @@ export const transporter: CaseStudy = {
   reflections: [
     {
       title: 'The 2.8/5 I gave my own screens is the most useful number here, and the least comfortable.',
-      body: 'The structural thinking was done — three ADRs, a locked vocabulary, a 34-row matrix — and the screens still reached review with counts that contradicted each other on one viewport and a confetti animation on a grievance flow.',
+      body: 'The structural thinking was done — three ADRs, a locked vocabulary, a 34-row matrix — and the screens still reached review with counts contradicting each other on one viewport, and confetti on a grievance flow.',
     },
     {
       title: 'Spec discipline and screen discipline are different skills.',

@@ -48,26 +48,26 @@ export const placement: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: "The Valmo TMS trip-edit screen was built on one assumption: a trip has exactly one source node. That assumption holds for roughly 94% of trips.\n\nIt fails for national linehaul (NLH) routes where a single vehicle collects freight from two or more hubs before heading to the destination — about 6% of trips, but roughly 20% of national lanes, because multi-origin concentrates on the long-haul routes that carry the most freight.",
+          body: 'The Valmo TMS trip-edit screen assumed a trip has exactly one source node. That holds for roughly 94% of trips.\n\nIt fails for national linehaul routes where one vehicle collects from two or more hubs before the destination — about 6% of trips, but roughly 20% of national lanes, because multi-origin concentrates on the long hauls carrying the most freight.',
         },
         {
           type: 'text',
-          body: "The tool couldn't express that reality, so ground teams invented one. Two workarounds circulated.\n\nThe first: delete the trip after the first pickup and recreate it from the second hub — destroying the trip's history and orphaning the first leg's data.\n\nThe second: raise a fake zero-bag challan at the \"extra\" hub so the system would let the vehicle through — injecting a fabricated dispatch document into the freight record. The requirements document named both explicitly as data corruption.\n\nEvery downstream consumer — billing, utilization reporting, transporter payouts — was reading data that a minority of trips had quietly falsified.",
+          body: 'The tool couldn\'t express that, so ground teams invented two workarounds. The requirements document named both as data corruption.\n\nEvery downstream consumer — billing, utilization reporting, transporter payouts — was reading data that a minority of trips had quietly falsified.',
         },
         {
           type: 'text',
-          body: "The constraint that shaped everything: the fix could not tax the majority. An Assignment Manager touches hundreds of trips a week, and 94% of them are single-origin.\n\nA redesign that added even one click, one field, or one moment of \"which mode am I in?\" to that flow would cost more in aggregate than the 6% problem it solved.\n\nThe brief I set myself: make the 6% expressible, keep the 94% untouched.",
+          body: 'The constraint that shaped everything: the fix could not tax the majority. An Assignment Manager touches hundreds of trips a week and 94% are single-origin.\n\nOne extra click, field, or moment of "which mode am I in?" would cost more in aggregate than the 6% problem it solved. Make the 6% expressible, keep the 94% untouched.',
         },
         {
           type: 'problemTabs',
           items: [
             {
               label: 'Delete and recreate',
-              body: 'Delete the trip after the first pickup, then recreate it from the second hub. The trip completes, and its history is destroyed — the first leg is orphaned from the record it belongs to.',
+              body: 'Delete the trip after the first pickup, then recreate it from the second hub. The trip completes and its history is destroyed — the first leg orphaned from the record it belongs to.',
             },
             {
               label: 'Fake a zero-bag challan',
-              body: 'Raise a dispatch document for nothing at the extra hub, so the system lets the vehicle through. A fabricated document enters the freight record, and every downstream consumer reads it as real.',
+              body: 'Raise a dispatch document for nothing at the extra hub, so the system lets the vehicle through. A fabricated document enters the freight record, and everything downstream reads it as real.',
             },
             {
               label: 'Who pays for it',
@@ -109,11 +109,11 @@ export const placement: CaseStudy = {
         },
         {
           type: 'text',
-          body: "One measurable target with a hard guard-rail: a multi-origin route is managed as a single trip record with explicit node roles (Source, Destination, RTO Destination), and the single-origin flow gains zero additional clicks, fields, or decisions.\n\nConcretely, the design had to satisfy four requirements from the KRD: three node sections on the trip edit page (FR-T02); node additions restricted to the original contract snapshot with no role changes post-creation (FR-T03); RTO destinations always a subset of source nodes (FR-T04); and reordering scoped within a section, never across sections.\n\nOn top of those, I set my own interaction budget: adding a node in the multi-origin builder must cost at most 2 clicks, because an AM adding the fourth node of a route should not pay a per-node tax that a form designed for one node never charged.",
+          body: 'One measurable target with a hard guard-rail: a multi-origin route is one trip record with explicit node roles — Source, Destination, RTO Destination — and the single-origin flow gains zero clicks, fields or decisions.\n\nFour requirements came from the KRD: three node sections on the edit page; node additions restricted to the contract snapshot with no role changes post-creation; RTO always a subset of Source; reordering scoped within a section.\n\nOn top I set an interaction budget: adding a node costs at most 2 clicks, because an AM adding a fourth node should not pay a per-node tax a one-node form never charged.',
         },
         {
           type: 'text',
-          body: "The success measures were direct: the two workarounds become unnecessary (there is now a legitimate, audited path for every real-world case, including dispatching with zero freight); trip creation time drops from minutes to seconds{*}; and source data accuracy — how often the trip record matches what physically happened — moves above 95%{*}.\n\nThe last two carried the business case: corrupted trip records weren't a hygiene annoyance, they were the input to billing and payout calculations.",
+          body: 'The success measures were direct: both workarounds become unnecessary, trip creation drops from minutes to seconds{*}, and source data accuracy moves above 95%{*}.\n\nThe last two carry the business case — corrupted trip records were not a hygiene annoyance, they were the input to billing and payout calculations.',
         },
         {
           type: 'statRow',
@@ -136,7 +136,7 @@ export const placement: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: "The user is a Linehaul Assignment Manager — internal Valmo ops, desktop-first, Chrome on a mid-range laptop.\n\nHe manages hundreds of routes and trips per week: bulk-uploading trip templates, fixing validation failures, assigning vehicles and drivers, and editing live trips when ground reality shifts.\n\nHe is a power user in the strict sense — he knows the domain vocabulary (NLH, RTO, challan, placement window) better than the tool does, and he measures the tool in seconds per trip because his week is trips multiplied by seconds.",
+          body: 'The user is a Linehaul Assignment Manager — internal Valmo ops, desktop, Chrome on a mid-range laptop. He handles hundreds of routes a week: bulk-uploading templates, fixing validation failures, assigning vehicles and drivers, editing live trips when the ground shifts.\n\nHe is a power user in the strict sense: he knows the vocabulary better than the tool does, and he measures it in seconds per trip.',
         },
         {
           type: 'text',
@@ -246,7 +246,7 @@ export const placement: CaseStudy = {
           items: [
             {
               pattern: 'Chip-bank ("Available from contract" chips)',
-              reason: "Render every snapshot node as a clickable chip; tap to add. One click, cheapest on paper — but it exposes contract internals before the AM knows what is already in the trip. The pattern exists nowhere else in the create flow, so it would be a one-screen dialect. Cheapest click, most expensive comprehension.",
+              reason: 'Render every snapshot node as a chip; tap to add. One click, cheapest on paper — but it exposes contract internals before the AM knows what is already in the trip, and the pattern exists nowhere else in the create flow.',
             },
             {
               pattern: 'Ghost row per section',
@@ -254,7 +254,7 @@ export const placement: CaseStudy = {
             },
             {
               pattern: 'Smart enable/disable on role buttons',
-              reason: "Disable whichever role buttons are invalid for the selected node. Creates \"why can't I click this?\" confusion — a disabled button says an action is impossible but not why, and the why is exactly what the AM needs to learn. Always-enabled plus validate-on-click surfaces the rule as a teachable inline error.",
+              reason: 'Disable whichever role buttons are invalid for the node. Creates "why can\'t I click this?" confusion — a disabled button says an action is impossible, not why, and the why is what the AM needs to learn.',
             },
             {
               pattern: 'Order-based role inference',
@@ -268,7 +268,7 @@ export const placement: CaseStudy = {
         },
         {
           type: 'text',
-          body: "The surviving structure: three stacked sections with accent-colored headers and matching dots, one shared add-node row above them (dropdown + three role buttons with dots that echo the section accents), and section-scoped drag handles.\n\nThe RTO section carries an inline info affordance on its button (\"Add as RTO ⓘ\") because the subset rule is the one constraint an AM can't infer from layout alone.\n\nFor the single-origin mode, the wireframe discipline was subtraction: the layout had to diff against the current production screen at near-zero.\n\nI also iterated the first-view experience through five FTUX mockup versions to settle how a multi-origin trip introduces its three-section anatomy — the answer was structural clarity over coachmarks: if the sections need a tour, the sections are wrong.",
+          body: 'The surviving structure: three stacked sections with accent headers, one shared add-node row above them, and section-scoped drag handles. The RTO section carries an inline info affordance on its button (\"Add as RTO ⓘ\"), because the subset rule is the one constraint an AM cannot infer from layout.',
         },
         {
           type: 'statRow',
@@ -302,7 +302,7 @@ export const placement: CaseStudy = {
         },
         {
           type: 'text',
-          body: "The prototype demonstrates the full interaction set. The 2-click node add with all three role buttons always enabled. Validate-on-click with specific inline errors, including the RTO-subset rule. RTO auto-mirroring on source add and remove, with manual RTO removal.\n\nSection-scoped drag-to-reorder that physically refuses cross-section drags. The amber RTO section appearing only when route type is ROUND_TRIP. And single-origin mode rendering the legacy-shaped layout with an auto-mirrored read-only RTO row.\n\nPrototyping surfaced decisions no static mock would have forced. Always-enabled buttons only work if error messages are specific — writing the actual error strings was design work.\n\nThe mirror rule needed visible feedback (the RTO row appears the instant a source is added) or AMs wouldn't trust it.\n\nAnd clicking through the live-trip scenario is what killed auto-commit-on-select for good: watching a dropdown selection instantly mutate an in-transit trip made the missing confirmation gate viscerally obvious.",
+          body: 'The prototype demonstrates the full interaction set. The 2-click node add with all three role buttons enabled. Validate-on-click with inline errors, including the RTO-subset rule. RTO auto-mirroring on source add and remove.\n\nSection-scoped drag that refuses cross-section moves. The amber RTO section appearing only on ROUND_TRIP. And single-origin mode rendering the legacy layout with an auto-mirrored read-only RTO row.',
         },
         {
           type: 'statRow',
@@ -372,20 +372,20 @@ export const placement: CaseStudy = {
         'One screen, two layouts, branched on `trip.source_nodes.length` at page load; the mode is immutable for that trip. Single-origin renders near-identical to the current production screen.',
       rejected:
         'A single unified layout where every trip shows the three-section structure, and a live-switching variant where the layout upgrades if a second source is added mid-session.',
-      why: "The unified layout taxes the 94% — every single-origin AM would parse three sections to use one, violating the founding constraint. Live-switching lets the screen restructure itself under the user's hands mid-edit, which is dangerous on a live trip. Reading the mode once makes the layout a stable fact, not a reactive state.",
+      why: 'The unified layout taxes the 94%: every single-origin AM parses three sections to use one. Live-switching lets the screen restructure under his hands mid-edit, which is dangerous on a live trip.',
     },
     {
       decision:
         'The AM can add only nodes present in the immutable contract snapshot captured at trip creation, and no node changes role post-creation. Cross-section drag is physically impossible.',
       rejected:
         'A free node picker over the full node master, with role reassignment allowed during edit.',
-      why: "An unbounded picker recreates the original disease in a new body — improvised trip data diverging from the contracted route, exactly what the fake challans were. The snapshot collapses validation from \"is this arbitrary graph legal?\" to \"is this node in a known set?\", and keeps genuine ad-hoc changes in the exception process where they carry review.",
+      why: 'An unbounded picker recreates the original disease in a new body — improvised data diverging from the contracted route, exactly what the fake challans were. The snapshot collapses validation from "is this arbitrary graph legal?" to "is this node in a known set?", and keeps genuine ad-hoc changes in the exception process.',
     },
     {
       decision:
         'Adding a node to Source auto-adds it to RTO; removing auto-removes. The AM\'s only manual RTO action is removal — excluding an origin from return freight.',
       rejected: 'Fully manual RTO management, where the AM builds the RTO list node by node.',
-      why: "RTO must be a subset of Source, and the common case is \"return freight goes back to every origin.\" Manual management makes the AM re-enter data the system already knows, and opens a failure mode the mirror makes unrepresentable. Automation handles the default; the human handles the one real decision.",
+      why: 'RTO must be a subset of Source, and the common case is "return freight goes back to every origin". Manual management makes the AM re-enter what the system knows, and opens a failure mode the mirror makes unrepresentable.',
     },
     {
       decision:

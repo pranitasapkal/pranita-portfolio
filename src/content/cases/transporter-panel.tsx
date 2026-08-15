@@ -36,11 +36,11 @@ export const transporterPanel: CaseStudy = {
   },
   tldr: {
     problem:
-      'Trip assignment ran on WhatsApp, which breaks past roughly 20 trips a day while real transporters run 20–80. Payouts were reconciled by hand, so a transporter first saw his own data months later. A third of trips carried an error before reaching finance.',
+      'Trip assignment ran on WhatsApp, which breaks past roughly 20 trips a day while real transporters run 20–80. Payouts were reconciled by hand, so a transporter saw his own data months later — a third of trips already carrying an error.',
     outcomes: [
-      'Replaced the chat thread with a five-state panel — 182 designed screens, 102 of them on Completed, because confirm-or-dispute is where the money and the risk are',
-      "Made confirmation the payout trigger: the panel is the transporter's auditable ledger, which is what lets self-invoicing and automated payouts exist at all",
-      'Every irreversible action names its cost first — Reject lists three consequences above the reason field, and confirming a trip with an open dispute states exactly what it destroys',
+      'A five-state panel replacing the chat thread — 182 screens, 102 on Completed, where the money and the risk are',
+      "Confirmation as the payout trigger: the panel is his auditable ledger, which is what lets self-invoicing exist",
+      'Every irreversible action names its cost first — Reject lists three consequences above the reason field',
     ],
     stats: [{ value: '182' }, { value: '5 states' }, { value: '20→80', fuzzed: true }],
     summary:
@@ -63,7 +63,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: "Valmo — Meesho's transportation arm — places linehaul trips with independent Indian transporters: the people who own the trucks. The whole lifecycle after placement ran on chat, and two separate failures met in the middle.",
+          body: "Valmo — Meesho's transportation arm — places linehaul trips with independent Indian transporters. Everything after placement ran on chat, where two failures met.",
         },
         {
           type: 'quote',
@@ -90,25 +90,25 @@ export const transporterPanel: CaseStudy = {
           items: [
             {
               label: 'Bad data going in',
-              body: 'Trips were created in TMS from placement sheets kept by sort-centre staff, who are measured on departures, not accuracy. A vehicle number typed under pressure is good enough to dispatch and wrong enough to break the payout weeks later. Wrong vehicle numbers, wrong transporter mapping, missing GPS — and the biggest class, round trips booked as two.',
+              body: 'Trips were typed in from placement sheets kept by sort-centre staff, who are measured on departures, not accuracy. A vehicle number typed under pressure is good enough to dispatch and wrong enough to break the payout. Wrong numbers, wrong transporter mapping, missing GPS — and the biggest class, round trips booked as two.',
             },
             {
               label: 'No visibility coming out',
-              body: 'A vendor had no view into which trips Valmo had even acknowledged. Each kept a private spreadsheet to invoice from, and FinOps matched the two by hand over a cycle measured in months. Mismatches were resolved by phone; disputes happened over email and got lost.',
+              body: 'A vendor could not see which trips Valmo had acknowledged, so he invoiced from a private spreadsheet that FinOps matched by hand over months. Mismatches went to the phone; disputes went to email and got lost.',
             },
             {
               label: 'A ceiling at twenty trips',
-              body: 'The interim answer was a WhatsApp assignment module — trips pushed as messages to accept, reject or update. It worked for the right reason: it moved data ownership to the person whose payout depends on it. But at volume you are scrolling a thread hunting for what is unassigned.',
+              body: 'The interim answer was a WhatsApp assignment module — trips pushed as messages to accept, reject or update. It worked for the right reason: it moved data ownership to the person whose payout depends on it. It just cannot survive a scroll.',
             },
           ],
         },
         {
           type: 'text',
-          body: 'At that volume nobody can answer the three questions that actually matter: which trips still need a vehicle, which vehicles are free, and what am I going to be paid.',
+          body: 'Three questions go unanswered: which trips need a vehicle, which vehicles are free, and what am I being paid.',
         },
         {
           type: 'text',
-          body: 'That ceiling is the design brief. Everything the chat thread structurally could not hold — a sortable list, a filter, a bulk action, a dispute with evidence attached, a payment history — is what the panel exists to do.',
+          body: 'That ceiling is the brief. A sortable list, a bulk action, a dispute with evidence attached — everything a chat thread cannot hold is what the panel exists to do.',
         },
         {
           type: 'image',
@@ -137,15 +137,15 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The business objective is one sentence and everything else follows from it. If a transporter agrees on screen that a trip’s route, vehicle and earnings are correct, the invoice can be generated from system data instead of reconstructed from his spreadsheet.',
+          body: 'One sentence, and everything follows from it. If he agrees on screen that a trip’s route, vehicle and earnings are right, the invoice generates from system data instead of his spreadsheet.',
         },
         {
           type: 'text',
-          body: 'That is the precondition for self-invoicing and automated payouts, and therefore for collapsing a payout cycle currently measured in months down to within the same week.',
+          body: 'That is the precondition for self-invoicing, and for a payout cycle measured in days rather than months.',
         },
         {
           type: 'text',
-          body: 'For the transporter it decomposes into four jobs, one per lifecycle state, each of which had to complete without a phone call.',
+          body: 'For him it becomes four jobs, one per state, each completing without a phone call.',
         },
         {
           type: 'flow',
@@ -158,7 +158,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The targets set against those jobs were behavioural, not interface-shaped: near-universal vehicle-and-driver confirmation before placement, a large drop in missed assignments, and better GPS coverage on tagged trips.',
+          body: 'The targets were behavioural, not interface-shaped: near-universal vehicle and driver confirmation before placement, fewer missed assignments, better GPS coverage.',
         },
         {
           type: 'wordList',
@@ -166,7 +166,7 @@ export const transporterPanel: CaseStudy = {
           items: [
             {
               word: 'No blank cells',
-              note: 'No RFQ Linked · No GPS Present · As per existing Billing Process · No action needed on panel. An absence is always a labelled value — the research said missing earnings read as anxiety, not as "pending".',
+              note: 'No RFQ Linked · No GPS Present · As per existing Billing Process. An absence is always a labelled value — the research said missing earnings read as anxiety, not as "pending".',
             },
             {
               word: 'Consequence before input',
@@ -174,7 +174,7 @@ export const transporterPanel: CaseStudy = {
             },
             {
               word: 'Hindi where money is',
-              note: 'Inline on the assignment banner, the payments explainer and every dispute category. Not on filter labels.',
+              note: 'Inline on the assignment banner, the payments explainer and every dispute category — not on filter labels.',
             },
           ],
           highlight: 0,
@@ -247,15 +247,15 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Three things about this person changed concrete decisions. He is Hindi-first and reads English slowly, so the two surfaces where he risks money carry Hindi inline rather than behind a toggle.',
+          body: 'Three things about him changed concrete screens. He is Hindi-first and reads English slowly, so the surfaces where he risks money carry Hindi inline, not behind a toggle.',
         },
         {
           type: 'text',
-          body: 'He trusts the interface literally, so a disabled Accept has to make its own precondition visible rather than just being grey. And he works from paper — the challan in his hand carries the Trip ID he has to type.',
+          body: 'He trusts the screen literally, so a disabled Accept must show its own precondition rather than just be grey. And he works from paper: the challan in his hand carries the Trip ID.',
         },
         {
           type: 'text',
-          body: 'So the Missing Trip form shows him photographs of a real challan with the ID box outlined in green, instead of describing the format in words.',
+          body: 'So the Missing Trip form shows photographs of a real challan with the ID box outlined, rather than describing the format.',
         },
         {
           type: 'image',
@@ -278,7 +278,7 @@ export const transporterPanel: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'Five tabs, ordered as the trip actually moves: Pending Assignment → Upcoming → In-Transit → Completed → Cancelled. Above them, three summary cards that each carry the one number that would make you go there.',
+          body: 'Five tabs in the order a trip moves: Pending Assignment → Upcoming → In-Transit → Completed → Cancelled. Above them, three summary cards each carrying the one number that would send you there.',
         },
         {
           type: 'text',
@@ -289,15 +289,15 @@ export const transporterPanel: CaseStudy = {
           frame: 'none',
           src: '/work/transporter-panel/hierarchy-tree.png',
           alt: 'The five tabs under one root, each with its columns and its single action',
-          caption: 'Completed carries the most structure because it carries the most risk.',
+          caption: 'Five tabs under one root, each with its columns and its one action.',
         },
         {
           type: 'text',
-          body: 'The structural idea I kept returning to: read the right-hand edge and the lifecycle explains itself — Accept/Reject, then Update/Reject, then nothing at all, then Confirm/Raise Dispute, then nothing again.',
+          body: 'Read the right-hand edge and the lifecycle explains itself: Accept/Reject, Update/Reject, nothing, Confirm/Raise Dispute, nothing.',
         },
         {
           type: 'text',
-          body: 'In-Transit and Cancelled have no action column because there is genuinely nothing to do, and I would rather a column disappear than sit there full of disabled buttons.',
+          body: 'In-Transit and Cancelled have no action column, because there is nothing to do. I would rather a column disappear than fill with disabled buttons.',
         },
         {
           type: 'image',
@@ -319,19 +319,19 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The biggest IA call was to take disputes out of the trip. A dispute can be about a trip, but equally about a rate card never agreed, a TDS deduction, a GST mismatch, a bank account, a POD disagreement.',
+          body: 'The biggest IA call was taking disputes out of the trip. A dispute can be about a rate card never agreed, a TDS deduction, a GST mismatch, a bank account — none of them a trip.',
         },
         {
           type: 'text',
-          body: 'If disputes live inside the trip row, the trip listing gets cluttered, the payments screen fills with dispute banners, the contract screens need dispute rows, and every module carries its own dispute logic forever.',
+          body: 'Inline, every module ends up carrying its own dispute UI and logic forever — banners on payments, rows on contracts, clutter on trips.',
         },
         {
           type: 'text',
-          body: 'So Disputes became a top-level nav item — one list, raised from anywhere, tracked in one place, backed by the existing support-ticketing backend rather than a bespoke workflow. The trip row keeps a single entry point; the machinery lives somewhere it can scale.',
+          body: 'So Disputes became a top-level surface on the existing ticketing backend: raised from anywhere, tracked in one list. The row keeps one entry point; the machinery lives where it can scale.',
         },
         {
           type: 'text',
-          body: 'Completed carries the most structure because it carries the most risk. It splits into four sub-pills that state value, not just count — the one worth money leads with the money.',
+          body: 'Completed carries the most structure because it carries the most risk — four sub-pills stating value, not just count, with the one worth money leading.',
         },
         {
           type: 'annotatedShot',
@@ -355,15 +355,15 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Adhoc rows get the full Confirm Details / Raise Dispute pair, exactly like Regular ones, and that was a deliberate call rather than an oversight. Adhoc is the billing type most likely to have no linked contract at all.',
+          body: 'Adhoc rows keep the full Confirm Details / Raise Dispute pair, and that was deliberate. Adhoc is the billing type most likely to have no linked contract at all.',
         },
         {
           type: 'text',
-          body: 'Those are precisely the trips whose number a transporter cannot check against anything he agreed to. Suppressing the actions on the rows with the weakest paper trail would have left the least verifiable earnings with no route to correction.',
+          body: 'Those are the trips whose number he cannot check against anything he agreed to. Suppressing the actions there would strand the least verifiable earnings with no route to correction.',
         },
         {
           type: 'text',
-          body: 'Instead the row shows the basis it does have — Rate: ₹20/km where Regular shows Contract ID: 001-RFQ-009 — and keeps both actions live.',
+          body: 'So the row shows the basis it does have — Rate: ₹20/km where Regular shows Contract ID: 001-RFQ-009 — and keeps both actions live.',
         },
         {
           type: 'image',
@@ -393,11 +393,11 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Assign and accept. A pending row shows Assign Vehicle and Assign Driver as empty outlined pickers, and Accept is disabled. Fill both — each a searchable dropdown with a real no-results state — and Accept turns solid. The button’s state is the instruction.',
+          body: 'Assign and accept. A pending row shows Assign Vehicle and Assign Driver as empty pickers, and Accept is disabled. Fill both and Accept turns solid — the button’s state is the instruction.',
         },
         {
           type: 'text',
-          body: 'Above the table, one banner says the rest in both languages: assign vehicle and driver, then Accept — and a trip not accepted before placement time is automatically rejected.',
+          body: 'One banner says the rest in both languages: assign, then Accept — a trip not accepted before placement time is rejected automatically.',
         },
         {
           type: 'image',
@@ -411,14 +411,14 @@ export const transporterPanel: CaseStudy = {
           index: 'Problem 1',
           problem: {
             title: 'Rejecting a trip looked free',
-            body: 'The reject flow opened with a reason dropdown. Nothing on screen said what rejecting actually costs him, and the costs are real: cancellation fees, a performance rating, scheduled earnings he loses.',
+            body: 'The reject flow opened with a reason dropdown. Nothing said what rejecting costs him, and the costs are real: cancellation fees, his performance rating, scheduled earnings.',
           },
           fix: {
             title: 'Name the three costs, then ask why',
-            body: 'The modal leads with "This action cannot be undone and may result in": trip cancellation fees, impact on performance ratings, loss of scheduled earnings. Only underneath does it ask for a reason, from six options ending in Other with a free-text field.',
+            body: 'The modal leads with "This action cannot be undone and may result in": cancellation fees, impact on performance ratings, loss of scheduled earnings. Only underneath does it ask for a reason, from six options ending in Other.',
           },
           effect:
-            'A transporter who was always going to reject loses nothing. One who did not understand the cost finds out before he commits. Rejections then persist on Cancelled with the reason attached, so the same conversation does not happen twice.',
+            'A transporter who was always going to reject loses nothing; one who did not understand the cost finds out first. Rejections persist on Cancelled with the reason attached, so the conversation happens once.',
           image: {
             src: '/work/transporter-panel/reject-consequences.png',
             alt: 'Reject Trip modal listing three consequences above the reason dropdown',
@@ -426,11 +426,11 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Track. In-Transit replaces the action column with Live Updates — "40km to NDSL New Delhi Hub" when there is a signal, "-" when there is not, and an amber No GPS Present chip on the trip itself.',
+          body: 'Track. In-Transit replaces the action column with Live Updates — "40km to NDSL New Delhi Hub" when there is a signal, "-" when there is not, and an amber No GPS Present chip on the trip.',
         },
         {
           type: 'text',
-          body: 'A vehicle without a tracker is stated as a fact, not hidden behind a stale last-known position. The driver’s number sits under his name with a copy button: on a running trip the panel shortens the distance to a phone call rather than replacing it.',
+          body: 'A vehicle without a tracker is stated as a fact, not hidden behind a stale position. The driver’s number sits under his name with a copy button — on a running trip the panel shortens the distance to a call rather than replacing it.',
         },
         {
           type: 'image',
@@ -448,27 +448,27 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Confirm or dispute. Each completed row shows what the payment is based on, how long he has — Dispute Window Open till 1 Apr — and two actions. Confirming a clean trip flips the row to "Confirmed by you on 1 Nov".',
+          body: 'Confirm or dispute. Each row shows the payment basis, how long he has — Dispute Window Open till 1 Apr — and two actions. Confirming flips the row to "Confirmed by you on 1 Nov".',
         },
         {
           type: 'text',
-          body: 'A checkbox on every row supports confirming a batch at once, which is the only way this screen works for someone closing out a month.',
+          body: 'A checkbox on every row confirms a batch at once — the only way this screen works at month end.',
         },
         {
           type: 'challengeSolution',
           index: 'Problem 2',
           problem: {
             title: 'Confirming could silently destroy a live claim',
-            body: 'Confirmation freezes a trip for payout: data final, dispute window closed. Reached from a row that otherwise looks routine, it can dismiss an open dispute the transporter is still waiting on.',
+            body: 'Confirmation freezes a trip for payout: data final, window closed. Reached from a routine-looking row, it can dismiss a dispute he is still waiting on.',
             quote:
               "You won't be able to raise it again, and payment will be based on current trip details.",
           },
           fix: {
             title: 'A full stop that names the loss',
-            body: 'Confirming a disputed trip raises a modal that states exactly what it destroys, with Close as the visually dominant option. Not a toast with undo, and not a silent block.',
+            body: 'Confirming a disputed trip raises a modal naming exactly what it destroys, with Close visually dominant. Not a toast with undo, not a silent block.',
           },
           effect:
-            'An undo toast assumes the user notices it. Blocking silently teaches him the button is broken. Naming the consequence and making the safe choice the easy one is the only version that survives a user who trusts the screen.',
+            'An undo toast assumes he notices it; a silent block teaches him the button is broken. Naming the loss is the only version that survives a reader who trusts the screen.',
           image: {
             src: '/work/transporter-panel/confirm-active-dispute.png',
             alt: 'Confirm Trip & Dismiss Dispute modal over the Completed tab',
@@ -476,15 +476,15 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Raise a dispute. Category, Trip ID, then sub-categories as a multi-select — with the behaviour explained rather than assumed: "You can select multiple issue types if they’re all related to the same trip."',
+          body: 'Raise a dispute. Category, Trip ID, then sub-categories as a multi-select, with the behaviour explained rather than assumed.',
         },
         {
           type: 'text',
-          body: 'All seven options carry their Hindi underneath: Wrong trip amount (rate mismatch) / ट्रिप रेट गलत है, Contract ID mismatch or missing / कॉन्ट्रैक्ट नंबर गलत है या नहीं दिख रहा, and so on.',
+          body: 'All seven carry their Hindi underneath — Wrong trip amount (rate mismatch) / ट्रिप रेट गलत है, and so on.',
         },
         {
           type: 'text',
-          body: 'Those categories are not generic — they were chosen against the actual dispute mix, where the overwhelming majority of weekly disputes were about rate, not service.',
+          body: 'The categories are not generic: they were chosen against the real dispute mix, where the overwhelming majority were about rate, not service.',
         },
         {
           type: 'image',
@@ -495,11 +495,11 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Report a missing trip. A three-step flow with one guard that matters most: type a Trip ID that already exists and the form refuses to open a ticket — "This trip isn’t missing!" — offering a View Trip link instead.',
+          body: 'Report a missing trip. Three steps, with one guard that matters most: type a Trip ID that already exists and the form refuses to file — "This trip isn’t missing!" — offering a View Trip link.',
         },
         {
           type: 'text',
-          body: 'The support ticket that never gets created is the best outcome that flow can have.',
+          body: 'The ticket that never gets created is the best outcome that flow can have.',
         },
         {
           type: 'statRow',
@@ -531,7 +531,7 @@ export const transporterPanel: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'Before drawing the Completed listing I wrote down what it had to obey, because this is the screen where a layout mistake costs someone money.',
+          body: 'Before drawing the Completed listing I wrote what it had to obey, because a layout mistake here costs someone money.',
         },
         {
           type: 'wordList',
@@ -556,15 +556,15 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The shipped table breaks rules 2 and 3, and both breaks were chosen. Completed ships with seven content columns plus a bulk-select checkbox, and Trip Info is leftmost.',
+          body: 'The shipped table breaks rules 2 and 3, both deliberately: seven content columns plus a bulk-select checkbox, with Trip Info leftmost.',
         },
         {
           type: 'text',
-          body: 'Rule 2 said Trip ID must not lead, because a transporter recognises a trip by route and vehicle long before an ID. Rather than reorder the table I made the first cell carry two handles — the ID over the vehicle number.',
+          body: 'Rule 2 said Trip ID must not lead, because he recognises a trip by route and vehicle long before an ID. Rather than reorder, I made the first cell carry two handles — the ID over the vehicle number.',
         },
         {
           type: 'text',
-          body: 'So the vehicle number, his second-strongest memory hook, sits where the eye already lands. The ID stays first because this is the tab where disputes get raised, and a dispute is quoted by ID.',
+          body: 'His second-strongest hook now sits where the eye already lands. The ID stays first because this is where disputes are raised, and a dispute is quoted by ID.',
         },
         {
           type: 'text',
@@ -572,7 +572,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'It cannot be checked from a listing showing one timestamp. Six columns is the right ceiling for a scanning table, the wrong one for an evidence table — and Completed is an evidence table.',
+          body: 'It cannot be checked from one timestamp. Six columns is the right ceiling for a scanning table and the wrong one for evidence — and Completed is evidence.',
         },
         {
           type: 'text',
@@ -580,7 +580,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Putting the safe action and the corrective action side by side matters more than column hygiene: a transporter who spots a wrong number should not have to open a detail page to say so. That friction only suppresses the legitimate dispute.',
+          body: 'Safe action and corrective action side by side matters more than column hygiene: a man who spots a wrong number should not open a detail page to say so.',
         },
         {
           type: 'rejected',
@@ -652,7 +652,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The deliverable is the Figma file engineering built from, and it is the version now live. Its weight is distributed the way the risk is.',
+          body: 'The deliverable is the Figma file engineering built from, now live. Its weight is distributed the way the risk is.',
         },
         {
           type: 'matrix',
@@ -670,15 +670,15 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'State coverage on Completed is met: Loading State, Error State, No Data State, Missing Trip - Empty State, Report Missing - Upload Failed, Confirm - Dispute Failed, plus four variants of the custom date-range picker.',
+          body: 'State coverage on Completed is met: loading, error, no data, missing-trip empty, upload failed, dispute failed, plus four date-picker variants.',
         },
         {
           type: 'text',
-          body: 'Search dropdowns on Pending and Upcoming carry explicit no-result states, unsaved edits are guarded by a save prompt, and the dispute lifecycle is drawn to its terminal states — including Partial Approved, Reopened, Reraise.',
+          body: 'Search dropdowns carry explicit no-result states, unsaved edits are guarded by a save prompt, and the dispute lifecycle is drawn to its terminal states — Partial Approved, Reopened, Reraise.',
         },
         {
           type: 'text',
-          body: "It is not met everywhere, and I'd rather name that than round it up. Cancelled has no empty state and no loading state. That is the honest edge of this file.",
+          body: "It is not met everywhere, and I would rather name that than round it up: Cancelled has no empty or loading state. That is the honest edge of this file.",
         },
       ],
     },
@@ -694,23 +694,23 @@ export const transporterPanel: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'The commercial case is a chain: accurate assignment data makes system-computed payouts possible, and on-screen confirmation makes self-invoicing possible. Without the first, finance is provisioning against numbers that are wrong a third of the time.',
+          body: 'The commercial case is a chain: accurate assignment data makes computed payouts possible, and on-screen confirmation makes self-invoicing possible. Without the first, finance provisions against numbers wrong a third of the time.',
         },
         {
           type: 'text',
-          body: 'Without the second, every invoice still has to be matched by hand against a vendor’s private spreadsheet — the manual work that made the reconciliation cycle months long in the first place.',
+          body: 'Without the second, every invoice is still matched by hand against a private spreadsheet — the work that made reconciliation months long.',
         },
         {
           type: 'text',
-          body: 'That framing decided the details. The dispute form asks for a category and a trip ID rather than a paragraph, because a structured dispute can be routed and measured while a phone call cannot.',
+          body: 'That framing decided the details. The dispute form asks for a category and a trip ID, not a paragraph, because a structured dispute can be routed and measured.',
         },
         {
           type: 'text',
-          body: 'The false-missing-trip guard exists because every ticket it prevents is cost removed from a resolving team. The earnings cell always shows its basis — Contract ID or Rate: ₹20/km — because a rate he can trace is a rate he argues about less.',
+          body: 'The false-missing guard exists because every ticket it prevents is cost off a resolving team. The earnings cell always shows its basis — Contract ID or Rate: ₹20/km — because a rate he can trace is one he argues about less.',
         },
         {
           type: 'text',
-          body: 'And No RFQ Linked is displayed rather than suppressed: a trip running without a linked contract is precisely the trip that gets disputed later, so the panel says so at assignment time instead of at payout time.',
+          body: 'And No RFQ Linked is shown rather than suppressed: a trip without a linked contract is the one disputed later, so the panel says so at assignment time, not at payout.',
         },
         {
           type: 'phaseCards',
@@ -734,11 +734,11 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The trade-off I took knowingly: this module never hides a bad number to keep the queue quiet. Missed Earning on every cancelled row, No RFQ Linked on the pending ones, the dispute window stated in plain text on every completed row.',
+          body: 'The trade-off I took knowingly: this module never hides a bad number to keep the queue quiet. Missed Earning on cancelled rows, No RFQ Linked on pending ones, the dispute window in plain text.',
         },
         {
           type: 'text',
-          body: 'It surfaces more disagreement in the short term, in exchange for disagreement that arrives as a categorised, evidenced dispute instead of a call to FinOps two months later.',
+          body: 'It surfaces more disagreement now, in exchange for disagreement that arrives as evidence rather than a call to FinOps two months later.',
         },
         {
           type: 'statRow',
