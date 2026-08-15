@@ -7,6 +7,8 @@
  *   dg-lifecycle.png  — the five-state user flow, with the exception loops that leave it
  *   dg-actions.png    — the action column read down the five tabs (the IA thesis)
  *   dg-confirm.png    — the confirm/dispute fork on Completed, incl. both guards
+ *   before-chaos.png  — the pre-panel state: one trip scattered across five places (ADR-004)
+ *   hierarchy-tree.png— what the panel had to account for, as one tree (ADR-004)
  *
  * Run: node scripts/gen-transporter-diagrams.mjs
  * Contains no NDA-sensitive values — labels come from the live SOT UI only.
@@ -18,7 +20,7 @@ import { fileURLToPath } from 'url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const outDir = resolve(root, 'public/work/transporter-panel')
-const tmp = resolve(root, '.asm-dg-tmp')
+const tmp = resolve(root, '.tpn-dg-tmp')
 mkdirSync(outDir, { recursive: true })
 mkdirSync(tmp, { recursive: true })
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -162,7 +164,85 @@ const confirm = page(1700, 700, 'The screen where money changes hands',
   </div>
 </div>`)
 
-const jobs = [['dg-lifecycle', lifecycle], ['dg-actions', actions], ['dg-confirm', confirm]]
+// ── 4 · BEFORE: THE TRIP SCATTERED ─────────────────────────────────────────
+// The "before" side of the before/after toggle. Deliberately tangled: the point of
+// the picture is that no two of these five places agreed about the same trip.
+const PLACES = [
+  { x: 60, y: 20, w: 300, t: 'The WhatsApp thread', s: 'Trips pushed as messages.<br/>Accept, reject, update — by scrolling.' },
+  { x: 620, y: 0, w: 300, t: 'The placement sheet', s: 'Kept by sort-centre staff who are<br/>measured on departures, not accuracy.' },
+  { x: 1170, y: 26, w: 300, t: "The transporter's own spreadsheet", s: 'His private record. The only thing<br/>he could raise an invoice from.' },
+  { x: 300, y: 250, w: 300, t: 'The email chain', s: 'Where a disagreement went<br/>to be forgotten.' },
+  { x: 930, y: 256, w: 300, t: 'FinOps, matching by hand', s: 'Two records reconciled manually,<br/>over a cycle measured in months.' },
+]
+const TANGLE = [
+  [210, 110, 770, 70], [770, 130, 1320, 116], [210, 130, 450, 250],
+  [450, 320, 1080, 346], [1080, 256, 1320, 156], [770, 130, 1080, 256],
+  [450, 250, 1320, 116], [210, 110, 1080, 340],
+]
+const beforeChaos = page(1700, 660, 'Before: one trip, five places',
+  'Every place held a version of the same trip. None of them agreed, and the transporter could see only his own.', `
+<div style="flex:1;position:relative;margin-top:14px">
+  <svg width="1592" height="420" style="position:absolute;left:0;top:0;z-index:0" aria-hidden="true">
+    ${TANGLE.map(([x1, y1, x2, y2]) =>
+      `<path d="M${x1} ${y1} Q${(x1 + x2) / 2} ${(y1 + y2) / 2 + 70} ${x2} ${y2}" fill="none" stroke="${LINE}" stroke-width="2.5" stroke-dasharray="7 7"/>`,
+    ).join('')}
+  </svg>
+  ${PLACES.map((p) => `
+    <div class="box" style="position:absolute;left:${p.x}px;top:${p.y}px;width:${p.w}px;z-index:1;padding:13px 16px;font-size:16px">
+      ${p.t}<span class="s">${p.s}</span>
+    </div>`).join('')}
+</div>
+<div class="row" style="gap:14px;margin-top:6px;flex-wrap:wrap">
+  <span class="box stop" style="padding:9px 16px;font-size:15px">Roughly 1 in 3 trips carried a data error</span>
+  <span class="box stop" style="padding:9px 16px;font-size:15px">The chat flow broke past ~20 trips a day</span>
+  <span class="box stop" style="padding:9px 16px;font-size:15px">"I don't know when and how much I'll be paid."</span>
+</div>`)
+
+// ── 5 · WHAT THE PANEL HAD TO ACCOUNT FOR ──────────────────────────────────
+const TABS = [
+  ['Pending Assignment', ['Trip ID + route', 'Vehicle picker', 'Driver picker', 'Expected Earnings', 'Assign-by deadline'], 'Accept · Reject'],
+  ['Upcoming', ['Trip ID + route', 'Assigned vehicle', 'Assigned driver', 'Expected Earnings', 'Placement Time'], 'Update · Reject'],
+  ['In-Transit', ['Trip ID + route', 'Departure Time', 'Live Updates', 'GPS presence', "Driver's number"], '— none —'],
+  ['Completed', ['Trip Info + vehicle', 'Placement Time', 'Completed Time', 'Total Earnings', 'Basis: contract or rate', 'Dispute window'], 'Confirm · Raise Dispute'],
+  ['Cancelled', ['Trip ID + route', 'Placement Time', 'Missed Earning', 'Remark, in his words'], '— none —'],
+]
+const hierarchy = page(1700, 620, 'What the panel had to account for',
+  'Five states, and every column that changes meaning as a trip moves between them.', `
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;margin-top:16px">
+  <div class="box acc" style="width:330px;padding:13px 18px">The Transporter Panel<span class="s">One trip, start to payout</span></div>
+  ${(() => {
+    // Drop-lines must land on the card centres: 5 cards of 290 with 14px gaps,
+    // centred in the 1560 svg. Computed rather than eyeballed so they stay aligned
+    // if the card width or count changes.
+    const W = 1560, CARD_W = 290, GAP = 14, N = TABS.length
+    const left = (W - (N * CARD_W + (N - 1) * GAP)) / 2
+    const centres = Array.from({ length: N }, (_, i) => left + i * (CARD_W + GAP) + CARD_W / 2)
+    return `<svg width="${W}" height="66" aria-hidden="true" style="margin-top:2px">
+    <path d="M${W / 2} 0 L${W / 2} 26" stroke="${LINE}" stroke-width="2.5" fill="none"/>
+    <path d="M${centres[0]} 26 L${centres[N - 1]} 26" stroke="${LINE}" stroke-width="2.5" fill="none"/>
+    ${centres.map((x) => `<path d="M${x} 26 L${x} 62" stroke="${LINE}" stroke-width="2.5" fill="none"/>`).join('')}
+  </svg>`
+  })()}
+  <div class="row" style="align-items:flex-start;gap:14px;width:100%;justify-content:center">
+    ${TABS.map(([tab, cols, action], i) => `
+      <div class="box ${i === 3 ? 'acc' : 'ghost'}" style="width:290px;text-align:left;padding:14px 16px;font-weight:700;color:${i === 3 ? ACC : INK}">
+        ${tab}
+        <span class="s" style="margin-top:9px">
+          ${cols.map((c) => `– ${c}`).join('<br/>')}
+        </span>
+        <span class="s" style="margin-top:10px;font-weight:700;color:${i === 3 ? ACC : MUT}">${action}</span>
+      </div>`).join('')}
+  </div>
+  <div class="note" style="margin-top:24px;font-size:16px;color:${INK};text-align:center;max-width:1200px">
+    Completed carries the most structure because it carries the most risk — it is the only tab where being wrong
+    costs him money he has already earned.
+  </div>
+</div>`)
+
+const jobs = [
+  ['dg-lifecycle', lifecycle], ['dg-actions', actions], ['dg-confirm', confirm],
+  ['before-chaos', beforeChaos], ['hierarchy-tree', hierarchy],
+]
 for (const [name, html] of jobs) {
   const p = resolve(tmp, `${name}.html`)
   writeFileSync(p, html)

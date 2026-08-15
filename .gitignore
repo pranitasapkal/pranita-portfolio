@@ -11,7 +11,7 @@ tsconfig.app.tsbuildinfo
 Figma- Assignment module/
 
 # diagram render scratch
-.asm-dg-tmp/
+.tpn-dg-tmp/
 .clh-dg-tmp/
 
 # NDA: the de-fuzzing map — pairs every public phrase with its real private value,
