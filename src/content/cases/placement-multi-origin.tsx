@@ -349,8 +349,8 @@ export const placement: CaseStudy = {
     "The uncomfortable truth of this project is that the most important design work was rejection, and rejection is slow. I built or wireframed six add-node patterns to ship one, and for a stretch that felt like churn — the ghost row and the chip-bank were each \"done\" at some point before a test case killed them. What I'd defend now, and would do faster next time, is naming the evaluation axes up front: comprehension, throughput, and live-trip safety. Once those three were explicit, each rejection took an hour instead of a day, because a pattern only had to fail one axis to die. I also carry some honest uncertainty forward: the design assumes the contract snapshot stores source and destination roles separately, and that assumption was still awaiting engineering confirmation when the prototype shipped for review — if it's wrong, the role-button validation needs a different data source, and I should have forced that conversation before building rather than after. The thing I'm most confident in is the founding constraint. \"The 94% pay nothing\" sounded like a limitation and behaved like a compass: nearly every rejected pattern died against it, and the two-render-mode architecture — the decision I'd defend hardest — exists only because that constraint made a unified layout unshippable.",
 
   next: {
-    slug: 'assignment-module',
-    title: 'The Assignment Module',
-    code: 'ASM-01',
+    slug: 'transporter-panel',
+    title: 'The Transporter Panel',
+    code: 'TPN-01',
   },
 }

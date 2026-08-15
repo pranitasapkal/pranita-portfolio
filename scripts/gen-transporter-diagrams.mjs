@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
- * scripts/gen-assignment-diagrams.mjs
- * Renders the Assignment Module case-study diagrams to PNG in public/work/assignment/.
+ * scripts/gen-transporter-diagrams.mjs
+ * Renders the Transporter Panel case-study diagrams to PNG in public/work/transporter-panel/.
  * Same visual language as the CLH diagrams (hand-drawn boxes, single amber accent).
  *
  *   dg-lifecycle.png  — the five-state user flow, with the exception loops that leave it
  *   dg-actions.png    — the action column read down the five tabs (the IA thesis)
  *   dg-confirm.png    — the confirm/dispute fork on Completed, incl. both guards
  *
- * Run: node scripts/gen-assignment-diagrams.mjs
+ * Run: node scripts/gen-transporter-diagrams.mjs
  * Contains no NDA-sensitive values — labels come from the live SOT UI only.
  */
 import { writeFileSync, mkdirSync } from 'fs'
@@ -17,7 +17,7 @@ import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const outDir = resolve(root, 'public/work/assignment')
+const outDir = resolve(root, 'public/work/transporter-panel')
 const tmp = resolve(root, '.asm-dg-tmp')
 mkdirSync(outDir, { recursive: true })
 mkdirSync(tmp, { recursive: true })
@@ -175,4 +175,4 @@ for (const [name, html] of jobs) {
   ], { stdio: 'ignore' })
   console.log('rendered', name + '.png')
 }
-console.log('done → public/work/assignment/')
+console.log('done → public/work/transporter-panel/')

@@ -13,8 +13,8 @@
     "build:docx": "node resume/build-docx.mjs",
     "build:svg": "node resume/build-svg.mjs",
     "build:cv": "node resume/build-resume.mjs && node resume/build-docx.mjs",
-    "shots:assignment": "node scripts/export-assignment-shots.mjs",
-    "diagrams:assignment": "node scripts/gen-assignment-diagrams.mjs"
+    "shots:transporter": "node scripts/export-transporter-shots.mjs",
+    "diagrams:transporter": "node scripts/gen-transporter-diagrams.mjs"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.2.5",

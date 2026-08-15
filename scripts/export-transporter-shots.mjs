@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * scripts/export-assignment-shots.mjs
- * Exports the Assignment Module SOT screens from `Figma- Assignment module/` into
- * public/work/assignment/ at web scale.
+ * scripts/export-transporter-shots.mjs
+ * Exports the Transporter Panel SOT screens from `Figma- Assignment module/` into
+ * public/work/transporter-panel/ at web scale.
  *
  * NDA: the Missing Trip screen embeds photographs of REAL challans carrying a real
  * vendor name, transporter ID, driver name, phone number and addresses. That region is
@@ -10,7 +10,7 @@
  * document's contents. Every other screen uses Figma dummy data (Karan Verma /
  * TR-12345678-1234 / DL 01 AB 1234 / Prashant Patel) and is exported as-is.
  *
- * Run: node scripts/export-assignment-shots.mjs
+ * Run: node scripts/export-transporter-shots.mjs
  * Requires: python3 with Pillow (already present on this machine).
  */
 import { execFileSync } from 'node:child_process'
@@ -19,7 +19,7 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const OUT = resolve(root, 'public/work/assignment')
+const OUT = resolve(root, 'public/work/transporter-panel')
 
 // The SOT folder has been copied in at two different depths across sessions; resolve whichever
 // level actually contains the tab directories.
@@ -87,6 +87,6 @@ for j in jobs:
     print(f"  {j['out']:28s} {im.width}x{im.height}")
 `
 
-console.log(`Exporting ${JOBS.length} SOT screens → public/work/assignment/`)
+console.log(`Exporting ${JOBS.length} SOT screens → public/work/transporter-panel/`)
 execFileSync('python3', ['-c', py, JSON.stringify(JOBS), SRC, OUT], { stdio: 'inherit' })
 console.log('Done. Blurred: missing-trip-challan.png (real challan data).')

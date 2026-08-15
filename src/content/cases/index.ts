@@ -9,14 +9,14 @@
  */
 import type { CaseStudy } from '../types'
 import { CASE_ORDER } from './summaries'
-import { assignment } from './assignment-module'
+import { transporterPanel } from './transporter-panel'
 import { ndc } from './ndc'
 import { clh } from './linehaul-nexus'
 import { transporter } from './transporter-contracts'
 import { placement } from './placement-multi-origin'
 
 export const caseStudies: Record<string, CaseStudy> = {
-  [assignment.slug]: assignment,
+  [transporterPanel.slug]: transporterPanel,
   [ndc.slug]: ndc,
   [clh.slug]: clh,
   [transporter.slug]: transporter,

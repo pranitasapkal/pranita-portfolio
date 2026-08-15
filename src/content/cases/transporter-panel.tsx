@@ -1,20 +1,20 @@
 /**
- * ASM-01 — The Assignment Module
- * Typed CaseStudy converted from content/case-studies/00-assignment-module.md.
+ * TPN-01 — The Transporter Panel
+ * Typed CaseStudy converted from content/case-studies/00-transporter-panel.md.
  * Source of truth for every UI claim: Figma- Assignment module/ (182 screens, live version).
  * Narrative source docs: Transporter Panel (1).pdf, Valmo Transporter Panel.pdf,
- * Transporter Payout and Negotiation (10).pdf — see tasks/assignment-sot-map.md.
+ * Transporter Payout and Negotiation (10).pdf — see tasks/transporter-panel-sot-map.md.
  * All programme-level metrics are fuzzed per content/fuzzing-map.json; nothing here claims a
  * system-wide number as this module's own outcome.
- * Screens are exported by scripts/export-assignment-shots.mjs (challan region blurred — real
- * vendor/driver data); diagrams by scripts/gen-assignment-diagrams.mjs. Both write public/work/assignment/.
+ * Screens are exported by scripts/export-transporter-shots.mjs (challan region blurred — real
+ * vendor/driver data); diagrams by scripts/gen-transporter-diagrams.mjs. Both write public/work/transporter-panel/.
  */
 import type { CaseStudy } from '../types'
 import { summaries } from './summaries'
 
-export const assignment: CaseStudy = {
-  ...summaries['assignment-module'],
-  title: "The Assignment Module — moving a transporter's whole trip life out of WhatsApp",
+export const transporterPanel: CaseStudy = {
+  ...summaries['transporter-panel'],
+  title: "The Transporter Panel — moving a transporter's whole trip life out of WhatsApp",
   oneLiner:
     "Every trip ran on a chat thread and got paid two months later. I designed the panel that replaced both — and its hardest screen is the one where a man who reads English slowly agrees, irreversibly, to what he's owed.",
   meta: {
@@ -79,7 +79,7 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'browser',
-          src: '/work/assignment/pending-default.png',
+          src: '/work/transporter-panel/pending-default.png',
           alt: 'The five-tab transporter panel with the Trip Management summary cards',
           caption: 'Pending Assignment — the panel that replaced the chat thread.',
         },
@@ -188,7 +188,7 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'browser',
-          src: '/work/assignment/missing-trip-challan.png',
+          src: '/work/transporter-panel/missing-trip-challan.png',
           alt: 'Missing Trip form showing two challan photographs with the Trip ID outlined in green',
           caption: 'Recognition over recall, using the paper the transporter is already holding.',
         },
@@ -212,7 +212,7 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'none',
-          src: '/work/assignment/dg-actions.png',
+          src: '/work/transporter-panel/dg-actions.png',
           alt: 'The action column read down all five tabs — Accept, Update, none, Confirm Details, none',
           caption: 'One primary action per row, always visible at rest.',
         },
@@ -242,14 +242,14 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'browser',
-          src: '/work/assignment/completed-default.png',
+          src: '/work/transporter-panel/completed-default.png',
           alt: 'Completed tab with four sub-pills and the illustrated payments explainer',
           caption: 'Four billing realities in one table — the explainer tells you which one you are.',
         },
         {
           type: 'image',
           frame: 'browser',
-          src: '/work/assignment/cancelled-remarks.png',
+          src: '/work/transporter-panel/cancelled-remarks.png',
           alt: 'Cancelled tab — Trip ID, Route, Placement Time, Missed Earning, Remark',
           caption: "Cancelled renames the money column Missed Earning, and keeps the transporter's own words in Remark.",
         },
@@ -265,7 +265,7 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'none',
-          src: '/work/assignment/dg-lifecycle.png',
+          src: '/work/transporter-panel/dg-lifecycle.png',
           alt: 'The five-state trip lifecycle with its three exception paths',
           caption: 'The whole module in one frame — five states, and the three ways a trip leaves the happy path.',
         },
@@ -276,7 +276,7 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'browser',
-          src: '/work/assignment/upcoming-list.png',
+          src: '/work/transporter-panel/upcoming-list.png',
           alt: 'Upcoming tab — filled vehicle and driver dropdowns, Update disabled until a change is made',
           caption: 'Once staffed, the same row becomes editable: Update stays disabled until something actually changes.',
         },
@@ -287,7 +287,7 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'browser',
-          src: '/work/assignment/reject-consequences.png',
+          src: '/work/transporter-panel/reject-consequences.png',
           alt: 'Reject Trip modal listing three consequences above the reason dropdown',
           caption: 'Three costs, then the reason field. Never the other way round.',
         },
@@ -298,14 +298,14 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'browser',
-          src: '/work/assignment/in-transit.png',
+          src: '/work/transporter-panel/in-transit.png',
           alt: 'In-Transit tab with Live Updates column and a No GPS Present chip',
           caption: 'No action column. Live Updates instead — and an honest No GPS Present where there is no signal.',
         },
         {
           type: 'image',
           frame: 'none',
-          src: '/work/assignment/route-timeline.png',
+          src: '/work/transporter-panel/route-timeline.png',
           alt: 'Route Timelines panel showing STA / ATA / STD / ATD per node beside a live tracking placeholder',
           caption: 'The route panel spells out its own abbreviations at the bottom rather than assuming them.',
         },
@@ -325,7 +325,7 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'browser',
-          src: '/work/assignment/confirm-active-dispute.png',
+          src: '/work/transporter-panel/confirm-active-dispute.png',
           alt: 'Confirm Trip & Dismiss Dispute modal over the Completed tab',
           caption: 'The one action that could silently destroy a claim is the one that cannot happen silently.',
         },
@@ -336,7 +336,7 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'browser',
-          src: '/work/assignment/raise-dispute-form.png',
+          src: '/work/transporter-panel/raise-dispute-form.png',
           alt: 'Raise Dispute form with seven bilingual sub-categories, English over Devanagari',
           caption: 'Not a language toggle — both languages, permanently, on the highest-stakes form in the module.',
         },
@@ -357,7 +357,7 @@ export const assignment: CaseStudy = {
         {
           type: 'image',
           frame: 'none',
-          src: '/work/assignment/dg-confirm.png',
+          src: '/work/transporter-panel/dg-confirm.png',
           alt: 'The confirm-or-dispute fork on Completed, with both guards called out',
           caption: 'The money screen, and the two paths that had to be guarded.',
         },

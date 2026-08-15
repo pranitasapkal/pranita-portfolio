@@ -56,7 +56,7 @@ const CASES: CaseData[] = caseSummaryList.map((cs) => ({
 }))
 
 // ── Node signatures — unique per-card constellations ─────────────────────────
-function NodeASM() {
+function NodeTPN() {
   return (
     <svg width="64" height="44" viewBox="0 0 64 44" fill="none" aria-hidden="true">
       <circle cx="7"  cy="22" r="2.5" stroke="var(--color-text-lo)" strokeWidth="1.5" />
@@ -124,7 +124,7 @@ function NodePLA() {
 
 // Keyed by slug so signatures can never fall out of step with card order.
 const NODE_SIGNATURES: Record<string, ComponentType> = {
-  'assignment-module': NodeASM,
+  'transporter-panel': NodeTPN,
   'network-design-central': NodeNDC,
   'linehaul-nexus': NodeCLH,
   'transporter-contract-management': NodeTPR,

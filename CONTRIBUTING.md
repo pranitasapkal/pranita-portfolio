@@ -104,7 +104,7 @@ the sanitized prototypes, and `content/case-studies/` for strings that must not 
 | Missing | Why | Consequence |
 |---|---|---|
 | `content/fuzzing-map.json` | It pairs every public phrase with its real private value and names colleagues and Figma file keys. It must never reach a public remote. | `nda-scan` skips cleanly. Nothing else reads it. |
-| `Figma- Assignment module/` | 182 raw source exports plus three internal PDFs. | `npm run shots:assignment` exits with a message. Its sanitized outputs are committed under `public/work/assignment/`. |
+| `Figma- Assignment module/` | 182 raw source exports plus three internal PDFs. | `npm run shots:transporter` exits with a message. Its sanitized outputs are committed under `public/work/transporter-panel/`. |
 | Root `*.jpeg` | Reference screenshots of other designers' portfolios — not ours to republish. | Nothing references them. |
 
 Never copy anything back in from the sibling project folders. `public/prototypes/` holds

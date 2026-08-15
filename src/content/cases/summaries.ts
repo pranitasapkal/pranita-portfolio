@@ -15,14 +15,14 @@
 import type { CaseSummary } from '../types'
 
 export const summaries = {
-  'assignment-module': {
-    slug: 'assignment-module',
-    code: 'ASM-01',
-    cardTitle: 'The Assignment Module',
+  'transporter-panel': {
+    slug: 'transporter-panel',
+    code: 'TPN-01',
+    cardTitle: 'The Transporter Panel',
     cardOneLiner:
       'Every trip ran on a chat thread and got paid two months later — I designed the panel that replaced both.',
     stats: ['182 screens', '5 lifecycle states', '7 bilingual categories'],
-    browserSlug: 'pranita.design/asm',
+    browserSlug: 'pranita.design/tpn',
   },
 
   'network-design-central': {
@@ -67,7 +67,7 @@ export const summaries = {
 
 /** Display order — drives both the home index and case-page prev/next. Single source. */
 export const CASE_ORDER = [
-  'assignment-module',
+  'transporter-panel',
   'network-design-central',
   'linehaul-nexus',
   'transporter-contract-management',
