@@ -1,3 +1,45 @@
+# Task: Full revamp — two parallel lanes (ACTIVE, started 2026-08-15)
+
+Pranita rewrites all copy; a collaborator rebuilds the visual system via a GitHub fork + PRs.
+Branch: `revamp` (pushed to origin) ← `text/*` and `design/*`. Merges to `public-main` at the end.
+Contract: [CONTRIBUTING.md](../CONTRIBUTING.md) · Design floor: [docs/DESIGN-BRIEF.md](../docs/DESIGN-BRIEF.md)
+
+## Phase 0 — the contract (DONE, commit `186f1e6`)
+- [x] P0.1 Extract all site copy → `src/content/site.ts`; components render it, zero visual change
+- [x] P0.2 Kill the `CaseIndex` duplicate `CASES` array → `src/content/cases/summaries.ts`;
+      `CaseStudy extends CaseSummary`; `CASE_ORDER` is the single source of display order;
+      `NODE_SIGNATURES` re-keyed by slug (blank-card trap gone)
+- [x] P0.3 `CONTRIBUTING.md` — ownership map, branch flow, NDA-scan rules, absent files
+- [x] P0.4 `docs/DESIGN-BRIEF.md` — what the rebuild may change, and the a11y/motion/perf floor
+- [x] P0.5 `nda-scan` fixed — numeric tokens anchored, `geo/` skipped, deliberate publications
+      allowlisted with rationale. **224 hits → clean exit.**
+- [x] P0.6 `revamp` branch created and pushed to origin
+
+**Caught in passing:** deriving the home cards from the full case registry pulled all five case
+studies into the initial bundle (360 kB → prose in the eager chunk, incl. the un-fuzzed CLH
+figure). Splitting card copy from page copy fixed it — main chunk now 239 kB, case prose back in
+the lazy `CaseStudyPage` chunk.
+
+**Verified:** `npm run build` green (1.87s, tsc clean) · `npm run nda-scan` clean · home renders
+all 5 cards with correct copy + node signatures (**settles the ASM-01 card that was never visually
+confirmed**) · `/work/assignment-module` and `/work/linehaul-nexus` both render, 49 images load,
+`noindex` intact · zero console errors.
+
+## Phase 1 — parallel lanes (NEXT)
+- [ ] Text: home/about/footer copy → sets the voice → then cases ASM→NDC→CLH→TCM→PLC → resume → SEO
+- [ ] Design: new system in `/dev/kitchen-sink` first, then applied; decides the two-layout question
+- [ ] Rebase `text/*` on `revamp` whenever a design PR merges
+
+## Phase 2 — integration
+- [ ] Design PRs merged, text merged last, full verification sweep, `revamp` → `public-main`
+
+## Blocked on Pranita (blocks copy completeness)
+Portrait photo · anonymized Hindi UT findings (TCM) · per-project timelines + ship status ·
+2018–21 gap one-liner · Wizrdom/AuraSmart metric · SetuX rollout numbers confirmation
+(209 vendors / 98% / 38K+ trips — currently sourced only from her self-review draft).
+
+---
+
 # Task: 3D Portfolio Website + Resume Overhaul
 
 Master plan: `~/.claude/plans/https-pranitas-framer-website-i-need-to-zazzy-eagle.md`
