@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "covers": "node scripts/gen-case-covers.mjs",
     "optimize-images": "node scripts/optimize-images.mjs",
     "nda-scan": "node scripts/nda-scan.mjs",
     "build:resume": "node resume/build-resume.mjs",
