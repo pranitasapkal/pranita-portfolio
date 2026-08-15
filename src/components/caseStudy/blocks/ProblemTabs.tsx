@@ -7,6 +7,7 @@
  */
 import { useId, useRef, useState } from 'react'
 import { useReveal } from './useReveal'
+import { Text } from './Text'
 
 interface ProblemTabsProps {
   items: { label: string; body: string }[]
@@ -69,9 +70,9 @@ export function ProblemTabs({ items }: ProblemTabsProps) {
           aria-labelledby={`${baseId}-tab-${i}`}
           hidden={i !== active}
         >
-          <p className="font-body text-base md:text-lg text-text-lo leading-relaxed max-w-3xl">
-            {item.body}
-          </p>
+          {/* Rendered through Text so a tab body behaves like every other body:
+              blank lines become paragraphs, and **bold** / {*} markers work. */}
+          <Text body={item.body} />
         </div>
       ))}
     </div>

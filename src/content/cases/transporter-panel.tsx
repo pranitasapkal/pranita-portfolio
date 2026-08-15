@@ -90,7 +90,7 @@ export const transporterPanel: CaseStudy = {
           items: [
             {
               label: 'Bad data going in',
-              body: 'Trips were typed in from placement sheets kept by sort-centre staff, who are measured on departures, not accuracy. A vehicle number typed under pressure is good enough to dispatch and wrong enough to break the payout. Wrong numbers, wrong transporter mapping, missing GPS — and the biggest class, round trips booked as two.',
+              body: 'An area manager decides how many trips run from which sort centre to which destination, and on what vehicles. That plan reached the system by hand: a sort-centre operator retyped every trip from it, in a hurry.\n\nA vehicle number typed under pressure is good enough to dispatch and wrong enough to break the payout. Dispatch itself was marked manually, and sometimes early, to protect a compliance score.\n\nWrong numbers, wrong transporter mapping, missing GPS — and the biggest class, round trips booked as two.',
             },
             {
               label: 'No visibility coming out',
@@ -98,7 +98,7 @@ export const transporterPanel: CaseStudy = {
             },
             {
               label: 'A ceiling at twenty trips',
-              body: 'The interim answer was a WhatsApp assignment module — trips pushed as messages to accept, reject or update. It worked for the right reason: it moved data ownership to the person whose payout depends on it. It just cannot survive a scroll.',
+              body: 'The interim answer was a WhatsApp assignment module — trips pushed as messages to accept, reject or update. It worked for the right reason: it moved data ownership to the person whose payout depends on it. It just cannot survive a scroll.\n\nWhatsApp did not go away. It became one of three notification channels alongside the transporter app and the dashboard — but the panel, not the thread, became the record.',
             },
           ],
         },
@@ -141,7 +141,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'That is the precondition for self-invoicing, and for a payout cycle measured in days rather than months.',
+          body: 'That is the precondition for self-invoicing — the system raises the invoice and he only confirms it — and for a payout cycle no longer gated by a multi-month manual match.',
         },
         {
           type: 'text',
@@ -694,7 +694,7 @@ export const transporterPanel: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'The commercial case is a chain: accurate assignment data makes computed payouts possible, and on-screen confirmation makes self-invoicing possible. Without the first, finance provisions against numbers wrong a third of the time.',
+          body: 'The commercial case is a chain. Dispatch is verified at the sort centre — a photo of the loaded vehicle, or an OTP from the driver — so the trip he later confirms rests on a real handshake rather than a marked checkbox.\n\nAccurate assignment data then makes computed payouts possible, and on-screen confirmation makes self-invoicing possible. Without the first, finance provisions against numbers wrong a third of the time.',
         },
         {
           type: 'text',
