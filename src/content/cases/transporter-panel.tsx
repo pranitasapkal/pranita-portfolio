@@ -180,11 +180,23 @@ export const transporterPanel: CaseStudy = {
           highlight: 0,
         },
         {
-          type: 'statRow',
-          stats: [
-            { value: '4', label: 'urgency bands on Pending, colour + text' },
-            { value: '7', label: 'dispute sub-categories, all bilingual' },
-            { value: '6', label: 'rejection reasons, last is Other + free text' },
+          type: 'heroStats',
+          items: [
+            {
+              value: '13',
+              label: 'dispute states designed',
+              sub: 'Including Partial Approved, Reopened and Reraise — a claim never dead-ends at "submitted"',
+            },
+            {
+              value: '6',
+              label: 'failure states on the money tab',
+              sub: 'Loading, error, no data, empty, upload failed, dispute failed — the screen never goes blank on him',
+            },
+            {
+              value: '4',
+              label: 'urgency bands, colour and text',
+              sub: 'Never colour alone, so the deadline still reads to someone scanning rather than reading',
+            },
           ],
         },
       ],
@@ -255,14 +267,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'So the Missing Trip form shows photographs of a real challan with the ID box outlined, rather than describing the format.',
-        },
-        {
-          type: 'image',
-          frame: 'browser',
-          src: '/work/transporter-panel/missing-trip-challan.png',
-          alt: 'Missing Trip form showing two challan photographs with the Trip ID outlined in green',
-          caption: 'Recognition over recall, using the paper the transporter is already holding.',
+          body: 'So where the panel asks him to type a Trip ID, it shows him the document he is holding rather than describing the format in words.',
         },
       ],
     },
@@ -502,6 +507,14 @@ export const transporterPanel: CaseStudy = {
           body: 'The ticket that never gets created is the best outcome that flow can have.',
         },
         {
+          type: 'image',
+          frame: 'browser',
+          src: '/work/transporter-panel/missing-trip-challan.png',
+          alt: 'Missing Trip form with the guard fired — the trip already exists, so a View Trip link replaces the ticket — above example challans',
+          caption:
+            'The guard firing: the ID he typed already exists, so he gets a link instead of a ticket. Underneath, example challans showing where to find the ID (redacted here — the originals carry real vendor and driver data).',
+        },
+        {
           type: 'statRow',
           stats: [
             {
@@ -670,7 +683,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'State coverage on Completed is met: loading, error, no data, missing-trip empty, upload failed, dispute failed, plus four date-picker variants.',
+          body: 'Completed is covered to its edges — every failure state above, plus four variants of the custom date-range picker.',
         },
         {
           type: 'text',
