@@ -3,6 +3,14 @@
  * Typed CaseStudy object converted from content/case-studies/01-network-design-central.md
  * IMG blocks point at placeholder paths; placeholder:true triggers the "asset pending" frame.
  * {*} markers preserved verbatim in all body strings — rendered as <Asterisk /> by BlockRenderer.
+ *
+ * Structure and length follow ADR-005; the worked example is transporter-panel.tsx. One claim,
+ * one home — a number shown by a statRow is not repeated by the paragraph above it — and a
+ * decision is argued once: where a spotlight makes the case, the chapter states it and moves on.
+ * ADR names match the source project (../network-design/tasks/decisions/): ADR-001 kept the
+ * Ops Alignment review at route grain; ADR-002 made the sidebar the only navigation and deleted
+ * the "lifecycle rail". Spelling is British throughout, matching the rest of the portfolio.
+ * Checked with `npm run count:copy NDC` and `npm run check:facts check NDC`.
  */
 import type { CaseStudy } from '../types'
 import { summaries } from './summaries'
@@ -31,7 +39,7 @@ export const ndc: CaseStudy = {
     ],
     stats: [{ value: '5→≤2' }, { value: '6→1' }, { value: '<30s' }],
     summary:
-      'I designed a net-new desktop workbench where a central planner triggers routing runs, compares them, and drives a structured row-by-row alignment loop with regional ops leads to a guarded, irreversible freeze. 13 locked design decisions and 2 ADRs turned an unstructured monthly negotiation into a repeatable ritual with one status language.',
+      'A net-new desktop workbench: one planner triggers solver runs, compares them, and drives row-by-row alignment to an irreversible freeze — 13 locked decisions, 2 ADRs.',
   },
 
   chapters: [
@@ -39,18 +47,17 @@ export const ndc: CaseStudy = {
     {
       id: 'problem-understanding',
       step: 1,
-      kicker: 'Problem Understanding',
       navLabel: 'The bottleneck',
       ghost: 'AGREE',
       title: 'The solver was never the bottleneck. Agreement was.',
       blocks: [
         {
           type: 'text',
-          body: 'Every month, Valmo redesigns the long-distance leg of its delivery network: which vehicle leaves which depot, visiting which delivery points, in what order.\n\nAt the scale in scope — around 80 depots, 10,000+ delivery points, hundreds of planning runs a cycle{*} — a routing model — a solver — already produced the designs.\n\nComputation was never the bottleneck.\n\nAt the scale in scope — ~80 depots, 10,000+ delivery centres, hundreds of routing runs per cycle{*} — a data-science solver already produced the designs.\n\nComputation was never the bottleneck.',
+          body: 'Every month, Valmo redesigns the long-distance leg of its delivery network: which vehicle leaves which depot, visiting which delivery centres, in what order.\n\nAt this scale — ~80 depots, 10,000+ delivery centres, hundreds of routing runs a cycle{*} — a solver already produced the designs.\n\nComputation was never the bottleneck.',
         },
         {
           type: 'text',
-          body: 'The bottleneck was agreement. The model\'s output is a proposal; the people who know whether a route is actually drivable are dozens of regional operations leads, each expert in their own depot.\n\nBefore the tool that negotiation ran across disconnected spreadsheets — exported, mailed around, edited contradictorily, reconciled by hand against a deadline after which the design becomes a vendor contract.\n\nIn one recent cycle, 32 delivery points silently fell out of coverage across around 10 depots, because impossible vehicle inputs never reached anyone who could catch them.\n\nBefore the tool that negotiation ran across disconnected Google Sheets — exported, mailed around, edited contradictorily, reconciled by hand against a deadline after which the design becomes a vendor contract.\n\nIn one recent cycle, 32 delivery centres silently fell out of coverage across ~10 depots because infeasible vehicle inputs never reached anyone who could catch them.',
+          body: 'The solver\'s output is a proposal.\n\nThe people who know whether a route is actually drivable are dozens of regional ops leads, each expert in their own depot.\n\nBefore the tool that negotiation ran across disconnected Google Sheets — exported, mailed around, edited contradictorily, reconciled by hand against a deadline after which the design becomes a vendor contract.\n\nIn one recent cycle, 32 delivery centres silently fell out of coverage across ~10 depots because infeasible vehicle inputs never reached anyone who could catch them.',
         },
         {
           type: 'text',
@@ -61,25 +68,25 @@ export const ndc: CaseStudy = {
           items: [
             {
               label: 'An empty dashboard',
-              body: 'Three navigation cards and nothing else. The screen a planner lands on every morning held no state, no queue and no deadline — so orientation happened somewhere other than the tool.',
+              body: 'Three navigation cards and nothing else. The screen a planner lands on every morning held no state, no queue and no deadline.',
             },
             {
               label: 'An invisible pipeline',
-              body: 'Inputs → Creation → Review → Alignment existed in the requirements and nowhere in the interface. Nothing enforced the order, so a planner could push a design built on inputs that were never validated.',
+              body: 'Inputs → Creation → Review → Alignment existed in the requirements and nowhere in the interface. A design could be pushed on inputs never validated.',
             },
             {
               label: 'Six vocabularies for one lifecycle',
-              body: 'Six modules had each invented their own words for the same states. Amber alone meant four different things depending on the screen, which makes a status colour worse than none.',
+              body: 'Six modules had each invented their own words for the same states. Amber alone meant four different things depending on the screen.',
             },
             {
               label: 'Two roles in one shell',
-              body: 'A central planner and a regional reviewer shared one interface with a role switch. An agreement process only works if reviewers physically cannot touch inputs, runs, or another region\'s plan.',
+              body: 'A central planner and a regional reviewer shared one interface with a role switch — but agreement only works if reviewers physically cannot touch inputs, runs, or another region\'s plan.',
             },
           ],
         },
         {
           type: 'text',
-          body: 'So I reframed it. The tool\'s job isn\'t producing route designs — the model does that. Its job is getting dozens of regional leads to agree with one central planner before a deadline that cannot be undone. **Designing the panel meant designing the ritual.**',
+          body: 'So I reframed it. The tool\'s job isn\'t producing route designs — the solver does that. Its job is getting the network to agree before a deadline that cannot be undone.\n\n**Designing the panel meant designing the ritual.**',
         },
         {
           type: 'statRow',
@@ -102,7 +109,6 @@ export const ndc: CaseStudy = {
     {
       id: 'objective',
       step: 2,
-      kicker: 'Objective',
       navLabel: 'The targets',
       ghost: 'TARGET',
       title: 'I wrote the targets before I drew a screen.',
@@ -115,7 +121,7 @@ export const ndc: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'I set measurable targets in the spec before touching a screen, because "make it usable" is not a brief.\n\n**Time-to-orient** — the state of the network understood in under 30 seconds. Previously unmeasurable, because the dashboard held nothing.\n\n**Clicks to primary task** — creating a route design, from 5 to ≤2.\n\n**Status vocabularies** — from 6 to 1. Amber alone had meant four different things.\n\n**"Where is design X?"** — answerable from one view. All four states — empty, loading, error, populated — defined on every screen.',
+          body: 'I set measurable targets in the spec before touching a screen, because "make it usable" is not a brief.\n\n**"Where is design X?"** — answerable from one view, with all four states — empty, loading, error, populated — defined on every screen.',
         },
         {
           type: 'statRow',
@@ -127,7 +133,7 @@ export const ndc: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Behind these sat the business objective: make model-led planning the default, targeting a double-digit gain in how full each vehicle runs and a shorter average route{*}.\n\nMy design targets sit deliberately upstream — if the planner can\'t orient, compare runs and close agreement before the deadline, no routing improvement ships.\n\nMy design metrics sit deliberately upstream — if the planner can\'t orient, compare runs and close alignment before the freeze, no solver improvement ships.',
+          body: 'Behind these sat the business objective — the solver programme\'s cost target — and my design targets sit deliberately upstream of it: if the planner can\'t orient, compare runs and close agreement before the freeze, no solver improvement ships.',
         },
         {
           type: 'image',
@@ -143,18 +149,13 @@ export const ndc: CaseStudy = {
     {
       id: 'user-persona',
       step: 3,
-      kicker: 'User Persona',
       navLabel: 'Two shells',
       ghost: 'ROLES',
       title: 'Two users, and letting them share a shell was the mistake.',
       blocks: [
         {
           type: 'text',
-          body: 'Two users, and the most consequential decision was refusing to let them share one interface.',
-        },
-        {
-          type: 'text',
-          body: 'The inherited prototype used a role toggle inside one shared interface. I locked the opposite: real per-user login and two different shells — the regional lead sees only the agreement screen and the map.\n\nThe prototype keeps a labelled "Demo: view as…" switch, because a prototype has no login. This is a trust decision as much as a design one.\n\nThe prototype keeps a labelled "Demo: view as…" switch, because a prototype has no auth. This is a trust decision as much as a UX one.',
+          body: 'I locked the opposite of the inherited role toggle: real per-user login and two different shells.\n\nThe prototype keeps a labelled "Demo: view as…" switch, because a prototype has no login — a trust decision as much as a design one.',
         },
         {
           type: 'matrix',
@@ -167,8 +168,6 @@ export const ndc: CaseStudy = {
             ['Should see', 'Everything, densely', 'One plan and a map. Nothing else.'],
             ['Shipped as', 'Full planner shell', 'Stripped shell — Ops Alignment and the map'],
           ],
-          totalNote:
-            'The PM prototype gave both a persona toggle inside one interface. Production is per-user login with two different shells.',
         },
         {
           type: 'statRow',
@@ -191,18 +190,17 @@ export const ndc: CaseStudy = {
     {
       id: 'information-architecture',
       step: 4,
-      kicker: 'Information Architecture',
       navLabel: 'One spine',
       ghost: 'SPINE',
       title: 'One spine, one vocabulary, one place for navigation.',
       blocks: [
         {
           type: 'text',
-          body: 'The IA had to make the ritual legible in the navigation itself. Three moves did most of the work.\n\n**One spine: the design lifecycle.** Every design carries one stage — Draft → Running → Created → In Review → Pushed → In Alignment → Acknowledged → Finalised — and every screen reads from it.\n\nThe pipeline chips, the runs view and each module are projections of the same state, under one vocabulary with one rule: **amber means "needs a human decision" and nothing else.**',
+          body: '**One spine: the design lifecycle.** Every design carries one stage — Draft → Running → Created → In Review → Pushed → In Alignment → Acknowledged → Finalised — and every screen reads from it.\n\nThe pipeline chips, the runs view and each module are projections of the same state, under one vocabulary with one rule: **amber means "needs a human decision" and nothing else.**',
         },
         {
           type: 'text',
-          body: '**One container per month.** A Design Cycle — the month’s named plan group — scopes every upload, run and agreement, capped at 80 runs. Without it, hundreds of runs a cycle{*} become an undifferentiated archive.\n\n**Navigation lives in the sidebar, and only there.** The planner\'s shell reads as the ritual in order: Command Center → Design Inputs → Design Creation → Review & Alignment → Runs → Help.\n\nAn earlier build also drew a horizontal strip of the same stages above every module, duplicating the sidebar. I deleted it. Switching module is infrequent and belongs in the sidebar; filtering is frequent and belongs in the content.\n\n**Nav lives in the sidebar, and only there.** The Planner shell reads as the ritual in order: Command Center → Design Inputs → Design Creation → Review & Alignment → Runs → Help.\n\nADR-002 records the correction: an earlier build also drew a horizontal "lifecycle rail" above every module, duplicating the sidebar. I deleted it. Module switching is infrequent and belongs in the sidebar; filters are frequent and belong in the content.',
+          body: '**One container per month.** A Design Cycle — the month\'s named plan group — scopes every upload, run and agreement, capped at 80 runs.\n\n**Navigation lives in the sidebar, and only there.** The planner\'s shell reads as the ritual: Command Center → Design Inputs → Design Creation → Review & Alignment → Runs → Help.\n\nADR-002 records the correction: an earlier build also drew a horizontal "lifecycle rail" above every module, duplicating the sidebar. I deleted it.\n\nModule switching is infrequent and belongs in the sidebar; filters are frequent and belong in the content.',
         },
         {
           type: 'statRow',
@@ -226,24 +224,23 @@ export const ndc: CaseStudy = {
     {
       id: 'user-flow',
       step: 5,
-      kicker: 'User Flow',
       navLabel: 'The month',
       ghost: 'CYCLE',
       title: 'The month is the flow.',
       blocks: [
         {
           type: 'text',
-          body: 'The monthly ritual, end to end, with real cycle anchors: volume data lands around the 10th; design due early the next month; a one-week feedback window; freeze; finalise within three days of freeze.',
+          body: 'The monthly ritual, end to end.\n\nVolume data lands around the 10th; design due early the next month; a feedback window; freeze; finalise within three days of freeze.',
         },
         {
           type: 'flow',
           steps: [
             'Gate the inputs — upload volume files and masters; a read-only node surfaces only flagged warnings as a pre-plan gate. Exit is an explicit success state: "✓ Inputs clean · Start Design Creation" — a gate you can\'t see pass is a gate people route around.',
-            'Trigger runs — select depots, pick a volume file, set vehicles and Historical Weight (a 0 / 0.5 / 1 dial for how much of last month\'s routes to preserve versus re-optimize). Each run is one async solver job per depot per weight value.',
-            'Compare and choose — Design Review shows per-run metrics (coverage, cost per shipment, utilization, routes, vehicles, distance) with a mandatory side-by-side of the three Historical-Weight runs. No reject button — an un-pushed run is a discarded simulation.',
+            'Trigger runs — select depots, pick a volume file, set vehicles and Historical Weight (a 0 / 0.5 / 1 dial for how much of last month\'s routes to preserve versus re-optimise). Each run is one async solver job per depot per weight value.',
+            'Compare and choose — per-run metrics (coverage, cost per shipment, utilisation, routes, vehicles, distance), with a mandatory side-by-side of the three Historical-Weight runs.',
             'Push to alignment — name reviewers (PoCs from the sort-centre master); the plan appears in each Ops Lead\'s stripped shell.',
             'Row-by-row feedback — Ops Leads mark each route Pending / Aligned / Needs Change / Blocker and flag specific cells — vehicle type, coordinates, touchpoints, cutoffs — with suggested corrections.',
-            'Simulate, decide, freeze — planner runs Simulate per row (metric deltas only), accepts or rejects each suggestion, then Acknowledges — the irreversible freeze that locks every reviewer — and Finalises. The finalised design hands off downstream as vendor contracts.',
+            'Simulate, decide, freeze — planner runs Simulate per row (metric deltas only), accepts or rejects each suggestion, then Acknowledges and Finalises. The finalised design hands off downstream as vendor contracts.',
           ],
         },
         {
@@ -266,23 +263,22 @@ export const ndc: CaseStudy = {
     {
       id: 'lo-fi-wireframes',
       step: 6,
-      kicker: 'Lo-fi Wireframes',
       navLabel: 'The cockpit',
       ghost: 'LO-FI',
       title: 'The dashboard held three cards. It needed a cockpit.',
       blocks: [
         {
           type: 'text',
-          body: 'I wireframed twice — once to inventory the PM prototype, once to restructure it around the ritual — and ranked the top 10 fixes before any hi-fi work. Structure first, because most of what was wrong was structural.\n\nThe wireframe that mattered was the **Command Center**. Three nav cards became a cockpit answering the planner\'s three questions in fixed positions.\n\nA deadline-health hero ("18 days to freeze · At risk"). A "Needs You" queue where every item requires the planner. Pipeline chips that filter rather than decorate. And a Start Something strip putting run creation ≤2 clicks from landing.',
+          body: 'I wireframed twice: once to inventory the PM prototype, once to restructure it around the ritual.\n\nThe wireframe that mattered was the **Command Center** — a cockpit answering the planner\'s three questions in fixed positions.\n\nA deadline-health hero ("18 days to freeze · At risk"). A "Needs You" queue where every item requires the planner. Pipeline chips that filter rather than decorate. And a Start Something strip putting run creation ≤2 clicks from landing.',
         },
         {
           type: 'text',
-          body: '**The grouping rule.** At this scale a flat list of 80+ items is a design failure, so every list groups by depot or zone with roll-up headers, collapsible groups, filters and "showing N of M". This did more for orientation than any visual treatment.\n\n**Unified wizard chrome.** Three multi-step flows had each invented their own stepper. One pattern replaced them — stepper on top, body, persistent footer with validation bottom-left and the primary action bottom-right, later steps locked until earned. Locked steps are the dependency model made physical.',
+          body: '**The grouping rule.** A flat list of 80+ items is a design failure, so every list groups by depot or zone — roll-up headers, collapsible groups, filters, "showing N of M".\n\nGrouping did more for orientation than any visual treatment.\n\n**Unified wizard chrome.** Three multi-step flows had each invented their own stepper. One pattern replaced them — stepper on top, body, persistent footer with validation bottom-left and the primary action bottom-right, later steps locked until earned.\n\nLocked steps are the dependency model made physical.',
         },
         {
           type: 'statRow',
           stats: [
-            { value: 'top 10', label: 'prioritized fixes (P0–P2)' },
+            { value: 'top 10', label: 'prioritised fixes (P0–P2)' },
           ],
         },
         {
@@ -300,21 +296,20 @@ export const ndc: CaseStudy = {
     {
       id: 'prototype',
       step: 7,
-      kicker: 'Prototype',
       navLabel: 'At real scale',
       ghost: 'SCALE',
       title: 'I prototyped at eighty depots, not five.',
       blocks: [
         {
           type: 'text',
-          body: 'The deliverable is a single-file interactive prototype — the full panel, both shells, on seeded data at realistic scale: 80 depots, 239 runs, 11,500 delivery points, 41 plans.\n\nI prototype at scale deliberately: a design that works with five mock rows tells you nothing about a tool whose whole problem is eighty.\n\nTwo rules governed it. **No dead controls** — every button and filter is wired, and anything needing a backend says "coming soon" rather than failing silently. And **every list ships grouped**, with breadcrumbs back to the user\'s home screen.\n\nI prototype at scale deliberately: a design that works with 5 mock rows tells you nothing about a tool whose whole problem is 80.\n\nTwo rules governed it. **No dead controls** — every button and filter is wired, and backend-dependent writes surface an honest "coming soon" rather than silence. And **every list ships grouped** per the Step-06 convention, with breadcrumbs back to the persona\'s home.',
+          body: 'The deliverable is a single-file interactive prototype — the full panel, both shells, on seeded data at realistic scale.\n\nTwo rules governed it. **No dead controls** — every button and filter is wired. And **every list ships grouped** per the Step-06 convention, with breadcrumbs back to the user\'s home screen.',
         },
         {
           type: 'statRow',
           stats: [
-            { value: '~80', label: 'depots (seeded)' },
-            { value: '~239', label: 'routing runs' },
-            { value: '~11.5k', label: 'delivery centres' },
+            { value: '~80', label: 'depots' },
+            { value: '~239 runs', label: 'seeded' },
+            { value: '~11,500', label: 'delivery centres' },
             { value: '~41', label: 'plans' },
           ],
         },
@@ -326,7 +321,7 @@ export const ndc: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Visual system: Meesho\'s internal design system{*} with the product\'s navy override, dense tables, WCAG 2.1 AA contrast, and status never carried by colour alone.\n\nOnboarding is deliberately sparing: a four-step dismissible tour plus tooltips on the six genuinely non-obvious ideas.\n\nOnboarding is sparing by locked decision: a 4-step dismissible tour plus tooltips on the six genuinely non-obvious concepts.',
+          body: 'Visual system: Meesho\'s internal design system{*} with the product\'s navy override, dense tables, WCAG 2.1 AA contrast, and status never carried by colour alone.\n\nOnboarding is deliberately sparing: a four-step dismissible tour plus tooltips on the six genuinely non-obvious ideas.',
         },
       ],
     },
@@ -335,33 +330,32 @@ export const ndc: CaseStudy = {
     {
       id: 'business-aspects',
       step: 8,
-      kicker: 'Business Aspects',
       navLabel: 'What pays for it',
       ghost: 'COST',
       title: 'A design only saves money if it survives alignment intact.',
       blocks: [
         {
           type: 'text',
-          body: 'The tool exists to make model-led planning the default, and the model exists to cut cost per parcel — a double-digit utilisation target and a shorter average route{*}.\n\nBut the metric that pays for those is human: a design realises its modelled savings only if it survives agreement intact and freezes on time.\n\nThe programme tracks how many routes reach the contract stage unchanged, which is why I treated the agreement loop, not the planning screens, as the highest-leverage surface.\n\nBut the metric that pays for those is human: a design realizes its modelled savings only if it survives alignment intact and freezes on time.\n\nThe programme tracks how many routes reach the contract stage unmodified, which is why I treated the alignment loop, not the solver UI, as the highest-leverage surface.',
+          body: 'The tool exists to make model-led planning the default; the model exists to cut cost per parcel and shorten the average route{*}.\n\nThe metric that pays for those is human — the programme tracks how many routes reach the contract stage unchanged — so I treated the agreement loop, not the planning screens, as the highest-leverage surface.',
         },
         {
           type: 'text',
-          body: '**Changing a route costs real money**: routes become vendor contracts, so every changed route triggers a re-negotiation — which is why the controls for keeping last month\'s routes are first-class, not buried in advanced settings.\n\n**Model time is scarce**: a full re-plan takes hours per depot on a limited licence, so Simulate honestly shows the change in the numbers rather than pretending to re-plan.\n\n**The deadline is contractual**: miss it and the network runs another month on the old design, so the dashboard\'s hero is deadline health, not vanity metrics.\n\n**Solver time is scarce**: full re-plans take hours per depot on limited licenses, so Simulate honestly shows metric deltas rather than pretending to re-optimize.\n\n**The freeze date is contractual**: miss it and the network runs another month on the old design, so the Command Center\'s hero is deadline health, not vanity metrics.',
+          body: '**Changing a route costs real money**: every changed route triggers a contract re-negotiation — which is why the controls for keeping last month\'s routes are first-class, not buried in advanced settings.\n\n**Solver time is scarce**: a full re-plan takes hours per depot on a limited licence, so Simulate shows the change in the numbers rather than pretending to re-plan.\n\n**The freeze date is contractual**: miss it and the network runs another month on the old design, so the Command Center\'s hero is deadline health, not vanity metrics.',
         },
         {
           type: 'text',
-          body: 'Trade-offs I accepted knowingly: two saved versions instead of a full history, file-level validation instead of per-cell editing, no month-over-month comparison in V1 — each cutting scope from the edges to protect the core.\n\nA phased release, shipping the agreement module alone for the next cycle, was kept open: agreement is the bottleneck the business feels first.\n\nA phased release, shipping the alignment module alone for the next cycle, was kept open — agreement is the bottleneck the business feels first.',
+          body: 'Trade-offs I accepted knowingly: two saved versions instead of a full history, file-level validation instead of per-cell editing, no month-over-month comparison in V1 — each cutting scope from the edges to protect the core.\n\nA phased release — the alignment module alone, next cycle — was kept open. Agreement is the bottleneck the business feels first.',
         },
         {
           type: 'statRow',
           stats: [
-            { value: 'double-digit%', label: 'vehicle utilization improvement target', fuzzed: true },
+            { value: 'double-digit%', label: 'vehicle utilisation improvement target', fuzzed: true },
           ],
         },
         {
           type: 'ndaNote',
           title: 'On the numbers I am not claiming',
-          body: 'The utilization and distance targets belong to the solver programme, not to this panel — the panel exists so a solver-led design survives alignment and freezes on time. The design targets here (clicks, orientation time, one vocabulary) are enforced by the spec and stakeholder review, not measured on a live cycle.',
+          body: 'The utilisation and distance targets belong to the solver programme, not to this panel. The design targets here — clicks, orientation time, one vocabulary — are enforced by spec and stakeholder review, not measured on a live cycle.',
         },
         {
           type: 'image',
@@ -378,36 +372,36 @@ export const ndc: CaseStudy = {
   spotlights: [
     {
       decision:
-        'Acknowledge is an irreversible, guarded freeze: a confirmation dialog that names exactly which reviewers get locked. After it, no Ops Lead can edit anything. There is no undo.',
+        'Acknowledge is an irreversible, guarded freeze — a confirmation dialog names exactly which reviewers get locked. No undo.',
       rejected: 'A silent status flip; a reversible "lock/unlock" toggle.',
-      why: 'The freeze is the entire point — after it, the design becomes vendor contracts. A reversible lock invites late edits that pull the contract out of step with the plan. Irreversibility is only safe if the screen shows its blast radius before the click.',
+      why: 'After the freeze the design becomes vendor contracts. A reversible lock invites late edits the contract never sees.',
     },
     {
       decision:
         'Design Review has Push to Alignment and nothing else. A run the planner doesn\'t push simply expires with the cycle.',
       rejected: 'The conventional Approve/Reject pair on every run card.',
-      why: 'The planner runs each depot three ways, so most runs are explorations by design — hundreds of runs{*} funnel into at most eighty pushed plans. A Reject button would force bookkeeping on throwaway work, and wrongly imply a rejected run is a decision someone might audit.',
+      why: 'Each depot runs three ways, so most runs are explorations. Reject would force bookkeeping on throwaway work.',
     },
     {
       decision:
-        'The panel auto-carries forward last cycle\'s finalised plan as the reference plan and forces a manual pick only for brand-new depots, with bulk-apply for the rest.',
+        'Last cycle\'s finalised plan auto-carries forward as the reference plan; brand-new depots force a manual pick, bulk-apply covers the rest.',
       rejected: 'A per-sort-centre picker as the default path for all 80.',
-      why: 'The right answer is the same roughly 79 times out of 80 — last month\'s finished design. Asking for it explicitly at this scale is eighty chances to mis-click before the cycle even starts. Defaults are where a tool proves it understands the job.',
+      why: 'The answer is the same roughly 79 times in 80. Asking explicitly is eighty chances to mis-click.',
     },
   ],
 
   reflections: [
     {
       title: 'Most of the work was subtraction, not invention.',
-      body: 'I inherited a prototype where every feature existed and nothing was usable. Deleting a duplicate navigation tier, collapsing six status vocabularies into one, removing a Reject button, refusing an audit log — that was the contribution.',
+      body: 'Six status vocabularies, a duplicate navigation tier, a Reject button — the contribution was deleting them.',
     },
     {
-      title: 'Two structural calls were corrections, not insights.',
-      body: 'The route-grain review in ADR-001 and the master-detail rethink in ADR-002 both came after I had built the wrong thing once. The evidence was in the requirements the whole time.',
+      title: 'Two structural calls were settled by evidence, not taste.',
+      body: 'ADR-001 kept the review at route grain; ADR-002 moved navigation to the sidebar alone. The requirements had the answer all along.',
     },
     {
       title: 'The targets are design-enforced, not field-measured.',
-      body: 'Under 30 seconds to orient and two clicks to start are validated by spec-fidelity checks and stakeholder review, not by a planner running a live cycle. I designed the ritual; the network has not voted yet.',
+      body: 'I designed the ritual; the network has not voted yet.',
     },
   ],
 

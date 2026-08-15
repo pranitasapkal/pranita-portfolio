@@ -1,10 +1,11 @@
 /**
  * CLH-03 — Contract Lifecycle Hub (EDITORIAL, real content, unlisted + noindex)
  *
- * Built from content/case-studies/CLH-SCRIPT-v3.md, approved 2026-08-07.
- * Structure: full case study — context → problem → inherited → object model →
- * architecture → the flows (9, each a real screen sequence) → decisions → states →
- * process → status. Plain headings; every domain term defined inline on first use.
+ * Built from content/case-studies/CLH-SCRIPT-v3.md, approved 2026-08-07; cut onto the
+ * ADR-005 section template 2026-08-16. One claim has one home — the flows are carried by
+ * their screen captions, the audit by its matrix, the process by its timeline; prose only
+ * connects them. No kicker eyebrows; reflections one line each.
+ * Checked with `npm run count:copy CLH` and `npm run check:facts check CLH`.
  * Status: in development (design locked and handed off; engineering building).
  *
  * Frames: `clh-rfq-panel/New SOT CLH panel /` (Jul 2026 SOT, trailing space in dir).
@@ -17,7 +18,7 @@ export const clh: CaseStudy = {
   ...summaries['linehaul-nexus'],
   title: 'Contract Lifecycle Hub',
   oneLiner:
-    'Every month, 2,400 truck routes have to go from a planner’s file to a signed, running contract before the 1st. This is the system that does it.',
+    'Every month, 2,400 truck routes go from a planner’s file to signed, running contracts before the 1st. This is the system that does it.',
   layout: 'editorial',
   noindex: true,
   eyebrow: 'INTERNAL TOOL · LOGISTICS OPS · IN DEVELOPMENT',
@@ -30,15 +31,9 @@ export const clh: CaseStudy = {
     platform: 'Internal desktop panel (Chrome, ~1440×900)',
     skills: ['Product Design', 'Information Architecture', 'Interaction Design', 'Design Systems'],
   },
-  coverBoard: {
-    src: '/work/clh/sot-overview.png',
-    alt: 'The contracting overview — an action centre grouping items into assign, follow up, and monitor',
-    tone: 'light',
-    placeholder: false,
-  },
   tldr: {
     problem:
-      'A central team contracted roughly 2,400 truck routes a month through spreadsheets, phone calls, and WhatsApp, with no screen that showed what was about to break.',
+      'A central team contracted a month’s truck routes through spreadsheets, phone calls and WhatsApp, with no screen that showed what was about to break.',
     outcomes: [
       'Two connected surfaces designed 0→1: route planning and contract management',
       'A locked architecture across 14 flows and 130+ screens, handed off without a structural revision',
@@ -46,7 +41,7 @@ export const clh: CaseStudy = {
     ],
     stats: [{ value: '2,400' }, { value: '14' }, { value: '130+' }],
     summary:
-      'I designed the system that turns a month’s planned truck routes into signed vendor contracts — the planning upload, the contracting queues, and the rules for what happens when a live contract has to change.',
+      'I designed the system that turns a month’s planned routes into signed vendor contracts — the planning upload, the contracting queues, and the rules for changing a live contract.',
   },
 
   chapters: [
@@ -54,14 +49,13 @@ export const clh: CaseStudy = {
     {
       id: 'what-this-is',
       step: 1,
-      kicker: 'Context',
       navLabel: 'What this is',
       ghost: 'Context',
-      title: 'What this is',
+      title: 'Valmo doesn’t own its trucks. It contracts them, every month, route by route.',
       blocks: [
         {
           type: 'text',
-          body: "**Meesho is one of India's largest e-commerce marketplaces.\n\nValmo is the logistics network it built to move its own parcels.** Before a parcel reaches a doorstep it travels between warehouses on hired trucks — that leg is called linehaul, and Valmo doesn't own those trucks.\n\nIt rents them, route by route, from trucking companies, on contracts that have to be negotiated and signed every single month.\n\nA route contract is one agreement: this vendor, this route, this size of truck, this rate, for this month. Valmo needs about **2,400 of them, live before the 1st**.\n\nI was the only designer on the system that does this, from the object model through to a 130-screen handoff.",
+          body: 'Meesho is one of India’s largest e-commerce marketplaces. **Valmo** is the logistics network it built to move its own parcels.\n\nBefore a parcel reaches a doorstep it rides hired trucks between warehouses — that leg is called **linehaul**.\n\nA route contract is one agreement with a trucking company: this vendor, this route, this truck size, this rate, for this month.',
         },
         {
           type: 'board',
@@ -79,14 +73,13 @@ export const clh: CaseStudy = {
     {
       id: 'the-problem',
       step: 2,
-      kicker: 'The problem',
-      navLabel: 'The problem',
+      navLabel: 'Four failures',
       ghost: 'Problem',
       title: 'The planning half was software. The contracting half was WhatsApp.',
       blocks: [
         {
           type: 'text',
-          body: 'Planners already produced the month’s routes in a system.\n\nThe team that had to turn those routes into signed contracts worked by hand: assignments went out as bulk Excel files, vendor follow-ups happened on phone calls, disputes lived in WhatsApp threads.\n\nNothing joined the two halves together.\n\nFour things went wrong because of that, and they are the four things the design has to fix.',
+          body: 'Planners already produced the month’s routes in a system.\n\nThe team turning those routes into signed contracts worked by hand: assignments as bulk Excel files, follow-ups on phone calls, disputes in WhatsApp threads.\n\nNothing joined the two halves together.\n\nFour things went wrong because of it.',
         },
         {
           type: 'phaseCards',
@@ -94,12 +87,12 @@ export const clh: CaseStudy = {
             {
               step: 'Failure 01',
               title: 'Nobody could see what was pending',
-              body: 'With 2,400 routes in flight and no shared view, "what still needs a vendor this week?" was answered by opening a spreadsheet and counting.',
+              body: 'With the month in flight and no shared view, "what still needs a vendor this week?" meant opening a spreadsheet and counting.',
             },
             {
               step: 'Failure 02',
               title: 'Contracts went live with the wrong terms',
-              body: 'A rate typed into a sheet is not a rate anyone agreed to. The error surfaced after trips had run, as a dispute over money already spent.',
+              body: 'A rate typed into a sheet is not a rate anyone agreed to — the error surfaced as a dispute over money already spent.',
             },
             {
               step: 'Failure 03',
@@ -120,14 +113,13 @@ export const clh: CaseStudy = {
     {
       id: 'inherited',
       step: 3,
-      kicker: 'Starting point',
       navLabel: 'What I inherited',
       ghost: 'Audit',
       title: 'What I inherited, and why I audited it first',
       blocks: [
         {
           type: 'text',
-          body: 'The project was not starting from zero, which turned out to be the problem. There were already **136 Figma screens**, drawn against a specification that had since moved, plus a 21-page requirements document and several prototype iterations.\n\nTreating them as an approved baseline would have shipped their structure into engineering. So the first thing I produced was not a screen. It was an audit of 50+ of those screens against the current specification.',
+          body: 'The project was not starting from zero, which was the problem.\n\n**136 Figma screens** already existed, drawn against a spec that had since moved, plus a 21-page requirements document and several prototype iterations.\n\nTreating them as an approved baseline would have shipped their structure straight into engineering.\n\nSo the first thing I produced was not a screen: an audit of 50+ of them against the current specification.',
         },
         {
           type: 'matrix',
@@ -144,7 +136,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'That audit bought the argument for doing structure first: diagram, then a written decision record, then Figma. Caught in a diagram, a structural mistake costs a redraw. Caught in 130 screens, it costs weeks.',
+          body: 'That audit bought the argument for the sequence: caught in a diagram, a structural mistake costs a redraw; caught in 130 screens, it costs weeks.',
         },
       ],
     },
@@ -153,14 +145,13 @@ export const clh: CaseStudy = {
     {
       id: 'object-model',
       step: 4,
-      kicker: 'The model',
       navLabel: 'The object model',
       ghost: 'Model',
       title: 'A route is not a contract',
       blocks: [
         {
           type: 'text',
-          body: 'This is the model everything else follows from.\n\nPlanners publish a **design** — one month’s batch of routes. Each route in it becomes a requirement: this lane, this truck size, this many trucks, starting this date. And each *truck* on that route becomes its **own contract**, with its own vendor and its own rate.\n\nA **regional** route needs one truck: one requirement, one contract. A **national** route runs long-distance and needs several — one requirement, four contracts — and each of those four can be at a completely different stage at the same time.',
+          body: 'This is the model everything else follows from.\n\nPlanners publish a **design** — one month’s batch of routes. Each route becomes a requirement: this lane, this truck size, this many trucks, starting this date.\n\nAnd each *truck* on that route becomes its **own contract**, with its own vendor and its own rate.\n\nA **regional** route needs one truck — one requirement, one contract. A **national** route needs several: one requirement, four contracts.',
         },
         {
           type: 'board',
@@ -187,7 +178,6 @@ export const clh: CaseStudy = {
     {
       id: 'architecture',
       step: 5,
-      kicker: 'Architecture',
       navLabel: 'Three levels',
       ghost: 'Structure',
       title: 'Three levels, five stages, one rule',
@@ -198,7 +188,7 @@ export const clh: CaseStudy = {
             {
               step: 'Level 1',
               title: 'Overview',
-              body: 'Opens on what needs attention across everything, grouped by what you would actually do about it: assign a vendor, chase a vendor, or fix a live contract. Not a dashboard of charts — a list of work.',
+              body: 'Not a dashboard of charts — a list of work, grouped by what you would actually do about it.',
               tags: ['Action centre'],
             },
             {
@@ -216,7 +206,7 @@ export const clh: CaseStudy = {
             {
               step: 'The rule',
               title: 'A route sits at the stage of its least-finished truck',
-              body: 'Three trucks approved and one unassigned means the whole route stays in Action Required. Every later stage becomes a promise — and a regional route is just the one-truck case of the same rule.',
+              body: 'Three trucks approved, one unassigned — the route stays in Action Required. Every later stage becomes a promise; a regional route is just the one-truck case.',
               tags: ['Holds both route types'],
             },
           ],
@@ -237,8 +227,7 @@ export const clh: CaseStudy = {
     {
       id: 'flows',
       step: 6,
-      kicker: 'The flows',
-      navLabel: 'The flows',
+      navLabel: 'Route to contract',
       ghost: 'Flows',
       title: 'How a route becomes a running contract',
       blocks: [
@@ -253,7 +242,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**Planning a month.** Planners upload the coming month’s routes as a file. It is deliberately all-or-nothing: one bad row rejects the whole batch, and the system returns an error file naming which rows failed and why.\n\nA partially-accepted batch would mean a month that is quietly incomplete.\n\nThe rules live on the page itself — what each column means, why the start date must be at least 10 days out, what happens when you edit a design that is already live.',
+          body: '**Planning a month.** The upload is deliberately all-or-nothing — a partial batch is a month quietly incomplete — and start dates sit at least 10 days out.',
         },
         {
           type: 'screensGrid',
@@ -268,7 +257,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**Assigning a vendor.** The queue is sorted most-urgent-first. Assigning happens in the row: the form opens under the route so the destination, truck size and deadline stay on screen while you pick a vendor and set a rate. A recommended rate sits beside the field.',
+          body: '**Assigning a vendor.** The route’s destination, truck size and deadline stay on screen throughout.',
         },
         {
           type: 'screensGrid',
@@ -282,7 +271,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**Assigning in bulk.** At 2,400 routes a month, one-at-a-time is not the main path. Download the queue as a file, fill vendor and rate in the sheet the team already lives in, upload it back.',
+          body: '**Assigning in bulk** — in the sheet the team already lives in.',
         },
         {
           type: 'screensGrid',
@@ -294,7 +283,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**Chasing a vendor who hasn’t replied.** Once sent, a contract waits on the vendor. After seven days with no response it moves into its own queue, and reminders can be sent across a selection at once.',
+          body: '**Chasing a vendor.** Reminders go out across a selection at once.',
         },
         {
           type: 'screensGrid',
@@ -306,7 +295,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**When a vendor says no.** A rejection returns the route to Action Required with the reason attached, and reassignment reuses the same inline form — deliberately not pre-filled with the vendor who just declined.',
+          body: '**When a vendor says no**, the route returns to Action Required.',
         },
         {
           type: 'screensGrid',
@@ -319,19 +308,19 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**Fixing a bad upload, and verifying before go-live.** Errors are named per field on the row that failed — wrong vendor ID, rate above the ceiling, invalid date range.\n\nAnd nothing activates automatically: an accepted contract waits in Upcoming until someone checks and activates it. One deliberate click, because a wrong contract caught here costs nothing and caught after the trucks run costs a dispute.',
+          body: '**Nothing activates automatically.** A wrong contract caught in Upcoming costs nothing; caught after the trucks run, it costs a dispute.',
         },
         {
           type: 'screensGrid',
           cols: 2,
           items: [
-            { src: '/work/clh/f6-error-detail.png', alt: 'Upload errors named per field', caption: 'Errors name the field and the reason, fixed in place' },
+            { src: '/work/clh/f6-error-detail.png', alt: 'Upload errors named per field', caption: 'Errors name the field — wrong vendor ID, rate above the ceiling, invalid date range — fixed in place' },
             { src: '/work/clh/f7-verify.png', alt: 'Upcoming — verify before activating', caption: 'Upcoming — verified by a person before it goes live' },
           ],
         },
         {
           type: 'text',
-          body: '**Exceptions: disputes, termination, closure.** A dispute raised before activation resolves in the route itself — approve and revise the rate, or reject it with a reason. Termination states its notice period, so a route is never cut without cover. Everything terminal lands in Closed, read-only.',
+          body: '**Exceptions.** Approving a dispute revises the rate; a termination notice period means a route is never cut without cover.',
         },
         {
           type: 'screensGrid',
@@ -350,21 +339,20 @@ export const clh: CaseStudy = {
     {
       id: 'decisions',
       step: 7,
-      kicker: 'The decisions',
       navLabel: 'Contested calls',
       ghost: 'Decisions',
       title: 'Four calls that shaped the system',
       blocks: [
         {
           type: 'text',
-          body: '**1 · Where a half-finished route lives.** A route sits at the stage of its least-finished truck.',
+          body: '**1 · A route lives wherever its least-finished truck is.**',
         },
         {
           type: 'rejected',
           items: [
             {
               pattern: 'File it under its best state, with a warning badge',
-              reason: 'At fifty rows a day, badges become wallpaper. The manager stops seeing them within a week.',
+              reason: 'At fifty rows a day, badges become wallpaper within a week.',
             },
             {
               pattern: 'List the route once in every stage it touches',
@@ -378,11 +366,11 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**What it costs:** progress you have already made stops being visible. Finish three of four trucks and the route sits where it sat this morning.\n\nThe counts reward finishing routes, not trucks — correct for the deadline the team is judged against, and mildly demoralising on a Wednesday.',
+          body: '**What it costs:** progress you have already made stops being visible.\n\nThe counts reward finishing routes, not trucks — correct for the deadline the team is judged against, and mildly demoralising on a Wednesday.',
         },
         {
           type: 'text',
-          body: '**2 · Not every change breaks a contract.** A signed contract is an agreement, so "edit" cannot mean what it means in an ordinary form.\n\nI had to decide, field by field, whether a change is something the vendor already agreed to, or something they must agree to again. Every one of these modals states the consequence in plain language before you commit.',
+          body: '**2 · Not every change breaks a contract.** A signed contract is an agreement — "edit" cannot mean what it means in an ordinary form.\n\nI decided, field by field, what the vendor already agreed to and what they must agree to again; each modal states the consequence before you commit.',
         },
         {
           type: 'screensGrid',
@@ -403,17 +391,17 @@ export const clh: CaseStudy = {
           items: [
             {
               pattern: 'A modal for every assignment',
-              reason: 'Open, fill, close, hunt for the next row, repeat — the cost lands on the single most repeated action in the product.',
+              reason: 'Open, fill, close, hunt, repeat — the cost lands on the product’s most repeated action.',
             },
             {
               pattern: 'A filter bar over one master table',
-              reason: 'Filters make you rebuild your to-do list every morning. A named queue with a count remembers it for you.',
+              reason: 'Filters make you rebuild the to-do list every morning; a named queue remembers it.',
             },
           ],
         },
         {
           type: 'text',
-          body: '**4 · The vendor column only exists once there is a vendor.** The rejected version kept a fixed grid across every stage and filled the gaps with dashes.\n\nAt scanning speed a dash reads as a loading failure and costs an investigation click. A missing column says **this does not exist yet**; an empty one says **something went wrong**.',
+          body: '**4 · The vendor column only exists once there is a vendor.** The rejected version kept a fixed grid and filled the gaps with dashes.\n\nAt scanning speed a dash reads as a loading failure and costs an investigation click. A missing column says **this does not exist yet**; an empty one says **something went wrong**.',
         },
         {
           type: 'screensGrid',
@@ -430,14 +418,13 @@ export const clh: CaseStudy = {
     {
       id: 'states',
       step: 8,
-      kicker: 'Edge cases',
       navLabel: 'Edge cases',
       ghost: 'States',
       title: 'The states that decide whether it survives a bad week',
       blocks: [
         {
           type: 'text',
-          body: 'Every table view was specified with its full set: default, loading, empty because you cleared it, empty because it is your first time, no search results, network error, inline row error, and three toast variants.\n\nThe interesting ones are the states that only appear when something has gone wrong upstream.',
+          body: 'Every table view was specified with its full set — default, loading, two empties (cleared vs first-time), no results, network error, inline row error, three toast variants.\n\nThe interesting ones only appear when something upstream has gone wrong.',
         },
         {
           type: 'screensGrid',
@@ -454,14 +441,13 @@ export const clh: CaseStudy = {
     {
       id: 'how-it-was-made',
       step: 9,
-      kicker: 'Process',
       navLabel: 'How I worked',
       ghost: 'Process',
       title: 'Structure first, pixels after',
       blocks: [
         {
           type: 'text',
-          body: 'Structure diagram → written decision record → Figma → prototype.\n\nFour contested structural calls were settled in writing before any high-fidelity work, which is why 130+ screens were handed off without a structural revision.\n\nThe full eight-step process ran underneath — problem framing, objective, persona, architecture, flows, wireframes, prototype, business case — it just isn’t the story.',
+          body: 'The full eight-step process ran underneath — problem framing, objective, persona, architecture, flows, wireframes, prototype, business case — it just isn’t the story.',
         },
         {
           type: 'timeline',
@@ -476,7 +462,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The interaction model was proven in a data-driven prototype rather than a click-through, because the central claim is a data rule.\n\nIt runs ~75 routes across three monthly batches with the least-finished-truck rule implemented in the filtering logic — assign three of four trucks and the route genuinely refuses to move.',
+          body: 'The interaction model was proven in a data-driven prototype rather than a click-through, because the central claim is a data rule.\n\nIt runs ~75 routes across three monthly batches, with the least-finished-truck rule live in the filtering logic.',
         },
         {
           type: 'prototype',
@@ -492,16 +478,16 @@ export const clh: CaseStudy = {
 
   reflections: [
     {
-      title: 'There is no usage number, and inventing one would be the easiest thing here to catch.',
-      body: 'The design is locked and handed off; engineering is still building it. What I can claim is structural — an architecture that held across 14 flows and 130+ screens, and three navigation-breaking issues caught before they reached engineering.',
+      title: 'There is no usage number, and inventing one would be the easiest thing to catch.',
+      body: 'Engineering is still building; every claim on this page is structural.',
     },
     {
       title: 'The measurement I want is the one I do not have.',
-      body: 'Time to clear the Action Required queue, before and after. Without it, the change model is an argument rather than a result.',
+      body: 'Time to clear the Action Required queue, before and after.',
     },
     {
       title: 'The prototype demonstrates the worst-case-slot rule. It does not yet teach it.',
-      body: 'A manager who has finished three of four trucks sees an unchanged queue. Whether that reads as the system being strict or as the system ignoring their work will only show up on a bad Wednesday in a real month.',
+      body: 'Whether an unchanged queue reads as strict, or as ignoring finished work, will only show in a real month.',
     },
   ],
 
