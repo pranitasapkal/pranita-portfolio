@@ -21,4 +21,5 @@ Shared `useReveal.ts` hook extracted so all blocks reuse one reveal implementati
 
 ## Consequences
 - Easier: reference-grade, image+data-rich case pages; the 8-step process reads as a narrative, not a form. Live-rendered blocks stay crisp at any DPR, animate, and are editable without re-exporting PNGs.
-- Watch: `screensGrid` object-cover crops screen tops — pick source screens whose story reads in the upper 16:9; blocks are dark-theme-tuned (ink/signal), so a future light-band variant needs a tone prop, not new components.
+- Corrected 2026-08-15: `screensGrid` does **not** crop. Its `img` is `w-full block` with no `object-cover`; the `aspect-[16/9]` applies only to the "screen pending" fallback, so a tall screenshot renders in full. What to watch instead is legibility — a 2000px-wide dense table sits at roughly 456px in a 2-col grid and 298px in a 3-col one, so use `cols: 2` when the rows have to be readable and `cols: 3` only for a contact sheet.
+- Watch: blocks are dark-theme-tuned (ink/signal), so a future light-band variant needs a tone prop, not new components.

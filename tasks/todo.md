@@ -133,3 +133,91 @@ everything else.
 ## Repo hygiene done this session
 - `.gitignore` now excludes `Figma- Assignment module/` — 182 raw SOT PNGs plus 3 source PDFs containing provisioning figures, the ticketing-vendor name, and NPS targets. They were untracked but would have been committed.
 - `tasks/transporter-panel-sot-map.md` moved out of `content/case-studies/` (a scanned dir) since it names banned strings by design.
+
+## 2026-08-15 — screens pass + review-deck reframe (TPN-01)
+
+**Shipped**
+- Un-cropped `raise-dispute-form` (all seven bilingual sub-categories now visible) — the 56%-width crop was what cut the text.
+- New exports: `disputes-list` (Dispute Management landing, five status tabs, full table) and `raise-dispute-details` (right-hand Dispute Details panel — one current-vs-expected card per selected issue).
+- `missing-trip-challan` re-sourced from `Missing Trip - Raise Dispute.png` — **no error state**, and the challan is no longer blanket-blurred. Only five personal-data fields are redacted (shipper name + address, transporter name + ID, delivery address, driver name, driver mobile); the Trip ID inside its green box stays sharp, which is the point of the screen. Boxes are fractions of the full frame, measured against that exact source — re-measure if it is re-exported from Figma.
+- Ch04: `screensGrid` (cols 2) of all five tab defaults in lifecycle order, each caption naming the tab's one action. The standalone `cancelled-remarks` image was dropped — the gallery carries it, and its Missed Earning / Remark point moved into the caption.
+- Ch05: right-hand dispute panel + disputes list added; missing-trip copy rewritten around the challan rather than the error, with the false-missing guard kept as copy.
+- Deck-informed copy: programme context in ch01 (three parts, this is the middle one), sharper root cause (a large changing pool of temporary depot staff measured on compliance targets), no-traceability / single-point-of-contact dependence, and the three goals stated plainly in ch02.
+- **Self-invoicing removed** from the TL;DR outcome, ch02 and ch08. The payout argument now rests on accurate assignment data + an agreed on-screen record.
+
+**Deliberately not taken from the deck:** placement, onboarding, fleet management, driver app, WhatsApp comms, payments screens (separate project); the deck's older vocabulary (Opt-Out, five dispute categories, a Payments tab) — the Figma wins; and its private figures (35% inaccuracy, the ~25/16/33/53/35% breakdown, 1000+ SC operators, 30+45 day cycle, 15–20 day disputes, 80%+ automated payouts). `nda-scan` does not carry those tokens, so that one is discipline, not a gate — grepped clean.
+
+**Verified:** `npm run build` green · `npm run nda-scan` clean · `count:copy TPN` 4,618w, median 23 / p75 31 / longest 51 / zero >60w — within budget · `check:facts check TPN` 55→60, single loss was a quote-pairing artifact (`"missing"`), the claim itself is intact · browser walk at `/work/transporter-panel`: 23 images all load, gallery renders 5 cells at 456px in two columns, the three new shots render full-width in browser frames, "self-invoic" appears nowhere.
+
+**Corrected:** ADR-002's note that `screensGrid` crops screen tops was stale — it does not crop. Replaced with the real constraint (legibility per column count).
+
+## 2026-08-15 — Fable review panel on TPN-01, and the fixes
+
+Four Fable reviewers ran against the Transporter Panel only (comprehension on the rendered page,
+design craft, copy quality, gaps). NDC/CLH/TCM/PLC were not touched.
+
+**The comprehension test passed** — a design lead with no logistics context wrote an accurate
+paragraph on what was designed and why after one read. What failed was the perimeter.
+
+### Fixed
+- **Factual error: the screens-per-tab table summed to 178, not 182.** Counted against the SOT
+  export — Pending 30 · Upcoming 29 · In-Transit 10 · **Completed 106** · Cancelled 7 = 182. The
+  case said 102 for Completed. Corrected in the matrix, the chapter title and the TL;DR outcome;
+  shares recomputed to 16/16/5/58/4.
+- **The TL;DR never rendered on this page.** `TldrBlock` was wired into `CaseLayout` only, and this
+  case is `layout: 'editorial'` — so the problem statement, three outcomes and stat tiles were
+  authored and invisible. Now rendered in both layouts (`EditorialCaseLayout.tsx`).
+- **A flat contradiction:** ch4 said disputes are "raised from anywhere", the closing said "only
+  from Completed". Both can't be true — now says built for anywhere, one entry point wired in this
+  release.
+- **Six passages broken by the earlier cut** — an orphaned "Not met everywhere", "Three traits"
+  pointing at a matrix of asks, Problem 2's `effect` field holding the rejection rationale, ch2 and
+  ch8 opening mid-thought, unintroduced phaseCards.
+- **"handshake"** inverted its own meaning in a payments story → "physical proof".
+- **Research provenance** — the eight findings read as assumptions. Now names the three methods
+  Pranita confirmed (talked to transporters · read the dispute ticket log · watched the WhatsApp
+  module in use), with no invented counts. The complaint-mix analysis moved out of ch5 into the
+  research chapter, where a reader looks for it.
+- **Validation** — usability testing on both guard modals is now stated in ch5. Nothing on the page
+  says testing happened before this.
+- **"Placement time"** — the term every deadline, urgency chip and auto-rejection hangs on, never
+  defined. Now glossed at first use.
+- **"Confirmation" had no referent** for two chapters — ch2 now names Confirm Details.
+- **The closing heading is hardcoded "What I'd test next."** over reflections that were aphorisms.
+  Reflections rewritten as actual open questions.
+- **One illegal outcome claim deleted** — "Each one, once named, stopped generating a phone call"
+  was a measured result in a case whose credibility rests on claiming none.
+- Decisions argued in three places collapsed to one home each (Adhoc/settlement, Hindi inline);
+  two strawman rejected-patterns dropped; jargon glossed (challan, Adhoc, TMS, POC, RFQ).
+
+### Measurement bug found in my own gate
+`count-copy.mjs` counted every string over 12 words as a "prose paragraph", including chapter
+titles, table cells and captions — inflating TPN-01 to 98 paragraphs when about half were headings.
+The reference was measured by counting `p`/`li` elements only. Corrected to the same two-step
+method, and the short-to-prose ratio gate was removed: the reference's "123 short elements" are
+one-word `p` tags used as labels (`PROBLEM`, `IF`, `THEN`), which our block vocabulary puts in
+dedicated fields. Gating on it would measure markup style, not writing.
+
+### Where TPN-01 landed
+Reading copy 1,990w against a 1,800 target (reference 1,401) · 74 prose paragraphs against 50 ·
+median 24 · p75 30 · longest 41 · one paragraph over 40 words. Build green, NDA scan clean, no fact
+lost that wasn't a deliberate correction.
+
+The two gates it misses are honest: this case carries 23 screenshots, 4 matrices, 3 rule lists, 2
+problem/fix pairs and 8 research notes, and the reference carries far less. Cutting to 1,800 from
+here means deleting evidence, which is the thing Pranita reversed last time.
+
+### Still owed by Pranita — each is one edit when she has it
+- **Research scale**: roughly how many transporters, over what period. She chose "methods only, no
+  numbers" for now; the counts would make the strongest section stronger.
+- **Usability testing specifics**: how many participants, and one thing the testing changed. The
+  page currently says testing happened and claims nothing about what it found.
+- **Go-live date and rollout scope** — the eyebrow says LIVE (she confirmed: built and in
+  production) but the page never says when, or whether it was a pilot or everyone.
+- **Anything observable post-launch**, even qualitative. Ch8 speaks in the future conditional on a
+  product that has been live for months, which reads worse than "I can't share the numbers".
+- **The money tail**: after Confirm Details the invoice generates — and the page stops. No payout
+  surface for a case whose thesis is payment.
+- **Trip creation**: the opening villain is depot staff retyping trips, and the biggest error class
+  is a creation-side error. The panel starts at "trip exists", so the villain of act one is never
+  defeated on the page.

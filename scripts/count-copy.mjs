@@ -23,7 +23,30 @@ const tmp = resolve(root, '.copy-count-tmp')
 
 // Identifiers and accessibility text — never rendered as reading copy.
 const SKIP = new Set(['src', 'slug', 'code', 'id', 'href', 'poster', 'browserSlug', 'alt'])
-const PROSE_MIN = 12
+
+/**
+ * Prose is decided by the FIELD, not by length — corrected 2026-08-15.
+ *
+ * The first version split on a 12-word threshold, so a 13-word chapter title counted as a
+ * paragraph. That inflated TPN-01 to 98 "paragraphs" when about half were headings, table cells
+ * and captions. It also made the comparison against the reference dishonest: the reference page
+ * was measured by counting `p` and `li` elements, which excludes every `h1`–`h4`.
+ *
+ * The reference was counted in two steps and this must match, or the comparison is meaningless:
+ *   1. take only the elements that render as `p` or `li` — that excludes every heading, caption,
+ *      table cell and label. The reference's 1,401 words are p/li words ONLY.
+ *   2. of those, the ones running 12 words or more are the "prose paragraphs" — 42 of them.
+ *
+ * So `body`, `note`, `notes`, `sub`, `reason`, `why`, `effect` and friends below are p/li text.
+ * `title`, `caption`, `label`, `word`, `value`, `rows`, `columns`, `pattern`, `decision`,
+ * `rejected` and `step` are headings, cells and chips — reported as `furniture`, never as prose.
+ * A 20-word caption is still worth fixing; it just isn't a paragraph, and pretending it is
+ * inflated TPN-01 by roughly half.
+ */
+const PROSE_FIELDS = new Set([
+  'body', 'statement', 'text', 'effect', 'why', 'reason', 'note', 'sub',
+  'totalNote', 'summary', 'problem', 'outcomes', 'oneLiner', 'notes',
+])
 
 const words = (s) => (s.match(/\S+/g) || []).length
 const pct = (a, p) => a[Math.floor(a.length * p)]
@@ -36,7 +59,7 @@ function collect(value, key, into) {
     // `{*}` is an asterisk marker, not a word.
     for (const para of value.split(/\n\n+/)) {
       const n = words(para.replace(/\{\*\}/g, ''))
-      if (n) into.push(n)
+      if (n) into.push({ n, prose: PROSE_FIELDS.has(key) })
     }
     return
   }
@@ -67,17 +90,25 @@ await build({
 const { caseStudies } = await import(`${resolve(tmp, 'bundle.mjs')}?v=${fileNames.join()}`)
 rmSync(tmp, { recursive: true, force: true })
 
-// Budget from ADR-004, revised 2026-08-15.
+// Budget from ADR-005 (2026-08-15), replacing ADR-004's.
 //
-// There is deliberately NO total-words target. The first pass set one (750–900, taken from the
-// reference portfolios) and cutting to it meant dropping six screens and four decision
-// spotlights — evidence, not padding. Pranita's call: keep the full depth, around 4,600 words.
+// The total-words target is back, and the history matters. A first pass cut to 750–900 words and
+// Pranita reversed it — but that cut had also dropped six screens and four decision spotlights,
+// so what she rejected was losing EVIDENCE, not losing prose. The reference she then chose
+// (smritidesign.work/work/ai-commentary) settles it: 1,401 words carrying 123 short labelled
+// elements against only 42 paragraphs. Meaning lives in the structure; prose only connects it.
 //
-// So the gate is paragraph SHAPE, not page length. `max`/`over60` are the ones that matter: a
-// 150-word paragraph is unreadable whatever the page total, while forty 28-word paragraphs are
-// fine. `median`/`p75` are set to what a full-depth case actually sustains, so a pass here means
-// something rather than being permanently red.
-const BUDGET = { median: [18, 30], p75: 40, max: 60, over60: 0 }
+// `total` and `paras` cap the page; `median`/`p75`/`max`/`over40` cap the shape.
+//
+// There is deliberately NO short-to-prose ratio gate. The reference appears to carry 123 "short
+// elements" against 42 paragraphs, but those are one-word `p` tags used as labels — literally
+// `PROBLEM`, `IF`, `THEN`. Our block vocabulary puts labels in dedicated fields (`label`, `word`,
+// `value`) that render as spans and chips, so the same page structure scores 24 instead of 123.
+// Gating on that ratio would measure markup style, not writing, and would fail forever.
+//
+// Reference actuals, for calibration: 1,401w of p/li text · 42 paragraphs · median 20 · p75 30 ·
+// max 46 · 1 paragraph over 40w.
+const BUDGET = { total: 1800, paras: 50, median: [16, 24], p75: 32, max: 48, over40: 3 }
 let failed = false
 
 let matched = 0
@@ -86,26 +117,35 @@ for (const cs of Object.values(caseStudies)) {
   matched++
   const lens = []
   collect(cs, 'root', lens)
-  const prose = lens.filter((n) => n >= PROSE_MIN).sort((a, b) => a - b)
-  const short = lens.filter((n) => n < PROSE_MIN)
-  const total = lens.reduce((a, b) => a + b, 0)
+  // Step 1 — p/li only, which is what the reference's 1,401 words covers.
+  const flowing = lens.filter((x) => x.prose)
+  const furniture = lens.filter((x) => !x.prose)
+  // Step 2 — of those, 12 words or more is a paragraph.
+  const prose = flowing.filter((x) => x.n >= 12).map((x) => x.n).sort((a, b) => a - b)
+  const short = flowing.filter((x) => x.n < 12)
+  const total = flowing.reduce((a, b) => a + b.n, 0)
+  const furnitureWords = furniture.reduce((a, b) => a + b.n, 0)
   const median = pct(prose, 0.5)
   const p75 = pct(prose, 0.75)
   const max = prose[prose.length - 1]
-  const over = prose.filter((n) => n > BUDGET.max).length
+  const over = prose.filter((n) => n > 40).length
 
   const bad = []
+  if (total > BUDGET.total) bad.push('total')
+  if (prose.length > BUDGET.paras) bad.push('paras')
   if (median < BUDGET.median[0] || median > BUDGET.median[1]) bad.push('median')
   if (p75 > BUDGET.p75) bad.push('p75')
-  if (over > BUDGET.over60) bad.push('>60w')
+  if (max > BUDGET.max) bad.push('longest')
+  if (over > BUDGET.over40) bad.push('>40w')
   if (bad.length) failed = true
 
   console.log(`\n${cs.code}  ${cs.title}`)
-  console.log(`  total            ${total}w`)
-  console.log(`  prose            ${prose.length} paras, ${prose.reduce((a, b) => a + b, 0)}w`)
-  console.log(`  short elements   ${short.length}   (ratio ${(short.length / prose.length).toFixed(1)}:1)`)
+  console.log(`  reading copy     ${total}w   (target ≤${BUDGET.total}; reference 1,401)`)
+  console.log(`  furniture        ${furnitureWords}w in ${furniture.length} headings/captions/cells (not compared)`)
+  console.log(`  prose            ${prose.length} paras, ${prose.reduce((a, b) => a + b, 0)}w   (target ≤${BUDGET.paras} paras)`)
+  console.log(`  short lines      ${short.length}   (p/li under 12 words)`)
   console.log(`  median / p75     ${median} / ${p75}   (target ${BUDGET.median.join('–')} / ≤${BUDGET.p75})`)
-  console.log(`  longest / >60w   ${max} / ${over}   (target ≤${BUDGET.max} / ${BUDGET.over60})`)
+  console.log(`  longest / >40w   ${max} / ${over}   (target ≤${BUDGET.max} / ≤${BUDGET.over40})`)
   console.log(bad.length ? `  OVER BUDGET: ${bad.join(', ')}` : '  within budget')
 }
 
