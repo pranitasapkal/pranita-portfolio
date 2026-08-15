@@ -63,7 +63,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: "Valmo — Meesho's transportation arm — places linehaul trips with independent Indian transporters. Everything after placement ran on chat, where two failures met.",
+          body: 'Valmo — Meesho\'s transportation arm — books long-distance truck runs between depots with independent Indian transporters. Everything after booking ran on chat, where two failures met.',
         },
         {
           type: 'quote',
@@ -90,11 +90,11 @@ export const transporterPanel: CaseStudy = {
           items: [
             {
               label: 'Bad data going in',
-              body: 'An area manager decides how many trips run from which sort centre to which destination, and on what vehicles. That plan reached the system by hand: a sort-centre operator retyped every trip from it, in a hurry.\n\nA vehicle number typed under pressure is good enough to dispatch and wrong enough to break the payout. Dispatch itself was marked manually, and sometimes early, to protect a compliance score.\n\nWrong numbers, wrong transporter mapping, missing GPS — and the biggest class, round trips booked as two.',
+              body: 'An area manager plans how many trips run from which depot to which destination, and on what vehicles. That plan reached the system by hand: someone at the depot retyped every trip from it, in a hurry.\n\nA vehicle number typed under pressure is good enough to dispatch and wrong enough to break the payment. Dispatch itself was ticked off manually, and sometimes early, to protect a performance score.\n\nWrong numbers, wrong transporter, missing GPS — and the biggest class, return journeys booked as two separate one-way trips.',
             },
             {
               label: 'No visibility coming out',
-              body: 'A vendor could not see which trips Valmo had acknowledged, so he invoiced from a private spreadsheet that FinOps matched by hand over months. Mismatches went to the phone; disputes went to email and got lost.',
+              body: 'A transporter could not see which trips Valmo had acknowledged, so he invoiced from his own spreadsheet, which finance then matched by hand over months. Mismatches went to the phone; disagreements went to email and got lost.',
             },
             {
               label: 'A ceiling at twenty trips',
@@ -267,7 +267,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'So where the panel asks him to type a Trip ID, it shows him the document he is holding rather than describing the format in words.',
+          body: 'So where the panel asks him to type a trip number, it shows him the paper dispatch note he is holding — the challan — rather than describing the format in words.',
         },
       ],
     },
@@ -324,7 +324,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The biggest IA call was taking disputes out of the trip. A dispute can be about a rate card never agreed, a TDS deduction, a GST mismatch, a bank account — none of them a trip.',
+          body: 'The biggest structural call was taking disagreements out of the trip. A dispute can be about a rate that was never agreed, a tax deduction, a bank account — none of them a trip.',
         },
         {
           type: 'text',
@@ -354,21 +354,21 @@ export const transporterPanel: CaseStudy = {
             },
             {
               title: 'Two settlement paths, kept visibly apart',
-              body: 'SC-SC and FM Carting settle through an existing billing process elsewhere, so those rows say so in words and offer More info instead of a dead button.',
+              body: 'Two trip types are paid through a different system entirely, so those rows say so in words and offer More info instead of a dead button.',
             },
           ],
         },
         {
           type: 'text',
-          body: 'Adhoc rows keep the full Confirm Details / Raise Dispute pair, and that was deliberate. Adhoc is the billing type most likely to have no linked contract at all.',
+          body: 'One-off trips — booked without a contract behind them — keep the full Confirm Details / Raise Dispute pair, and that was deliberate.',
         },
         {
           type: 'text',
-          body: 'Those are the trips whose number he cannot check against anything he agreed to. Suppressing the actions there would strand the least verifiable earnings with no route to correction.',
+          body: 'Those are exactly the trips whose number he cannot check against anything he agreed to. Suppressing the actions there would strand the least verifiable earnings with no route to correction.',
         },
         {
           type: 'text',
-          body: 'So the row shows the basis it does have — Rate: ₹20/km where Regular shows Contract ID: 001-RFQ-009 — and keeps both actions live.',
+          body: 'So the row shows the basis it does have — Rate: ₹20/km, where a contracted trip shows Contract ID: 001-RFQ-009 — and keeps both actions live.',
         },
         {
           type: 'image',
@@ -481,7 +481,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Raise a dispute. Category, Trip ID, then sub-categories as a multi-select, with the behaviour explained rather than assumed.',
+          body: 'Raise a disagreement. Category, trip number, then sub-categories as a multi-select, with the behaviour explained rather than assumed.',
         },
         {
           type: 'text',
@@ -489,7 +489,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The categories are not generic: they were chosen against the real dispute mix, where the overwhelming majority were about rate, not service.',
+          body: 'The categories are not generic: they were chosen against the real mix of complaints, where the overwhelming majority were about the rate, not the service.',
         },
         {
           type: 'image',
@@ -500,7 +500,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Report a missing trip. Three steps, with one guard that matters most: type a Trip ID that already exists and the form refuses to file — "This trip isn’t missing!" — offering a View Trip link.',
+          body: 'Report a missing trip. Three steps, with one guard that matters most: type a trip number that already exists and the form refuses to file — "This trip isn’t missing!" — offering a View Trip link.',
         },
         {
           type: 'text',
@@ -573,11 +573,11 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Rule 2 said Trip ID must not lead, because he recognises a trip by route and vehicle long before an ID. Rather than reorder, I made the first cell carry two handles — the ID over the vehicle number.',
+          body: 'Rule 2 said the trip number must not lead, because he recognises a trip by its route and vehicle long before its number. Rather than reorder, I made the first cell carry two handles — the number over the vehicle.',
         },
         {
           type: 'text',
-          body: 'His second-strongest hook now sits where the eye already lands. The ID stays first because this is where disputes are raised, and a dispute is quoted by ID.',
+          body: 'His second-strongest hook now sits where the eye already lands. The number stays first because this is where disagreements are raised, and one is always quoted by number.',
         },
         {
           type: 'text',
@@ -710,7 +710,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'That framing decided the details. The dispute form asks for a category and a trip ID, not a paragraph, because a structured dispute can be routed and measured.',
+          body: 'That framing decided the details. The dispute form asks for a category and a trip number, not a paragraph, because a structured complaint can be routed and measured.',
         },
         {
           type: 'text',
@@ -718,7 +718,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'And No RFQ Linked is shown rather than suppressed: a trip without a linked contract is the one disputed later, so the panel says so at assignment time, not at payout.',
+          body: 'And No RFQ Linked is shown rather than suppressed: a trip running without a contract behind it is the one disputed later, so the panel says so at assignment time, not at payout.',
         },
         {
           type: 'phaseCards',
@@ -781,13 +781,6 @@ export const transporterPanel: CaseStudy = {
     },
     {
       decision:
-        'Disputes got their own top-level nav item and their own list, instead of living inside the trip row.',
-      rejected:
-        'Managing disputes inline per module — a dispute section on trips, another on payments, another on contracts.',
-      why: 'Only some disputes are about a trip. Rate cards, TDS and GST, bank details, POD disagreements — a trip listing cannot hold that, and inline means every module maintains its own dispute logic forever.',
-    },
-    {
-      decision:
         'Adhoc rows keep Confirm Details / Raise Dispute against a per-km rate; SC-SC and FM Carting get More info only.',
       rejected:
         'Suppressing the confirm/dispute actions on Adhoc because it has no contract ID to check against.',
@@ -798,12 +791,6 @@ export const transporterPanel: CaseStudy = {
         'Hindi is printed under every dispute sub-category and inside both money banners, permanently — not behind a toggle.',
       rejected: 'A full Hindi locale switch for the panel.',
       why: "A toggle asks the user to predict where he'll struggle, and doubles the copy surface of the whole panel to serve four screens. Printing both languages costs vertical space on one form, and lets a Hindi-first and an English-first user read the same screen.",
-    },
-    {
-      decision:
-        'The Missing Trip form validates the Trip ID against live trips and redirects instead of filing, and shows photographs of a challan with the ID location outlined.',
-      rejected: 'Accepting the report and letting the resolving team close it as invalid.',
-      why: 'A "missing" trip is usually one he couldn’t find, not one the system lost — most often a mistyped ID read off paper. Fixing the lookup at entry converts a support ticket into a link, and showing the document beats describing its format.',
     },
   ],
 

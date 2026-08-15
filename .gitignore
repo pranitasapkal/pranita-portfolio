@@ -25,3 +25,4 @@ content/fuzzing-map.json
 # Local tooling scratch
 .playwright-mcp/
 tsconfig.node.tsbuildinfo
+.facts-snapshot.json

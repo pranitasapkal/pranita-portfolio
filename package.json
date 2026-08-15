@@ -10,6 +10,7 @@
     "optimize-images": "node scripts/optimize-images.mjs",
     "nda-scan": "node scripts/nda-scan.mjs",
     "count:copy": "node scripts/count-copy.mjs",
+    "check:facts": "node scripts/check-facts.mjs",
     "build:resume": "node resume/build-resume.mjs",
     "build:docx": "node resume/build-docx.mjs",
     "build:svg": "node resume/build-svg.mjs",
