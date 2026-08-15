@@ -13,57 +13,8 @@ import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import { gsap, ScrollTrigger } from '../../lib/gsap'
 import { withReducedMotion } from '../../lib/motion'
-
-type PluginCategory = 'AUDIT' | 'ENFORCE' | 'CHECK' | 'GENERATE' | 'SPEC' | 'SYNC'
-
-interface Plugin {
-  name: string
-  category: PluginCategory
-  oneLiner: string
-}
-
-const PLUGINS: Plugin[] = [
-  {
-    name: 'CLH IA AUDITOR',
-    category: 'AUDIT',
-    oneLiner: 'Validates frames against IA Spec v4 — checks column order, identity blocks, and tab naming.',
-  },
-  {
-    name: 'CLH DS ENFORCER',
-    category: 'ENFORCE',
-    oneLiner: 'Catches detached components and hardcoded colors against Design System v1.1.1.',
-  },
-  {
-    name: 'CLH STATE CHECKER',
-    category: 'CHECK',
-    oneLiner: 'Verifies that every screen group ships its full state matrix: default, loading, empty, error, modal.',
-  },
-  {
-    name: 'CLH TOKEN POLICE',
-    category: 'ENFORCE',
-    oneLiner: 'Flags unbound fills, off-scale font sizes, and spacing values that miss the token grid.',
-  },
-  {
-    name: 'CLH A11Y CHECKER',
-    category: 'AUDIT',
-    oneLiner: 'WCAG 2.1 AA — contrast ratios, touch-target sizing (44×44 min), and text minimum sizes.',
-  },
-  {
-    name: 'CLH HANDOFF SPEC',
-    category: 'SPEC',
-    oneLiner: 'Generates annotated spec cards next to frames: dimensions, colour palette, typography summary, spacing values.',
-  },
-  {
-    name: 'CLH STATE GENERATOR',
-    category: 'GENERATE',
-    oneLiner: 'Clones a default frame for each missing state and positions the variants in a labelled row.',
-  },
-  {
-    name: 'CLH PROTOTYPE SYNC',
-    category: 'SYNC',
-    oneLiner: 'Copies auto-layout, fills, strokes, and radii from a source frame to all selected targets.',
-  },
-]
+import { site } from '../../content/site'
+import type { Plugin, PluginCategory } from '../../content/site'
 
 // Amber = AUDIT/ENFORCE/GENERATE/SYNC; teal = CHECK/SPEC
 const CATEGORY_STYLE: Record<PluginCategory, string> = {
@@ -161,12 +112,12 @@ export function Toolkit() {
         {/* Paper-variant section label */}
         <div className="inline-flex items-center gap-3 mb-14">
           <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[rgba(22,24,29,0.08)] border border-[rgba(22,24,29,0.15)] font-mono text-xs text-paper-mute shrink-0">
-            02
+            {site.toolkit.sectionNumber}
           </span>
           <span className="flex items-center gap-2">
             <span className="font-mono text-paper-mute text-xs">/</span>
             <span className="font-mono text-xs tracking-widest uppercase text-paper-mute border border-[rgba(22,24,29,0.15)] rounded-full px-3 py-0.5">
-              TOOLKIT
+              {site.toolkit.sectionLabel}
             </span>
           </span>
         </div>
@@ -175,10 +126,10 @@ export function Toolkit() {
         <div className="grid md:grid-cols-2 gap-8 md:gap-16 mb-16 items-end">
           <div>
             <h2 className="font-display font-black text-3xl md:text-5xl text-paper-ink leading-tight tracking-tight">
-              I build the tools I wish existed.
+              {site.toolkit.headline}
             </h2>
             <p className="font-serif italic text-paper-mute mt-4 text-lg md:text-xl leading-relaxed max-w-md">
-              Eight Figma plugins, built with AI, run daily on production files.
+              {site.toolkit.subline}
             </p>
           </div>
 
@@ -190,13 +141,13 @@ export function Toolkit() {
               aria-hidden="true"
             >
               <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-paper-mute">
-                SPEC SHEET
+                {site.toolkit.stamp.top}
               </span>
-              <span className="font-display font-black text-4xl text-paper-ink leading-none">
-                NO.&nbsp;08
+              <span className="font-display font-black text-4xl text-paper-ink leading-none whitespace-nowrap">
+                {site.toolkit.stamp.number}
               </span>
               <span className="font-mono text-[8px] tracking-[0.15em] text-paper-mute mt-1">
-                FIGMA PLUGINS
+                {site.toolkit.stamp.bottom}
               </span>
             </div>
           </div>
@@ -210,15 +161,17 @@ export function Toolkit() {
               'repeating-linear-gradient(0deg, rgba(22,24,29,0.04) 0px, rgba(22,24,29,0.04) 1px, transparent 1px, transparent 40px)',
           }}
         >
-          {PLUGINS.map((plugin, i) => (
+          {site.toolkit.plugins.map((plugin, i) => (
             <PluginCard key={plugin.name} plugin={plugin} index={i} />
           ))}
         </div>
 
         {/* Footnote */}
         <p className="font-mono text-[10px] text-paper-mute mt-6 text-center tracking-wider">
-          All plugins run on Figma Desktop. Source in{' '}
-          <code className="bg-[rgba(22,24,29,0.06)] rounded px-1">_setup/figma-plugins/</code>
+          {site.toolkit.footnote.text}{' '}
+          <code className="bg-[rgba(22,24,29,0.06)] rounded px-1">
+            {site.toolkit.footnote.code}
+          </code>
         </p>
       </div>
     </section>

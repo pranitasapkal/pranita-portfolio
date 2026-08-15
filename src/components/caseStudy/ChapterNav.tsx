@@ -70,7 +70,9 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
                 <span className="font-mono text-[10px] tracking-[0.12em] uppercase opacity-60">
                   STEP {String(chapter.step).padStart(2, '0')}
                 </span>
-                <span className="font-mono text-xs leading-snug">{chapter.title}</span>
+                <span className="font-mono text-xs leading-snug">
+                  {chapter.navLabel ?? chapter.title}
+                </span>
               </span>
             </a>
           )

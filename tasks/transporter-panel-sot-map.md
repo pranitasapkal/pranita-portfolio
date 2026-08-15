@@ -1,6 +1,6 @@
-# Assignment Module — Figma SOT map
+# Transporter Panel — Figma SOT map
 
-Evidence base for `00-assignment-module.md`. Every line here is read directly off the screens in
+Evidence base for `00-transporter-panel.md`. Every line here is read directly off the screens in
 `Figma- Assignment module/` (182 PNGs). This is the version live in production.
 
 **Rule for the case study: nothing goes in the narrative that isn't in this file or confirmed by Pranita.**
@@ -236,7 +236,7 @@ The user's instruction: the Figma SOT is the live version; the decks describe ea
 | Dispute categories `Payout incorrect, GPS mismatch, SC delays, route deviation, other` | 7 bilingual sub-categories (rate / billing type / vehicle number / contract ID / time / route change / other) | Use the SOT's seven |
 | Dispute card CTAs `Confirm Earnings` (secondary) + `Raise Dispute` (primary) | Row CTAs `Confirm Details` (primary, solid) + `Raise Dispute` (secondary link) | Use the SOT — primacy is inverted |
 | Report Missing Trip fields: route, touch points, route name, date range, vehicle number | Flow keyed on **Trip ID** with challan photos + false-missing guard | Use the SOT |
-| Mobile app screens (onboarding, driver app, fleet management) | Not part of this module | Out of scope for ASM-01 |
+| Mobile app screens (onboarding, driver app, fleet management) | Not part of this module | Out of scope for TPN-01 |
 
 ## Her own rules vs what shipped (the honest bit)
 

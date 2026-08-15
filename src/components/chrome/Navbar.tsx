@@ -9,13 +9,9 @@
  *   Staggered link entrance, Escape closes, focus-trapped, body scroll locked.
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { site } from '../../content/site'
 
-const NAV_LINKS = [
-  { label: 'Work', href: '/#work' },
-  { label: 'Toolkit', href: '/#toolkit' },
-  { label: 'Process', href: '/#process' },
-  { label: 'Contact', href: '/#contact' },
-]
+const NAV_LINKS = site.nav.links
 
 function getISTTime(): string {
   const now = new Date()
@@ -156,16 +152,16 @@ export function Navbar() {
         <a
           href="/"
           className="flex items-center gap-2 shrink-0"
-          aria-label="Pranita Sapkal — home"
+          aria-label={site.nav.homeAriaLabel}
         >
           <LogoMark />
           <span className="font-mono text-sm font-medium text-text-hi tracking-wider">
-            PS
+            {site.nav.wordmark}
           </span>
         </a>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1" aria-label="Primary">
+        <nav className="hidden md:flex items-center gap-1" aria-label={site.nav.primaryNavLabel}>
           {NAV_LINKS.map(({ label, href }) => (
             <a
               key={label}
@@ -181,11 +177,11 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-3 shrink-0">
           <span className="font-mono text-xs text-text-lo tabular-nums">{time}</span>
           <a
-            href="/resume/pranita-sapkal-resume.pdf"
+            href={site.nav.resumeHref}
             download
             className="font-mono text-xs text-signal border border-signal/40 rounded-full px-3 py-1 hover:bg-signal/10 transition-colors duration-200"
           >
-            Resume ↓
+            {site.nav.resumeLabel}
           </a>
         </div>
 
@@ -194,7 +190,7 @@ export function Navbar() {
           ref={hamburgerRef}
           className="md:hidden ml-auto flex flex-col gap-1 p-1"
           onClick={() => setMenuOpen(true)}
-          aria-label="Open navigation menu"
+          aria-label={site.nav.openMenuLabel}
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
         >
@@ -211,19 +207,19 @@ export function Navbar() {
           className="fixed inset-0 z-[800] bg-ink-0/95 backdrop-blur-lg flex flex-col items-center justify-center gap-8"
           role="dialog"
           aria-modal="true"
-          aria-label="Navigation"
+          aria-label={site.nav.menuAriaLabel}
           onKeyDown={handleMenuKeyDown}
         >
           {/* Close button */}
           <button
             className="absolute top-6 right-6 font-mono text-sm text-text-lo hover:text-text-hi"
             onClick={closeMenu}
-            aria-label="Close navigation menu"
+            aria-label={site.nav.closeMenuLabel}
           >
             ✕
           </button>
 
-          <nav className="flex flex-col items-center gap-6" aria-label="Mobile primary">
+          <nav className="flex flex-col items-center gap-6" aria-label={site.nav.mobileNavLabel}>
             {NAV_LINKS.map(({ label, href }, i) => (
               <a
                 key={label}
@@ -241,11 +237,11 @@ export function Navbar() {
           </nav>
 
           <a
-            href="/resume/pranita-sapkal-resume.pdf"
+            href={site.nav.resumeHref}
             download
             className="font-mono text-sm text-signal border border-signal/40 rounded-full px-5 py-2 hover:bg-signal/10 transition-colors duration-200"
           >
-            Resume ↓
+            {site.nav.resumeLabel}
           </a>
 
           <span className="font-mono text-xs text-text-lo tabular-nums absolute bottom-6">

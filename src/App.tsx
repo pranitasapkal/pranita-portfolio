@@ -9,6 +9,7 @@ import { Loader } from './components/chrome/Loader'
 import { RouteTransition } from './components/chrome/RouteTransition'
 import KitchenSink from './pages/KitchenSink'
 import Home from './pages/Home'
+import { site } from './content/site'
 
 const CaseStudyPage = lazy(() => import('./pages/CaseStudyPage'))
 
@@ -19,9 +20,11 @@ function NotFound() {
       id="main"
       className="min-h-screen flex flex-col items-center justify-center gap-8 p-8"
     >
-      <p className="font-mono text-text-lo text-xs tracking-[0.3em] uppercase">404</p>
+      <p className="font-mono text-text-lo text-xs tracking-[0.3em] uppercase">
+        {site.notFound.code}
+      </p>
       <h1 className="font-display font-black text-4xl md:text-6xl text-text-hi text-center">
-        PACKAGE NOT FOUND
+        {site.notFound.headline}
       </h1>
       {/* Dashed SVG arc */}
       <svg
@@ -42,10 +45,10 @@ function NotFound() {
         />
       </svg>
       <a
-        href="/"
+        href={site.notFound.ctaHref}
         className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-mono tracking-wider border bg-signal text-ink-0 border-transparent hover:bg-signal/90 transition-colors duration-200"
       >
-        Return to base
+        {site.notFound.ctaLabel}
       </a>
     </main>
   )

@@ -2,7 +2,7 @@
 
 Personal portfolio site for **Pranita Sapkal**, Product Designer at Meesho (Valmo Transportation). Five long-form case studies on logistics tooling, a WebGL hero, and a resume pipeline that renders one JSON source into several formats.
 
-Live case studies: Assignment Module (`ASM-01`), Network Design Central (`NDC-02`), Contract Lifecycle Hub (`CLH-03`), Transporter Contract Management (`TCM-04`), Multi-Origin Route Builder (`PLC-05`).
+Live case studies: Transporter Panel (`TPN-01`), Network Design Central (`NDC-02`), Contract Lifecycle Hub (`CLH-03`), Transporter Contract Management (`TCM-04`), Multi-Origin Route Builder (`PLC-05`).
 
 ---
 
@@ -38,8 +38,8 @@ Node 20+. No env vars, no API keys, no backend — it is a fully static site.
 | `build:resume` | `content/resume.json` → designed + ATS PDF | |
 | `build:docx` / `build:svg` | same source → DOCX / SVG | |
 | `build:cv` | resume + docx together | |
-| `diagrams:assignment` | renders the 3 hand-drawn ASM diagrams into `public/work/assignment/` | needs Chrome at the standard macOS path |
-| `shots:assignment` | exports Assignment case screenshots from the Figma SOT | **needs a folder that is not in this repo** — see below |
+| `diagrams:transporter` | renders the 3 hand-drawn Transporter Panel diagrams into `public/work/transporter-panel/` | needs Chrome at the standard macOS path |
+| `shots:transporter` | exports Transporter Panel case screenshots from the Figma SOT | **needs a folder that is not in this repo** — see below |
 | `nda-scan` | greps the build for strings that must not ship | **needs a file that is not in this repo** — see below |
 | `optimize-images` | — | **broken**: `scripts/optimize-images.mjs` does not exist. Pre-existing; nothing depends on it. |
 
@@ -50,7 +50,7 @@ Three things are gitignored on purpose. Everything builds and runs without them.
 | Missing | What it gated |
 |---|---|
 | `content/fuzzing-map.json` | Maps each public phrase to the real private value behind it, and names colleagues and Figma files. Only `nda-scan` reads it; that script now prints a notice and exits 0 when it is absent. |
-| `Figma- Assignment module/` | 182 raw Figma exports + 3 internal source PDFs for the Assignment case study. Only `shots:assignment` reads it; the script exits with a clear message when it is absent. The *sanitized* exports it produced are committed in `public/work/assignment/`. |
+| `Figma- Assignment module/` | 182 raw Figma exports + 3 internal source PDFs for the Transporter Panel case study. Only `shots:transporter` reads it; the script exits with a clear message when it is absent. The *sanitized* exports it produced are committed in `public/work/transporter-panel/`. |
 | Root `*.jpeg` | Reference screenshots of other designers' portfolios, kept locally as visual research. Not ours to redistribute. |
 
 ## Architecture
@@ -72,7 +72,7 @@ content/
   case-studies/*.md     ← narrative source; the .tsx files are what actually renders
 tasks/
   todo.md               ← phase tracker + known-issues table. Read this first.
-  assignment-sot-map.md ← evidence base for the Assignment case study
+  transporter-panel-sot-map.md ← evidence base for the Transporter Panel case study
 ```
 
 ### Adding or editing a case study

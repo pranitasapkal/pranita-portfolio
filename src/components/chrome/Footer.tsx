@@ -10,15 +10,9 @@
  */
 import { useRef } from 'react'
 import { MagneticWrap } from '../primitives/MagneticWrap'
+import { site } from '../../content/site'
 
-const SOCIALS = [
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/pranita-sapkal-86364010a' },
-  { label: 'Behance', href: 'https://behance.net/pranitasapkal' },
-  { label: 'Dribbble', href: 'https://dribbble.com/Pranitas03' },
-  { label: 'Medium', href: 'https://medium.com/@Pranitasapkal' },
-]
-
-const EMAIL = 'sapkalp1997@gmail.com'
+const EMAIL = site.footer.email
 
 // Mono-safe character pool for scramble — avoids characters that look broken
 // in IBM Plex Mono or cause layout shifts (wide chars excluded).
@@ -96,10 +90,10 @@ export function Footer() {
       {/* Giant email — MagneticWrap + scramble on hover */}
       <MagneticWrap strength={6} className="w-full text-center">
         <a
-          href="mailto:sapkalp1997@gmail.com"
+          href={`mailto:${EMAIL}`}
           className="font-display font-black uppercase text-text-hi hover:text-signal transition-colors duration-300 leading-none whitespace-nowrap"
           style={{ fontSize: 'clamp(1.375rem, 5.2vw, 5rem)' }}
-          aria-label="Email: sapkalp1997@gmail.com"
+          aria-label={site.footer.emailAriaLabel}
           onMouseEnter={handleMouseEnter}
         >
           {/*
@@ -116,9 +110,9 @@ export function Footer() {
       {/* Social pills */}
       <nav
         className="flex flex-wrap justify-center gap-3"
-        aria-label="Social links"
+        aria-label={site.footer.socialsAriaLabel}
       >
-        {SOCIALS.map(({ label, href }) => (
+        {site.footer.socials.map(({ label, href }) => (
           <a
             key={label}
             href={href}
@@ -136,13 +130,12 @@ export function Footer() {
 
       {/* Asterisk footnote */}
       <p className="font-mono text-xs text-text-lo text-center max-w-lg leading-relaxed">
-        * All metrics are directionally accurate and intentionally fuzzed.
-        No real shipment data appears on this site.
+        {site.footer.footnote}
       </p>
 
       {/* Mono stamp */}
       <span className="font-mono text-[10px] text-text-lo tracking-[0.2em] uppercase">
-        Last Dispatch: 2026-07
+        {site.footer.stamp}
       </span>
     </footer>
   )

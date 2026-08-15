@@ -14,7 +14,7 @@ A fuller session log lives at `tasks/todo.md` (phase tracker + a known-issues ta
 
 | Code | Case study | Layout |
 |---|---|---|
-| `ASM-01` | The Assignment Module | standard |
+| `TPN-01` | The Transporter Panel | standard |
 | `NDC-02` | Network Design Central | standard |
 | `CLH-03` | Contract Lifecycle Hub | **editorial** |
 | `TCM-04` | Transporter Contract Management | standard |
@@ -33,18 +33,18 @@ There are currently **two** case-study layouts, and the migration between them i
 
 The editorial system added block types to the `Block` union in `src/content/types.ts` (`board`, `heroStats`, `challengeSolution`, `phaseCards`, `wordList`, `timeline`, `screensGrid`) with components in `src/components/caseStudy/blocks/`. `Block` is a **closed** union — new types need an ADR, not a quick extension.
 
-## Most recent work: the Assignment Module (`ASM-01`)
+## Most recent work: the Transporter Panel (`TPN-01`)
 
 Built end to end this session and finished. Source of truth was a 182-screen Figma export plus three internal PDFs (none of which are in this repo — see below).
 
-- Narrative: `content/case-studies/00-assignment-module.md`
-- Rendered: `src/content/cases/assignment-module.tsx`
-- Evidence base: `tasks/assignment-sot-map.md` — every UI claim traced to a specific screen. If you want to know why the case study says something, it is in here.
-- Images: 13 in `public/work/assignment/` — 10 screenshot exports + 3 generated diagrams
+- Narrative: `content/case-studies/00-transporter-panel.md`
+- Rendered: `src/content/cases/transporter-panel.tsx`
+- Evidence base: `tasks/transporter-panel-sot-map.md` — every UI claim traced to a specific screen. If you want to know why the case study says something, it is in here.
+- Images: 13 in `public/work/transporter-panel/` — 10 screenshot exports + 3 generated diagrams
 
 Verified: build green, all 13 image paths resolve, the page renders (checked via headless screenshot), home and registry codes match.
 
-One thing **not** verified: the ASM card's appearance in the home Work section. The hero is ScrollTrigger-pinned, so a static headless capture just re-renders the hero, and Chrome's remote-debugging port wouldn't bind in that environment. Run `npm run dev`, scroll to Work, and confirm the first card renders with its node signature.
+The `TPN-01` card in the home Work section is verified — it renders with its node signature. Note for anyone re-checking it: the hero is ScrollTrigger-pinned, so a static headless capture only ever re-renders the hero. You have to scroll a real browser.
 
 ## Known issues
 
@@ -60,7 +60,7 @@ One thing **not** verified: the ASM card's appearance in the home Work section. 
 | Missing | Consequence |
 |---|---|
 | `content/fuzzing-map.json` | `nda-scan` prints a notice and exits 0. Nothing else reads it. |
-| `Figma- Assignment module/` | `shots:assignment` exits with a clear message. The sanitized outputs it produced are committed in `public/work/assignment/`. |
+| `Figma- Assignment module/` | `shots:transporter` exits with a clear message. The sanitized outputs it produced are committed in `public/work/transporter-panel/`. |
 | Root `*.jpeg` | Visual research only — reference screenshots of other designers' portfolios. Nothing references them. |
 
 Everything builds and runs without all three.
@@ -77,4 +77,4 @@ Everything builds and runs without all three.
 npm install && npm run dev
 ```
 
-Open the home page, scroll through the Work section, then read one case study of each kind — `/work/assignment-module` (standard) and `/work/linehaul-nexus` (editorial) — to see the two layout systems side by side. That comparison is the main thing to have an opinion about.
+Open the home page, scroll through the Work section, then read one case study of each kind — `/work/transporter-panel` (standard) and `/work/linehaul-nexus` (editorial) — to see the two layout systems side by side. That comparison is the main thing to have an opinion about.

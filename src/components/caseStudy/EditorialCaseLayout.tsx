@@ -1,14 +1,19 @@
 /**
  * EditorialCaseLayout — walletsprout-style long-scroll case shell (ADR-001).
  * Serif editorial hero (eyebrow · title · one-liner · Domain/Role/Timeline/Scale pills)
- * → cover board → chapters rendered full-width top-to-bottom (no sticky nav) with boards
- * interleaved → Decision Spotlights → Reflection → Next case.
+ * → cover board → TL;DR → chapters rendered full-width top-to-bottom (no sticky nav) with
+ * boards interleaved → Decision Spotlights → Reflection → Next case.
+ *
+ * The TL;DR was authored on every case but rendered only by CaseLayout, so editorial cases
+ * silently dropped their problem statement, outcomes and stat tiles — a reader scrolled eight
+ * chapters with nothing summarising the work. Fixed 2026-08-15; both layouts now show it.
  * Real-content cases (cs.noindex) inject a robots noindex tag and skip the NDA chip.
  */
 import { useEffect } from 'react'
 import { SEOHead } from '../chrome/SEOHead'
 import { ArrowCircle } from '../primitives/ArrowCircle'
 import { BlockRenderer } from './BlockRenderer'
+import { TldrBlock } from './TldrBlock'
 import { Board } from './blocks/Board'
 import type { CaseStudy } from '../../content/types'
 
@@ -32,6 +37,7 @@ export function EditorialCaseLayout({ cs }: EditorialCaseLayoutProps) {
     ['Domain', cs.domain ?? cs.meta.platform],
     ['Role', cs.meta.role],
     ['Timeline', cs.meta.timeline],
+    ['Skills', cs.meta.skills.join(' · ')],
     ...(cs.scale ? ([['Scale', cs.scale]] as [string, string][]) : []),
   ]
 
@@ -77,6 +83,14 @@ export function EditorialCaseLayout({ cs }: EditorialCaseLayoutProps) {
             />
           </section>
         )}
+
+        {/* ── TLDR ─────────────────────────────────────────────────── */}
+        <TldrBlock
+          problem={cs.tldr.problem}
+          outcomes={cs.tldr.outcomes}
+          summary={cs.tldr.summary}
+          stats={cs.tldr.stats}
+        />
 
         {/* ── CHAPTERS (long-scroll) ───────────────────────────────── */}
         <div className="max-w-5xl mx-auto px-6 md:px-12 py-8 flex flex-col gap-28">
@@ -176,9 +190,25 @@ export function EditorialCaseLayout({ cs }: EditorialCaseLayoutProps) {
               What I'd test next.
             </h2>
           </div>
-          <p className="font-serif italic text-lg md:text-xl text-text-hi leading-relaxed max-w-[65ch]">
-            {cs.reflection}
-          </p>
+          <ul className="flex flex-col gap-7 list-none p-0 m-0 max-w-[65ch]">
+            {cs.reflections.map((r) => (
+              <li key={r.title} className="flex gap-4 border-b border-line pb-7 last:border-b-0">
+                <span className="font-mono text-signal shrink-0 pt-1.5" aria-hidden="true">
+                  —
+                </span>
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-display font-black text-xl md:text-2xl text-text-hi tracking-tight leading-snug">
+                    {r.title}
+                  </h3>
+                  {r.body && (
+                    <p className="font-body text-sm md:text-base text-text-lo leading-relaxed">
+                      {r.body}
+                    </p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* ── NEXT CASE ────────────────────────────────────────────── */}

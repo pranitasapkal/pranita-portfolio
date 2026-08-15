@@ -19,6 +19,12 @@ import { PhaseCards } from './blocks/PhaseCards'
 import { WordList } from './blocks/WordList'
 import { TimelineBlock } from './blocks/TimelineBlock'
 import { ScreensGrid } from './blocks/ScreensGrid'
+import { ProblemTabs } from './blocks/ProblemTabs'
+import { StatementBand } from './blocks/StatementBand'
+import { InsightNotes } from './blocks/InsightNotes'
+import { BeforeAfter } from './blocks/BeforeAfter'
+import { AnnotatedShot } from './blocks/AnnotatedShot'
+import { NdaNote } from './blocks/NdaNote'
 
 interface BlockRendererProps {
   blocks: Block[]
@@ -76,8 +82,44 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
             return <HeroStats key={i} items={block.items} />
           case 'challengeSolution':
             return (
-              <ChallengeSolution key={i} challenge={block.challenge} solution={block.solution} />
+              <ChallengeSolution
+                key={i}
+                challenge={block.challenge}
+                solution={block.solution}
+                index={block.index}
+                problem={block.problem}
+                fix={block.fix}
+                effect={block.effect}
+                image={block.image}
+              />
             )
+          case 'problemTabs':
+            return <ProblemTabs key={i} items={block.items} />
+          case 'statementBand':
+            return <StatementBand key={i} eyebrow={block.eyebrow} statement={block.statement} />
+          case 'insightNotes':
+            return <InsightNotes key={i} title={block.title} notes={block.notes} />
+          case 'beforeAfter':
+            return (
+              <BeforeAfter
+                key={i}
+                before={block.before}
+                after={block.after}
+                caption={block.caption}
+              />
+            )
+          case 'annotatedShot':
+            return (
+              <AnnotatedShot
+                key={i}
+                src={block.src}
+                alt={block.alt}
+                caption={block.caption}
+                notes={block.notes}
+              />
+            )
+          case 'ndaNote':
+            return <NdaNote key={i} title={block.title} body={block.body} />
           case 'phaseCards':
             return <PhaseCards key={i} items={block.items} />
           case 'wordList':

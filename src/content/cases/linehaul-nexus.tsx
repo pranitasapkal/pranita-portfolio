@@ -11,23 +11,24 @@
  * Diagrams: scripts/gen-clh-diagrams.mjs → dg-month / dg-model / dg-flow.
  */
 import type { CaseStudy } from '../types'
+import { summaries } from './summaries'
 
 export const clh: CaseStudy = {
-  slug: 'linehaul-nexus',
-  code: 'CLH-03',
+  ...summaries['linehaul-nexus'],
   title: 'Contract Lifecycle Hub',
+  oneLiner:
+    'Every month, 2,400 truck routes have to go from a planner’s file to a signed, running contract before the 1st. This is the system that does it.',
   layout: 'editorial',
   noindex: true,
   eyebrow: 'INTERNAL TOOL · LOGISTICS OPS · IN DEVELOPMENT',
   domain: 'B2B ops tooling',
   scale: '~2,400 contracts / month',
-  oneLiner:
-    'Every month, 2,400 truck routes have to go from a planner’s file to a signed, running contract before the 1st. This is the system that does it.',
   meta: {
     role: 'Sole designer, object model → handoff',
     team: '1 PM, 1 engineering manager, central ops',
     timeline: 'Mar–Jun 2026',
     platform: 'Internal desktop panel (Chrome, ~1440×900)',
+    skills: ['Product Design', 'Information Architecture', 'Interaction Design', 'Design Systems'],
   },
   coverBoard: {
     src: '/work/clh/sot-overview.png',
@@ -54,12 +55,13 @@ export const clh: CaseStudy = {
       id: 'what-this-is',
       step: 1,
       kicker: 'Context',
+      navLabel: 'What this is',
       ghost: 'Context',
       title: 'What this is',
       blocks: [
         {
           type: 'text',
-          body: "**Meesho is one of India's largest e-commerce marketplaces. Valmo is the logistics network it built to move its own parcels.** Before a parcel reaches a doorstep it travels between warehouses on hired trucks — that leg is called linehaul, and Valmo doesn't own those trucks. It rents them, route by route, from trucking companies, on contracts that have to be negotiated and signed every single month.\n\nA route contract is one agreement: this vendor, this route, this size of truck, this rate, for this month. Valmo needs about **2,400 of them, live before the 1st**.\n\nI was the only designer on the system that does this, from the object model through to a 130-screen handoff.",
+          body: "**Meesho is one of India's largest e-commerce marketplaces.\n\nValmo is the logistics network it built to move its own parcels.** Before a parcel reaches a doorstep it travels between warehouses on hired trucks — that leg is called linehaul, and Valmo doesn't own those trucks.\n\nIt rents them, route by route, from trucking companies, on contracts that have to be negotiated and signed every single month.\n\nA route contract is one agreement: this vendor, this route, this size of truck, this rate, for this month. Valmo needs about **2,400 of them, live before the 1st**.\n\nI was the only designer on the system that does this, from the object model through to a 130-screen handoff.",
         },
         {
           type: 'board',
@@ -78,12 +80,13 @@ export const clh: CaseStudy = {
       id: 'the-problem',
       step: 2,
       kicker: 'The problem',
+      navLabel: 'The problem',
       ghost: 'Problem',
       title: 'The planning half was software. The contracting half was WhatsApp.',
       blocks: [
         {
           type: 'text',
-          body: 'Planners already produced the month’s routes in a system. The team that had to turn those routes into signed contracts worked by hand: assignments went out as bulk Excel files, vendor follow-ups happened on phone calls, disputes lived in WhatsApp threads. Nothing joined the two halves together.\n\nFour things went wrong because of that, and they are the four things the design has to fix.',
+          body: 'Planners already produced the month’s routes in a system.\n\nThe team that had to turn those routes into signed contracts worked by hand: assignments went out as bulk Excel files, vendor follow-ups happened on phone calls, disputes lived in WhatsApp threads.\n\nNothing joined the two halves together.\n\nFour things went wrong because of that, and they are the four things the design has to fix.',
         },
         {
           type: 'phaseCards',
@@ -118,6 +121,7 @@ export const clh: CaseStudy = {
       id: 'inherited',
       step: 3,
       kicker: 'Starting point',
+      navLabel: 'What I inherited',
       ghost: 'Audit',
       title: 'What I inherited, and why I audited it first',
       blocks: [
@@ -150,6 +154,7 @@ export const clh: CaseStudy = {
       id: 'object-model',
       step: 4,
       kicker: 'The model',
+      navLabel: 'The object model',
       ghost: 'Model',
       title: 'A route is not a contract',
       blocks: [
@@ -183,6 +188,7 @@ export const clh: CaseStudy = {
       id: 'architecture',
       step: 5,
       kicker: 'Architecture',
+      navLabel: 'Three levels',
       ghost: 'Structure',
       title: 'Three levels, five stages, one rule',
       blocks: [
@@ -232,6 +238,7 @@ export const clh: CaseStudy = {
       id: 'flows',
       step: 6,
       kicker: 'The flows',
+      navLabel: 'The flows',
       ghost: 'Flows',
       title: 'How a route becomes a running contract',
       blocks: [
@@ -246,7 +253,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**Planning a month.** Planners upload the coming month’s routes as a file. It is deliberately all-or-nothing: one bad row rejects the whole batch, and the system returns an error file naming which rows failed and why. A partially-accepted batch would mean a month that is quietly incomplete. The rules live on the page itself — what each column means, why the start date must be at least 10 days out, what happens when you edit a design that is already live.',
+          body: '**Planning a month.** Planners upload the coming month’s routes as a file. It is deliberately all-or-nothing: one bad row rejects the whole batch, and the system returns an error file naming which rows failed and why.\n\nA partially-accepted batch would mean a month that is quietly incomplete.\n\nThe rules live on the page itself — what each column means, why the start date must be at least 10 days out, what happens when you edit a design that is already live.',
         },
         {
           type: 'screensGrid',
@@ -312,7 +319,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**Fixing a bad upload, and verifying before go-live.** Errors are named per field on the row that failed — wrong vendor ID, rate above the ceiling, invalid date range. And nothing activates automatically: an accepted contract waits in Upcoming until someone checks and activates it. One deliberate click, because a wrong contract caught here costs nothing and caught after the trucks run costs a dispute.',
+          body: '**Fixing a bad upload, and verifying before go-live.** Errors are named per field on the row that failed — wrong vendor ID, rate above the ceiling, invalid date range.\n\nAnd nothing activates automatically: an accepted contract waits in Upcoming until someone checks and activates it. One deliberate click, because a wrong contract caught here costs nothing and caught after the trucks run costs a dispute.',
         },
         {
           type: 'screensGrid',
@@ -344,6 +351,7 @@ export const clh: CaseStudy = {
       id: 'decisions',
       step: 7,
       kicker: 'The decisions',
+      navLabel: 'Contested calls',
       ghost: 'Decisions',
       title: 'Four calls that shaped the system',
       blocks: [
@@ -370,11 +378,11 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**What it costs:** progress you have already made stops being visible. Finish three of four trucks and the route sits where it sat this morning. The counts reward finishing routes, not trucks — correct for the deadline the team is judged against, and mildly demoralising on a Wednesday.',
+          body: '**What it costs:** progress you have already made stops being visible. Finish three of four trucks and the route sits where it sat this morning.\n\nThe counts reward finishing routes, not trucks — correct for the deadline the team is judged against, and mildly demoralising on a Wednesday.',
         },
         {
           type: 'text',
-          body: '**2 · Not every change breaks a contract.** A signed contract is an agreement, so "edit" cannot mean what it means in an ordinary form. I had to decide, field by field, whether a change is something the vendor already agreed to, or something they must agree to again. Every one of these modals states the consequence in plain language before you commit.',
+          body: '**2 · Not every change breaks a contract.** A signed contract is an agreement, so "edit" cannot mean what it means in an ordinary form.\n\nI had to decide, field by field, whether a change is something the vendor already agreed to, or something they must agree to again. Every one of these modals states the consequence in plain language before you commit.',
         },
         {
           type: 'screensGrid',
@@ -405,7 +413,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**4 · The vendor column only exists once there is a vendor.** The rejected version kept a fixed grid across every stage and filled the gaps with dashes. At scanning speed a dash reads as a loading failure and costs an investigation click. A missing column says **this does not exist yet**; an empty one says **something went wrong**.',
+          body: '**4 · The vendor column only exists once there is a vendor.** The rejected version kept a fixed grid across every stage and filled the gaps with dashes.\n\nAt scanning speed a dash reads as a loading failure and costs an investigation click. A missing column says **this does not exist yet**; an empty one says **something went wrong**.',
         },
         {
           type: 'screensGrid',
@@ -423,12 +431,13 @@ export const clh: CaseStudy = {
       id: 'states',
       step: 8,
       kicker: 'Edge cases',
+      navLabel: 'Edge cases',
       ghost: 'States',
       title: 'The states that decide whether it survives a bad week',
       blocks: [
         {
           type: 'text',
-          body: 'Every table view was specified with its full set: default, loading, empty because you cleared it, empty because it is your first time, no search results, network error, inline row error, and three toast variants. The interesting ones are the states that only appear when something has gone wrong upstream.',
+          body: 'Every table view was specified with its full set: default, loading, empty because you cleared it, empty because it is your first time, no search results, network error, inline row error, and three toast variants.\n\nThe interesting ones are the states that only appear when something has gone wrong upstream.',
         },
         {
           type: 'screensGrid',
@@ -446,12 +455,13 @@ export const clh: CaseStudy = {
       id: 'how-it-was-made',
       step: 9,
       kicker: 'Process',
+      navLabel: 'How I worked',
       ghost: 'Process',
       title: 'Structure first, pixels after',
       blocks: [
         {
           type: 'text',
-          body: 'Structure diagram → written decision record → Figma → prototype. Four contested structural calls were settled in writing before any high-fidelity work, which is why 130+ screens were handed off without a structural revision. The full eight-step process ran underneath — problem framing, objective, persona, architecture, flows, wireframes, prototype, business case — it just isn’t the story.',
+          body: 'Structure diagram → written decision record → Figma → prototype.\n\nFour contested structural calls were settled in writing before any high-fidelity work, which is why 130+ screens were handed off without a structural revision.\n\nThe full eight-step process ran underneath — problem framing, objective, persona, architecture, flows, wireframes, prototype, business case — it just isn’t the story.',
         },
         {
           type: 'timeline',
@@ -466,7 +476,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The interaction model was proven in a data-driven prototype rather than a click-through, because the central claim is a data rule. It runs ~75 routes across three monthly batches with the least-finished-truck rule implemented in the filtering logic — assign three of four trucks and the route genuinely refuses to move.',
+          body: 'The interaction model was proven in a data-driven prototype rather than a click-through, because the central claim is a data rule.\n\nIt runs ~75 routes across three monthly batches with the least-finished-truck rule implemented in the filtering logic — assign three of four trucks and the route genuinely refuses to move.',
         },
         {
           type: 'prototype',
@@ -480,8 +490,20 @@ export const clh: CaseStudy = {
 
   spotlights: [],
 
-  reflection:
-    "The system is in development now — the design is locked and handed off, and engineering is building it. So there is no usage number yet, and inventing one would be the easiest thing here to catch. What I can claim is structural: an architecture that held across 14 flows and 130+ screens, three navigation-breaking issues caught before they reached engineering, and a change model that makes the consequence of every edit explicit before anyone commits to it. What I want next is the measurement I don't have — time to clear the Action Required queue, before and after — and one specific answer: whether a manager who has just finished three of four trucks reads the unchanged queue as the system being strict, or as the system ignoring their work. The prototype demonstrates that rule. It does not yet teach it, and the difference will only show up on a bad Wednesday in a real month.",
+  reflections: [
+    {
+      title: 'There is no usage number, and inventing one would be the easiest thing here to catch.',
+      body: 'The design is locked and handed off; engineering is still building it. What I can claim is structural — an architecture that held across 14 flows and 130+ screens, and three navigation-breaking issues caught before they reached engineering.',
+    },
+    {
+      title: 'The measurement I want is the one I do not have.',
+      body: 'Time to clear the Action Required queue, before and after. Without it, the change model is an argument rather than a result.',
+    },
+    {
+      title: 'The prototype demonstrates the worst-case-slot rule. It does not yet teach it.',
+      body: 'A manager who has finished three of four trucks sees an unchanged queue. Whether that reads as the system being strict or as the system ignoring their work will only show up on a bad Wednesday in a real month.',
+    },
+  ],
 
   next: {
     slug: 'transporter-contract-management',

@@ -1,10 +1,9 @@
 /**
- * CaseIndex — id="work". Five sticky-stacking case cards.
+ * CaseIndex — id="work". Sticky-stacking case cards, one per registered case study.
  *
- * CASES below duplicates title/one-liner/stats from src/content/cases/*.tsx by design
- * (home copy is shorter than the case-page copy). The `code` field is the exception —
- * it renders in both places, so it must stay in sync. NODE_SIGNATURES is indexed by
- * card position, so adding a case needs a matching signature or the card renders blank.
+ * Card copy comes from each case's `home` field in src/content/cases/*.tsx — this
+ * component authors no text. NODE_SIGNATURES is keyed by slug; a case without a
+ * signature simply renders no mark rather than a blank slot.
  *
  * Sticky-stack mechanic:
  *   Each card wrapper is position:sticky with staggered top offsets.
@@ -21,6 +20,7 @@
  * Non-NDC cards are <div aria-disabled> (no Link) so we never ship dead routes.
  */
 import { useRef, useCallback } from 'react'
+import type { ComponentType } from 'react'
 import { Link } from 'react-router'
 import { useGSAP } from '@gsap/react'
 import { gsap, ScrollTrigger } from '../../lib/gsap'
@@ -29,73 +29,34 @@ import { SectionLabel } from '../primitives/SectionLabel'
 import { PillTag } from '../primitives/PillTag'
 import { ArrowCircle } from '../primitives/ArrowCircle'
 import { BrowserFrame } from '../primitives/BrowserFrame'
+import { caseSummaryList } from '../../content/cases/summaries'
+import { site } from '../../content/site'
 
 // ── Case data ─────────────────────────────────────────────────────────────────
+// Derived from cases/summaries.ts — the cards carry no copy of their own, and the
+// summaries module deliberately excludes case-study prose so the home page stays light.
 interface CaseData {
   slug: string
   code: string
   title: string
   oneLiner: string
-  stats: [string, string, string]
+  stats: string[]
   browserSlug: string
   live: boolean
 }
 
-// Codes here MUST match `code` in src/content/cases/*.tsx — they render side by side.
-const CASES: CaseData[] = [
-  {
-    slug: 'assignment-module',
-    code: 'ASM-01',
-    title: 'The Assignment Module',
-    oneLiner:
-      'Every trip ran on a chat thread and got paid two months later — I designed the panel that replaced both.',
-    stats: ['182 screens', '5 lifecycle states', '7 bilingual categories'],
-    browserSlug: 'pranita.design/asm',
-    live: true,
-  },
-  {
-    slug: 'network-design-central',
-    code: 'NDC-02',
-    title: 'Network Design Central',
-    oneLiner: 'The solver designs the routes. I designed the agreement.',
-    stats: ['~80 sort centres', '5→2 clicks', '<30 s to orient'],
-    browserSlug: 'pranita.design/ndc',
-    live: true,
-  },
-  {
-    slug: 'linehaul-nexus',
-    code: 'CLH-03',
-    title: 'Contract Lifecycle Hub',
-    oneLiner:
-      'One panel had to hold two contradictory realities — national contracts fan out to many vehicles, regional contracts stay strictly one-to-one.',
-    stats: ['130+ screens', '14 end-to-end flows', '4 contested decisions'],
-    browserSlug: 'pranita.design/clh',
-    live: true,
-  },
-  {
-    slug: 'transporter-contract-management',
-    code: 'TCM-04',
-    title: 'Transporter Contract Management',
-    oneLiner:
-      'Everything that makes an ops power-tool good actively fails a user who reads slowly and trusts the screen literally.',
-    stats: ['34 distinct row states', '27 issues self-caught', '6-term vocabulary'],
-    browserSlug: 'pranita.design/tpr',
-    live: true,
-  },
-  {
-    slug: 'placement-multi-origin',
-    code: 'PLC-05',
-    title: 'Multi-Origin Route Builder',
-    oneLiner:
-      'Six percent of trips were quietly corrupting the data everyone else depended on — and the fix wasn\'t allowed to cost the other 94% a single click.',
-    stats: ['2-click node add', '>95% data accuracy', '0 extra steps (94%)'],
-    browserSlug: 'pranita.design/pla',
-    live: true,
-  },
-]
+const CASES: CaseData[] = caseSummaryList.map((cs) => ({
+  slug: cs.slug,
+  code: cs.code,
+  title: cs.cardTitle,
+  oneLiner: cs.cardOneLiner,
+  stats: cs.stats,
+  browserSlug: cs.browserSlug,
+  live: cs.live ?? true,
+}))
 
 // ── Node signatures — unique per-card constellations ─────────────────────────
-function NodeASM() {
+function NodeTPN() {
   return (
     <svg width="64" height="44" viewBox="0 0 64 44" fill="none" aria-hidden="true">
       <circle cx="7"  cy="22" r="2.5" stroke="var(--color-text-lo)" strokeWidth="1.5" />
@@ -161,16 +122,22 @@ function NodePLA() {
   )
 }
 
-const NODE_SIGNATURES = [NodeASM, NodeNDC, NodeCLH, NodeTPR, NodePLA]
+// Keyed by slug so signatures can never fall out of step with card order.
+const NODE_SIGNATURES: Record<string, ComponentType> = {
+  'transporter-panel': NodeTPN,
+  'network-design-central': NodeNDC,
+  'linehaul-nexus': NodeCLH,
+  'transporter-contract-management': NodeTPR,
+  'placement-multi-origin': NodePLA,
+}
 
 // ── Individual case card ──────────────────────────────────────────────────────
 interface CaseCardProps {
   data: CaseData
-  index: number
 }
 
-function CaseCard({ data, index }: CaseCardProps) {
-  const NodeSig = NODE_SIGNATURES[index]
+function CaseCard({ data }: CaseCardProps) {
+  const NodeSig = NODE_SIGNATURES[data.slug]
   const cardRef = useRef<HTMLDivElement>(null)
   const browserRef = useRef<HTMLDivElement>(null)
 
@@ -250,11 +217,11 @@ function CaseCard({ data, index }: CaseCardProps) {
           </span>
           {!data.live && (
             <PillTag className="border-signal/25 text-signal/50 text-[10px]">
-              CASE STUDY IN ASSEMBLY
+              {site.work.inAssemblyLabel}
             </PillTag>
           )}
         </div>
-        <NodeSig />
+        {NodeSig && <NodeSig />}
       </div>
 
       {/* Title + one-liner */}
@@ -272,7 +239,7 @@ function CaseCard({ data, index }: CaseCardProps) {
         <BrowserFrame slug={data.browserSlug}>
           <div className="aspect-[16/9] bg-ink-2 flex items-center justify-center">
             <span className="font-mono text-xs text-text-lo tracking-[0.2em] uppercase">
-              Asset pending
+              {site.work.assetPendingLabel}
             </span>
           </div>
         </BrowserFrame>
@@ -295,7 +262,7 @@ function CaseCard({ data, index }: CaseCardProps) {
       <Link
         to={`/work/${data.slug}`}
         className="group block focus-visible:outline-signal focus-visible:outline-2 rounded-2xl"
-        aria-label={`View case study: ${data.title}`}
+        aria-label={site.work.viewCaseAriaLabel(data.title)}
       >
         {cardInner}
       </Link>
@@ -306,7 +273,7 @@ function CaseCard({ data, index }: CaseCardProps) {
     <div
       role="link"
       aria-disabled="true"
-      aria-label={`${data.title} — case study in assembly`}
+      aria-label={site.work.inAssemblyAriaLabel(data.title)}
       className="group cursor-default"
       tabIndex={-1}
     >
@@ -370,7 +337,11 @@ export function CaseIndex() {
       className="bg-ink-0 border-t border-line py-24 md:py-32 px-6 md:px-12"
     >
       <div className="max-w-[1200px] mx-auto">
-        <SectionLabel number="01" label="SELECTED SYSTEMS" className="mb-16" />
+        <SectionLabel
+          number={site.work.sectionNumber}
+          label={site.work.sectionLabel}
+          className="mb-16"
+        />
 
         {/* Stack */}
         <div className="relative">
@@ -385,7 +356,7 @@ export function CaseIndex() {
                 paddingBottom: i < CASES.length - 1 ? '220px' : '0',
               }}
             >
-              <CaseCard data={c} index={i} />
+              <CaseCard data={c} />
             </div>
           ))}
         </div>

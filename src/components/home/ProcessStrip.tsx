@@ -5,16 +5,9 @@
  * Step numbers are genuine sequence markers — the 8-step process IS sequential.
  */
 
-const STEPS = [
-  { num: '01', label: 'Problem\nUnderstanding' },
-  { num: '02', label: 'Objective' },
-  { num: '03', label: 'User\nPersona' },
-  { num: '04', label: 'Information\nArchitecture' },
-  { num: '05', label: 'User\nFlow' },
-  { num: '06', label: 'Lo-fi\nWireframes' },
-  { num: '07', label: 'Prototype' },
-  { num: '08', label: 'Business\nAspects' },
-]
+import { site } from '../../content/site'
+
+const STEPS = site.process.steps
 
 export function ProcessStrip() {
   return (
@@ -26,10 +19,10 @@ export function ProcessStrip() {
         {/* Header */}
         <div className="mb-14">
           <p className="font-mono text-[10px] text-text-lo tracking-[0.25em] uppercase mb-3">
-            04 / PROCESS
+            {site.process.eyebrow}
           </p>
           <p className="font-serif italic text-text-lo text-base md:text-lg max-w-md leading-relaxed">
-            Every case study on this site follows the same eight steps.
+            {site.process.intro}
           </p>
         </div>
       </div>
@@ -38,7 +31,7 @@ export function ProcessStrip() {
       <div
         className="overflow-x-auto pb-4"
         role="list"
-        aria-label="Design process steps"
+        aria-label={site.process.listAriaLabel}
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <div className="flex items-start px-6 md:px-12 min-w-max">
