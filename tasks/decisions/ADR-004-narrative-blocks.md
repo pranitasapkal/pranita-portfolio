@@ -59,8 +59,26 @@ reads "The morning list · Two failures · Who I designed for" while the kicker 
 Deferred, noted so it isn't re-litigated: Debo's `Iteration 1 / Iteration 2 / Final Design`
 triptych. We have no iteration artifacts for this module.
 
-Length budget, to be enforced when the copy lands: total 750–900 words, median paragraph 18–22,
-nothing over 60, 60–75 short elements.
+### Length — revised the same day
+
+The first pass set a total-words budget of 750–900, taken from the reference portfolios. Writing
+to it cost six screens (In-Transit, the route timeline, Upcoming, Cancelled, and two diagrams went
+unreferenced) and four of five decision spotlights. That is evidence, not padding, and specificity
+is the thing this portfolio is competing on.
+
+**Pranita's call: keep the full depth, around 4,600 words.** So there is no total-words target.
+What survives is the rule that actually changed how the page reads — **paragraph shape**:
+
+| | Before | After |
+|---|---|---|
+| Total | 4,599w | 4,661w |
+| Median paragraph | 28w | 28w |
+| 75th percentile | 69w | 37w |
+| Longest paragraph | 153w | 57w |
+| Paragraphs over 60w | 30 | **0** |
+
+Same length, none of the walls of text. `npm run count:copy` gates `max` and `over60` hard;
+`median` and `p75` are set to what a full-depth case sustains, so a pass means something.
 
 ## Consequences
 

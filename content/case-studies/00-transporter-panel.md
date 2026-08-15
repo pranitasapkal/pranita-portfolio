@@ -48,7 +48,10 @@ Closing: two decision spotlights, then four reflections.
 
 ## Length
 
-Written to the `ADR-004` budget and checked with `npm run count:copy transporter-panel`:
-median paragraph 22 words, 75th percentile 30, longest 40, nothing over 60, and short elements
-outnumbering prose paragraphs 2.6 to 1. The evidence lives in blocks — matrices, rule lists,
-annotated callouts, rejected patterns — rather than in paragraphs.
+Full depth by decision — around 4,600 words, the same as the pre-rewrite version. An earlier pass
+cut it to 2,500 and that cost six screens and four decision spotlights, so the cut was reversed.
+
+What changed instead is paragraph shape. Checked with `npm run count:copy transporter-panel`:
+longest paragraph 57 words against 153 before, and **zero** paragraphs over 60 against thirty.
+Evidence sits in blocks — matrices, rule lists, annotated callouts, rejected patterns — rather
+than inside long paragraphs.
