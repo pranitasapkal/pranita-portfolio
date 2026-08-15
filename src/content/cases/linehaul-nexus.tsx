@@ -60,7 +60,7 @@ export const clh: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: "**Meesho is one of India's largest e-commerce marketplaces. Valmo is the logistics network it built to move its own parcels.** Before a parcel reaches a doorstep it travels between warehouses on hired trucks — that leg is called linehaul, and Valmo doesn't own those trucks. It rents them, route by route, from trucking companies, on contracts that have to be negotiated and signed every single month.\n\nA route contract is one agreement: this vendor, this route, this size of truck, this rate, for this month. Valmo needs about **2,400 of them, live before the 1st**.\n\nI was the only designer on the system that does this, from the object model through to a 130-screen handoff.",
+          body: "**Meesho is one of India's largest e-commerce marketplaces.\n\nValmo is the logistics network it built to move its own parcels.** Before a parcel reaches a doorstep it travels between warehouses on hired trucks — that leg is called linehaul, and Valmo doesn't own those trucks.\n\nIt rents them, route by route, from trucking companies, on contracts that have to be negotiated and signed every single month.\n\nA route contract is one agreement: this vendor, this route, this size of truck, this rate, for this month. Valmo needs about **2,400 of them, live before the 1st**.\n\nI was the only designer on the system that does this, from the object model through to a 130-screen handoff.",
         },
         {
           type: 'board',
@@ -84,7 +84,7 @@ export const clh: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'Planners already produced the month’s routes in a system. The team that had to turn those routes into signed contracts worked by hand: assignments went out as bulk Excel files, vendor follow-ups happened on phone calls, disputes lived in WhatsApp threads. Nothing joined the two halves together.\n\nFour things went wrong because of that, and they are the four things the design has to fix.',
+          body: 'Planners already produced the month’s routes in a system.\n\nThe team that had to turn those routes into signed contracts worked by hand: assignments went out as bulk Excel files, vendor follow-ups happened on phone calls, disputes lived in WhatsApp threads.\n\nNothing joined the two halves together.\n\nFour things went wrong because of that, and they are the four things the design has to fix.',
         },
         {
           type: 'phaseCards',
@@ -247,7 +247,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**Planning a month.** Planners upload the coming month’s routes as a file. It is deliberately all-or-nothing: one bad row rejects the whole batch, and the system returns an error file naming which rows failed and why. A partially-accepted batch would mean a month that is quietly incomplete. The rules live on the page itself — what each column means, why the start date must be at least 10 days out, what happens when you edit a design that is already live.',
+          body: '**Planning a month.** Planners upload the coming month’s routes as a file. It is deliberately all-or-nothing: one bad row rejects the whole batch, and the system returns an error file naming which rows failed and why.\n\nA partially-accepted batch would mean a month that is quietly incomplete.\n\nThe rules live on the page itself — what each column means, why the start date must be at least 10 days out, what happens when you edit a design that is already live.',
         },
         {
           type: 'screensGrid',
@@ -313,7 +313,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**Fixing a bad upload, and verifying before go-live.** Errors are named per field on the row that failed — wrong vendor ID, rate above the ceiling, invalid date range. And nothing activates automatically: an accepted contract waits in Upcoming until someone checks and activates it. One deliberate click, because a wrong contract caught here costs nothing and caught after the trucks run costs a dispute.',
+          body: '**Fixing a bad upload, and verifying before go-live.** Errors are named per field on the row that failed — wrong vendor ID, rate above the ceiling, invalid date range.\n\nAnd nothing activates automatically: an accepted contract waits in Upcoming until someone checks and activates it. One deliberate click, because a wrong contract caught here costs nothing and caught after the trucks run costs a dispute.',
         },
         {
           type: 'screensGrid',
@@ -371,11 +371,11 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**What it costs:** progress you have already made stops being visible. Finish three of four trucks and the route sits where it sat this morning. The counts reward finishing routes, not trucks — correct for the deadline the team is judged against, and mildly demoralising on a Wednesday.',
+          body: '**What it costs:** progress you have already made stops being visible. Finish three of four trucks and the route sits where it sat this morning.\n\nThe counts reward finishing routes, not trucks — correct for the deadline the team is judged against, and mildly demoralising on a Wednesday.',
         },
         {
           type: 'text',
-          body: '**2 · Not every change breaks a contract.** A signed contract is an agreement, so "edit" cannot mean what it means in an ordinary form. I had to decide, field by field, whether a change is something the vendor already agreed to, or something they must agree to again. Every one of these modals states the consequence in plain language before you commit.',
+          body: '**2 · Not every change breaks a contract.** A signed contract is an agreement, so "edit" cannot mean what it means in an ordinary form.\n\nI had to decide, field by field, whether a change is something the vendor already agreed to, or something they must agree to again. Every one of these modals states the consequence in plain language before you commit.',
         },
         {
           type: 'screensGrid',
@@ -406,7 +406,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: '**4 · The vendor column only exists once there is a vendor.** The rejected version kept a fixed grid across every stage and filled the gaps with dashes. At scanning speed a dash reads as a loading failure and costs an investigation click. A missing column says **this does not exist yet**; an empty one says **something went wrong**.',
+          body: '**4 · The vendor column only exists once there is a vendor.** The rejected version kept a fixed grid across every stage and filled the gaps with dashes.\n\nAt scanning speed a dash reads as a loading failure and costs an investigation click. A missing column says **this does not exist yet**; an empty one says **something went wrong**.',
         },
         {
           type: 'screensGrid',
@@ -429,7 +429,7 @@ export const clh: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'Every table view was specified with its full set: default, loading, empty because you cleared it, empty because it is your first time, no search results, network error, inline row error, and three toast variants. The interesting ones are the states that only appear when something has gone wrong upstream.',
+          body: 'Every table view was specified with its full set: default, loading, empty because you cleared it, empty because it is your first time, no search results, network error, inline row error, and three toast variants.\n\nThe interesting ones are the states that only appear when something has gone wrong upstream.',
         },
         {
           type: 'screensGrid',
@@ -452,7 +452,7 @@ export const clh: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'Structure diagram → written decision record → Figma → prototype. Four contested structural calls were settled in writing before any high-fidelity work, which is why 130+ screens were handed off without a structural revision. The full eight-step process ran underneath — problem framing, objective, persona, architecture, flows, wireframes, prototype, business case — it just isn’t the story.',
+          body: 'Structure diagram → written decision record → Figma → prototype.\n\nFour contested structural calls were settled in writing before any high-fidelity work, which is why 130+ screens were handed off without a structural revision.\n\nThe full eight-step process ran underneath — problem framing, objective, persona, architecture, flows, wireframes, prototype, business case — it just isn’t the story.',
         },
         {
           type: 'timeline',
@@ -467,7 +467,7 @@ export const clh: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'The interaction model was proven in a data-driven prototype rather than a click-through, because the central claim is a data rule. It runs ~75 routes across three monthly batches with the least-finished-truck rule implemented in the filtering logic — assign three of four trucks and the route genuinely refuses to move.',
+          body: 'The interaction model was proven in a data-driven prototype rather than a click-through, because the central claim is a data rule.\n\nIt runs ~75 routes across three monthly batches with the least-finished-truck rule implemented in the filtering logic — assign three of four trucks and the route genuinely refuses to move.',
         },
         {
           type: 'prototype',

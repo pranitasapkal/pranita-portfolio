@@ -40,15 +40,15 @@ export const ndc: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'Every month, Valmo redesigns its regional linehaul network: which vehicle leaves which sort centre, visiting which delivery centres, in what sequence. At the scale in scope — ~80 sort centres, 10,000+ delivery centres, hundreds of optimizer runs per cycle{*} — a data-science solver (a vehicle-routing model) already produced the route designs. The bottleneck was never computation.',
+          body: 'Every month, Valmo redesigns its regional linehaul network: which vehicle leaves which sort centre, visiting which delivery centres, in what sequence.\n\nAt the scale in scope — ~80 sort centres, 10,000+ delivery centres, hundreds of optimizer runs per cycle{*} — a data-science solver (a vehicle-routing model) already produced the route designs.\n\nThe bottleneck was never computation.',
         },
         {
           type: 'text',
-          body: 'The bottleneck was agreement. A solver output is a proposal; the people who know whether a route is actually drivable are dozens of regional ops leads, each expert in their own sort centre. Before the tool, that negotiation happened across disconnected Google Sheets: the planner exported solver output, mailed it around, collected contradictory edits, and manually reconciled them against a monthly deadline after which the design becomes a vendor contract and cannot change. In one recent cycle, 32 delivery centres silently fell out of coverage across ~10 sort centres because infeasible vehicle inputs never surfaced to anyone who could catch them.',
+          body: 'The bottleneck was agreement. A solver output is a proposal; the people who know whether a route is actually drivable are dozens of regional ops leads, each expert in their own sort centre.\n\nBefore the tool, that negotiation happened across disconnected Google Sheets: the planner exported solver output, mailed it around, collected contradictory edits, and manually reconciled them against a monthly deadline after which the design becomes a vendor contract and cannot change.\n\nIn one recent cycle, 32 delivery centres silently fell out of coverage across ~10 sort centres because infeasible vehicle inputs never surfaced to anyone who could catch them.',
         },
         {
           type: 'text',
-          body: 'When I audited the PM-built feature prototype meant to replace this, I found a feature inventory, not a tool: an empty dashboard of 3 navigation cards, an invisible and unenforced Inputs→Creation→Review→Alignment pipeline, six different status vocabularies, and two very different user roles sharing one shell. A planner opening it could not answer three questions: what is happening across my network, what needs me, and where did I leave off.',
+          body: 'When I audited the PM-built feature prototype meant to replace this, I found a feature inventory, not a tool: an empty dashboard of 3 navigation cards, an invisible and unenforced Inputs→Creation→Review→Alignment pipeline, six different status vocabularies, and two very different user roles sharing one shell.\n\nA planner opening it could not answer three questions: what is happening across my network, what needs me, and where did I leave off.',
         },
         {
           type: 'text',
@@ -91,7 +91,7 @@ export const ndc: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Behind these sat the business objective the tool serves: full adoption of solver-led design, targeting a double-digit improvement in vehicle utilization and a shorter average network distance{*}. My design metrics were deliberately upstream of those numbers — if the planner can\'t orient, compare runs, and close alignment before the freeze date, no solver improvement ships.',
+          body: 'Behind these sat the business objective the tool serves: full adoption of solver-led design, targeting a double-digit improvement in vehicle utilization and a shorter average network distance{*}.\n\nMy design metrics were deliberately upstream of those numbers — if the planner can\'t orient, compare runs, and close alignment before the freeze date, no solver improvement ships.',
         },
         {
           type: 'image',
@@ -111,11 +111,11 @@ export const ndc: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'Two personas, and the single most consequential persona decision was refusing to let them share a shell.\n\n**Central Network Planner (primary).** One person responsible for the whole network. Owns inputs, triggers runs, compares outputs, pushes plans for alignment, and executes the freeze. Their scarce resource is situational awareness: with ~80 sort centres and hundreds of runs per cycle{*}, they need to know what needs them right now, not browse. Expert internal user, desktop, dense tables welcome.\n\n**Ops Lead / Regional PoC (secondary).** Regional operators who review a pushed plan row-by-row and flag what won\'t work on the ground: a vehicle type the local vendor doesn\'t run, a coordinate that\'s wrong, a cutoff that\'s undrivable. They should see exactly one thing: the plan assigned to them, plus a map. Everything else is noise and risk.',
+          body: 'Two personas, and the single most consequential persona decision was refusing to let them share a shell.\n\n**Central Network Planner (primary).** One person responsible for the whole network. Owns inputs, triggers runs, compares outputs, pushes plans for alignment, and executes the freeze.\n\nTheir scarce resource is situational awareness: with ~80 sort centres and hundreds of runs per cycle{*}, they need to know what needs them right now, not browse.\n\nExpert internal user, desktop, dense tables welcome.\n\n**Ops Lead / Regional PoC (secondary).** Regional operators who review a pushed plan row-by-row and flag what won\'t work on the ground: a vehicle type the local vendor doesn\'t run, a coordinate that\'s wrong, a cutoff that\'s undrivable.\n\nThey should see exactly one thing: the plan assigned to them, plus a map. Everything else is noise and risk.',
         },
         {
           type: 'text',
-          body: 'The PM prototype handled this with a persona toggle in one shared interface. I locked the opposite: production is real per-user login with two different shells — the Ops Lead gets a stripped interface containing only Ops Alignment and the map (the prototype keeps a clearly-labelled "Demo: view as…" switch, because a prototype has no auth). This is a trust decision as much as a UX one: an alignment ritual only works if reviewers physically cannot touch inputs, runs, or other regions\' plans.',
+          body: 'The PM prototype handled this with a persona toggle in one shared interface.\n\nI locked the opposite: production is real per-user login with two different shells — the Ops Lead gets a stripped interface containing only Ops Alignment and the map (the prototype keeps a clearly-labelled "Demo: view as…" switch, because a prototype has no auth).\n\nThis is a trust decision as much as a UX one: an alignment ritual only works if reviewers physically cannot touch inputs, runs, or other regions\' plans.',
         },
         {
           type: 'statRow',
@@ -142,11 +142,11 @@ export const ndc: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'The IA had to make the monthly ritual legible in the navigation itself. Three moves did most of the work.\n\n**One spine: the design lifecycle.** Every design carries a single lifecycle stage — Draft → Running → Created → In Review → Pushed → In Alignment → Acknowledged → Finalised — and every screen reads from it. The dashboard\'s pipeline chips, the runs view, and each module are projections of the same state. On top of it sits one status vocabulary (Draft / In Progress / Needs Attention / Blocked / Done) with one rule enforced ruthlessly: **amber means "needs a human decision" and nothing else.**',
+          body: 'The IA had to make the monthly ritual legible in the navigation itself. Three moves did most of the work.\n\n**One spine: the design lifecycle.** Every design carries a single lifecycle stage — Draft → Running → Created → In Review → Pushed → In Alignment → Acknowledged → Finalised — and every screen reads from it.\n\nThe dashboard\'s pipeline chips, the runs view, and each module are projections of the same state.\n\nOn top of it sits one status vocabulary (Draft / In Progress / Needs Attention / Blocked / Done) with one rule enforced ruthlessly: **amber means "needs a human decision" and nothing else.**',
         },
         {
           type: 'text',
-          body: '**One scoping container: the Design Cycle.** A named monthly plan group scopes every upload, run, and alignment, capped at ≤80 runs. Without it, hundreds of runs per cycle{*} stack into an undifferentiated archive; with it, the planner always works inside this month.\n\n**Nav lives in the sidebar, and only there.** The Planner shell reads as the ritual in order: Command Center → Design Inputs → Design Creation → Review & Alignment → Runs → Help. ADR-002 records the correction that got us there: an earlier build also drew a horizontal "lifecycle rail" above every module, duplicating the sidebar. I deleted it and set the rule: module switching is infrequent, so it lives in the persistent sidebar; filters and sub-views are frequent, so they live in the content.',
+          body: '**One scoping container: the Design Cycle.** A named monthly plan group scopes every upload, run, and alignment, capped at ≤80 runs. Without it, hundreds of runs per cycle{*} stack into an undifferentiated archive; with it, the planner always works inside this month.\n\n**Nav lives in the sidebar, and only there.** The Planner shell reads as the ritual in order: Command Center → Design Inputs → Design Creation → Review & Alignment → Runs → Help.\n\nADR-002 records the correction that got us there: an earlier build also drew a horizontal "lifecycle rail" above every module, duplicating the sidebar.\n\nI deleted it and set the rule: module switching is infrequent, so it lives in the persistent sidebar; filters and sub-views are frequent, so they live in the content.',
         },
         {
           type: 'statRow',
@@ -211,11 +211,11 @@ export const ndc: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'I wireframed the panel twice — once to inventory the PM prototype\'s screens, once to restructure them around the ritual — and wrote a critique document ranking the top 10 fixes before any hi-fi work. Structure first, because most of what was wrong was structural.\n\nThe wireframe that mattered most was the **Command Center**. The old dashboard was 3 nav cards; the lo-fi replaced it with a cockpit answering the three planner questions in fixed positions: a deadline-health hero ("18 days to freeze · At risk" with the cycle\'s milestone timeline), a "Needs You" queue where every item is a state requiring the planner, pipeline chips showing counts per lifecycle stage — each a click-through filter, not a decoration — and a Start Something strip that puts run creation ≤2 clicks from landing.',
+          body: 'I wireframed the panel twice — once to inventory the PM prototype\'s screens, once to restructure them around the ritual — and wrote a critique document ranking the top 10 fixes before any hi-fi work. Structure first, because most of what was wrong was structural.\n\nThe wireframe that mattered most was the **Command Center**.\n\nThe old dashboard was 3 nav cards. The lo-fi replaced it with a cockpit answering the three planner questions in fixed positions.\n\nA deadline-health hero ("18 days to freeze · At risk" with the cycle\'s milestone timeline). A "Needs You" queue where every item is a state requiring the planner.\n\nPipeline chips showing counts per lifecycle stage — each a click-through filter, not a decoration. And a Start Something strip that puts run creation ≤2 clicks from landing.',
         },
         {
           type: 'text',
-          body: '**The grouping rule.** At this scale, a flat list of 80+ items is a design failure, so I made it a standing convention — every list groups by sort centre or zone with roll-up progress headers, collapsible groups, segment filters, and "showing N of M". This rule alone did more for orientation than any visual treatment.\n\n**Unified wizard chrome.** Three multi-step flows had each invented their own stepper; I collapsed them into one pattern — stepper on top, step body, persistent footer with the validation summary bottom-left and the primary action bottom-right, later steps locked until earned. Locked steps are the pipeline\'s dependency model made physical.',
+          body: '**The grouping rule.** At this scale, a flat list of 80+ items is a design failure, so I made it a standing convention — every list groups by sort centre or zone with roll-up progress headers, collapsible groups, segment filters, and "showing N of M".\n\nThis rule alone did more for orientation than any visual treatment.\n\n**Unified wizard chrome.** Three multi-step flows had each invented their own stepper; I collapsed them into one pattern — stepper on top, step body, persistent footer with the validation summary bottom-left and the primary action bottom-right, later steps locked until earned.\n\nLocked steps are the pipeline\'s dependency model made physical.',
         },
         {
           type: 'statRow',
@@ -242,7 +242,7 @@ export const ndc: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'The canonical deliverable is a single-file interactive HTML prototype — the full V1 panel, both persona shells, running against seeded data at realistic scale: ~80 sort centres, ~239 runs, ~11.5k delivery centres, ~41 plans. I prototype at scale deliberately; a design that works with 5 mock rows tells you nothing about a tool whose whole problem is 80.\n\nTwo rules governed the build. **No dead controls** — every button, filter, and action is wired; backend-dependent writes surface an honest "coming soon" toast rather than a silent nothing. And **every list ships grouped** per the Step-06 convention, with breadcrumbs on every drill-in returning to the persona\'s home.',
+          body: 'The canonical deliverable is a single-file interactive HTML prototype — the full V1 panel, both persona shells, running against seeded data at realistic scale: ~80 sort centres, ~239 runs, ~11.5k delivery centres, ~41 plans.\n\nI prototype at scale deliberately; a design that works with 5 mock rows tells you nothing about a tool whose whole problem is 80.\n\nTwo rules governed the build. **No dead controls** — every button, filter, and action is wired; backend-dependent writes surface an honest "coming soon" toast rather than a silent nothing.\n\nAnd **every list ships grouped** per the Step-06 convention, with breadcrumbs on every drill-in returning to the persona\'s home.',
         },
         {
           type: 'statRow',
@@ -261,7 +261,7 @@ export const ndc: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Visual system: Meesho\'s internal design system{*} with the product\'s navy override, 13px base type, dense tables with deliberate hierarchy, WCAG 2.1 AA contrast, and status never conveyed by colour alone. FTUX is sparing by locked decision: a 4-step dismissible tour plus contextual tooltips on the six genuinely non-obvious concepts (Historical Weight, reference plan, validation flags, Design Cycle, Acknowledge, Simulate).',
+          body: 'Visual system: Meesho\'s internal design system{*} with the product\'s navy override, 13px base type, dense tables with deliberate hierarchy, WCAG 2.1 AA contrast, and status never conveyed by colour alone.\n\nFTUX is sparing by locked decision: a 4-step dismissible tour plus contextual tooltips on the six genuinely non-obvious concepts (Historical Weight, reference plan, validation flags, Design Cycle, Acknowledge, Simulate).',
         },
       ],
     },
@@ -274,7 +274,7 @@ export const ndc: CaseStudy = {
       blocks: [
         {
           type: 'text',
-          body: 'The tool exists to make solver-led network design the default, and the solver exists to cut cost per shipment — via a double-digit vehicle-utilization improvement target and a shorter average sort-centre-to-delivery-centre distance{*}. But the adoption metric that pays for those is human: a design only realizes its modelled savings if it survives alignment intact and freezes on time. The programme explicitly tracks how many routes and vehicles reach the downstream contract stage unmodified — which is why I treated the alignment loop, not the solver UI, as the highest-leverage surface.',
+          body: 'The tool exists to make solver-led network design the default, and the solver exists to cut cost per shipment — via a double-digit vehicle-utilization improvement target and a shorter average sort-centre-to-delivery-centre distance{*}.\n\nBut the adoption metric that pays for those is human: a design only realizes its modelled savings if it survives alignment intact and freezes on time.\n\nThe programme explicitly tracks how many routes and vehicles reach the downstream contract stage unmodified — which is why I treated the alignment loop, not the solver UI, as the highest-leverage surface.',
         },
         {
           type: 'text',
@@ -282,7 +282,7 @@ export const ndc: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Trade-offs I accepted knowingly: two-version persistence instead of a full audit log, shallow file-level input validation instead of per-cell editing, and no month-over-month comparison in V1 — each cut scope from the ritual\'s periphery to protect its core. A phased-release option — shipping the alignment module alone for the next cycle — was kept open, because agreement is the bottleneck the business feels first.',
+          body: 'Trade-offs I accepted knowingly: two-version persistence instead of a full audit log, shallow file-level input validation instead of per-cell editing, and no month-over-month comparison in V1 — each cut scope from the ritual\'s periphery to protect its core.\n\nA phased-release option — shipping the alignment module alone for the next cycle — was kept open, because agreement is the bottleneck the business feels first.',
         },
         {
           type: 'statRow',

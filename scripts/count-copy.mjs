@@ -31,8 +31,13 @@ const pct = (a, p) => a[Math.floor(a.length * p)]
 function collect(value, key, into) {
   if (typeof value === 'string') {
     if (SKIP.has(key)) return
-    const n = words(value)
-    if (n) into.push(n)
+    // Text.tsx splits a body on blank lines and renders one <p> per piece, so a block holding
+    // three paragraphs is three paragraphs on the page — not one long one. Count what renders.
+    // `{*}` is an asterisk marker, not a word.
+    for (const para of value.split(/\n\n+/)) {
+      const n = words(para.replace(/\{\*\}/g, ''))
+      if (n) into.push(n)
+    }
     return
   }
   if (Array.isArray(value)) return value.forEach((v) => collect(v, key, into))
