@@ -4,11 +4,21 @@
  * IMG blocks point at placeholder paths; placeholder:true triggers the "asset pending" frame.
  * {*} markers preserved verbatim in all body strings — rendered as <Asterisk /> by BlockRenderer.
  * [UT-FINDINGS:...] placeholders preserved verbatim — renderer shows a "content pending" pill.
+ *
+ * Structure and length follow ADR-005; the worked example is transporter-panel.tsx. One claim,
+ * one home — a number a statRow shows is not repeated by the paragraph above it — and a decision
+ * is argued once: the spotlights carry the reasoning, the chapters state what shipped.
+ *
+ * NOTE: "the response deadline" is the fuzzed form of an internal SLA term. An earlier
+ * find/replace left three artifacts behind (a lowercase bolded label, a missing word, and a
+ * multi-word `ghost`), fixed 2026-08-16. Do NOT revert any of these to the original term.
+ * Checked with `npm run count:copy TCM` and `npm run check:facts check TCM`.
  */
 import type { CaseStudy } from '../types'
 import { summaries } from './summaries'
 
-export const transporter: CaseStudy = {...summaries['transporter-contract-management'],
+export const transporter: CaseStudy = {
+  ...summaries['transporter-contract-management'],
   title: 'Transporter Contract Management',
   oneLiner:
     'Everything that makes an ops power-tool good actively fails a user who reads slowly and trusts the screen literally — so the work was subtraction, with discipline.',
@@ -24,15 +34,15 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
   },
   tldr: {
     problem:
-      'Transporters handling 15–70 contracts a month — low-literacy, Hindi-first, trusting the screen literally — had no self-serve way to accept, reject, track, or dispute contracts without calling support.',
+      'Transporters handling 15–70 contracts a month — low-literacy, Hindi-first, trusting the screen literally — had no self-serve way to accept, reject, track or dispute a contract without calling support.',
     outcomes: [
-      'Cut the interface down to 4 lifecycle tabs, 1 primary CTA per row, and a 34-row table proving every row state renders that proves every combination renders correctly',
-      'Judge-mode self-review scored my own screens 2.8/5 and catalogued 27 issues — 7 of them ship-blockers I caught before engineering did',
-      '3 written decision records lock 13+ structural decisions and a 6-term status vocabulary; validated with a moderated Hindi usability test across 6–8 literacy-mixed transporters',
+      'Four lifecycle tabs, one primary action per row, and a 34-row table proving every combination renders',
+      'A self-review scored my own screens 2.8/5 and catalogued 27 issues — 7 of them ship-blockers I caught before engineering did',
+      'Three decision records lock 13+ structural calls and a 6-term status vocabulary, pressure-tested in a moderated Hindi usability test',
     ],
     stats: [{ value: '34' }, { value: '27' }, { value: '3' }],
     summary:
-      'I designed the vendor-facing contract console for Valmo transporters by systematically removing the patterns ops tools are usually praised for — dense filters, hover-hidden actions, clever conditional layouts. What shipped instead is a panel of named views, deadline-based urgency, and one action per row, hardened by a 27-issue self-audit and a moderated usability test in Hindi.',
+      'The vendor-facing contract console for Valmo transporters, built by removing the patterns ops tools are usually praised for — dense filters, hover-hidden actions, clever conditional layouts.',
   },
 
   chapters: [
@@ -40,22 +50,13 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
     {
       id: 'problem-understanding',
       step: 1,
-      kicker: 'Problem Understanding',
       navLabel: 'The wrong answer',
       ghost: 'LITERAL',
       title: 'The obvious answer was an ops dashboard. That answer was wrong.',
       blocks: [
         {
           type: 'text',
-          body: 'Valmo — Meesho\'s transportation arm — issues route contracts to independent Indian transporters: 15–70 a month, mostly in one batch, each with a deadline, a rate, a vehicle spec and real money attached.\n\nBefore this panel it lived in phone calls and PDFs. He heard about contracts from a Valmo contact, disagreed by calling someone, and had nowhere to see what was running, ending, or gone.',
-        },
-        {
-          type: 'text',
-          body: 'The obvious answer was an ops-style dashboard. That answer was wrong, and understanding why became the project.\n\nThis user is not an analyst. He runs a small fleet from a mid-range laptop, reads slowly, comprehends decisions in Hindi first, and trusts the screen literally — if a chip says "Disputes (0)" he reads it as a fact about his business, not an empty filter.',
-        },
-        {
-          type: 'text',
-          body: 'So the problem was not "build a contract table."\n\nIt was: take a genuinely complex lifecycle — Pending → Upcoming → Active → Closed, disputes, terminations with a 3-day trip buffer, performance flags, deadline reminders — and present it so a slow, literal reader can act correctly, alone, on the first batch day.',
+          body: 'Valmo — Meesho’s transportation arm — issues route contracts to independent Indian transporters. Each carries a deadline, a rate, a vehicle spec and real money.\n\nBefore this panel they lived in phone calls and PDFs. He heard about a contract from a Valmo contact, and had nowhere to see what was running, ending or gone.',
         },
         {
           type: 'problemTabs',
@@ -79,6 +80,10 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
           ],
         },
         {
+          type: 'text',
+          body: 'So the brief was not "build a contract table."\n\nIt was to take a real lifecycle — Pending → Upcoming → Active → Closed, disputes, terminations, performance flags — and present it so a slow, literal reader can act alone, on the first batch day.',
+        },
+        {
           type: 'statRow',
           stats: [
             { value: '15–70 contracts/month', label: 'contract volume' },
@@ -99,31 +104,38 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
     {
       id: 'objective',
       step: 2,
-      kicker: 'Objective',
       navLabel: 'Four jobs',
       ghost: 'ALONE',
       title: 'Four jobs, done alone, without a phone call.',
       blocks: [
         {
           type: 'statementBand',
-          eyebrow: 'The problem, stated',
+          eyebrow: 'What had to become true',
           statement:
             'How might a transporter who reads slowly accept, reject, track and dispute a contract on his own — on the first batch day, without calling anyone?',
         },
         {
-          type: 'text',
-          body: 'The objective had two halves, one measurable bar each.\n\nFor him: accept a contract, reject one, find what needs action today, and check whether an active contract is in trouble — without calling support or being walked through it.\n\nFor the business: protect the response deadlines Valmo commits to, since a delayed accept is a breach risk — hence deadline-based urgency at ≤48 hours — and cut avoidable rejections by showing the economics before reject commits.',
-        },
-        {
-          type: 'text',
-          body: 'I also set a quality bar for myself, not the user: before handoff the screens had to survive a self-review against the locked spec, WCAG 2.1 AA and the persona. That gate is Step 07.',
+          type: 'wordList',
+          title: 'Two halves, one measurable bar each',
+          items: [
+            {
+              word: 'For him',
+              note: 'Accept, reject, find what needs him today, and check whether an active contract is in trouble.',
+            },
+            {
+              word: 'For the business',
+              note: 'Protect the response deadlines Valmo commits to, and cut avoidable rejections.',
+            },
+            {
+              word: 'For me',
+              note: 'The screens had to survive a self-review against the locked spec, WCAG 2.1 AA and the persona.',
+            },
+          ],
+          highlight: 2,
         },
         {
           type: 'statRow',
-          stats: [
-            { value: '≤48 hours', label: 'urgency threshold' },
-            { value: '2.8/5, 27 issues, 7 ship-blockers', label: 'self-review gate' },
-          ],
+          stats: [{ value: '≤48 hours', label: 'urgency threshold — a delayed accept is a breach risk' }],
         },
       ],
     },
@@ -132,28 +144,31 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
     {
       id: 'user-persona',
       step: 3,
-      kicker: 'User Persona',
       navLabel: 'Reads it literally',
       ghost: 'TRUST',
       title: 'He reads the screen literally, so the screen cannot bluff.',
       blocks: [
         {
           type: 'text',
-          body: 'The user is an Indian transporter — a small operator running one to a handful of vehicles, from a mid-range laptop rather than a phone, which surprises people who assume "low-literacy" means "mobile".\n\nHis comprehension of anything consequential is Hindi-first, and his mental model is three questions: what needs me now, what is running, what is over.',
+          body: 'A small operator running one to a handful of vehicles — from a mid-range laptop, not a phone, which surprises people who read "low-literacy" and assume "mobile".\n\nAnything consequential he understands in Hindi first, and his mental model is three questions: what needs me now, what is running, what is over.',
+        },
+        {
+          type: 'insightNotes',
+          title: 'Four traits, and the screen each one changed',
+          notes: [
+            'He reads the screen literally — a count that disagrees with another count is evidence the system is untrustworthy',
+            'He has no tolerance for hidden navigation — hover tooltips, kebab menus and unlabelled filter states all fail him',
+            'He fears making mistakes, which shaped the reject warning and the typed-confirmation terminate flow',
+            'He shares his logged-in laptop with staff, which is why the contract area got its own passcode gate',
+          ],
         },
         {
           type: 'text',
-          body: 'Four traits drove every decision in this project.\n\n**He reads the screen literally.** A count that disagrees with another count on the same screen is not a rendering bug to him — it is evidence the system is untrustworthy.\n\nHence P0 issue #1 in my self-review: reconcile all counts to one source. I had shipped `Pending (22)` on a card next to `Pending (10)` on a tab.\n\n**He has no tolerance for hidden navigation.** Hover-only tooltips, actions behind kebab menus, and filter states with no visible label all fail him. Everything is a named, labelled, counted view.\n\n**He fears making mistakes.** The usability-test debrief asked directly: "Did you feel safe doing actions here, or were you scared of making mistakes?" That fear shaped the reject warning, the typed-confirmation terminate flow, and the removal of celebratory treatment from the dispute-success modal — a grievance is not a confetti moment.\n\n**He shares his device.** Staff and points-of-contact use the same logged-in laptop, which is why the contract area got its own session passcode gate.',
-        },
-        {
-          type: 'text',
-          body: 'The moderated usability test (6–8 transporters, literacy-mixed, conducted in Hindi) pressure-tested exactly these traits. [UT-FINDINGS: pending from Pranita]',
+          body: 'The first trait produced ship-blocker #1 in my own review: I had shipped `Pending (22)` on a card next to `Pending (10)` on a tab.\n\nThe third produced the debrief question I put to every participant: "Did you feel safe doing actions here, or were you scared of making mistakes?"\n\nIt is also why the dispute-success modal lost its confetti. A grievance acknowledged is not a celebration. [UT-FINDINGS: pending from Pranita]',
         },
         {
           type: 'statRow',
-          stats: [
-            { value: '6–8 transporters, literacy-mixed', label: 'UT sample' },
-          ],
+          stats: [{ value: '6–8 transporters, literacy-mixed', label: 'moderated usability test, in Hindi' }],
         },
         {
           type: 'image',
@@ -169,29 +184,38 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
     {
       id: 'information-architecture',
       step: 4,
-      kicker: 'Information Architecture',
       navLabel: 'Named views',
       ghost: 'NAMES',
       title: 'Named views instead of filters he has to assemble.',
       blocks: [
         {
           type: 'text',
-          body: 'The IA is the contract lifecycle, stated plainly: four tabs — **Pending, Upcoming, Active, Closed** — in the order a contract moves. No dashboard landing, no separate action center. The tab names are the mental model.',
+          body: 'The IA is the contract lifecycle, stated plainly: four tabs — **Pending, Upcoming, Active, Closed** — in the order a contract moves.\n\nNo dashboard landing, no separate action centre. The tab names are the mental model.',
         },
         {
           type: 'text',
-          body: '**Chips are named views, not filter toggles.** Pending has `Urgent (X)` and `All Pending (X)`. Active has up to four: `Below Target`, `Disputes`, `Ending Soon`, `All Active`.\n\nAction chips hide entirely when their count is zero — a "Disputes (0)" chip is noise that invites a dead-end click — but the "All" fallback is always visible, so the user can never be stranded in a filtered view he doesn\'t understand.\n\n**Columns are invariant per tab (ADR-001 §7).** No chip ever restructures the table.\n\nRow-level tags carry all contextual variation, in exactly two places: performance tags beside the on-time performance and on-time numbers they annotate, everything else under the Contract ID.\n\n**Sub-metrics on overview cards exist only if they map to a real chip (ADR-002).** That rule killed the Estimated Earnings card (not actionable), the "All: X" sub-metric (duplicates the header count), and "Starting Soon" (maps to no view). Four cards became three.',
+          body: '**Chips are named views, not filter toggles.** Pending has `Urgent (X)` and `All Pending (X)`. Active has up to four: `Below Target`, `Disputes`, `Ending Soon`, `All Active`.',
         },
         {
-          type: 'text',
-          body: 'A locked 6-term closure vocabulary — Rejected, Terminated by You, Terminated by Valmo, Cancelled by Valmo, Completed, No Response — replaced ambiguous words like "Auto rejected" and actor-less "Cancelled," because a literal reader needs to know *who* did the thing.',
-        },
-        {
-          type: 'statRow',
-          stats: [
-            { value: '6 locked terms, 3 retired', label: 'closure vocabulary' },
-            { value: '4 → 3', label: 'overview cards after chip-backed sub-metric rule' },
+          type: 'matrix',
+          title: 'Three rules that decided the whole structure',
+          columns: ['Rule', 'What it killed'],
+          rows: [
+            [
+              'Columns are invariant per tab (ADR-001 §7)',
+              'Any chip restructuring the table. Row tags carry it instead, in two places only: performance tags beside the numbers they annotate, everything else under Contract ID.',
+            ],
+            [
+              'A sub-metric exists only if it maps to a real chip (ADR-002)',
+              '"Estimated Earnings" (not actionable), "All: X" (duplicates the header), "Starting Soon" (maps to no view). 4 → 3 cards.',
+            ],
+            [
+              'Every closure names its actor',
+              'The ambiguous "Auto rejected" and the actor-less "Cancelled" — three retired terms in all.',
+            ],
           ],
+          totalNote:
+            'The locked vocabulary is six words: Rejected · Terminated by You · Terminated by Valmo · Cancelled by Valmo · Completed · No Response. A literal reader needs to know who did the thing.',
         },
         {
           type: 'image',
@@ -207,32 +231,33 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
     {
       id: 'user-flow',
       step: 5,
-      kicker: 'User Flow',
       navLabel: 'One action a row',
       ghost: 'ONE',
       title: 'One primary action per row, so the next step is never a choice.',
       blocks: [
         {
           type: 'text',
-          body: 'The flows follow one principle: destructive or consequential actions get friction; everything else gets none.',
+          body: 'One principle runs through every flow: destructive or consequential actions get friction, everything else gets none.',
         },
         {
           type: 'text',
-          body: '**Accept** — the highest-frequency action — is one click from the default landing state on batch day: the Urgent chip auto-selects when non-empty, an the response deadline banner explains why "Reminder from Valmo" rows come first, and each row carries a filled `Accept` button.\n\nThe accept modal splits into three steps — Review → Assign vehicle/driver, optional → Confirm — so assignment never blocks acceptance. It can also happen later from the detail view, never from the list row.',
+          body: '**Accept** is one click from the default landing state on batch day. The Urgent chip auto-selects when non-empty, each row carries a filled `Accept` button, and a banner explains why "Reminder from Valmo" rows come first.\n\nThe modal splits into Review → Assign vehicle and driver, optional → Confirm, so assignment never blocks acceptance.',
         },
         {
           type: 'text',
-          body: "**Reject** is a text link, deliberately weaker than Accept, and it interrupts: before confirming, the flow shows the economic consequence — the total earning the transporter is walking away from, a lakh-plus figure on a typical contract{*} — plus the performance-rating impact, then asks for a reason from an acceptance-time list (rate, vehicle size, period).\n\n**Terminate**, a different act with different reasons (driver exit, breakdown, route closed), gets a harder gate: a typed-confirmation second step, because it is irreversible and trips must still run for a 3-day buffer afterwards — a countdown the row surfaces as \"X days to complete remaining trips.\"",
+          body: '**Reject** is a text link, deliberately weaker than Accept, and it interrupts — see the spotlight below.\n\n**Terminate** gets a harder gate: a typed confirmation, because it is irreversible and trips still run for a 3-day buffer afterwards, which the row counts down as "X days to complete remaining trips."',
         },
         {
           type: 'text',
-          body: "**Dispute** is reachable only from Active rows without an open dispute; with one open, the CTA disables with a plain-language tooltip.\n\nThe success state is a neutral document icon and \"We've received your dispute.\n\nExpect an update within 24 hours\" — the confetti treatment from an earlier screen was removed because a grievance acknowledged is not a celebration.\n\n**Session entry** passes through a passcode gate on the contract area only: transporters share their logged-in laptop with staff, and contract rates are confidential.\n\nFirst-time flow is OTP-to-registered-mobile → create password, fronted by an intro screen in three 2–4-word bullets (\"Private page / Your contracts and money / Only you can open it\") and an amber callout: \"Do not tell anyone — not even your staff.\"",
+          body: '**Dispute** is reachable only from an Active row without one already open; with one open the button disables and says why.\n\nThe success state is a neutral document icon and "We\'ve received your dispute. Expect an update within 24 hours".',
+        },
+        {
+          type: 'text',
+          body: '**Session entry** passes through a passcode gate on the contract area only, because he shares the laptop and rates are confidential. First run is OTP to the registered mobile, then set a password.\n\nIt is fronted by three short lines — "Private page / Your contracts and money / Only you can open it" — and an amber callout: "Do not tell anyone — not even your staff."',
         },
         {
           type: 'statRow',
-          stats: [
-            { value: '3 days', label: 'terminate buffer' },
-          ],
+          stats: [{ value: '3 days', label: 'trips still run after a termination' }],
         },
         {
           type: 'image',
@@ -255,47 +280,46 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
     {
       id: 'lo-fi-wireframes',
       step: 6,
-      kicker: 'Lo-fi Wireframes',
       navLabel: 'What I removed',
       ghost: 'CUT',
       title: 'The work was removing what ops tools get praised for.',
       blocks: [
         {
           type: 'text',
-          body: "The lo-fi stage was where most of the subtraction happened, and I kept a written record of what was cut — five rejected patterns, each of which would pass review in a normal ops tool.",
+          body: 'Five patterns were cut at lo-fi, each of which would pass review in a normal ops tool. I wrote down why, because a recorded reason is what stops the next iteration quietly adding it back.',
         },
         {
           type: 'rejected',
           items: [
             {
               pattern: 'An "Assign Pending" chip on Upcoming with per-row "Assign Now" buttons',
-              reason: 'Created two primary actions per row and referenced a flow that didn\'t exist from that surface. Upcoming became view-only at list level; assignment lives at acceptance and in the detail view.',
+              reason: 'Two primary actions per row, pointing at a flow that did not exist from that surface.',
             },
             {
               pattern: 'A "New Contracts" chip on Pending',
-              reason: 'Contracts arrive in one monthly batch — "new vs. existing" is not a distinction this user acts on. Only "respond now vs. later" matters, so urgency became deadline-based (≤48h), not arrival-based.',
+              reason: 'See the spotlight — arrival is not a distinction this user acts on.',
             },
             {
-              pattern: 'All contextual banners shown simultaneously on the Active tab',
-              reason: 'Rejected for stacking; one banner per active chip instead, so the user always knows which view\'s context the banner belongs to.',
+              pattern: 'All contextual banners shown at once on Active',
+              reason: 'One banner per active chip, so he always knows which view it belongs to.',
             },
             {
               pattern: 'Tags distributed across columns by topic',
-              reason: 'Rejected, then partly reinstated with a stricter rule — performance tags belong with the performance numbers; everything else stays under Contract ID, capping worst-case tag stacks at 2.',
+              reason: 'Reinstated under a stricter rule that caps a worst-case tag stack at two.',
             },
             {
-              pattern: 'A Performance filter dropdown on Active duplicating the Below Target chip',
-              reason: 'Two controls doing one job. Removed from Active, kept only on Closed where no chip exists.',
+              pattern: 'A Performance filter on Active duplicating the Below Target chip',
+              reason: 'Two controls doing one job. Kept only on Closed, where no chip exists.',
             },
           ],
         },
         {
           type: 'text',
-          body: 'The wireframes were validated against a 34-row table proving every row state renders — every tag, chip, and banner rule had to render correctly against every row before hi-fi started.\n\nThe matrix is also the prototype\'s test data, so the spec and the demo can\'t drift.',
+          body: 'Every tag, chip and banner rule had to render correctly against every row before hi-fi started. That table is also the prototype’s test data, so the spec and the demo cannot drift.',
         },
         {
           type: 'matrix',
-          title: 'Row State Matrix — representative states',
+          title: 'Row state matrix — representative states',
           columns: ['Tab', 'State', 'Urgency', 'Primary CTA'],
           rows: [
             ['Pending', 'Deadline ≤48h, no response', 'Urgent (red)', 'Accept · Reject (text link)'],
@@ -305,20 +329,17 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
             ['Active', 'Open dispute, under review', 'Urgent', 'View (dispute in progress)'],
             ['Closed', 'Terminated by You, buffer complete', '—', 'View (read-only)'],
           ],
-          totalNote: '34 states documented in the full matrix',
+          totalNote: '34 rows in the full matrix, across 4 tabs.',
         },
         {
           type: 'statRow',
-          stats: [
-            { value: '5', label: 'rejected patterns, each documented with reason' },
-            { value: '34 rows across 4 tabs', label: 'table of row states' },
-          ],
+          stats: [{ value: '5', label: 'patterns rejected, each with a written reason' }],
         },
         {
           type: 'image',
           frame: 'none',
           src: '/src/assets/work/transporter/state-matrix.png',
-          alt: 'Row-table of row states table — 34 states across 4 lifecycle tabs',
+          alt: 'Row state matrix — 34 states across 4 lifecycle tabs',
           placeholder: true,
         },
       ],
@@ -328,36 +349,30 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
     {
       id: 'prototype',
       step: 7,
-      kicker: 'Prototype',
       navLabel: 'I judged my own',
       ghost: '2.8',
       title: 'I scored my own screens 2.8 out of 5 before anyone else could.',
       blocks: [
         {
           type: 'text',
-          body: "Two artifacts carried the interaction design: hi-fi screens in Figma (the visual source of truth — 130+ screens across the two export sets) and a single-file HTML prototype, ~1,450 lines of vanilla JS with no framework and no build step, driven entirely by the 34-row table proving every row state renders.\n\nThe prototype exists because tag-visibility rules, chip auto-hide logic, and banner conditions are behavioral claims — a static mock can't prove that switching to the Below Target chip hides the now-redundant performance tags, or that the Disputes chip disappears when its last dispute resolves.",
+          body: 'Two artefacts carried the interaction design: 130+ hi-fi screens in Figma across the two export sets, and a single-file HTML prototype — ~1,450 lines, no framework, no build step, driven entirely by the row-state matrix.\n\nIt exists because tag-visibility, chip auto-hide and banner conditions are behavioural claims. A static mock cannot prove that switching to Below Target hides the now-redundant performance tags.',
         },
         {
           type: 'text',
-          body: 'Before handoff I ran the screens through a self-review against the locked spec, WCAG 2.1 AA and the persona, scoring my own work as a hostile reviewer would. It scored **2.8/5** — strong skeleton, not ship-ready: 27 issues, 7 of them ship-blockers.',
-        },
-        {
-          type: 'text',
-          body: 'The prototype then went in front of transporters: a moderated, think-aloud usability test in Hindi — 6–8 participants, literacy-mixed, 45–60 minutes each, 8 task scenarios from "find and accept a new contract" to "this contract was terminated — can you still run trips?", with per-task timing, unaided-success scoring, and verbatim confusion quotes. [UT-FINDINGS: pending from Pranita]',
+          body: 'Then I reviewed it as a hostile reviewer would, against the locked spec, WCAG 2.1 AA and the persona. It scored **2.8/5** — strong skeleton, not ship-ready.\n\nAfter that it went in front of transporters: think-aloud, in Hindi, 45–60 minutes each, with per-task timing and unaided-success scoring.\n\n8 task scenarios, from "find and accept a new contract" to "this contract was terminated — can you still run trips?" [UT-FINDINGS: pending from Pranita]',
         },
         {
           type: 'statRow',
           stats: [
-            { value: '2.8/5 · 27 issues · 7 P0', label: 'self-review' },
+            { value: '2.8/5 · 27 issues · 7 P0', label: 'self-review, before handoff' },
             { value: '~1,450 lines, single file, no framework', label: 'prototype' },
-            { value: '8 tasks · 6–8 participants · Hindi, think-aloud', label: 'UT protocol' },
           ],
         },
         {
           type: 'prototype',
           slug: 'transporter',
           title: 'Transporter Contract Management — live prototype',
-          note: 'Driven by the 34-row table proving every row state renders. Chip auto-hide logic and tag-visibility rules are live — switch to Below Target and the redundant performance tag disappears from every row.',
+          note: 'Chip auto-hide and tag-visibility rules are live — switch to Below Target and the redundant performance tag disappears from every row.',
         },
         {
           type: 'image',
@@ -380,28 +395,45 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
     {
       id: 'business-aspects',
       step: 8,
-      kicker: 'Business Aspects',
       navLabel: 'What it protects',
-      ghost: 'the response deadline',
+      ghost: 'CLOCK',
       title: 'A late accept is a breach, so urgency had to be a deadline, not a mood.',
       blocks: [
         {
-          type: 'text',
-          body: 'The panel\'s business case rests on three levers.\n\n**the response deadline protection.** A pending contract that expires unanswered is a route Valmo has to re-source.\n\nThe deadline-based urgency model (≤48h), the auto-selected Urgent chip and the "Reminder from Valmo" banner all exist to compress response time on the contracts where a delayed accept becomes a missed commitment.\n\nContracts that expire unanswered get an honest label — "No Response", not "Auto rejected" — because mislabelling the system\'s action as the user\'s erodes the trust the panel depends on.',
+          type: 'phaseCards',
+          items: [
+            {
+              step: '01',
+              title: 'Response-deadline protection',
+              body: 'A pending contract that expires unanswered is a route Valmo has to re-source.',
+            },
+            {
+              step: '02',
+              title: 'Avoidable-rejection reduction',
+              body: 'A rejection costs Valmo a re-sourcing cycle and costs him a contract-length earning stream.',
+            },
+            {
+              step: '03',
+              title: 'Support-call deflection',
+              body: 'Every flow that used to need a phone call has a self-serve path, with a reason and a timestamp.',
+            },
+          ],
         },
         {
           type: 'text',
-          body: "**Avoidable-rejection reduction.** A rejection costs Valmo a re-sourcing cycle and costs the transporter a contract-length earning stream.\n\nThe reject warning surfaces both — the full earning loss (a lakh-plus figure on a typical contract{*}) and the performance-rating consequence — before the decision commits.\n\nThe usability test probed this directly: \"What does the earning-loss figure mean to you — would you still reject?\" The point is not to block rejection; it is to make sure no transporter rejects a contract without understanding its price. [UT-FINDINGS: pending from Pranita]",
+          body: 'The first lever is why urgency is deadline-based, and why an expired contract gets an honest label — "No Response", not "Auto rejected".\n\nMislabelling the system’s action as the user’s erodes the trust the panel depends on.',
         },
         {
           type: 'text',
-          body: "**Support-call deflection.** Every flow that previously required a phone call — what's new, why was this closed, raising a rate dispute, when a terminated contract actually stops — has a self-serve path with reason, timestamp, and next action attached.\n\nThe trade-offs were accepted knowingly. Three decision records' worth of locked constraints slow future bolt-ons, because any new action must fit \"one primary CTA per row\". The passcode gate adds a session-entry step.\n\nAnd full state coverage — empty, loading and error on every surface — is real engineering cost paid up front, to keep the screen from ever contradicting itself in front of a literal reader.",
+          body: 'The second is why the usability test asked: "What does the earning-loss figure mean to you — would you still reject?"\n\nThe point is not to block rejection. Nobody should reject a contract without knowing its price. [UT-FINDINGS: pending from Pranita]',
+        },
+        {
+          type: 'text',
+          body: 'The trade-offs were taken knowingly. Locked constraints slow future bolt-ons, since any new action must fit "one primary CTA per row", and the passcode gate adds a step.\n\nFull state coverage everywhere is engineering cost paid up front, so the screen never contradicts itself.',
         },
         {
           type: 'statRow',
-          stats: [
-            { value: '3 ADRs, 13+ decisions, 6-term vocabulary', label: 'decision record' },
-          ],
+          stats: [{ value: '3 ADRs, 13+ decisions, 6-term vocabulary', label: 'written before hi-fi' }],
         },
       ],
     },
@@ -409,45 +441,30 @@ export const transporter: CaseStudy = {...summaries['transporter-contract-manage
 
   spotlights: [
     {
-      decision:
-        'Chips are named views with an always-visible "All" fallback — action chips vanish at zero count.',
-      rejected:
-        'Conventional filter toggles — including zero-count chips and filter states with no labelled escape.',
-      why: 'A literal reader treats "Disputes (0)" as a fact and an empty filtered table as a broken page. Every chip is a named view with a count; action chips vanish at zero; the "All" chip never does. The user can always answer "show me everything" without understanding the filter model. (ADR-001 §1–2.)',
+      decision: 'Chips are named views with an always-visible "All" fallback; action chips vanish at zero.',
+      rejected: 'Conventional filter toggles, zero-count chips included.',
+      why: 'A literal reader treats "Disputes (0)" as a fact, and an empty filtered table as a broken page. (ADR-001 §1–2.)',
     },
     {
-      decision:
-        'Deadline-based urgency (≤48h), not arrival-based — no "New Contracts" chip.',
-      rejected:
-        'A "New Contracts" chip — the default recency model in every inbox-shaped tool.',
-      why: "Contracts arrive in one monthly batch, so on batch day everything is \"new\" and the distinction carries zero signal. The only question the transporter acts on is \"respond now or later,\" which is a property of the deadline, not the arrival. Urgent = deadline within 48 hours, colour-graded red/amber/grey by proximity. (ADR-001 §2.)",
+      decision: 'Urgency is the deadline, not the arrival date — so there is no "New Contracts" chip.',
+      rejected: 'The recency model every inbox-shaped tool ships with.',
+      why: 'Contracts arrive in one monthly batch, so on batch day everything is new and the distinction carries no signal. "Respond now vs. later" is a property of the deadline, not the arrival. (ADR-001 §2.)',
     },
     {
-      decision:
-        'Show the money before allowing a rejection — the earnings he forfeits, and the hit to his performance rating, before the decision commits.',
-      rejected:
-        'A bare "Are you sure?" dialog — or, at the other extreme, a guilt screen designed to stop him.',
-      why: 'Rejecting a contract forfeits a whole contract-length earnings stream, six figures on a typical one, and marks his rating. A user who fears the screen clicks through a vague confirm; a user shown the actual number makes an informed call.',
+      decision: 'Show the money before allowing a rejection — the earnings forfeited and the rating hit.',
+      rejected: 'A bare "Are you sure?", or a guilt screen designed to stop him.',
+      why: 'Rejecting forfeits a contract-length earnings stream — a lakh-plus figure on a typical contract{*}. A user who fears the screen clicks through a vague confirm.',
     },
   ],
 
   reflections: [
     {
       title: 'The 2.8/5 I gave my own screens is the most useful number here, and the least comfortable.',
-      body: 'The structural thinking was done — three written decision records, a locked vocabulary, a 34-row matrix — and the screens still reached review with counts contradicting each other on one viewport, and confetti on a grievance flow.',
+      body: 'Three decision records and a locked vocabulary, and the screens still reached review contradicting themselves on one viewport.',
     },
-    {
-      title: 'Spec discipline and screen discipline are different skills.',
-      body: 'Rules I had written myself were violated in my own Figma files within a day. That is why the self-review is now a standing gate in my process rather than a one-off.',
-    },
-    {
-      title: 'Four lifecycle tabs may be one too many for this user.',
-      body: 'I raised it and deferred it. The honest answer waits on usability-test evidence, not on my preference.',
-    },
-    {
-      title: 'Cutting features is easy. Writing down why is the discipline.',
-      body: 'A recorded reason is what stops the next iteration quietly adding it back.',
-    },
+    { title: 'Spec discipline and screen discipline turn out to be different skills.' },
+    { title: 'Four lifecycle tabs may be one too many. I raised it, and deferred it to the test evidence.' },
+    { title: 'Cutting features is easy. Writing down why is the discipline.' },
   ],
 
   next: {
