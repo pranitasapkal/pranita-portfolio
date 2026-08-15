@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="1358" viewBox="0 0 960 1358" fill="none">
+<style>@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap');</style>
+<rect id="bg" x="0" y="0" width="960" height="1358" fill="#FFFFFF"/>
+<rect id="sidebar-panel" x="533" y="0" width="427" height="1358" fill="rgba(222,29,62,0.02)"/>
+<g id="identity">
+<rect id="accent-bar" x="39" y="71" width="120" height="3" fill="#DE1D3E"/>
+<text id="name" x="39" y="118" font-family="Poppins, sans-serif" font-size="30" font-weight="600" fill="#333333">Pranita Sapkal</text>
+<text id="role" x="39" y="143" font-family="Poppins, sans-serif" font-size="15" font-weight="500" fill="#DE1D3E">Product Designer</text>
+<text id="summary" x="39" y="167" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#616161"><tspan x="39" dy="0">Product designer for the platforms that run one of</tspan><tspan x="39" dy="21">India's largest logistics networks. On Meesho's</tspan><tspan x="39" dy="21">Valmo network I'm the sole designer behind three</tspan><tspan x="39" dy="21">products taken from 0→1 to launch: the systems that</tspan><tspan x="39" dy="21">plan trips, manage transporters, and run vendor</tspan><tspan x="39" dy="21">contracts, now used by transporters and managers</tspan><tspan x="39" dy="21">across India. Partnering with product and</tspan><tspan x="39" dy="21">engineering, I design the operating model, not just</tspan><tspan x="39" dy="21">the screens. Earlier: 3 years across web, mobile,</tspan><tspan x="39" dy="21">and design systems.</tspan></text>
+</g>
+<g id="photo-placeholder"><rect x="757" y="0" width="164" height="220" rx="6" fill="#C4C4C4"/><rect x="757" y="0" width="164" height="220" rx="6" fill="none" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="6 5"/><text x="839" y="116" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#7A7A7A" text-anchor="middle">PHOTO</text></g>
+<g id="contact">
+<text x="720" y="109" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="#616161" text-anchor="end">sapkalp1997@gmail.com</text>
+<path transform="translate(730,97)" d="M1 3 h14 v10 h-14 z M1 3 l7 6 l7 -6" fill="none" stroke="#DE1D3E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="720" y="140" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="#616161" text-anchor="end">+91 8767897103</text>
+<path transform="translate(730,128)" d="M4 2 C3 2 2 3 2 4 C2 9 7 14 12 14 C13 14 14 13 14 12 L14 10 L10.5 9 L9.5 11 C7.5 10 6 8.5 5 6.5 L7 5.5 L6 2 Z" fill="none" stroke="#DE1D3E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="720" y="171" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="#616161" text-anchor="end">Bangalore, India</text>
+<path transform="translate(730,159)" d="M8 1 C5 1 3 3 3 6 C3 10 8 15 8 15 C8 15 13 10 13 6 C13 3 11 1 8 1 Z M8 4.5 A1.6 1.6 0 1 0 8.01 4.5" fill="none" stroke="#DE1D3E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="720" y="202" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="#616161" text-anchor="end">linkedin.com/in/pranita-sapkal-86364010a</text>
+<path transform="translate(730,190)" d="M6 9 A3 3 0 0 1 6 5 L8 3 A3 3 0 0 1 12 7 L11 8 M10 7 A3 3 0 0 1 10 11 L8 13 A3 3 0 0 1 4 9 L5 8" fill="none" stroke="#DE1D3E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="720" y="233" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="#616161" text-anchor="end">behance.net/pranitasapkal</text>
+<path transform="translate(730,221)" d="M6 9 A3 3 0 0 1 6 5 L8 3 A3 3 0 0 1 12 7 L11 8 M10 7 A3 3 0 0 1 10 11 L8 13 A3 3 0 0 1 4 9 L5 8" fill="none" stroke="#DE1D3E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="720" y="264" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="#616161" text-anchor="end">dribbble.com/Pranitas03</text>
+<path transform="translate(730,252)" d="M6 9 A3 3 0 0 1 6 5 L8 3 A3 3 0 0 1 12 7 L11 8 M10 7 A3 3 0 0 1 10 11 L8 13 A3 3 0 0 1 4 9 L5 8" fill="none" stroke="#DE1D3E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="720" y="295" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="#616161" text-anchor="end">medium.com/@Pranitasapkal</text>
+<path transform="translate(730,283)" d="M6 9 A3 3 0 0 1 6 5 L8 3 A3 3 0 0 1 12 7 L11 8 M10 7 A3 3 0 0 1 10 11 L8 13 A3 3 0 0 1 4 9 L5 8" fill="none" stroke="#DE1D3E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="left-page1">
+<g id="header-professional-experience"><text x="39" y="406" font-family="Poppins, sans-serif" font-size="20" font-weight="600" fill="#333333">Professional Experience</text><rect x="39" y="418" width="200" height="3" fill="#DE1D3E"/></g>
+<text x="39" y="455" font-family="Poppins, sans-serif" font-size="16" font-weight="500" fill="#333333">Product Designer</text>
+<text x="572" y="452" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="rgba(51,51,51,0.5)" text-anchor="end">Jun 2025 – Present</text>
+<text x="39" y="476" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#DE1D3E">Meesho (Valmo Transportation)</text>
+<text x="39" y="512" font-family="Poppins, sans-serif" font-size="14" font-weight="500" fill="#333333">Transporter Panel: SetuX<tspan fill="#DE1D3E" font-weight="400">  (live flagship)</tspan></text>
+<text x="39" y="536" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="39" dy="0">•  Designed SetuX, a unified transporter platform to accept trips,</tspan><tspan x="54" dy="21">assign vehicles and drivers, track execution, confirm cost, and raise</tspan><tspan x="54" dy="21">disputes, replacing scattered email and WhatsApp workflows.</tspan></text>
+<text x="39" y="603" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="39" dy="0">•  Led the V1→V2 redesign that made completed trips clearer and added</tspan><tspan x="54" dy="21">Hindi audio for low-literacy partners, lifting cost visibility from</tspan><tspan x="54" dy="21">~70% to ~96%.</tspan></text>
+<text x="39" y="670" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="39" dy="0">•  Designed the upfront cost-acknowledgement flow, cutting invoice</tspan><tspan x="54" dy="21">errors from ~20% to under 2% (~₹10 Cr impact).</tspan></text>
+<text x="39" y="716" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="39" dy="0">•  Designed the disputes flow to raise, track, and resolve issues in one</tspan><tspan x="54" dy="21">place, cutting the payout cycle from ~90 to ~7 days (NPS &gt; 60).</tspan></text>
+<text x="39" y="770" font-family="Poppins, sans-serif" font-size="14" font-weight="500" fill="#333333">TMS Admin: Trip Creation, Placement &amp; Multi-Origin</text>
+<text x="39" y="794" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="39" dy="0">•  Designed the Area Manager admin panel for bulk trip creation, turning</tspan><tspan x="54" dy="21">managers into active moderators of data quality across ~100 sort</tspan><tspan x="54" dy="21">centres (97% cost visibility, 99% compliance).</tspan></text>
+<text x="39" y="861" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="39" dy="0">•  Redesigned multi-origin trip creation into a simple 2-click route</tspan><tspan x="54" dy="21">builder, removing two workarounds that were corrupting trip data.</tspan></text>
+<text x="39" y="915" font-family="Poppins, sans-serif" font-size="14" font-weight="500" fill="#333333">Contract Management: CLH<tspan fill="#DE1D3E" font-weight="400">  (designing 0→1)</tspan></text>
+<text x="39" y="939" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="39" dy="0">•  Designing Valmo's contract-lifecycle system from 0→1, turning route</tspan><tspan x="54" dy="21">plans into signed, running vendor contracts and replacing an offline</tspan><tspan x="54" dy="21">spreadsheet process with one auditable source of truth.</tspan></text>
+<text x="39" y="1006" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="39" dy="0">•  Modeled the full contract lifecycle and designed the CLH manager</tspan><tspan x="54" dy="21">workspace to assign transporters and rates (with cost guardrails and</tspan><tspan x="54" dy="21">best-fit suggestions) plus a transporter side to review and accept,</tspan><tspan x="54" dy="21">across 14 flows and 130+ screens.</tspan></text>
+</g>
+<g id="right-page1">
+<g id="header-skills-competencies"><text x="608" y="406" font-family="Poppins, sans-serif" font-size="20" font-weight="600" fill="#333333">Skills &amp; Competencies</text><rect x="608" y="418" width="200" height="3" fill="#DE1D3E"/></g>
+<text x="608" y="454" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Interaction Design</tspan></text>
+<text x="608" y="485" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Information Architecture</tspan></text>
+<text x="608" y="516" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Enterprise / B2B UX</tspan></text>
+<text x="608" y="547" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Systems Design</tspan></text>
+<text x="608" y="578" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">0→1 Product Discovery</tspan></text>
+<text x="608" y="609" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Design Systems &amp; Tokens</tspan></text>
+<text x="608" y="640" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Inclusive / Low-Literacy Design</tspan></text>
+<text x="608" y="671" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Accessibility</tspan></text>
+<text x="608" y="702" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Usability Testing (moderated,</tspan><tspan x="608" dy="21">multilingual)</tspan></text>
+<g id="header-tools"><text x="608" y="773" font-family="Poppins, sans-serif" font-size="20" font-weight="600" fill="#333333">Tools</text><rect x="608" y="785" width="200" height="3" fill="#DE1D3E"/></g>
+<text x="608" y="821" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Figma (Variables, Dev Mode, Auto Layout,</tspan><tspan x="608" dy="21">Plugin API)</tspan></text>
+<text x="608" y="873" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Interactive HTML prototyping</tspan></text>
+<text x="608" y="904" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Adobe Photoshop / Illustrator</tspan></text>
+<text x="608" y="935" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Excalidraw / FigJam</tspan></text>
+<text x="608" y="966" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#333333"><tspan x="608" dy="0">Claude Code</tspan></text>
+<g id="header-languages"><text x="608" y="1016" font-family="Poppins, sans-serif" font-size="20" font-weight="600" fill="#333333">Languages</text><rect x="608" y="1028" width="200" height="3" fill="#DE1D3E"/></g>
+<text x="608" y="1065" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#000000">English</text>
+<text x="608" y="1082" font-family="Poppins, sans-serif" font-size="12" font-weight="400" fill="#DE1D3E">Professional</text>
+<text x="608" y="1106" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#000000">Hindi</text>
+<text x="608" y="1123" font-family="Poppins, sans-serif" font-size="12" font-weight="400" fill="#DE1D3E">Fluent</text>
+<text x="608" y="1147" font-family="Poppins, sans-serif" font-size="14" font-weight="400" fill="#000000">Marathi</text>
+<text x="608" y="1164" font-family="Poppins, sans-serif" font-size="12" font-weight="400" fill="#DE1D3E">Native</text>
+</g></svg>

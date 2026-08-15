@@ -1,0 +1,210 @@
+{
+  "$comment": "PRIVATE application resume, single source of truth. Real numbers stay (NOT published on the public portfolio site). KRD-grounded; recruiter-legible plain English in Bishal/Vijit style (verb-led action + trailing -ing outcome clause), honest designer verbs (Designed/Led/Redesigned/Modeled, never 'built the service'/'launched'). Em-dashes removed 2026-07-10 (colons/commas; hyphens in compounds and en-dashes in date ranges kept). Meesho role uses `projects`; prior roles use flat `bullets`; `independent_projects` renders above Skills. Build: `npm run build:docx`. All local.",
+  "meta": {
+    "name": "Pranita Sapkal",
+    "role": "Product Designer",
+    "roleLine": "Product Designer · Logistics Platforms & Systems",
+    "location": "Bangalore, India",
+    "email": "sapkalp1997@gmail.com",
+    "phone": "+91 8767897103",
+    "links": {
+      "portfolio": "",
+      "linkedin": "linkedin.com/in/pranita-sapkal-86364010a",
+      "behance": "behance.net/pranitasapkal",
+      "dribbble": "dribbble.com/Pranitas03",
+      "medium": "medium.com/@Pranitasapkal"
+    },
+    "photo": ""
+  },
+  "summary": "Product designer for the platforms that run one of India's largest logistics networks. On Meesho's Valmo network I'm the sole designer behind three products taken from 0→1 to launch: the systems that plan trips, manage transporters, and run vendor contracts, now used by transporters and managers across India. Partnering with product and engineering, I design the operating model, not just the screens. Earlier: 3 years across web, mobile, and design systems.",
+  "experience": [
+    {
+      "org": "Meesho (Valmo Transportation)",
+      "title": "Product Designer",
+      "location": "Bangalore",
+      "start": "Jun 2025",
+      "end": "Present",
+      "roleLine": "Sole designer on Valmo's logistics platform: the systems that plan trips, manage transporters, and run vendor contracts, built with product and engineering from 0→1.",
+      "projects": [
+        {
+          "name": "Transporter Panel: SetuX",
+          "note": "live flagship",
+          "bullets": [
+            {
+              "text": "Designed SetuX, a unified transporter platform to accept trips, assign vehicles and drivers, track execution, confirm cost, and raise disputes, replacing scattered email and WhatsApp workflows.",
+              "priority": 1
+            },
+            {
+              "text": "Led the V1→V2 redesign that made completed trips clearer and added Hindi audio for low-literacy partners, lifting cost visibility from ~70% to ~96%.",
+              "priority": 1
+            },
+            {
+              "text": "Designed the upfront cost-acknowledgement flow, cutting invoice errors from ~20% to under 2% (~₹10 Cr impact).",
+              "priority": 1
+            },
+            {
+              "text": "Designed the disputes flow to raise, track, and resolve issues in one place, cutting the payout cycle from ~90 to ~7 days (NPS > 60).",
+              "priority": 2
+            }
+          ]
+        },
+        {
+          "name": "TMS Admin: Trip Creation, Placement & Multi-Origin",
+          "note": "",
+          "bullets": [
+            {
+              "text": "Designed the Area Manager admin panel for bulk trip creation, turning managers into active moderators of data quality across ~100 sort centres (97% cost visibility, 99% compliance).",
+              "priority": 1
+            },
+            {
+              "text": "Redesigned multi-origin trip creation into a simple 2-click route builder, removing two workarounds that were corrupting trip data.",
+              "priority": 1
+            }
+          ]
+        },
+        {
+          "name": "Contract Management: CLH",
+          "note": "designing 0→1",
+          "bullets": [
+            {
+              "text": "Designing Valmo's contract-lifecycle system from 0→1, turning route plans into signed, running vendor contracts and replacing an offline spreadsheet process with one auditable source of truth.",
+              "priority": 1
+            },
+            {
+              "text": "Modeled the full contract lifecycle and designed the CLH manager workspace to assign transporters and rates (with cost guardrails and best-fit suggestions) plus a transporter side to review and accept, across 14 flows and 130+ screens.",
+              "priority": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "org": "Wizrdom",
+      "title": "UI/UX & Graphic Designer",
+      "location": "Bangalore",
+      "start": "Jan 2024",
+      "end": "Jun 2025",
+      "bullets": [
+        {
+          "text": "Designed end-to-end UI/UX for client web and mobile products, taking work from research and wireframes through prototypes to high-fidelity, dev-ready handoff.",
+          "priority": 1
+        },
+        {
+          "text": "Created social, graphic, and motion content for marketing, using performance metrics to refine what shipped.",
+          "priority": 1
+        },
+        {
+          "text": "Ran multiple projects simultaneously, presenting to stakeholders and mentoring junior designers.",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "org": "Huntment",
+      "title": "UI/UX Designer (Remote, UAE)",
+      "location": "Remote",
+      "start": "Nov 2023",
+      "end": "Jan 2024",
+      "bullets": [
+        {
+          "text": "Designed DoJoin Ride, a multi-service app for the UAE market, delivering user flows, wireframes, and hi-fi interfaces across its features.",
+          "priority": 1
+        },
+        {
+          "text": "Partnered with cross-functional teams to align designs with business goals, running user testing to optimize the experience.",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "org": "AuraSmart",
+      "title": "UI/UX Designer",
+      "location": "Bangalore",
+      "start": "Jan 2023",
+      "end": "Nov 2023",
+      "bullets": [
+        {
+          "text": "Designed smart-home automation app experiences end-to-end, taking them from research and user flows to high-fidelity prototypes.",
+          "priority": 1
+        },
+        {
+          "text": "Built a reusable design system, running usability testing to validate and refine flows.",
+          "priority": 2
+        },
+        {
+          "text": "Shaped branding direction and improved UX writing across the product.",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "org": "OnerosTech",
+      "title": "UI/UX Design Intern",
+      "location": "Pune",
+      "start": "Jun 2022",
+      "end": "Aug 2022",
+      "bullets": [
+        {
+          "text": "Designed a personal-finance app (loan tracking, bill reminders) from lo-fi to hi-fi, adding micro-interactions to improve usability.",
+          "priority": 1
+        },
+        {
+          "text": "Researched real usability issues and applied UX principles to the solutions, also designing a sports-betting app interface for clarity and ease of use.",
+          "priority": 2
+        }
+      ]
+    }
+  ],
+  "independent_projects": [
+    {
+      "name": "Rooted",
+      "url": "rootedplant.org",
+      "text": "Designed the product experience for this AI plant-care app (now in beta), spanning plant identification, condition-based watering schedules, and photo-based problem diagnosis."
+    },
+    {
+      "name": "Yantrava",
+      "url": "yantrava.com",
+      "text": "Helped design the website for Yantrava Labs, a studio building independent, AI-driven software products."
+    }
+  ],
+  "skills": {
+    "Design": [
+      "Interaction Design",
+      "Information Architecture",
+      "Enterprise / B2B UX",
+      "Systems Design",
+      "0→1 Product Discovery",
+      "Design Systems & Tokens",
+      "Inclusive / Low-Literacy Design",
+      "Accessibility",
+      "Usability Testing (moderated, multilingual)"
+    ],
+    "Tools": [
+      "Figma (Variables, Dev Mode, Auto Layout, Plugin API)",
+      "Interactive HTML prototyping",
+      "Adobe Photoshop / Illustrator",
+      "Excalidraw / FigJam",
+      "Claude Code"
+    ]
+  },
+  "education": [
+    {
+      "degree": "M.Des in Experience Design",
+      "school": "National Institute of Fashion Technology, Bangalore",
+      "years": "2021–2023",
+      "note": "CGPA 8.05"
+    },
+    {
+      "degree": "B.Tech in Information Technology",
+      "school": "VJTI, Mumbai",
+      "years": "2014–2018",
+      "note": ""
+    }
+  ],
+  "languages": ["English (professional)", "Hindi", "Marathi (native)"],
+  "open_items": [
+    "Portfolio URL: retired the stale Framer link; header carries LinkedIn + Behance until the new site is deployed.",
+    "Photo: none yet; drop resume/photo.jpg and rebuild the designed PDF to add.",
+    "Wizrdom outcome metric: optional; currently qualitative."
+  ]
+}

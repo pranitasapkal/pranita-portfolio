@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1440" />
+<title>Dispute Flow Redesign v2 — Transporter Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#F4F5F8; --surface:#FFFFFF; --side:#0B1430; --side-active:#223066; --side-text:#B6BBD0;
+  --ink-1:#14171F; --ink-2:#4A4F5E; --ink-3:#7A8094; --line:#E4E7EE; --line-2:#EEF0F5;
+  --primary:#1E3A8A; --primary-2:#2F4FC6; --primary-bg:#EEF1FB;
+  --danger:#D14B4B; --danger-bg:#FDECEC; --warning:#C77B00; --warning-bg:#FFF3DC;
+  --success:#128A3E; --success-bg:#E6F4EB; --info:#1E6FB8; --info-bg:#E7F1FA; --neutral-bg:#F0F2F8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--ink-1);font-size:13.5px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none;font-size:inherit;color:inherit}
+select,input,textarea{font-family:inherit;font-size:inherit;color:inherit}
+
+/* demo bar */
+.demobar{position:sticky;top:0;z-index:50;background:#0B1430;color:#fff;display:flex;align-items:center;gap:18px;padding:10px 20px;flex-wrap:wrap}
+.demobar .dlabel{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#7E89AD;font-weight:600}
+.seg{display:inline-flex;background:#18234A;border-radius:8px;padding:3px}
+.seg button{padding:6px 12px;border-radius:6px;font-size:12.5px;color:#B6BBD0;font-weight:500}
+.seg button.on{background:#2F4FC6;color:#fff}
+.demobar .grp{display:flex;align-items:center;gap:8px}
+.demobar .grp span.k{font-size:12px;color:#9098B8}
+
+.app{display:flex;min-height:100vh}
+.sidebar{width:224px;background:var(--side);display:flex;flex-direction:column;flex-shrink:0}
+.brand-user{padding:18px;display:flex;align-items:center;gap:12px}
+.brand-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#F5B5D1,#A78BFA)}
+.brand-user strong{color:#fff;font-weight:600;font-size:14px}
+.nav{padding:10px;flex:1;margin-top:8px}
+.nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--side-text);font-size:13.5px;font-weight:500;margin-bottom:2px}
+.nav a.active{background:var(--side-active);color:#fff}
+.nav a svg{width:18px;height:18px}
+.valmo-foot{padding:14px 18px;color:#5A6480;font-size:18px;font-weight:700;letter-spacing:1px;border-top:1px solid rgba(255,255,255,.06)}
+
+.main{flex:1;min-height:100vh;position:relative}
+.topbar{padding:16px 28px 4px;display:flex;align-items:center;gap:8px}
+.topbar .back{font-size:20px;color:var(--ink-2)}
+.topbar h1{font-size:20px;font-weight:700}
+
+.coex{margin:6px 28px 0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:4px 14px}
+.coex summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--primary-2);padding:8px 0;list-style:none}
+.coex summary::-webkit-details-marker{display:none}
+.coex summary::before{content:'ⓘ ';}
+.coex .cbody{font-size:12.5px;color:var(--ink-2);padding:4px 0 12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.coex .cbody b{color:var(--ink-1)}
+.coex .pill{font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;letter-spacing:.4px}
+.pill.share{background:var(--warning-bg);color:var(--warning)} .pill.solo{background:var(--neutral-bg);color:var(--ink-2)}
+
+.wrap{padding:14px 28px 60px}
+
+/* ===== RAISE DISPUTE (two-pane) ===== */
+.panes{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;min-height:560px}
+.pane-l{width:45%;padding:22px 24px;border-right:1px solid var(--line)}
+.pane-r{width:55%;padding:22px 24px;background:#FAFBFD;display:flex;flex-direction:column}
+.bread{font-size:12.5px;color:var(--ink-3);margin-bottom:14px}
+.bread .cur{color:var(--ink-2)}
+h2.t{font-size:18px;font-weight:700;margin-bottom:16px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12.5px;color:var(--ink-2);font-weight:600;margin-bottom:6px}
+.selectbox,.txtbox{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:14px;color:var(--ink-1)}
+.selectbox{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%237A8094' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+input[readonly]{background:#F4F6FA;color:var(--ink-2)}
+
+.note{background:var(--info-bg);border-radius:8px;padding:12px 14px;margin-bottom:16px}
+.note strong{display:block;font-size:13px;margin-bottom:3px;color:var(--info)}
+.note p{font-size:12.5px;color:var(--ink-2)}
+
+.seclabel{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;margin-bottom:10px}
+.hindi-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:#E4ECFC;color:var(--primary-2);border-radius:6px;font-size:11.5px;font-weight:600}
+.hindi-pill::before{content:'▶';font-size:8px}
+
+.issue{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;font-size:13.5px;cursor:pointer}
+.issue:hover{border-color:#C7D3F7}
+.issue .box{width:18px;height:18px;border:2px solid var(--ink-3);border-radius:4px;flex-shrink:0;position:relative}
+.issue.sel{border-color:var(--primary-2);background:#FAFBFF}
+.issue.sel .box{background:var(--primary-2);border-color:var(--primary-2)}
+.issue.sel .box::after{content:'✓';color:#fff;font-size:12px;position:absolute;left:2.5px;top:-2.5px}
+.issue .tag{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.3px;padding:2px 8px;border-radius:999px;background:var(--neutral-bg);color:var(--ink-2)}
+.issue .tag.common{background:#E7F1FA;color:var(--info)}
+
+.block{border:1px solid #F2C9C9;background:#FDF3F3;border-radius:10px;padding:18px;margin-bottom:16px}
+.block .bhead{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;margin-bottom:8px}
+.block .bicon{width:34px;height:34px;border-radius:50%;background:#FBE2E2;display:flex;align-items:center;justify-content:center;font-size:17px}
+.block p{font-size:13px;color:var(--ink-2);margin-bottom:14px;line-height:1.5}
+.block .brow{display:flex;gap:10px}
+.aware{display:flex;gap:10px;align-items:flex-start;background:var(--info-bg);border:1px solid #CFE2F4;border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:13px}
+.aware .i{width:18px;height:18px;color:var(--info);flex-shrink:0} .aware strong{font-weight:700}
+
+/* right pane */
+.dhead{font-size:15px;font-weight:700}
+.dcnt{font-size:12.5px;color:var(--ink-3);font-weight:500;margin:2px 0 14px;display:block}
+.dscroll{flex:1;overflow:auto;margin-right:-8px;padding-right:8px}
+.dcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.dcard.required-card{border-color:#C7D3F7}
+.dcard .dch{display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:14px}
+.dcard .dch .reqtag{font-size:10px;font-weight:700;color:var(--info);background:var(--info-bg);padding:2px 8px;border-radius:999px;margin-left:8px}
+.dcard .dx{color:var(--ink-3);cursor:pointer;font-size:18px;line-height:1}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dfield label{display:block;font-size:11px;color:var(--ink-3);margin-bottom:5px;font-weight:500}
+.txtbox.sm,.selectbox.sm{padding:10px 12px;font-size:13px}
+.rpanel-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink-3);font-size:13px;padding:40px;gap:8px}
+.rpanel-empty .ic{font-size:30px;opacity:.5}
+
+.desc-field{margin-top:4px}
+.desc-field textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:12px;font-family:inherit;font-size:13px;resize:vertical}
+.desc-field textarea:focus{outline:none;border-color:var(--primary-2)}
+.lbl-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.lbl-row label{font-size:11px;color:var(--ink-3);font-weight:500}
+.req{color:var(--danger)}
+.err{display:flex;gap:6px;align-items:center;font-size:11.5px;color:var(--danger);margin-top:6px}
+.err svg{width:13px;height:13px;flex-shrink:0}
+.field-bad textarea,.field-bad .txtbox{border-color:var(--danger)!important;background:var(--danger-bg)}
+
+.upload-h{font-size:14px;font-weight:700;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.upload-h .req{font-weight:700}
+.upload{border:1px dashed var(--line);border-radius:8px;padding:18px;text-align:center;color:var(--ink-3);font-size:12.5px;background:#fff}
+.upload.bad{border-color:var(--danger);background:var(--danger-bg)}
+.upload b{color:var(--primary-2);font-weight:600;cursor:pointer}
+.filelist{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.filechip{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:#fff;font-size:12.5px}
+.filechip .fi{width:26px;height:26px;border-radius:6px;background:var(--primary-bg);color:var(--primary-2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;flex-shrink:0}
+.filechip .fn{font-weight:600;color:var(--ink-1)}
+.filechip .fs{color:var(--ink-3);font-size:11px}
+.filechip .fx{margin-left:auto;color:var(--ink-3);cursor:pointer;font-size:16px}
+.addmore{align-self:flex-start;color:var(--primary-2);font-weight:600;font-size:12.5px;margin-top:2px}
+.uptip{background:var(--warning-bg);border-radius:6px;padding:9px 12px;font-size:12px;color:var(--warning);margin-top:10px;display:flex;gap:6px;align-items:center}
+.rfoot{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:disabled{background:#A9B2C9;cursor:not-allowed}
+.btn-outline{background:#fff;color:var(--primary-2);border:1px solid var(--primary-2)}
+.btn-ghost{background:#fff;color:var(--ink-1);border:1px solid var(--line)}
+.gate{font-size:11.5px;color:var(--ink-3);margin-right:auto}
+
+/* ===== L1 CONTRACT LIST ===== */
+.cards{display:flex;gap:14px;margin-bottom:18px}
+.card{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;cursor:pointer;position:relative}
+.card:hover{border-color:#C7D3F7}
+.card .cnum{font-size:24px;font-weight:700}
+.card .clab{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.card .cnew{display:inline-flex;align-items:center;gap:5px;margin-top:9px;font-size:11.5px;font-weight:600;color:var(--info);background:var(--info-bg);padding:3px 9px;border-radius:999px}
+.card .cnew.none{color:var(--ink-3);background:var(--neutral-bg)}
+.card .dot{width:6px;height:6px;border-radius:50%;background:var(--info)}
+
+.subtabs{display:flex;gap:6px;margin-bottom:12px}
+.subtab{padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--ink-2);background:#fff;border:1px solid var(--line)}
+.subtab.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+thead th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);font-weight:700;padding:12px 16px;background:#FAFBFD;border-bottom:1px solid var(--line)}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--line-2);vertical-align:top;font-size:13px}
+tbody tr:last-child td{border-bottom:none}
+.cid{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.updated{font-size:9.5px;font-weight:800;letter-spacing:.5px;color:var(--success);background:var(--success-bg);border:1px solid #BfE3CC;padding:2px 7px;border-radius:5px;cursor:help}
+.starts{font-size:11.5px;color:var(--warning);margin-top:4px}
+.dsub{margin-top:8px;display:inline-flex;align-items:center;gap:7px;font-size:11.5px;background:#F7F8FB;border:1px solid var(--line);border-radius:7px;padding:5px 9px;color:var(--ink-2);cursor:pointer}
+.dsub:hover{border-color:#C7D3F7}
+.dsub .sp{font-weight:700;padding:1px 7px;border-radius:999px;font-size:10px}
+.sp.review{background:#E7ECF7;color:var(--primary-2)}
+.sp.resolved{background:var(--success-bg);color:var(--success)}
+.sp.rejected{background:var(--danger-bg);color:var(--danger)}
+.dsub .age{color:var(--ink-3)}
+.dsub .new{width:6px;height:6px;border-radius:50%;background:var(--info);display:inline-block}
+.muted{color:var(--ink-3)}
+.rate-new{font-weight:700}
+.rate-up{font-size:10.5px;color:var(--success);font-weight:600}
+.rate-old{font-size:11px;color:var(--ink-3);text-decoration:line-through}
+.act-link{color:var(--primary-2);font-weight:600;cursor:pointer;display:block;margin-top:6px;font-size:12px}
+.tipwrap{position:relative;display:inline-flex}
+.tipwrap .tt{visibility:hidden;opacity:0;transition:.12s;position:absolute;top:130%;left:0;z-index:20;background:#14171F;color:#fff;font-size:11px;font-weight:500;padding:8px 10px;border-radius:7px;width:230px;line-height:1.4}
+.tipwrap:hover .tt{visibility:visible;opacity:1}
+
+/* toast */
+.toast{position:fixed;right:28px;bottom:28px;background:#14171F;color:#fff;padding:13px 16px;border-radius:10px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:80}
+.toast .tk{width:22px;height:22px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;font-size:13px}
+.toast .tx{margin-left:6px;color:#9DB2E8;cursor:pointer}
+
+/* success modal */
+.modal-bg{position:fixed;inset:0;background:rgba(11,20,48,.45);display:flex;align-items:center;justify-content:center;z-index:90}
+.modal{background:#fff;border-radius:14px;padding:30px;width:420px;text-align:center}
+.modal .mi{width:58px;height:58px;border-radius:50%;background:var(--success-bg);color:var(--success);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.modal p{font-size:13px;color:var(--ink-2);line-height:1.5;margin-bottom:20px}
+/* rate scope + contract redirect */
+.scope{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+.scope-q{font-size:12px;color:var(--ink-2);font-weight:600;margin-bottom:8px}
+.scopeseg{display:inline-flex;background:#F0F2F8;border-radius:8px;padding:3px;gap:2px}
+.scopeseg button{padding:7px 12px;border-radius:6px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.scopeseg button.on{background:#fff;color:var(--primary-2);box-shadow:0 1px 2px rgba(0,0,0,.10)}
+.redirect{border:1px solid #D1DBF4;background:var(--primary-bg);border-radius:10px;padding:14px 16px;margin-bottom:14px;display:flex;flex-direction:column;gap:11px}
+.redirect .rt{font-size:13px;color:var(--ink-2);line-height:1.5} .redirect .rt strong{color:var(--ink-1)}
+.redirect .rrow{display:flex;gap:10px;align-items:center}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="demobar">
+  <span class="dlabel">Prototype controls</span>
+  <div class="grp"><span class="k">View</span>
+    <div class="seg" id="segView">
+      <button data-v="raise" class="on">Raise Dispute (form)</button>
+      <button data-v="l1">Contract list (L1)</button>
+    </div></div>
+  <div class="grp" id="grpEntry"><span class="k">Entry</span>
+    <div class="seg" id="segEntry">
+      <button data-e="contract">From Contract</button>
+      <button data-e="trip" class="on">From Trip</button>
+      <button data-e="disputes">From Disputes tab</button>
+    </div></div>
+  <div class="grp" id="grpScn"><span class="k">Rate overlap</span>
+    <div class="seg" id="segScn">
+      <button data-s="none" class="on">None</button>
+      <button data-s="aware">Other open</button>
+      <button data-s="block">Rate already open</button>
+    </div></div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand-user"><div class="brand-avatar"></div><div><strong>Karan Verma</strong></div></div>
+    <nav class="nav">
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg> Home</a>
+      <a id="navTrips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h13l3 4v6h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg> Trips</a>
+      <a id="navDisp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg> Disputes</a>
+      <a id="navCM" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg> Contract Management</a>
+    </nav>
+    <div class="valmo-foot">VALMO</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar"><span class="back">‹</span><h1 id="pageTitle">Raise Dispute</h1></div>
+    <div id="coexSlot"></div>
+    <div class="wrap" id="wrap"></div>
+  </main>
+</div>
+
+<div id="overlays"></div>
+
+<script>
+/* ============ DATA ============ */
+const dimName = {RATE:'rate', VEHICLE:'vehicle size', ROUTE:'route', BILLING:'billing', PERIOD:'contract period'};
+
+const CATS = {
+  contract:{ label:'Contract', idLabel:'Contract ID', idVal:'CT-1042-1234',
+    note:{t:'Raising this flags every trip under the contract.', p:'Trips keep running normally; settlement is adjusted across all trips once the dispute is resolved.'},
+    issues:[
+      {t:'Rate not acceptable', dim:'RATE', rows:[ {l:'Current Rate', v:'₹4,000 / trip', ro:true}, {l:'Expected Rate (your ask)', ph:'₹ Enter amount', req:true} ]},
+      {t:"I don't have this vehicle size available", dim:'VEHICLE', rows:[ {l:'Required Vehicle Size', v:'32 ft', ro:true}, {l:'Size you can provide', sel:['Select size','20 ft','24 ft','32 ft','42 ft'], req:true} ]},
+      {t:'My vehicle or driver are unavailable for the contract period', dim:'PERIOD', rows:[ {l:'Contract Period', v:"1 Feb'26 – 28 Feb'26", ro:true}, {l:'Unavailable from – to', ph:'Select dates', req:true} ]},
+      {t:'Other reason', dim:'OTHER', rows:[]},
+    ]},
+  /* EXISTING TRIP — reordered by real frequency (60/10/5/0.5/0/0) */
+  existing:{ label:'Existing Trip', idLabel:'Trip ID', idVal:'TRP1234567890',
+    issues:[
+      {t:'Wrong contract amount (rate mismatch)', dim:'RATE', freq:'Most common', proof:true,
+        rows:[ {l:'Current Amount (this trip)', v:'₹ 18,000', ro:true}, {l:'Expected Amount', ph:'₹ Enter amount', req:true, key:'amt'} ]},
+      {t:'Wrong billing type', dim:'BILLING',
+        rows:[ {l:'Current Billing Type', v:'Regular', ro:true}, {l:'Expected Type', sel:['Select','Adhoc','Regular','RFQ','CoLoading','Railways'], req:true} ]},
+      {t:'Vehicle size mismatch', dim:'VEHICLE',
+        rows:[ {l:'Current Vehicle', v:'KA 01 AB1234 - 12ft', ro:true}, {l:'Actual Vehicle Used', sel:['Select','KA 01 AB1234 - 22ft','KA 12 CD5678 - 32ft'], req:true} ]},
+      {t:'Contract ID mismatch / missing', dim:'DATA',
+        rows:[ {l:'Current Contract ID', v:'CT-1076', ro:true}, {l:'Expected Contract ID', ph:'Enter Contract ID', req:true} ]},
+      {t:'Time / schedule mismatch', dim:'SCHEDULE',
+        rows:[ {l:'Scheduled Departure', v:"9 Nov'25, 8:00 AM", ro:true}, {l:'Actual Departure', ph:'Select date/time'}, {l:'Scheduled Arrival', v:"10 Nov'25, 8:00 AM", ro:true}, {l:'Actual Arrival', ph:'Select date/time'} ]},
+      {t:'Route changed / additional stops added', dim:'ROUTE',
+        rows:[ {l:'Current Route', v:'BLR → DLS → MUM', ro:true}, {l:'Actual Route', ph:'Enter actual route'} ]},
+      {t:'Other', dim:'OTHER', rows:[]},
+    ]},
+  missing:{ label:'Missing Trip', idLabel:'Trip date / reference', idVal:"18 Feb'26 · BLR → DLS",
+    issues:[ {t:'Trip not showing in the system', dim:'MISSING', rows:[ {l:'Expected trip date', v:"18 Feb'26", ro:true}, {l:'Route', v:'BLR → DLS', ro:true} ]},
+             {t:'Other', dim:'OTHER', rows:[]} ]},
+  other:{ label:'Other', idLabel:'Related ID (optional)', idVal:'',
+    issues:[ {t:'Describe your issue', dim:'OTHER', rows:[]} ]},
+};
+const ENTRY = {
+  contract:{ options:['contract','existing','missing','other'], def:'contract', bread:'Contract Management' },
+  trip:{ options:['existing','contract','missing','other'], def:'existing', bread:'Trips' },
+  disputes:{ options:['existing','missing','contract','other'], def:'existing', bread:'Disputes' },
+};
+
+const state = { view:'raise', entry:'trip', scenario:'none', cat:'existing',
+  sel:new Set(), files:[], desc:'', fieldVals:{}, tried:false, rateScope:'trip' };
+
+/* ============ CONTROLS ============ */
+function setView(v){ state.view=v; document.getElementById('overlays').innerHTML=''; document.querySelectorAll('#segView button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  const showRaise = v==='raise';
+  document.getElementById('grpEntry').style.opacity=showRaise?'1':'.35';
+  document.getElementById('grpScn').style.opacity=showRaise?'1':'.35';
+  document.getElementById('grpEntry').style.pointerEvents=showRaise?'auto':'none';
+  document.getElementById('grpScn').style.pointerEvents=showRaise?'auto':'none';
+  ['navTrips','navDisp','navCM'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(v==='l1'?'navCM':(state.entry==='trip'?'navTrips':'navDisp')).classList.add('active');
+  document.getElementById('pageTitle').textContent = v==='l1' ? 'Contract Management' : 'Raise Dispute';
+  render();
+}
+function setEntry(e){ state.entry=e; state.cat=ENTRY[e].def; resetForm();
+  document.querySelectorAll('#segEntry button').forEach(b=>b.classList.toggle('on',b.dataset.e===e));
+  document.getElementById('navTrips').classList.toggle('active', e==='trip' && state.view==='raise');
+  document.getElementById('navDisp').classList.toggle('active', (e==='disputes'||e==='contract') && state.view==='raise');
+  render();
+}
+function setScn(s){ state.scenario=s; document.querySelectorAll('#segScn button').forEach(b=>b.classList.toggle('on',b.dataset.s===s)); render(); }
+function setCat(v){ state.cat=v; resetForm(); render(); }
+function resetForm(){ state.sel=new Set(); state.files=[]; state.desc=''; state.fieldVals={}; state.tried=false; state.rateScope='trip'; }
+function toggleIssue(i){ state.sel.has(i)?state.sel.delete(i):state.sel.add(i); render(); }
+function setRateScope(s){ state.rateScope=s; render(); }
+function addFile(){ const n=state.files.length+1; state.files.push({name:`proof_${n}.pdf`, size:(180+n*40)+' KB'}); render(); }
+function removeFile(i){ state.files.splice(i,1); render(); }
+document.querySelectorAll('#segView button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
+document.querySelectorAll('#segEntry button').forEach(b=>b.onclick=()=>setEntry(b.dataset.e));
+document.querySelectorAll('#segScn button').forEach(b=>b.onclick=()=>setScn(b.dataset.s));
+
+/* ============ HELPERS ============ */
+function fieldHTML(f,issueIdx,rowIdx){
+  const id = `f_${issueIdx}_${rowIdx}`;
+  const val = state.fieldVals[id] ?? (f.v||'');
+  const bad = state.tried && proofNeeded() && f.key==='amt' && !val;
+  const inp = f.sel
+    ? `<select class="selectbox sm" oninput="state.fieldVals['${id}']=this.value">${f.sel.map(o=>`<option ${o===val?'selected':''}>${o}</option>`).join('')}</select>`
+    : `<input class="txtbox sm" value="${val}" ${f.ro?'readonly':''} ${f.ph?`placeholder="${f.ph}"`:''} oninput="state.fieldVals['${id}']=this.value"/>`;
+  return `<div class="dfield ${bad?'field-bad':''}"><label>${f.l}${f.req?' <span class="req">*</span>':''}</label>${inp}
+    ${bad?`<div class="err">${errIcon()} Enter the expected amount.</div>`:''}</div>`;
+}
+function errIcon(){ return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>`; }
+/* Is the amount/rate (proof-required) issue currently selected? */
+function proofNeeded(){
+  const cat = CATS[state.cat];
+  return [...state.sel].some(i => cat.issues[i] && cat.issues[i].proof);
+}
+/* Scope question shown inside the trip rate card */
+function rateScopeHTML(){
+  return `<div class="scope">
+    <div class="scope-q">Is this rate wrong only for this trip, or for every trip on this contract?</div>
+    <div class="scopeseg">
+      <button class="${state.rateScope==='trip'?'on':''}" onclick="setRateScope('trip')">Only this trip</button>
+      <button class="${state.rateScope==='contract'?'on':''}" onclick="setRateScope('contract')">Every trip (recurring)</button>
+    </div></div>`;
+}
+
+/* ============ RENDER ROOT ============ */
+function render(){ state.view==='l1' ? renderL1() : renderRaise(); }
+
+/* ============ RAISE DISPUTE ============ */
+function renderRaise(){
+  // coexistence explainer
+  document.getElementById('coexSlot').innerHTML = `
+    <details class="coex"><summary>How contract &amp; trip disputes coexist</summary>
+      <div class="cbody">
+        <div><b>One surface.</b> The category dropdown carries the level — Trip→3 options, Contract→pre-set, Disputes tab→all.</div>
+        <div><b>Only rate links the two levels.</b> <span class="pill share">RATE</span> Contract <i>Rate not acceptable</i> ↔ trip <i>Wrong contract amount</i>. <span class="pill solo">BILLING / VEHICLE / CONTRACT ID / SCHEDULE / ROUTE</span> are trip-only.</div>
+        <div><b>Rule:</b> if a contract rate dispute is open, the trip amount dispute is blocked (and vice-versa) — no double counting. Any other open dispute → allowed + heads-up.</div>
+      </div></details>`;
+
+  const e = ENTRY[state.entry], cat = CATS[state.cat];
+  const isContract = state.cat==='contract';
+  const blocked = state.scenario==='block';
+  const opts = e.options.map(k=>`<option value="${k}" ${k===state.cat?'selected':''}>${CATS[k].label}</option>`).join('');
+
+  let aware='';
+  if(state.scenario==='aware' && !blocked){
+    aware = `<div class="aware"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><div>This ${isContract?'contract':'trip’s contract'} already has an open dispute on a <strong>different</strong> issue. The one you’re raising now is handled separately.</div></div>`;
+  }
+  let blockHTML='';
+  if(blocked){
+    blockHTML = isContract
+      ? card_block('Some trips already have an open amount dispute', `2 trips on this contract have a <strong>wrong-amount dispute under review</strong>. A contract rate dispute re-prices every trip — resolve those first so the amount isn’t counted twice.`, 'View those trips (2)')
+      : card_block('This issue is already under review', `A <strong>rate dispute is already open on the contract (CT-1042-1234)</strong> and it will re-price this trip too — so you don’t need a separate amount dispute here. You’ll get an update within 24 hours.`, 'View contract dispute');
+  }
+
+  let issues='';
+  if(!blocked){
+    issues = `<div class="seclabel">Select Dispute Sub-Category <span class="hindi-pill">हिंदी में जानकारी</span></div>`;
+    issues += cat.issues.map((it,i)=>{
+      const sel = state.sel.has(i)?'sel':'';
+      const tag = it.freq ? `<span class="tag common">${it.freq}</span>` : '';
+      return `<div class="issue ${sel}" onclick="toggleIssue(${i})"><span class="box"></span><span>${it.t}</span>${tag}</div>`;
+    }).join('');
+  }
+  const noteHTML = (isContract && !blocked) ? `<div class="note"><strong>${cat.note.t}</strong><p>${cat.note.p}</p></div>` : '';
+
+  document.getElementById('wrap').innerHTML = `<div class="panes">
+    <div class="pane-l">
+      <div class="bread">${e.bread} <span style="margin:0 6px">›</span> <span class="cur">Raise Dispute</span></div>
+      <h2 class="t">Raise Dispute</h2>
+      <div class="field"><label>Select Dispute Category</label><select class="selectbox" onchange="setCat(this.value)">${opts}</select></div>
+      <div class="field"><label>${cat.idLabel} ${state.cat!=='other'?'<span class="req">*</span>':''}</label><input class="txtbox" value="${cat.idVal}" ${cat.idVal?'':'placeholder="Optional"'}/></div>
+      ${aware}${blockHTML}${noteHTML}${issues}
+    </div>
+    <div class="pane-r" id="paneR"></div>
+  </div>`;
+
+  /* RIGHT PANE */
+  const R = document.getElementById('paneR');
+  if(blocked){ R.innerHTML = `<div class="rpanel-empty"><div class="ic">⏳</div><div>Resolve the existing dispute first.<br>No new details needed right now.</div></div>`; return; }
+  const selIdx = [...state.sel].sort((a,b)=>a-b);
+  if(selIdx.length===0){ R.innerHTML = `<div class="rpanel-empty"><div class="ic">📝</div><div>Select one or more issues on the left<br>to add their details here.</div></div>`; return; }
+
+  const needProof = proofNeeded();
+  const cards = selIdx.map((i,n)=>{
+    const it = cat.issues[i];
+    const grid = it.rows.length ? `<div class="dgrid">${it.rows.map((r,ri)=>fieldHTML(r,i,ri)).join('')}</div>`
+                                : `<div class="dfield"><label>Details</label><input class="txtbox sm" placeholder="Add a short note"/></div>`;
+    const reqtag = it.proof ? `<span class="reqtag">Proof required</span>` : '';
+    const scope = (it.proof && state.cat==='existing') ? rateScopeHTML() : '';
+    return `<div class="dcard ${it.proof?'required-card':''}"><div class="dch"><span>${n+1}. ${it.t}${reqtag}</span><span class="dx" onclick="toggleIssue(${i})">×</span></div>${grid}${scope}</div>`;
+  }).join('');
+
+  // Recurring trip-rate issue → steer to a contract-level dispute
+  const isTripRate = state.cat==='existing' && needProof;
+  const recurring = isTripRate && state.rateScope==='contract';
+  const redirectCard = recurring ? `<div class="redirect">
+      <div class="rt"><strong>This looks like a contract-wide rate issue.</strong> Raise it once on the contract and it re-prices <b>every trip</b> automatically — you won’t need to dispute each trip separately.</div>
+      <div class="rrow"><button class="btn btn-primary" onclick="setCat('contract')">Raise on contract →</button>
+        <button class="btn btn-ghost" onclick="setRateScope('trip')">No, just this trip</button>
+        <span class="hindi-pill">हिंदी में जानकारी</span></div>
+    </div>` : '';
+
+  // Description (mandatory when proof needed)
+  const descBad = state.tried && needProof && state.desc.trim().length<10;
+  const descReq = needProof ? ' <span class="req">*</span>' : ' <span class="muted">(optional)</span>';
+  const descHint = needProof ? 'Add a short reason so we can verify the amount (min 10 chars).' : 'Add any details that help us resolve this faster';
+
+  // Upload (≥1 file mandatory when proof needed)
+  const filesBad = state.tried && needProof && state.files.length===0;
+  const fileChips = state.files.map((f,i)=>`<div class="filechip"><span class="fi">${f.name.split('.').pop().toUpperCase()}</span>
+      <div><div class="fn">${f.name}</div><div class="fs">${f.size} · Uploaded</div></div><span class="fx" onclick="removeFile(${i})">×</span></div>`).join('');
+
+  R.innerHTML = `
+    <div class="dhead">Dispute Details</div><span class="dcnt">${selIdx.length} Selected</span>
+    <div class="dscroll">
+      ${redirectCard}
+      ${cards}
+      <div class="desc-field ${descBad?'field-bad':''}">
+        <div class="lbl-row"><label>Description${descReq}</label><span class="muted" style="font-size:11px">${state.desc.length}/1000</span></div>
+        <textarea rows="4" maxlength="1000" placeholder="${descHint}" oninput="state.desc=this.value;refreshGate()">${state.desc}</textarea>
+        ${descBad?`<div class="err">${errIcon()} ${descHint}</div>`:''}
+      </div>
+      <div class="upload-h">Upload Supporting Documents ${needProof?'<span class="req">*</span>':'<span class="muted" style="font-weight:500;font-size:12px">(optional)</span>'}</div>
+      <div class="upload ${filesBad?'bad':''}" onclick="addFile()">⬆ Drag &amp; drop or <b>browse</b> — JPG, PNG, PDF up to 10 MB each · <b>multiple files allowed</b></div>
+      ${filesBad?`<div class="err">${errIcon()} Attach proof (invoice / agreed rate / challan) to resolve an amount dispute.</div>`:''}
+      ${state.files.length?`<div class="filelist">${fileChips}<span class="addmore" onclick="addFile()">+ Add more files</span></div>`:''}
+      <div class="uptip">💡 Clear documents help us resolve faster${needProof?' — required for amount disputes':''}.</div>
+    </div>
+    <div class="rfoot">
+      <span class="gate" id="gateMsg">${needProof?'Amount disputes need expected amount + description + 1 document.':''}</span>
+      <button class="btn btn-ghost" onclick="resetForm();render()">Cancel</button>
+      <button class="btn btn-primary" onclick="trySubmit()">Submit Dispute</button>
+    </div>`;
+}
+function refreshGate(){ /* keep textarea focus; update only counter via light touch */
+  const ta=document.querySelector('.desc-field textarea'); if(!ta)return;
+  const c=ta.closest('.desc-field').querySelector('.lbl-row .muted'); if(c)c.textContent=`${ta.value.length}/1000`;
+}
+function validate(){
+  if(!proofNeeded()) return true;
+  const cat=CATS[state.cat]; const i=[...state.sel].find(x=>cat.issues[x].proof);
+  // amount field id: f_i_rowWithKeyAmt
+  const it=cat.issues[i]; const ri=it.rows.findIndex(r=>r.key==='amt');
+  const amt = state.fieldVals[`f_${i}_${ri}`]||'';
+  const okAmt = amt.trim().length>0;
+  const okDesc = state.desc.trim().length>=10;
+  const okDoc = state.files.length>=1;
+  return okAmt && okDesc && okDoc;
+}
+function trySubmit(){
+  state.tried=true;
+  if(!validate()){ render(); return; }
+  showSuccess();
+}
+function showSuccess(){
+  const lvl = state.cat==='contract' ? 'Contract' : (state.cat==='existing'?'Trip':'Request');
+  document.getElementById('overlays').innerHTML = `
+   <div class="modal-bg" onclick="if(event.target===this)closeOv()">
+     <div class="modal">
+       <div class="mi">✓</div>
+       <h3>Dispute Raised Successfully!</h3>
+       <p>Your ${lvl.toLowerCase()} dispute has been recorded. Our team is reviewing it — expect an update within <b>24 hours</b>. Track it anytime in the Disputes section.</p>
+       <button class="btn btn-primary" style="width:100%" onclick="closeOv();setView('l1')">View in Contract list</button>
+     </div></div>`;
+}
+function closeOv(){ document.getElementById('overlays').innerHTML=''; }
+function card_block(title, body, cta){
+  return `<div class="block"><div class="bhead"><span class="bicon">⛔</span>${title}</div><p>${body}</p><div class="brow"><button class="btn btn-outline">${cta}</button><button class="btn btn-ghost">Go back</button></div></div>`;
+}
+
+/* ============ L1 CONTRACT LIST ============ */
+const L1ROWS = [
+  { id:'CT-1042-1001', updated:false, starts:"Starts in 1 day", route:'BLR → DLS → MUM · NLH · 1400km',
+    veh:'32 ft', period:"1 Feb'26 – 28 Feb'26", rate:'₹4,000', rateNew:null,
+    disp:{id:'DIS-7382', dim:'Rate', status:'review', age:'2h ago', neu:true} },
+  { id:'CT-1042-1002', updated:true, starts:"Starts in 4 days", route:'BLR → CHN · NLH · 980km',
+    veh:'24 ft', period:"3 Feb'26 – 2 Mar'26", rate:'₹4,000', rateNew:'₹5,000',
+    disp:{id:'DIS-7355', dim:'Rate', status:'resolved', age:'1d ago', neu:false} },
+  { id:'CT-1042-1003', updated:false, starts:"Starts in 6 days", route:'DEL → LKO · NLH · 540km',
+    veh:'32 ft', period:"5 Feb'26 – 4 Mar'26", rate:'₹3,500', rateNew:null,
+    disp:{id:'DIS-7301', dim:'Vehicle size', status:'rejected', age:'3d ago', neu:false} },
+  { id:'CT-1042-1004', updated:false, starts:"Starts in 8 days", route:'MUM → PUN · RLH · 150km',
+    veh:'20 ft', period:"7 Feb'26 – 6 Mar'26", rate:'₹2,000', rateNew:null, disp:null },
+];
+function spLabel(s){ return s==='review'?'Under review':s==='resolved'?'Resolved':'Rejected'; }
+function renderL1(){
+  document.getElementById('coexSlot').innerHTML='';
+  const rows = L1ROWS.map(r=>{
+    const cid = `<div class="cid">${r.id}
+        ${r.updated?`<span class="tipwrap"><span class="updated">UPDATED</span><span class="tt">Terms revised after dispute ${r.disp?r.disp.id:''} resolved on 12 Jun. Open to review the new rate.</span></span>`:''}</div>
+        <div class="starts">${r.starts}</div>
+        ${r.disp?`<div class="dsub" onclick="alert('Opens dispute ${r.disp.id} on L2')">
+            ${r.disp.neu?'<span class="new"></span>':''}<b>${r.disp.id}</b> · ${r.disp.dim}
+            <span class="sp ${r.disp.status}">${spLabel(r.disp.status)}</span>
+            <span class="age">· ${r.disp.age}</span></div>`:''}`;
+    const earn = r.rateNew
+      ? `<span class="rate-old">${r.rate}/trip</span><br><span class="rate-new">${r.rateNew}/trip</span> <span class="rate-up">Updated ✓</span>`
+      : `${r.rate}/trip`;
+    // Already raised → CTA is View dispute (can't raise the same one twice). Clean rows → View + Raise Dispute.
+    const act = r.disp
+      ? `<span class="act-link">View dispute →</span>`
+      : `<span class="act-link">View</span><span class="act-link" onclick="setView('raise');setEntry('contract')">Raise Dispute</span>`;
+    return `<tr><td>${cid}</td><td class="muted">${r.route}</td><td>${r.veh}</td><td class="muted">${r.period}</td><td>${earn}</td><td>${act}</td></tr>`;
+  }).join('');
+
+  document.getElementById('wrap').innerHTML = `
+    <div class="cards">
+      <div class="card" onclick="alert('Filter: Disputed (Upcoming)')"><div class="cnum">5</div><div class="clab">Disputed (Upcoming)</div>
+        <span class="cnew"><span class="dot"></span> 1 new update</span></div>
+      <div class="card" onclick="alert('Filter: Disputed (Active)')"><div class="cnum">3</div><div class="clab">Disputed (Active)</div>
+        <span class="cnew none">No new updates</span></div>
+      <div class="card" onclick="alert('Filter: Resolved this month')"><div class="cnum">2</div><div class="clab">Resolved this month</div>
+        <span class="cnew none">Rate revised on 1</span></div>
+    </div>
+    <div class="subtabs">
+      <div class="subtab">All Upcoming</div>
+      <div class="subtab on">Disputed before Activation</div>
+      <div class="subtab">Disputed (Active)</div>
+    </div>
+    <table>
+      <thead><tr><th>Contract ID</th><th>Route Details</th><th>Vehicle</th><th>Contract Period</th><th>Earnings</th><th>Action</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="muted" style="margin-top:12px;font-size:12px">New on L1: dispute <b>status + ID + last-update age</b> now show on the row (no need to open L2), and a green <b>UPDATED</b> badge sits beside any Contract ID whose terms changed after a resolved dispute.</p>`;
+
+  // sample toast (kept notification method)
+  document.getElementById('overlays').innerHTML = `
+    <div class="toast" id="toast"><span class="tk">✓</span> Dispute raised on Contract CT-1042-1001 successfully.
+      <span class="tx" onclick="document.getElementById('toast').remove()">✕</span></div>`;
+}
+
+/* init */
+setView('raise');
+</script>
+</body>
+</html>

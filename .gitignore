@@ -1,0 +1,27 @@
+node_modules
+dist
+.omc
+*.local
+.DS_Store
+tsconfig.app.tsbuildinfo
+
+# NDA: raw Figma SOT exports + internal source PDFs (real vendor numbers, Kapture, provisioning figures).
+# Sanitized/blurred exports live in public/work/assignment/ and are committed from there
+# (regenerate with `npm run shots:assignment` + `npm run diagrams:assignment`).
+Figma- Assignment module/
+
+# diagram render scratch
+.asm-dg-tmp/
+.clh-dg-tmp/
+
+# NDA: the de-fuzzing map — pairs every public phrase with its real private value,
+# and names colleagues + Figma file keys. Never publish. Kept locally only.
+# scripts/nda-scan.mjs skips gracefully when it is absent.
+content/fuzzing-map.json
+
+# Third-party reference boards (other designers' portfolios) — not ours to republish
+/*.jpeg
+
+# Local tooling scratch
+.playwright-mcp/
+tsconfig.node.tsbuildinfo

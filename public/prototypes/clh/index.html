@@ -1,0 +1,2532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linehaul Nexus — RFQ Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   CRYSTAL DESIGN SYSTEM TOKENS
+   ═══════════════════════════════════════ */
+:root {
+  --primary: #072042;
+  --primary-tint1: #e8edf3;
+  --primary-tint2: #1a3a5c;
+  --primary-hover: #0a2d5a;
+  --white: #FFFFFF;
+  --g50: #F8F9FA; --g100: #F1F3F5; --g200: #E9ECEF; --g300: #DEE2E6;
+  --g400: #ADB5BD; --g500: #868E96; --g600: #6C757D; --g700: #495057;
+  --g800: #343A40; --g900: #212529;
+  --red: #E53935; --red-bg: #FFEBEE; --red-light: #EF5350;
+  --orange: #F57C00; --orange-bg: #FFF3E0;
+  --green: #2E7D32; --green-bg: #E8F5E9;
+  --blue: #1565C0; --blue-bg: #E3F2FD;
+  --purple: #7B1FA2; --purple-bg: #F3E5F5;
+  --shadow-sm: 0 1px 3px rgba(7,32,66,.06);
+  --shadow-md: 0 4px 12px rgba(7,32,66,.1);
+  --shadow-pop: 0 8px 30px rgba(7,32,66,.16), 0 2px 6px rgba(7,32,66,.06);
+  --font: 'Space Grotesk', sans-serif;
+  --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
+}
+
+/* ═══ RESET ═══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--g100);color:var(--g900);-webkit-font-smoothing:antialiased;font-size:13px;line-height:1.5;overflow:hidden;height:100vh}
+a{text-decoration:none;color:inherit}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+input,select{font-family:var(--font)}
+
+/* ═══ APP LAYOUT ═══ */
+.app{display:flex;height:100vh}
+
+/* ─── SIDEBAR ─── */
+.sidebar{width:200px;background:var(--primary);color:var(--white);display:flex;flex-direction:column;flex-shrink:0;z-index:10}
+.sb-user{padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4A6FA5,#7B9EC9);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
+.sb-name{font-size:13px;font-weight:600}
+.sb-nav{padding:8px 0;flex:1;overflow-y:auto}
+.sb-item{display:flex;align-items:center;gap:12px;padding:11px 16px;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;cursor:pointer;transition:.15s;border-left:3px solid transparent}
+.sb-item:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.05)}
+.sb-item.active{color:#fff;background:rgba(255,255,255,.1);border-left-color:#fff}
+.sb-item svg{width:18px;height:18px;flex-shrink:0}
+.sb-section{padding:12px 16px 4px;display:flex;align-items:center;justify-content:space-between}
+.sb-section span{font-size:11px;font-weight:600;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px}
+.sb-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-footer .sb-item{padding:8px 0;border-left:none}
+.sb-logo{padding:8px 16px 16px;font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase}
+
+/* ─── MAIN ─── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--white)}
+
+/* ─── TOP BAR ─── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--white);border-bottom:1px solid var(--g200);flex-shrink:0}
+.topbar h1{font-size:20px;font-weight:700}
+.topbar-r{display:flex;align-items:center;gap:16px}
+.how-link{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--g600);cursor:pointer}
+.how-link:hover{color:var(--primary)}
+.search-box{display:flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid var(--g300);border-radius:var(--r-md);min-width:220px}
+.search-box svg{width:16px;height:16px;color:var(--g400);flex-shrink:0}
+.search-box input{border:none;outline:none;font-family:var(--font);font-size:13px;color:var(--g700);width:100%;background:transparent}
+.search-box input::placeholder{color:var(--g400)}
+
+/* ─── PAGE CONTAINER ─── */
+.page{display:none;flex-direction:column;flex:1;overflow:hidden}
+.page.visible{display:flex}
+
+/* ═══════════════════════════════════════
+   OVERVIEW PAGE
+   ═══════════════════════════════════════ */
+.overview-scroll{flex:1;overflow-y:auto;padding:24px;background:var(--g50)}
+.ov-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px}
+.ov-header h2{font-size:18px;font-weight:700;color:var(--g900)}
+.ov-header-meta{font-size:13px;color:var(--g500)}
+.ov-header-meta b{color:var(--g700);font-weight:600}
+
+/* Guidance banner */
+.ov-guide{background:var(--blue-bg);border:1px solid #BBDEFB;border-left:4px solid var(--blue);border-radius:var(--r-md);padding:14px 20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:12px;font-size:13px;color:var(--g700);line-height:1.6}
+.ov-guide svg{width:18px;height:18px;color:var(--blue);flex-shrink:0;margin-top:2px}
+
+/* Action Center */
+.ov-ac{margin-bottom:32px}
+.ov-ac-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.ov-ac-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.ov-ac-title .ct{color:var(--red);font-weight:600}
+.ov-ac-download{display:flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:12px;font-weight:500;color:var(--g600);cursor:pointer}
+.ov-ac-download:hover{border-color:var(--primary);color:var(--primary)}
+.ov-ac-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.ov-ac-col{display:flex;flex-direction:column;gap:10px}
+.ov-ac-col-head{font-size:12px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;padding-bottom:8px;border-bottom:2px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
+.ov-ac-col-head .arr{color:var(--g300);font-size:16px}
+.ov-ac-card{background:var(--white);border:1px solid var(--g200);border-radius:var(--r-md);padding:14px 16px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:space-between}
+.ov-ac-card:hover{border-color:var(--primary);box-shadow:var(--shadow-sm)}
+.ov-ac-card-l{display:flex;flex-direction:column;gap:4px}
+.ov-ac-card-name{font-size:13px;font-weight:600;color:var(--g800)}
+.ov-ac-card-count{font-size:12px;color:var(--g500)}
+.ov-ac-card-designs{font-size:11px;color:var(--g400);margin-top:2px}
+.ov-ac-card-cta{font-size:12px;font-weight:600;color:var(--primary);white-space:nowrap}
+.ov-ac-card.red{border-left:3px solid var(--red)}
+.ov-ac-card.orange{border-left:3px solid var(--orange)}
+.ov-ac-card.blue{border-left:3px solid var(--blue)}
+
+/* Designs section */
+.ov-designs{margin-bottom:24px}
+.ov-designs-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.ov-designs-head h3{font-size:14px;font-weight:700}
+.ov-designs-tabs{display:flex;gap:4px}
+.ov-dtab{padding:5px 14px;font-size:12px;font-weight:500;color:var(--g600);border:1px solid var(--g200);border-radius:var(--r-sm);cursor:pointer;background:var(--white)}
+.ov-dtab:hover{background:var(--g50)}
+.ov-dtab.active{background:var(--primary-tint1);color:var(--primary);border-color:var(--primary-tint2);font-weight:600}
+.ov-designs-note{font-size:12px;color:var(--g500);margin-bottom:12px}
+
+.design-card{background:var(--white);border:1px solid var(--g200);border-radius:var(--r-lg);padding:20px;margin-bottom:12px;cursor:pointer;transition:.15s}
+.design-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md)}
+.dc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.dc-name{font-size:15px;font-weight:700;color:var(--g900);display:flex;align-items:center;gap:10px}
+.dc-badge{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.dc-badge.active{background:var(--green-bg);color:var(--green)}
+.dc-badge.planning{background:var(--blue-bg);color:var(--blue)}
+.dc-badge.sale{background:var(--purple-bg);color:var(--purple)}
+.dc-badge.closed{background:var(--g100);color:var(--g600)}
+.dc-update{font-size:12px;color:var(--orange);font-weight:500}
+.dc-mid{display:flex;align-items:center;gap:24px;margin-bottom:12px;font-size:13px;color:var(--g600)}
+.dc-mid b{color:var(--g800);font-weight:600}
+.dc-period{color:var(--g500);font-size:12px}
+.dc-progress{margin-bottom:12px}
+.dc-progress-text{font-size:12px;color:var(--g600);margin-bottom:4px}
+.dc-progress-bar{height:6px;background:var(--g200);border-radius:3px;overflow:hidden}
+.dc-progress-fill{height:100%;background:var(--blue);border-radius:3px;transition:.3s}
+.dc-bottom{display:flex;align-items:center;justify-content:space-between}
+.dc-chips{display:flex;gap:8px;flex-wrap:wrap}
+.dc-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.dc-chip.red{background:var(--red-bg);color:var(--red)}
+.dc-chip.orange{background:var(--orange-bg);color:var(--orange)}
+.dc-chip.green{background:var(--green-bg);color:var(--green)}
+.dc-chip.blue{background:var(--blue-bg);color:var(--blue)}
+.dc-chip.gray{background:var(--g100);color:var(--g600)}
+.dc-cta{padding:8px 18px;background:var(--primary);color:var(--white);border-radius:var(--r-sm);font-size:12px;font-weight:600}
+.dc-cta:hover{background:var(--primary-hover)}
+.dc-cta.outline{background:var(--white);color:var(--primary);border:1px solid var(--primary)}
+
+/* Past RFQs */
+.ov-past{font-size:13px;color:var(--g600);cursor:pointer;display:flex;align-items:center;gap:6px;padding:12px 0}
+.ov-past:hover{color:var(--primary)}
+.ov-past b{font-weight:600}
+
+/* ═══════════════════════════════════════
+   DESIGN DETAIL PAGE
+   ═══════════════════════════════════════ */
+.rfq-breadcrumb{padding:10px 24px 0;flex-shrink:0}
+.rfq-breadcrumb a{font-size:12px;color:var(--g500);display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.rfq-breadcrumb a:hover{color:var(--primary)}
+.rfq-breadcrumb svg{width:14px;height:14px}
+
+/* Design header */
+.design-header{padding:12px 24px;background:var(--g50);border-bottom:1px solid var(--g200);flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.dh-left{display:flex;align-items:center;gap:16px}
+.dh-name{font-size:15px;font-weight:700;color:var(--g900)}
+.dh-meta{font-size:13px;color:var(--g600)}
+.dh-meta b{font-weight:600;color:var(--g800)}
+.dh-badge{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+
+/* Tabs */
+.tabs{display:flex;padding:0 24px;border-bottom:1px solid var(--g200);flex-shrink:0}
+.tab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--g500);cursor:pointer;border-bottom:2px solid transparent;transition:.15s;white-space:nowrap}
+.tab:hover{color:var(--g700)}
+.tab.active{color:var(--primary);font-weight:600;border-bottom-color:var(--primary)}
+
+/* Sub-tabs */
+.subtabs{display:flex;gap:6px;padding:12px 24px;flex-shrink:0;flex-wrap:wrap}
+.stab{padding:5px 12px;font-size:12px;font-weight:500;color:var(--g600);background:var(--g100);border:1px solid var(--g200);border-radius:var(--r-sm);cursor:pointer;display:flex;align-items:center;gap:6px;transition:.15s}
+.stab:hover{background:var(--g200)}
+.stab.active{background:var(--primary-tint1);color:var(--primary);border-color:var(--primary-tint2);font-weight:600}
+.stab .ct{font-weight:600}
+
+/* Filter bar */
+.fbar{display:flex;align-items:center;justify-content:space-between;padding:10px 24px;border-bottom:1px solid var(--g200);flex-shrink:0}
+.fbar-l{display:flex;align-items:center;gap:12px}
+.fbar-l span{font-size:12px;font-weight:600;color:var(--g600)}
+.fbtn{display:flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:12px;color:var(--g700);cursor:pointer;background:var(--white);transition:.15s}
+.fbtn:hover{border-color:var(--primary);color:var(--primary)}
+.fbtn svg{width:12px;height:12px}
+.fbar-r{display:flex;align-items:center;gap:12px}
+.fbar-r>span{font-size:12px;color:var(--g500)}
+.bulk-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--primary);color:var(--white);border-radius:var(--r-sm);font-size:13px;font-weight:600;transition:.15s}
+.bulk-btn:hover{background:var(--primary-hover)}
+.bulk-btn svg{width:16px;height:16px}
+.download-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:12px;font-weight:500;color:var(--g600);cursor:pointer;background:var(--white)}
+.download-btn:hover{border-color:var(--primary);color:var(--primary)}
+
+/* ─── TABLE ─── */
+.tbl-wrap{flex:1;overflow:auto}
+table.rfq{width:100%;border-collapse:collapse;min-width:1020px}
+table.rfq th{position:sticky;top:0;z-index:2;background:var(--g50);padding:11px 16px;font-size:11px;font-weight:600;color:var(--g500);text-align:left;border-bottom:1px solid var(--g200);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+table.rfq td{padding:14px 16px;font-size:13px;color:var(--g800);border-bottom:1px solid var(--g100);vertical-align:top}
+table.rfq tbody tr:hover{background:var(--g50)}
+table.rfq tbody tr.expanded-parent{background:var(--primary-tint1);border-left:3px solid var(--primary)}
+
+/* Cell styles */
+.rfq-id{font-weight:600;color:var(--g900)}
+.rfq-urg{font-size:12px;font-weight:500;margin-top:3px}
+.urg-red{color:var(--red)}.urg-orange{color:var(--orange)}.urg-gray{color:var(--g500)}
+.vtype{font-weight:600}.valloc{font-size:12px;color:var(--g500);margin-top:2px}
+.adate{font-size:13px}
+.ptime{line-height:1.7}
+.act-cell{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.assign-btn{padding:6px 18px;background:var(--primary);color:var(--white);border-radius:var(--r-sm);font-size:12px;font-weight:600;transition:.15s}
+.assign-btn:hover{background:var(--primary-hover)}
+.action-btn{padding:5px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;transition:.15s;display:inline-block}
+.action-btn.primary{background:var(--primary);color:var(--white)}
+.action-btn.primary:hover{background:var(--primary-hover)}
+.action-btn.danger{background:var(--red);color:var(--white)}
+.action-btn.outline{background:var(--white);color:var(--primary);border:1px solid var(--primary)}
+.action-btn.outline:hover{background:var(--primary-tint1)}
+.action-btn.orange{background:var(--orange);color:var(--white)}
+.details-link{font-size:12px;color:var(--g500);cursor:pointer;transition:.15s}
+.details-link:hover{color:var(--primary)}
+
+/* Status chips */
+.status-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-right:4px;margin-bottom:4px}
+.status-chip.red{background:var(--red-bg);color:var(--red)}
+.status-chip.orange{background:var(--orange-bg);color:var(--orange)}
+.status-chip.green{background:var(--green-bg);color:var(--green)}
+.status-chip.blue{background:var(--blue-bg);color:var(--blue)}
+.status-chip.gray{background:var(--g100);color:var(--g600)}
+.status-chip.purple{background:var(--purple-bg);color:var(--purple)}
+
+/* Transporter cell */
+.tp-cell{line-height:1.6}
+.tp-name{font-weight:600;color:var(--g900);font-size:13px}
+.tp-ids{font-size:11px;color:var(--g500)}
+.tp-perf{font-size:12px;margin-top:4px;font-weight:500}
+.tp-perf.good{color:var(--green)}
+.tp-perf.bad{color:var(--red)}
+.tp-perf.mid{color:var(--orange)}
+
+/* Contract cell */
+.ct-id{font-weight:600;color:var(--g900)}
+.ct-type{font-size:11px;color:var(--g500)}
+.ct-label{font-size:11px;font-weight:500;margin-top:2px}
+
+/* Dispute cell */
+.disp-reason{font-weight:600;color:var(--g800);font-size:13px}
+.disp-date{font-size:12px;color:var(--g500);margin-top:2px}
+
+/* Earnings cell */
+.earn-amount{font-weight:600;color:var(--g900)}
+
+/* Period cell */
+.period-range{font-size:13px;color:var(--g800)}
+.period-days{font-size:11px;color:var(--g500)}
+
+/* ─── ROUTE CELL ─── */
+.rt-cell{position:relative}
+.rt-main{display:flex;align-items:center;gap:5px;font-size:13px}
+.rt-origin,.rt-dest{font-weight:600;color:var(--primary);white-space:nowrap}
+.rt-dash{color:var(--g400)}
+.rt-arrow{color:var(--g400);display:flex}
+.rt-arrow svg{width:14px;height:14px}
+.nd-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--primary-tint1);border:1px solid rgba(7,32,66,.1);border-radius:10px;font-size:11px;font-weight:600;color:var(--primary);white-space:nowrap;cursor:pointer;transition:.15s;flex-shrink:0}
+.nd-pill:hover{background:rgba(7,32,66,.1);border-color:rgba(7,32,66,.2)}
+.nd-pill svg{width:12px;height:12px}
+.rt-meta{display:flex;gap:4px;font-size:11px;color:var(--g500);margin-top:1px}
+.rt-sep{color:var(--g300)}
+.rt-name{font-size:12px;color:var(--g500);margin-top:3px}
+
+/* ─── ROUTE POPOVER ─── */
+.rt-anchor{position:relative}
+.rt-pop{position:absolute;top:calc(100% + 10px);left:0;z-index:100;width:340px;background:var(--white);border:1px solid var(--g200);border-radius:var(--r-lg);box-shadow:var(--shadow-pop);opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .15s,transform .15s,visibility .15s;pointer-events:none}
+.rt-anchor:hover .rt-pop,.rt-pop:hover{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+.rt-pop::before{content:'';position:absolute;top:-6px;left:28px;width:12px;height:12px;background:var(--white);border:1px solid var(--g200);border-right:none;border-bottom:none;transform:rotate(45deg);z-index:1}
+.rt-pop::after{content:'';position:absolute;top:-14px;left:0;width:100%;height:14px}
+.pop-head{padding:12px 16px;border-bottom:1px solid var(--g100);display:flex;align-items:center;justify-content:space-between}
+.pop-label{font-size:12px;font-weight:600;color:var(--primary)}
+.pop-type{font-size:11px;font-weight:500;color:var(--g500);background:var(--g100);padding:2px 8px;border-radius:10px}
+.stepper{padding:16px}
+.step{display:flex;gap:12px;position:relative}
+.step:not(:last-child) .track::after{content:'';position:absolute;top:18px;left:7px;width:2px;bottom:0;background:repeating-linear-gradient(to bottom,var(--g300) 0 4px,transparent 4px 8px)}
+.track{position:relative;display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:16px}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid #4A6FA5;background:var(--white);flex-shrink:0;position:relative;z-index:1;margin-top:1px}
+.dot.orig,.dot.dest{background:var(--primary);border-color:var(--primary)}
+.dot.orig::after,.dot.dest::after{content:'';position:absolute;top:3px;left:3px;width:6px;height:6px;background:var(--white);border-radius:50%}
+.ninfo{flex:1;padding-bottom:14px}
+.step:last-child .ninfo{padding-bottom:0}
+.nhead{display:flex;align-items:baseline;gap:8px}
+.ncode{font-size:13px;font-weight:700;color:var(--g900);letter-spacing:.2px}
+.nname{font-size:12px;color:var(--g500)}
+.seg{display:flex;align-items:center;gap:8px;margin-top:5px;padding:4px 8px;background:var(--g50);border-radius:var(--r-sm);font-size:11px;color:var(--g600)}
+.seg svg{width:12px;height:12px;color:var(--g400);flex-shrink:0}
+.seg-dot{width:3px;height:3px;border-radius:50%;background:var(--g300);flex-shrink:0}
+.pop-foot{padding:10px 16px;border-top:1px solid var(--g100);display:flex;gap:16px;background:var(--g50);border-radius:0 0 var(--r-lg) var(--r-lg)}
+.sf-item{display:flex;flex-direction:column;gap:1px}
+.sf-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--g400)}
+.sf-val{font-size:13px;font-weight:600;color:var(--g800)}
+.rt-anchor:hover .step{animation:nodeIn .2s ease both}
+.rt-anchor:hover .step:nth-child(1){animation-delay:.02s}
+.rt-anchor:hover .step:nth-child(2){animation-delay:.05s}
+.rt-anchor:hover .step:nth-child(3){animation-delay:.08s}
+.rt-anchor:hover .step:nth-child(4){animation-delay:.11s}
+.rt-anchor:hover .step:nth-child(5){animation-delay:.14s}
+.rt-anchor:hover .step:nth-child(6){animation-delay:.17s}
+.rt-anchor:hover .step:nth-child(7){animation-delay:.2s}
+.rt-anchor:hover .step:nth-child(8){animation-delay:.23s}
+@keyframes nodeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ INLINE ASSIGN ROW ═══ */
+.inline-row{background:var(--g50);border-bottom:2px solid var(--primary)}
+.inline-row td{padding:0!important}
+.inline-content{padding:16px 24px}
+.inline-slots{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.inline-slot{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--white);border:1px solid var(--g200);border-radius:var(--r-sm)}
+.inline-slot-info{flex:1;display:flex;align-items:center;gap:12px}
+.inline-slot-id{font-weight:600;font-size:12px;color:var(--g800)}
+.inline-slot-tp{font-size:12px;color:var(--g600)}
+.inline-slot-status{font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px}
+.inline-slot-status.sent{color:var(--blue);background:var(--blue-bg)}
+.inline-slot-status.error{color:var(--red);background:var(--red-bg)}
+.inline-slot-status.approved{color:var(--green);background:var(--green-bg)}
+.inline-slot-status.rejected{color:var(--red);background:var(--red-bg)}
+.inline-slot-status.active{color:var(--green);background:var(--green-bg)}
+.inline-slot-status.unassigned{color:var(--g600);background:var(--g100)}
+.inline-slot .edit-btn{padding:4px 12px;font-size:11px;font-weight:600;color:var(--primary);border:1px solid var(--primary);border-radius:var(--r-sm);cursor:pointer}
+.inline-slot .edit-btn:hover{background:var(--primary-tint1)}
+.inline-form{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.inline-field{display:flex;flex-direction:column;gap:4px}
+.inline-field label{font-size:11px;font-weight:600;color:var(--g600);text-transform:uppercase;letter-spacing:.3px}
+.inline-field input,.inline-field select{padding:8px 12px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:13px;color:var(--g800);outline:none;min-width:140px}
+.inline-field input:focus,.inline-field select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(7,32,66,.08)}
+.inline-field select{appearance:none;background:var(--white) url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23868E96' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center;padding-right:32px}
+.inline-send{padding:8px 24px;background:var(--primary);color:var(--white);border-radius:var(--r-sm);font-size:13px;font-weight:600;cursor:pointer}
+.inline-send:hover{background:var(--primary-hover)}
+.inline-close{padding:8px 16px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:13px;color:var(--g600);cursor:pointer}
+.inline-close:hover{background:var(--g100)}
+
+/* ═══ CONFIRMATION MODAL ═══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(7,32,66,.3);z-index:300;opacity:0;visibility:hidden;transition:.2s;display:flex;align-items:center;justify-content:center}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal{background:var(--white);border-radius:var(--r-lg);box-shadow:var(--shadow-pop);width:440px;transform:scale(.95);transition:transform .2s}
+.modal-overlay.open .modal{transform:scale(1)}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-size:16px;font-weight:700}
+.modal-close{width:32px;height:32px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--g500);cursor:pointer;transition:.15s}
+.modal-close:hover{background:var(--g100);color:var(--g900)}
+.modal-close svg{width:18px;height:18px}
+.modal-body{padding:24px}
+.modal-body p{font-size:13px;color:var(--g700);line-height:1.6}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--g200);display:flex;gap:12px;justify-content:flex-end}
+.modal-foot .btn-cancel{padding:9px 20px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:13px;font-weight:500;color:var(--g700);cursor:pointer}
+.modal-foot .btn-cancel:hover{background:var(--g100)}
+.modal-foot .btn-confirm{padding:9px 20px;background:var(--primary);color:var(--white);border-radius:var(--r-sm);font-size:13px;font-weight:600;cursor:pointer}
+.modal-foot .btn-confirm:hover{background:var(--primary-hover)}
+
+/* ═══ FILTER PANEL ═══ */
+.filter-overlay{position:fixed;inset:0;background:rgba(7,32,66,.15);z-index:150;opacity:0;visibility:hidden;transition:.2s}
+.filter-overlay.open{opacity:1;visibility:visible}
+.filter-panel{position:fixed;top:0;right:0;width:320px;height:100vh;background:var(--white);box-shadow:-4px 0 20px rgba(7,32,66,.1);z-index:151;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}
+.filter-panel.open{transform:translateX(0)}
+.fp-head{padding:20px 24px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
+.fp-head h3{font-size:16px;font-weight:700}
+.fp-body{flex:1;overflow-y:auto;padding:20px 24px}
+.fp-section{margin-bottom:24px}
+.fp-section-title{font-size:12px;font-weight:600;color:var(--g600);margin-bottom:10px}
+.fp-option{display:flex;align-items:center;gap:10px;padding:6px 0;cursor:pointer;font-size:13px;color:var(--g700)}
+.fp-option input[type="checkbox"]{width:16px;height:16px;accent-color:var(--primary)}
+.fp-footer{padding:16px 24px;border-top:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
+.fp-count{font-size:12px;color:var(--g500)}
+.fp-actions{display:flex;gap:8px}
+
+/* ═══ L3 DETAIL PAGE ═══ */
+.l3-scroll{flex:1;overflow-y:auto;padding:24px;background:var(--g50)}
+.l3-breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--g500);margin-bottom:16px}
+.l3-breadcrumb a{cursor:pointer;color:var(--g500)}
+.l3-breadcrumb a:hover{color:var(--primary)}
+.l3-breadcrumb span{color:var(--g400)}
+.l3-title-row{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.l3-back{width:32px;height:32px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--g700);cursor:pointer;border:1px solid var(--g200);background:var(--white)}
+.l3-back:hover{background:var(--g100)}
+.l3-back svg{width:18px;height:18px}
+.l3-title{font-size:18px;font-weight:700;color:var(--g900)}
+.l3-status-badge{padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600}
+.l3-status-badge.red{background:var(--red-bg);color:var(--red)}
+.l3-status-badge.green{background:var(--green-bg);color:var(--green)}
+.l3-status-badge.blue{background:var(--blue-bg);color:var(--blue)}
+.l3-status-badge.orange{background:var(--orange-bg);color:var(--orange)}
+.l3-status-badge.gray{background:var(--g100);color:var(--g600)}
+
+/* L3 Overview cards */
+.l3-section{background:var(--white);border:1px solid var(--g200);border-radius:var(--r-lg);padding:24px;margin-bottom:20px}
+.l3-section-title{font-size:14px;font-weight:700;color:var(--g900);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.l3-overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--g200);border:1px solid var(--g200);border-radius:var(--r-md);overflow:hidden;margin-bottom:16px}
+.l3-info-card{background:var(--white);padding:16px 20px;display:flex;align-items:flex-start;gap:12px}
+.l3-info-card-icon{width:32px;height:32px;border-radius:var(--r-sm);background:var(--g50);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--g500)}
+.l3-info-card-icon svg{width:18px;height:18px}
+.l3-info-card-label{font-size:11px;font-weight:500;color:var(--g500);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.l3-info-card-value{font-size:14px;font-weight:600;color:var(--g900)}
+.l3-info-card-sub{font-size:12px;color:var(--g500);margin-top:2px}
+.l3-overview-row2{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--g200);border:1px solid var(--g200);border-radius:var(--r-md);overflow:hidden}
+
+/* L3 Dispute Summary */
+.l3-dispute-banner{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--green-bg);border:1px solid #C8E6C9;border-radius:var(--r-md);margin-bottom:16px;font-size:13px;color:var(--green)}
+.l3-dispute-banner.warning{background:var(--orange-bg);border-color:#FFCC80;color:var(--orange)}
+.l3-dispute-banner svg{width:16px;height:16px;flex-shrink:0}
+table.l3-table{width:100%;border-collapse:collapse}
+table.l3-table th{padding:10px 14px;font-size:11px;font-weight:600;color:var(--g500);text-align:left;background:var(--g50);border-bottom:1px solid var(--g200);text-transform:uppercase;letter-spacing:.3px}
+table.l3-table td{padding:12px 14px;font-size:13px;color:var(--g800);border-bottom:1px solid var(--g100);vertical-align:top}
+table.l3-table tbody tr:hover{background:var(--g50)}
+.l3-link{color:var(--blue);font-weight:600;cursor:pointer}
+.l3-link:hover{text-decoration:underline}
+
+/* L3 Contract Details header */
+.l3-contracts-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.l3-show-all{font-size:12px;color:var(--blue);cursor:pointer;display:flex;align-items:center;gap:4px}
+.l3-show-all svg{width:12px;height:12px}
+.l3-download{display:flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:12px;font-weight:500;color:var(--g600);cursor:pointer}
+.l3-download:hover{border-color:var(--primary);color:var(--primary)}
+.l3-download svg{width:14px;height:14px}
+
+/* L3 action buttons in table */
+.l3-action-links{display:flex;flex-direction:column;gap:4px}
+.l3-action-link{font-size:12px;cursor:pointer;font-weight:500}
+.l3-action-link.edit{color:var(--blue)}
+.l3-action-link.terminate{color:var(--red)}
+.l3-action-link.activate{color:var(--green)}
+.l3-action-link:hover{text-decoration:underline}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:24px;right:24px;z-index:400;padding:14px 24px;background:#2E7D32;color:var(--white);border-radius:var(--r-md);font-size:13px;font-weight:500;box-shadow:var(--shadow-md);transform:translateY(80px);opacity:0;transition:.3s;display:flex;align-items:center;gap:10px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast svg{width:18px;height:18px;color:var(--white);flex-shrink:0}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--g300);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--g400)}
+
+/* ═══ NUDGE & WITHDRAW BUTTONS ═══ */
+.nudge-btn{background:var(--orange);color:var(--white);padding:5px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;transition:.15s;display:inline-block}
+.nudge-btn:hover{background:#E67E00}
+.withdraw-btn{background:var(--white);color:var(--red);border:1px solid var(--red);padding:5px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;transition:.15s;display:inline-block}
+.withdraw-btn:hover{background:var(--red-bg)}
+
+/* ═══ DISPUTE RESOLUTION MODAL ═══ */
+.resolve-modal .modal-body{max-height:500px;overflow-y:auto}
+.resolve-radio{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--g200);border-radius:var(--r-sm);margin-bottom:12px;cursor:pointer;transition:.15s}
+.resolve-radio:hover{background:var(--g50)}
+.resolve-radio input[type="radio"]{width:18px;height:18px;accent-color:var(--primary);cursor:pointer}
+.resolve-radio-content{flex:1}
+.resolve-radio-label{font-weight:600;color:var(--g800);font-size:13px}
+.resolve-radio-desc{font-size:12px;color:var(--g500);margin-top:2px}
+.dispute-summary{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-md);padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--g700)}
+.dispute-summary-row{display:flex;justify-content:space-between;padding:4px 0}
+.dispute-summary-row b{color:var(--g900);font-weight:600}
+
+/* ═══ TERMINATION MODAL ═══ */
+.terminate-modal .modal-body{max-height:500px;overflow-y:auto}
+.term-warning{background:var(--orange-bg);border:1px solid #FFCC80;border-radius:var(--r-md);padding:12px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start;color:var(--orange);font-size:12px;line-height:1.5}
+.term-warning svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.form-field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.form-field label{font-size:12px;font-weight:600;color:var(--g600);text-transform:uppercase;letter-spacing:.3px}
+.form-field input,.form-field select,.form-field textarea{padding:10px 12px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:13px;color:var(--g800);font-family:var(--font);outline:none}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(7,32,66,.08)}
+.form-field select{appearance:none;background:var(--white) url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23868E96' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center;padding-right:32px}
+.form-field textarea{min-height:80px;resize:vertical}
+
+/* ═══ ACTIVATE BLOCKED STATE ═══ */
+.activate-blocked{display:flex;flex-direction:column;gap:4px;padding:6px 12px;background:var(--orange-bg);border:1px solid #FFCC80;border-radius:var(--r-sm);color:var(--orange);font-size:12px;font-weight:600}
+.activate-blocked-hint{font-size:11px;color:var(--orange);font-weight:400;margin-top:2px}
+
+/* ═══ L3 INLINE ASSIGN/REASSIGN FORM ═══ */
+.l3-assign-form{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-md);padding:20px;margin:12px 0}
+.l3-assign-context{font-size:12px;color:var(--g600);margin-bottom:12px;padding:8px 12px;background:var(--blue-bg);border-radius:var(--r-sm);border-left:3px solid var(--blue)}
+.l3-assign-context.prev{background:var(--orange-bg);border-left-color:var(--orange);color:var(--g700)}
+.l3-assign-fields{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.l3-assign-field{display:flex;flex-direction:column;gap:4px;min-width:140px}
+.l3-assign-field label{font-size:11px;font-weight:600;color:var(--g600);text-transform:uppercase;letter-spacing:.3px}
+.l3-assign-field input,.l3-assign-field select{padding:8px 12px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:13px;color:var(--g800);font-family:var(--font)}
+.l3-assign-field input:focus,.l3-assign-field select:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(7,32,66,.08)}
+.l3-assign-field .hint{font-size:11px;color:var(--g400);margin-top:2px}
+.l3-assign-btns{display:flex;gap:8px;margin-top:14px}
+
+/* ═══ L3 EDIT MODAL - UPDATE FOR REAL FIELDS ═══ */
+#confirmBody .form-section{margin-bottom:16px}
+#confirmBody .form-section label{font-size:11px;font-weight:600;color:var(--g600);text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:8px}
+#confirmBody .form-section input,#confirmBody .form-section select{width:100%;padding:8px 12px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:13px;color:var(--g800);font-family:var(--font)}
+#confirmBody .form-section input:focus,#confirmBody .form-section select:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(7,32,66,.08)}
+#confirmBody .version-context{font-size:11px;color:var(--g500);padding:8px 12px;background:var(--g100);border-radius:var(--r-sm);margin-bottom:12px}
+#confirmBody .reason-hint{font-size:11px;color:var(--g400);margin-top:2px}
+
+/* ═══ ACTIVATION CONFIRMATION MODAL ═══ */
+.activate-confirm-modal .modal-body{text-align:center}
+.activate-msg{font-size:13px;color:var(--g700);line-height:1.6;margin-bottom:16px}
+.activate-date{font-weight:600;color:var(--g900)}
+.confirm-checkbox{display:flex;align-items:center;gap:10px;padding:12px;background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-sm);margin-bottom:16px}
+.confirm-checkbox input[type="checkbox"]{width:18px;height:18px;accent-color:var(--primary);cursor:pointer;flex-shrink:0}
+.confirm-checkbox label{font-size:12px;color:var(--g700);cursor:pointer;flex:1}
+
+/* ═══ FIX INLINE FORM ═══ */
+.fix-inline-form{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-md);padding:16px;margin-top:12px}
+.fix-inline-form-field{margin-bottom:12px}
+.fix-inline-form-field label{display:block;font-size:12px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px}
+.fix-inline-form-field input{width:100%;padding:8px 12px;border:2px solid var(--red);border-radius:var(--r-sm);font-size:13px;color:var(--g800);outline:none}
+.fix-inline-form-field input:focus{border-color:var(--primary)}
+
+/* ═══ PERFORMANCE TREND ═══ */
+.perf-trend{display:inline-flex;align-items:center;gap:4px;margin-left:4px}
+.perf-trend-down{color:var(--red);font-weight:700;font-size:14px}
+
+/* ═══ ACTIVITY LOG ═══ */
+.activity-log{background:var(--white);border:1px solid var(--g200);border-radius:var(--r-lg);padding:24px}
+.activity-log-title{font-size:14px;font-weight:700;color:var(--g900);margin-bottom:16px}
+.activity-timeline{display:flex;flex-direction:column;gap:0}
+.activity-item{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--g100);position:relative}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:12px;height:12px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:4px}
+.activity-content{flex:1}
+.activity-event{font-size:13px;color:var(--g800);font-weight:500}
+.activity-time{font-size:12px;color:var(--g500);margin-top:2px}
+
+/* ═══ BULK UPLOAD MODAL ═══ */
+.bulk-modal .modal-body{max-height:500px;overflow-y:auto}
+.bulk-step{display:none}
+.bulk-step.active{display:block}
+.step-indicator{display:flex;gap:16px;margin-bottom:24px;align-items:center}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--g100);border:2px solid var(--g300);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--g600);font-size:12px}
+.step-num.active{background:var(--primary);color:var(--white);border-color:var(--primary)}
+.step-line{flex:1;height:2px;background:var(--g200)}
+.step-line.active{background:var(--primary)}
+.upload-area{border:2px dashed var(--g300);border-radius:var(--r-md);padding:32px;text-align:center;cursor:pointer;transition:.15s;background:var(--g50)}
+.upload-area:hover{border-color:var(--primary);background:var(--primary-tint1)}
+.upload-area svg{width:40px;height:40px;color:var(--g400);margin-bottom:8px}
+.upload-area-text{font-size:13px;color:var(--g700);line-height:1.5}
+.upload-area-text b{color:var(--primary);font-weight:600}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar">
+    <div class="sb-user">
+      <div class="sb-avatar">KV</div>
+      <div class="sb-name">Karan Verma</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-item" onclick="navTo('overview')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+        Valmo Support
+      </div>
+      <div class="sb-item" data-nav="overview" onclick="navTo('overview')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        Home
+      </div>
+      <div class="sb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/></svg>
+        Trips
+      </div>
+      <div class="sb-section">
+        <span>RFQ Management</span>
+      </div>
+      <div class="sb-item active" data-nav="design" onclick="navTo('overview')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Requirements
+      </div>
+      <div class="sb-item" data-nav="contracts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Contracts
+      </div>
+      <div class="sb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+        Route Master
+      </div>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Log Out
+      </div>
+    </div>
+    <div class="sb-logo">Valmo</div>
+  </aside>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="main">
+    <div class="topbar">
+      <h1 id="pageTitle">RFQ Management</h1>
+      <div class="topbar-r">
+        <div class="how-link">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          How it works?
+        </div>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search by RFQ ID">
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: OVERVIEW -->
+    <div class="page visible" id="page-overview">
+      <div class="overview-scroll" id="overviewContent"></div>
+    </div>
+
+    <!-- PAGE: DESIGN DETAIL -->
+    <div class="page" id="page-design">
+      <div class="rfq-breadcrumb">
+        <a onclick="navTo('overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to Overview
+        </a>
+      </div>
+      <div id="designHeader"></div>
+      <div class="tabs" id="tabBar"></div>
+      <div class="subtabs" id="subTabBar"></div>
+      <div class="fbar" id="filterBar"></div>
+      <div class="tbl-wrap">
+        <table class="rfq" id="mainTable">
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAGE: L3 DETAIL -->
+    <div class="page" id="page-l3">
+      <div class="l3-scroll" id="l3Content"></div>
+    </div>
+  </main>
+</div>
+
+<!-- FILTER PANEL -->
+<div class="filter-overlay" id="filterOverlay" onclick="closeFilters()"></div>
+<div class="filter-panel" id="filterPanel">
+  <div class="fp-head">
+    <h3>Filters</h3>
+    <div class="modal-close" onclick="closeFilters()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <div class="fp-body">
+    <div class="fp-section"><div class="fp-section-title">Haul Type</div>
+      <label class="fp-option"><input type="checkbox" checked data-filter="haul" value="NLH"> NLH</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="haul" value="RLH"> RLH</label>
+    </div>
+    <div class="fp-section"><div class="fp-section-title">Source Node</div>
+      <label class="fp-option"><input type="checkbox" checked data-filter="source" value="BLR"> BLR</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="source" value="DLS"> DLS</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="source" value="MUM"> MUM</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="source" value="CHN"> CHN</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="source" value="HYD"> HYD</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="source" value="KOL"> KOL</label>
+    </div>
+    <div class="fp-section"><div class="fp-section-title">Trip Type</div>
+      <label class="fp-option"><input type="checkbox" checked data-filter="trip" value="One-way"> One-way</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="trip" value="Two-way"> Two-way</label>
+    </div>
+    <div class="fp-section"><div class="fp-section-title">Vehicle Size</div>
+      <label class="fp-option"><input type="checkbox" checked data-filter="vehicle" value="32ft"> 32ft</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="vehicle" value="24ft"> 24ft</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="vehicle" value="17ft"> 17ft</label>
+    </div>
+    <div class="fp-section"><div class="fp-section-title">RFQ Month</div>
+      <label class="fp-option"><input type="checkbox" checked data-filter="month" value="Mar"> Mar</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="month" value="Apr"> Apr</label>
+      <label class="fp-option"><input type="checkbox" checked data-filter="month" value="Feb"> Feb</label>
+    </div>
+  </div>
+  <div class="fp-footer">
+    <span class="fp-count" id="filterCount"></span>
+    <div class="fp-actions">
+      <button class="btn-cancel" onclick="closeFilters()" style="padding:7px 16px;border:1px solid var(--g300);border-radius:var(--r-sm);font-size:12px;color:var(--g600);cursor:pointer">Cancel</button>
+      <button class="btn-confirm" onclick="applyFilters()" style="padding:7px 16px;background:var(--primary);color:var(--white);border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer">Apply Filter</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRMATION MODAL -->
+<div class="modal-overlay" id="confirmOverlay" onclick="closeConfirm()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3 id="confirmTitle">Edit Contract</h3>
+      <div class="modal-close" onclick="closeConfirm()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="modal-body" id="confirmBody"><p>Are you sure you want to edit this Contract?<br>Transporter will be notified of the changes.</p></div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="btn-confirm" id="confirmAction" onclick="confirmEdit()">Save &amp; Resend</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toastMsg">Action completed</span>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   DATA LAYER
+   ═══════════════════════════════════════ */
+
+const TRANSPORTERS = [
+  {id:'TP-001',oId:'123456789',tId:'123456789',name:'ABC Transports PVT LTD',short:'ABC Transports',crtId:'CRT-01ABC-D678'},
+  {id:'TP-002',oId:'234567890',tId:'234567890',name:'Om Transports PVT LTD',short:'Om Transports',crtId:'CRT-02OMT-E789'},
+  {id:'TP-003',oId:'345678901',tId:'345678901',name:'XYZ Transports PVT LTD',short:'XYZ Transports',crtId:'CRT-03XYZ-F890'},
+  {id:'TP-004',oId:'456789012',tId:'456789012',name:'Sharma Logistics PVT LTD',short:'Sharma Logistics',crtId:'CRT-04SHR-G901'},
+  {id:'TP-005',oId:'567890123',tId:'567890123',name:'Gupta Roadways PVT LTD',short:'Gupta Roadways',crtId:'CRT-05GPT-H012'},
+  {id:'TP-006',oId:'678901234',tId:'678901234',name:'Rajesh Kumar Transport',short:'RK Transport',crtId:'CRT-06RKT-I123'},
+];
+
+const ROUTES = {
+  'blr-dls':{origin:'BLR',dest:'DLS',nodes:[
+    {code:'BLR',name:'Bangalore',type:'origin',segDist:'570 km',segTime:'~9h 30m'},
+    {code:'HYD',name:'Hyderabad',segDist:'500 km',segTime:'~8h 15m'},
+    {code:'NGP',name:'Nagpur',segDist:'330 km',segTime:'~5h 30m'},
+    {code:'BPL',name:'Bhopal',segDist:'480 km',segTime:'~7h 45m'},
+    {code:'DLS',name:'Delhi',type:'dest'}
+  ],totalDist:'1,880 km',transit:'~31h',stops:5,distance:1400,routeStr:'BLR → HYD → NGP → BPL → DLS'},
+  'blr-mum':{origin:'BLR',dest:'MUM',nodes:[
+    {code:'BLR',name:'Bangalore',type:'origin',segDist:'490 km',segTime:'~8h'},
+    {code:'PNQ',name:'Pune',segDist:'150 km',segTime:'~2h 30m'},
+    {code:'MUM',name:'Mumbai',type:'dest'}
+  ],totalDist:'640 km',transit:'~10h 30m',stops:3,distance:980,routeStr:'BLR → PNQ → MUM'},
+  'mum-kol':{origin:'MUM',dest:'KOL',nodes:[
+    {code:'MUM',name:'Mumbai',type:'origin',segDist:'150 km',segTime:'~2h 30m'},
+    {code:'PNQ',name:'Pune',segDist:'520 km',segTime:'~8h 30m'},
+    {code:'HYD',name:'Hyderabad',segDist:'280 km',segTime:'~4h 30m'},
+    {code:'VJA',name:'Vijayawada',segDist:'440 km',segTime:'~7h'},
+    {code:'VSK',name:'Visakhapatnam',segDist:'480 km',segTime:'~7h 45m'},
+    {code:'BBS',name:'Bhubaneswar',segDist:'440 km',segTime:'~7h'},
+    {code:'KOL',name:'Kolkata',type:'dest'}
+  ],totalDist:'2,310 km',transit:'~37h 15m',stops:7,distance:2100,routeStr:'MUM → PNQ → HYD → VJA → VSK → BBS → KOL'},
+  'dls-chn':{origin:'DLS',dest:'CHN',nodes:[
+    {code:'DLS',name:'Delhi',type:'origin',segDist:'780 km',segTime:'~12h 30m'},
+    {code:'NGP',name:'Nagpur',segDist:'570 km',segTime:'~9h'},
+    {code:'HYD',name:'Hyderabad',segDist:'630 km',segTime:'~10h'},
+    {code:'CHN',name:'Chennai',type:'dest'}
+  ],totalDist:'1,980 km',transit:'~31h 30m',stops:4,distance:2200,routeStr:'DLS → NGP → HYD → CHN'},
+  'chn-blr':{origin:'CHN',dest:'BLR',nodes:[
+    {code:'CHN',name:'Chennai',type:'origin',segDist:'350 km',segTime:'~5h 30m'},
+    {code:'BLR',name:'Bangalore',type:'dest'}
+  ],totalDist:'350 km',transit:'~5h 30m',stops:2,distance:350,routeStr:'CHN → BLR'},
+  'hyd-kol':{origin:'HYD',dest:'KOL',nodes:[
+    {code:'HYD',name:'Hyderabad',type:'origin',segDist:'280 km',segTime:'~4h 30m'},
+    {code:'VJA',name:'Vijayawada',segDist:'440 km',segTime:'~7h'},
+    {code:'VSK',name:'Visakhapatnam',segDist:'440 km',segTime:'~7h'},
+    {code:'KOL',name:'Kolkata',type:'dest'}
+  ],totalDist:'1,160 km',transit:'~18h 30m',stops:4,distance:1100,routeStr:'HYD → VJA → VSK → KOL'},
+  'dls-mum':{origin:'DLS',dest:'MUM',nodes:[
+    {code:'DLS',name:'Delhi',type:'origin',segDist:'450 km',segTime:'~7h'},
+    {code:'JPR',name:'Jaipur',segDist:'400 km',segTime:'~6h 30m'},
+    {code:'ADI',name:'Ahmedabad',segDist:'530 km',segTime:'~8h 30m'},
+    {code:'MUM',name:'Mumbai',type:'dest'}
+  ],totalDist:'1,380 km',transit:'~22h',stops:4,distance:1400,routeStr:'DLS → JPR → ADI → MUM'},
+  'kol-dls':{origin:'KOL',dest:'DLS',nodes:[
+    {code:'KOL',name:'Kolkata',type:'origin',segDist:'600 km',segTime:'~10h'},
+    {code:'PAT',name:'Patna',segDist:'530 km',segTime:'~8h 30m'},
+    {code:'LKO',name:'Lucknow',segDist:'500 km',segTime:'~8h'},
+    {code:'DLS',name:'Delhi',type:'dest'}
+  ],totalDist:'1,630 km',transit:'~26h 30m',stops:4,distance:1500,routeStr:'KOL → PAT → LKO → DLS'},
+};
+
+const DESIGNS = [
+  {id:'mar-bau',name:'Mar BAU Design',start:'Mar 1',end:'Mar 31',status:'Active',totalRfqs:2400,nlh:400,rlh:2000,assigned:2400,updates:2,
+   chips:[{l:'Poor Performing',c:5,cl:'orange'},{l:'Terminated',c:2,cl:'red'},{l:'Active Dispute',c:1,cl:'red'},{l:'Active',c:100,cl:'green'}]},
+  {id:'apr-bau',name:'Apr BAU Design',start:'Apr 1',end:'Apr 30',status:'Planning',totalRfqs:2400,nlh:400,rlh:2000,assigned:2200,updates:2,daysLeft:10,
+   chips:[{l:'Unassigned',c:4,cl:'red'},{l:'No Response',c:4,cl:'orange'},{l:'Rejected',c:1,cl:'red'},{l:'Upload Errors',c:3,cl:'orange'}]},
+  {id:'apr-sale',name:'Apr Sale Design',start:'Apr 6',end:'Apr 20',status:'Sale',totalRfqs:600,nlh:200,rlh:400,assigned:600,daysLeft:20,
+   chips:[{l:'Unassigned',c:5,cl:'red'},{l:'No Response',c:2,cl:'orange'},{l:'Active',c:3,cl:'green'}]},
+];
+
+const CLOSED_DESIGNS = [
+  {id:'feb-bau',name:'Feb BAU Design',start:'Feb 1',end:'Feb 28',status:'Closed',totalRfqs:2200,nlh:380,rlh:1820,assigned:2200,
+   chips:[{l:'Expired',c:2180,cl:'gray'},{l:'Terminated',c:15,cl:'red'},{l:'Cancelled',c:5,cl:'gray'}]},
+  {id:'jan-bau',name:'Jan BAU Design',start:'Jan 1',end:'Jan 31',status:'Closed',totalRfqs:2100,nlh:360,rlh:1740,assigned:2100,
+   chips:[{l:'Expired',c:2070,cl:'gray'},{l:'Terminated',c:22,cl:'red'},{l:'Cancelled',c:8,cl:'gray'}]},
+];
+
+// ── RFQ DATA ──
+const RFQS = [
+  // ═══ ACTION REQUIRED > UNASSIGNED ═══
+  // RLH single unassigned
+  {id:'RFQ-001',num:'001-RFQ-00944',design:'mar-bau',month:'Mar',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'Overdue 1 day',l:'red'},
+   slots:[{status:'unassigned'}]},
+  // NLH 3 vehicles all unassigned
+  {id:'RFQ-002',num:'001-RFQ-00945',design:'mar-bau',month:'Apr',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'Two-way',vSize:'32ft',vCount:3,times:['06:00 AM','08:00 AM','10:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 1 day',l:'orange'},
+   slots:[{status:'unassigned'},{status:'unassigned'},{status:'unassigned'}]},
+  // NLH 4 vehicles all unassigned
+  {id:'RFQ-003',num:'001-RFQ-00946',design:'mar-bau',month:'Apr',route:'mum-kol',routeName:'Route 789',haul:'RLH',trip:'One-way',vSize:'32ft',vCount:4,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"20 Mar'26",targetPrice:'₹3,800',urg:{t:'Starts in 3 days',l:'orange'},
+   slots:[{status:'unassigned'},{status:'unassigned'},{status:'unassigned'},{status:'unassigned'}]},
+  {id:'RFQ-004',num:'001-RFQ-00947',design:'apr-sale',month:'Apr',route:'dls-chn',routeName:'Route 101',haul:'RLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹4,100',urg:{t:'Starts in 4 days',l:'gray'},
+   slots:[{status:'unassigned'}]},
+  // NLH mixed: 1 unassigned + 2 sent (worst-case = unassigned → shows in AR)
+  {id:'RFQ-005',num:'001-RFQ-00948',design:'mar-bau',month:'Apr',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:3,times:['06:00 AM','08:00 AM','10:00 AM'],actDate:"1 Apr'26",assignedOn:"18 Mar'26",targetPrice:'₹4,500',urg:{t:'Starts in 5 days',l:'gray'},
+   slots:[{status:'unassigned'},{status:'sent',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',sentDate:'Mar 25',daysWaiting:5},{status:'sent',tp:1,crtId:'CRT-02OMT-E789',amount:'₹4,200',sentDate:'Mar 25',daysWaiting:5}]},
+  {id:'RFQ-006',num:'001-RFQ-00949',design:'mar-bau',month:'Apr',route:'chn-blr',routeName:'Route 200',haul:'RLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"26 Mar'26",targetPrice:'₹2,800',urg:{t:'Starts in 5 days',l:'gray'},
+   slots:[{status:'unassigned'}]},
+  {id:'RFQ-007',num:'001-RFQ-00950',design:'apr-bau',month:'Apr',route:'hyd-kol',routeName:'Route 301',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,100',urg:{t:'Starts in 10 days',l:'gray'},
+   slots:[{status:'unassigned'}]},
+  {id:'RFQ-008',num:'001-RFQ-00951',design:'apr-bau',month:'Apr',route:'dls-mum',routeName:'Route 400',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"23 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 15 days',l:'gray'},
+   slots:[{status:'unassigned'}]},
+  // NLH mixed: 1 unassigned + 1 sent + 1 rejected
+  {id:'RFQ-009',num:'001-RFQ-00952',design:'mar-bau',month:'Apr',route:'kol-dls',routeName:'Route 500',haul:'NLH',trip:'One-way',vSize:'24ft',vCount:3,times:['06:00 AM','08:00 AM','10:00 AM'],actDate:"1 Apr'26",assignedOn:"20 Mar'26",targetPrice:'₹3,800',urg:{t:'Starts in 5 days',l:'gray'},
+   slots:[{status:'unassigned'},{status:'sent',tp:1,crtId:'CRT-02OMT-E789',amount:'₹3,800',sentDate:'Mar 22',daysWaiting:8},{status:'rejected',tp:2,reason:'Rate too low'}]},
+  {id:'RFQ-010',num:'001-RFQ-00953',design:'apr-sale',month:'Apr',route:'blr-mum',routeName:'Route 456',haul:'RLH',trip:'Two-way',vSize:'17ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"27 Mar'26",targetPrice:'₹3,200',urg:{t:'Overdue 2 days',l:'red'},
+   slots:[{status:'unassigned'}]},
+
+  // ═══ ACTION REQUIRED > UPLOAD ERRORS ═══
+  {id:'RFQ-011',num:'001-RFQ-00954',design:'mar-bau',month:'Mar',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'Overdue 1 day',l:'red'},
+   slots:[{status:'upload-error',error:'Oracle ID Absent'}]},
+  // NLH mixed: 3 upload-error + 1 sent
+  {id:'RFQ-012',num:'001-RFQ-00955',design:'mar-bau',month:'Apr',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'Two-way',vSize:'32ft',vCount:4,times:['06:00 AM','08:00 AM','10:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 3 days',l:'orange'},
+   slots:[{status:'upload-error',error:'Rate Exceeded'},{status:'upload-error',error:'Rate Exceeded'},{status:'upload-error',error:'Rate Exceeded'},{status:'sent',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',sentDate:'Mar 25',daysWaiting:5}]},
+  {id:'RFQ-013',num:'001-RFQ-00956',design:'apr-sale',month:'Apr',route:'dls-chn',routeName:'Route 101',haul:'RLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹4,100',urg:{t:'Starts in 4 days',l:'gray'},
+   slots:[{status:'upload-error',error:'Invalid Transporter ID'}]},
+  // NLH mixed: 1 upload-error + 1 sent + 1 approved
+  {id:'RFQ-014',num:'001-RFQ-00957',design:'mar-bau',month:'Apr',route:'mum-kol',routeName:'Route 789',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:3,times:['06:00 AM','08:00 AM','10:00 AM'],actDate:"1 Apr'26",assignedOn:"20 Mar'26",targetPrice:'₹3,800',urg:{t:'Starts in 5 days',l:'gray'},
+   slots:[{status:'upload-error',error:'Missing Rate'},{status:'sent',tp:3,crtId:'CRT-04SHR-G901',amount:'₹5,100',sentDate:'Mar 25',daysWaiting:5},{status:'approved',tp:4,crtId:'CRT-05GPT-H012',amount:'₹4,800',period:{start:"1 Apr'26",end:"30 Apr'26",days:30}}]},
+  // NLH mixed: 1 unassigned + 2 upload-error + 1 sent + 1 upload-error (5 vehicles)
+  {id:'RFQ-015',num:'001-RFQ-00958',design:'apr-bau',month:'Apr',route:'hyd-kol',routeName:'Route 301',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:5,times:['06:00 AM','08:00 AM','10:00 AM'],actDate:"1 Apr'26",assignedOn:"18 Mar'26",targetPrice:'₹4,100',urg:{t:'Starts in 5 days',l:'gray'},
+   slots:[{status:'unassigned'},{status:'upload-error',error:'Rate Exceeded'},{status:'sent',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',sentDate:'Mar 25',daysWaiting:5},{status:'upload-error',error:'Oracle ID Absent'},{status:'upload-error',error:'Missing Rate'}]},
+  {id:'RFQ-016',num:'001-RFQ-00959',design:'mar-bau',month:'Apr',route:'dls-mum',routeName:'Route 400',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:2,times:['06:00 AM','08:00 AM'],actDate:"1 Apr'26",assignedOn:"23 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 5 days',l:'gray'},
+   slots:[{status:'upload-error',error:'Rate Exceeded'},{status:'upload-error',error:'Missing Rate'}]},
+
+  // ═══ ACTION REQUIRED > REJECTED ═══
+  {id:'RFQ-021',num:'001-RFQ-00960',design:'mar-bau',month:'Mar',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'Overdue 1 day',l:'red'},
+   slots:[{status:'rejected',tp:0,reason:'Rate too low'}]},
+  {id:'RFQ-022',num:'001-RFQ-00961',design:'mar-bau',month:'Apr',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 1 day',l:'orange'},
+   slots:[{status:'rejected',tp:1,reason:'Cannot serve this period'}]},
+  // NLH mixed: 1 rejected + 1 sent
+  {id:'RFQ-024',num:'001-RFQ-00962',design:'mar-bau',month:'Mar',route:'mum-kol',routeName:'Route 789',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:2,times:['06:00 AM','08:00 AM'],actDate:"1 Apr'26",assignedOn:"20 Mar'26",targetPrice:'₹3,800',urg:{t:'Starts in 3 days',l:'orange'},
+   slots:[{status:'rejected',tp:3,reason:'Rate too low'},{status:'sent',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',sentDate:'Mar 25',daysWaiting:5}]},
+  {id:'RFQ-025',num:'001-RFQ-00963',design:'mar-bau',month:'Mar',route:'dls-chn',routeName:'Route 101',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹4,100',urg:{t:'Starts in 3 days',l:'orange'},
+   slots:[{status:'rejected',tp:4,reason:'Vehicle not available'}]},
+  {id:'RFQ-026',num:'001-RFQ-00964',design:'apr-bau',month:'Apr',route:'chn-blr',routeName:'Route 200',haul:'RLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"26 Mar'26",targetPrice:'₹2,800',urg:{t:'Starts in 4 days',l:'gray'},
+   slots:[{status:'rejected',tp:5,reason:'Rate too low'}]},
+  // NLH mixed: 2 rejected + 1 approved + 1 unassigned
+  {id:'RFQ-027',num:'001-RFQ-00965',design:'mar-bau',month:'Apr',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:4,times:['06:00 AM','08:00 AM','10:00 AM','12:00 PM'],actDate:"1 Apr'26",assignedOn:"18 Mar'26",targetPrice:'₹4,500',urg:{t:'Starts in 2 days',l:'orange'},
+   slots:[{status:'rejected',tp:0,reason:'Rate too low'},{status:'rejected',tp:1,reason:'Cannot serve'},{status:'approved',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹4,200',period:{start:"1 Apr'26",end:"30 Apr'26",days:30}},{status:'unassigned'}]},
+
+  // ═══ ACTION REQUIRED > DISPUTED (pre-activation) ═══
+  {id:'RFQ-031',num:'001-RFQ-00966',design:'mar-bau',month:'Mar',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'Starts in 1 day',l:'orange'},
+   slots:[{status:'disputed-pre',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',dispute:{id:'DIS373833312068',reason:'Distance issues (KM mismatch)',type:'Distance issues (KM mismatch)',remark:'The km mentioned in the contract does not match the actual Kms',raised:'9 Nov\'25, 08:00 AM',days:9,tripsAffected:"30 trips (from 1 Apr'26 onward)",action:'Approved'}}]},
+  {id:'RFQ-032',num:'001-RFQ-00967',design:'mar-bau',month:'Apr',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'Two-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 2 days',l:'orange'},
+   slots:[{status:'disputed-pre',tp:1,crtId:'CRT-02OMT-E789',amount:'₹5,200',dispute:{id:'DIS373833312069',reason:'Rate not acceptable',type:'Rate dispute',remark:'Transporter claims the rate is below market standard for this route',raised:'22 Mar\'26, 10:00 AM',days:8,tripsAffected:"30 trips (from 1 Apr'26 onward)",action:'Pending'}}]},
+  {id:'RFQ-033',num:'001-RFQ-00968',design:'apr-bau',month:'Apr',route:'dls-chn',routeName:'Route 101',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹3,900',urg:{t:'Starts in 4 days',l:'gray'},
+   slots:[{status:'disputed-pre',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹3,900',dispute:{id:'DIS373833312070',reason:"Can't serve this contract period",type:'Period dispute',remark:'Vehicle is already committed to another contract during this period',raised:'26 Mar\'26, 09:00 AM',days:4,tripsAffected:"30 trips (from 1 Apr'26 onward)",action:'Under Review'}}]},
+  {id:'RFQ-034',num:'001-RFQ-00969',design:'apr-bau',month:'Apr',route:'hyd-kol',routeName:'Route 301',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,100',urg:{t:'Starts in 10 days',l:'gray'},
+   slots:[{status:'disputed-pre',tp:3,crtId:'CRT-04SHR-G901',amount:'₹4,100',dispute:{id:'DIS373833312071',reason:'Extra node added after agreement',type:'Route dispute',remark:'An additional stop was added after the transporter agreed to the route',raised:'27 Mar\'26, 11:00 AM',days:3,tripsAffected:"30 trips (from 1 Apr'26 onward)",action:'Pending'}}]},
+
+  // ═══ SENT FOR APPROVAL > AWAITING ═══
+  {id:'RFQ-041',num:'001-RFQ-00970',design:'mar-bau',month:'Apr',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:2,times:['06:00 AM','08:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'Overdue 1 day',l:'red'},
+   slots:[{status:'sent',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',sentDate:'Mar 25',daysWaiting:5},{status:'sent',tp:1,crtId:'CRT-02OMT-E789',amount:'₹4,200',sentDate:'Mar 25',daysWaiting:5}]},
+  {id:'RFQ-042',num:'001-RFQ-00971',design:'mar-bau',month:'Apr',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:4,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 1 day',l:'orange'},
+   slots:[{status:'sent',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹5,100',sentDate:'Mar 25',daysWaiting:5},{status:'sent',tp:3,crtId:'CRT-04SHR-G901',amount:'₹4,800',sentDate:'Mar 25',daysWaiting:5},{status:'sent',tp:4,crtId:'CRT-05GPT-H012',amount:'₹4,900',sentDate:'Mar 25',daysWaiting:5},{status:'sent',tp:5,crtId:'CRT-06RKT-I123',amount:'₹4,600',sentDate:'Mar 25',daysWaiting:5}]},
+  {id:'RFQ-043',num:'001-RFQ-00972',design:'apr-bau',month:'Apr',route:'dls-chn',routeName:'Route 101',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹4,500',urg:{t:'Starts in 3 days',l:'orange'},
+   slots:[{status:'sent',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',sentDate:'Mar 25',daysWaiting:5}]},
+  // NLH mixed: 2 sent + 1 unassigned (worst-case = unassigned, but this is in SFA for demo)
+  {id:'RFQ-045',num:'001-RFQ-00973',design:'mar-bau',month:'Apr',route:'dls-mum',routeName:'Route 400',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:3,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"23 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 5 days',l:'gray'},
+   slots:[{status:'sent',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',sentDate:'Mar 22',daysWaiting:8},{status:'sent',tp:1,crtId:'CRT-02OMT-E789',amount:'₹4,200',sentDate:'Mar 22',daysWaiting:8},{status:'sent',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹4,800',sentDate:'Mar 22',daysWaiting:8}]},
+  // NLH mixed: 1 sent + 1 rejected
+  {id:'RFQ-046',num:'001-RFQ-00974',design:'apr-bau',month:'Apr',route:'kol-dls',routeName:'Route 500',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:2,times:['06:00 AM','08:00 AM'],actDate:"1 Apr'26",assignedOn:"20 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 10 days',l:'gray'},
+   slots:[{status:'sent',tp:4,crtId:'CRT-05GPT-H012',amount:'₹5,200',sentDate:'Mar 20',daysWaiting:10},{status:'rejected',tp:3,reason:'Rate too low'}]},
+
+  // ═══ SENT FOR APPROVAL > NO RESPONSE ═══
+  {id:'RFQ-051',num:'001-RFQ-00975',design:'mar-bau',month:'Mar',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:3,times:['06:00 AM','08:00 AM','10:00 AM'],actDate:"1 Apr'26",assignedOn:"15 Mar'26",targetPrice:'₹4,500',urg:{t:'Overdue 1 day',l:'red'},
+   slots:[{status:'sent',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',sentDate:'Mar 15',daysWaiting:15},{status:'sent',tp:1,crtId:'CRT-02OMT-E789',amount:'₹4,200',sentDate:'Mar 15',daysWaiting:15},{status:'sent',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹4,800',sentDate:'Mar 15',daysWaiting:15}]},
+  {id:'RFQ-052',num:'001-RFQ-00976',design:'mar-bau',month:'Apr',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'Two-way',vSize:'32ft',vCount:4,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"12 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 1 day',l:'orange'},
+   slots:[{status:'sent',tp:3,crtId:'CRT-04SHR-G901',amount:'₹5,100',sentDate:'Mar 12',daysWaiting:18},{status:'sent',tp:4,crtId:'CRT-05GPT-H012',amount:'₹4,900',sentDate:'Mar 12',daysWaiting:18},{status:'sent',tp:5,crtId:'CRT-06RKT-I123',amount:'₹4,600',sentDate:'Mar 12',daysWaiting:18},{status:'sent',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',sentDate:'Mar 12',daysWaiting:18}]},
+  {id:'RFQ-053',num:'001-RFQ-00977',design:'apr-bau',month:'Apr',route:'dls-chn',routeName:'Route 101',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹4,500',urg:{t:'Starts in 2 days',l:'orange'},
+   slots:[{status:'sent',tp:1,crtId:'CRT-02OMT-E789',amount:'₹4,500',sentDate:'Mar 10',daysWaiting:20}]},
+  {id:'RFQ-055',num:'001-RFQ-00978',design:'apr-sale',month:'Apr',route:'chn-blr',routeName:'Route 200',haul:'RLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"26 Mar'26",targetPrice:'₹2,800',urg:{t:'Starts in 5 days',l:'gray'},
+   slots:[{status:'sent',tp:3,crtId:'CRT-04SHR-G901',amount:'₹2,800',sentDate:'Mar 18',daysWaiting:12}]},
+  // NLH mixed: 1 sent (no-response) + 1 upload-error
+  {id:'RFQ-056',num:'001-RFQ-00979',design:'mar-bau',month:'Apr',route:'dls-mum',routeName:'Route 400',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:2,times:['06:00 AM','08:00 AM'],actDate:"1 Apr'26",assignedOn:"23 Mar'26",targetPrice:'₹5,200',urg:{t:'3 days left',l:'orange'},
+   slots:[{status:'sent',tp:4,crtId:'CRT-05GPT-H012',amount:'₹5,200',sentDate:'Mar 16',daysWaiting:14},{status:'upload-error',error:'Rate Exceeded'}]},
+
+  // ═══ APPROVED > READY ═══
+  {id:'RFQ-061',num:'001-RFQ-00980',design:'mar-bau',month:'Apr',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'',l:'gray'},
+   slots:[{status:'approved',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',period:{start:"1 Apr'26",end:"30 Apr'26",days:30}}]},
+  {id:'RFQ-062',num:'001-RFQ-00981',design:'mar-bau',month:'Apr',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,200',urg:{t:'',l:'gray'},
+   slots:[{status:'approved',tp:1,crtId:'CRT-02OMT-E789',amount:'₹5,200',period:{start:"1 Apr'26",end:"30 Apr'26",days:30}}]},
+  {id:'RFQ-063',num:'001-RFQ-00982',design:'apr-bau',month:'Apr',route:'dls-chn',routeName:'Route 101',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹3,900',urg:{t:'',l:'gray'},
+   slots:[{status:'approved',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹3,900',period:{start:"1 Apr'26",end:"30 Apr'26",days:30}}]},
+  {id:'RFQ-065',num:'001-RFQ-00983',design:'mar-bau',month:'Apr',route:'dls-mum',routeName:'Route 400',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"23 Mar'26",targetPrice:'₹5,200',urg:{t:'',l:'gray'},
+   slots:[{status:'approved',tp:4,crtId:'CRT-05GPT-H012',amount:'₹5,200',period:{start:"1 Apr'26",end:"30 Apr'26",days:30}}]},
+  {id:'RFQ-066',num:'001-RFQ-00984',design:'apr-sale',month:'Apr',route:'chn-blr',routeName:'Route 200',haul:'RLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"26 Mar'26",targetPrice:'₹2,800',urg:{t:'',l:'gray'},
+   slots:[{status:'approved',tp:5,crtId:'CRT-06RKT-I123',amount:'₹2,800',period:{start:"1 Apr'26",end:"30 Apr'26",days:30}}]},
+
+  // ═══ APPROVED > PRE-ACTIVATION DISPUTES ═══
+  {id:'RFQ-071',num:'001-RFQ-00985',design:'mar-bau',month:'Apr',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'Starts in 1 day',l:'orange'},
+   slots:[{status:'approved-disputed',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},dispute:{id:'DIS373833312072',reason:'Rate not acceptable',type:'Rate dispute',remark:'Transporter claims rate is below market',raised:'21 Mar\'26',days:9,tripsAffected:"30 trips",action:'Pending'}}]},
+  {id:'RFQ-072',num:'001-RFQ-00986',design:'mar-bau',month:'Apr',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'Two-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,200',urg:{t:'Starts in 2 days',l:'orange'},
+   slots:[{status:'approved-disputed',tp:1,crtId:'CRT-02OMT-E789',amount:'₹5,200',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},dispute:{id:'DIS373833312073',reason:'Distance is incorrect',type:'Distance dispute',remark:'Actual route distance differs from contract',raised:'22 Mar\'26',days:8,tripsAffected:"30 trips",action:'Under Review'}}]},
+  {id:'RFQ-073',num:'001-RFQ-00987',design:'apr-bau',month:'Apr',route:'dls-chn',routeName:'Route 101',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹3,900',urg:{t:'Starts in 4 days',l:'gray'},
+   slots:[{status:'approved-disputed',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹3,900',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},dispute:{id:'DIS373833312074',reason:"Can't serve this contract period",type:'Period dispute',remark:'Vehicle committed elsewhere',raised:'26 Mar\'26',days:4,tripsAffected:"30 trips",action:'Pending'}}]},
+  {id:'RFQ-074',num:'001-RFQ-00988',design:'apr-bau',month:'Apr',route:'hyd-kol',routeName:'Route 301',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,100',urg:{t:'Starts in 10 days',l:'gray'},
+   slots:[{status:'approved-disputed',tp:3,crtId:'CRT-04SHR-G901',amount:'₹4,100',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},dispute:{id:'DIS373833312075',reason:'Rate not acceptable',type:'Rate dispute',remark:'Rate below current market rates',raised:'27 Mar\'26',days:3,tripsAffected:"30 trips",action:'Approved'}}]},
+
+  // ═══ ACTIVE > ON TRACK ═══
+  {id:'RFQ-081',num:'001-RFQ-00989',design:'mar-bau',month:'Mar',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'',l:'gray'},
+   slots:[{status:'active',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:90,placement:92}}]},
+  {id:'RFQ-082',num:'001-RFQ-00990',design:'mar-bau',month:'Mar',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,100',urg:{t:'',l:'gray'},
+   slots:[{status:'active',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹5,100',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:88,placement:85}}]},
+  {id:'RFQ-083',num:'001-RFQ-00991',design:'mar-bau',month:'Mar',route:'mum-kol',routeName:'Route 789',haul:'RLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"20 Mar'26",targetPrice:'₹4,800',urg:{t:'',l:'gray'},
+   slots:[{status:'active',tp:3,crtId:'CRT-04SHR-G901',amount:'₹4,800',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:81,placement:78}}]},
+  {id:'RFQ-084',num:'001-RFQ-00992',design:'mar-bau',month:'Mar',route:'dls-chn',routeName:'Route 101',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹5,200',urg:{t:'',l:'gray'},
+   slots:[{status:'active',tp:4,crtId:'CRT-05GPT-H012',amount:'₹5,200',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:95,placement:93}}]},
+
+  // ═══ ACTIVE > DISPUTES ═══
+  {id:'RFQ-091',num:'001-RFQ-00993',design:'mar-bau',month:'Apr',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'Active Dispute',l:'red'},
+   slots:[{status:'active-disputed',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:90,placement:92},dispute:{id:'DIS373833312076',reason:'Distance issues (KM mismatch)',type:'Distance issues (KM mismatch)',remark:'The km mentioned in the contract does not match the actual Kms',raised:"9 Nov'25, 08:00 AM",days:9,tripsAffected:"30 trips (from 1 Apr'26 onward)",action:'Approved'}}]},
+  {id:'RFQ-092',num:'001-RFQ-00994',design:'mar-bau',month:'Apr',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,200',urg:{t:'Active Dispute',l:'red'},
+   slots:[{status:'active-disputed',tp:1,crtId:'CRT-02OMT-E789',amount:'₹5,200',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:85,placement:80},dispute:{id:'DIS373833312077',reason:'Rate not acceptable',type:'Rate dispute',remark:'Rate below market',raised:"21 Mar'26",days:9,tripsAffected:"30 trips",action:'Pending'}}]},
+  {id:'RFQ-093',num:'001-RFQ-00995',design:'apr-bau',month:'Apr',route:'dls-chn',routeName:'Route 101',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹3,900',urg:{t:'Active Dispute',l:'red'},
+   slots:[{status:'active-disputed',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹3,900',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:78,placement:75},dispute:{id:'DIS373833312078',reason:'Extra node added',type:'Route dispute',remark:'Additional stop added after agreement',raised:"21 Mar'26",days:9,tripsAffected:"30 trips",action:'Under Review'}}]},
+
+  // ═══ ACTIVE > POOR PERFORMING ═══
+  {id:'RFQ-101',num:'001-RFQ-00996',design:'mar-bau',month:'Mar',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'',l:'gray'},
+   slots:[{status:'poor-performing',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:10,placement:12}}]},
+  {id:'RFQ-102',num:'001-RFQ-00997',design:'mar-bau',month:'Mar',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,100',urg:{t:'',l:'gray'},
+   slots:[{status:'poor-performing',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹5,100',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:20,placement:22}}]},
+  {id:'RFQ-103',num:'001-RFQ-00998',design:'mar-bau',month:'Mar',route:'mum-kol',routeName:'Route 789',haul:'RLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"20 Mar'26",targetPrice:'₹4,800',urg:{t:'',l:'gray'},
+   slots:[{status:'poor-performing',tp:3,crtId:'CRT-04SHR-G901',amount:'₹4,800',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:15,placement:18}}]},
+  {id:'RFQ-104',num:'001-RFQ-00999',design:'mar-bau',month:'Mar',route:'dls-chn',routeName:'Route 101',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"24 Mar'26",targetPrice:'₹5,200',urg:{t:'',l:'gray'},
+   slots:[{status:'poor-performing',tp:4,crtId:'CRT-05GPT-H012',amount:'₹5,200',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:10,placement:12}}]},
+
+  // ═══ ACTIVE > TERMINATED ═══
+  {id:'RFQ-111',num:'001-RFQ-01000',design:'mar-bau',month:'Mar',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"25 Mar'26",targetPrice:'₹4,500',urg:{t:'Terminated by you',l:'red'},
+   slots:[{status:'terminated',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹4,500',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:56,placement:54},terminatedBy:'you'}]},
+  {id:'RFQ-112',num:'001-RFQ-01001',design:'mar-bau',month:'Mar',route:'blr-mum',routeName:'Route 456',haul:'RLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"22 Mar'26",targetPrice:'₹5,100',urg:{t:'Terminated by transporter',l:'red'},
+   slots:[{status:'terminated',tp:3,crtId:'CRT-04SHR-G901',amount:'₹5,100',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:56,placement:54},terminatedBy:'transporter'}]},
+  {id:'RFQ-113',num:'001-RFQ-01002',design:'mar-bau',month:'Mar',route:'mum-kol',routeName:'Route 789',haul:'RLH',trip:'One-way',vSize:'12ft',vCount:1,times:['06:00 AM'],actDate:"1 Apr'26",assignedOn:"20 Mar'26",targetPrice:'₹4,800',urg:{t:'Terminated by transporter',l:'red'},
+   slots:[{status:'terminated',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,800',period:{start:"1 Apr'26",end:"30 Apr'26",days:30},perf:{tat:90,placement:92},terminatedBy:'transporter'}]},
+
+  // ═══ CLOSED ═══
+  {id:'RFQ-121',num:'001-RFQ-01003',design:'feb-bau',month:'Feb',route:'blr-dls',routeName:'Route 123',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Feb'26",assignedOn:"20 Jan'26",targetPrice:'₹4,500',urg:{t:'',l:'gray'},
+   slots:[{status:'closed',tp:0,crtId:'CRT-01ABC-D678',amount:'₹4,500',period:{start:"1 Feb'26",end:"28 Feb'26",days:28},perf:{tat:90,placement:92},closureType:'expired'}]},
+  {id:'RFQ-122',num:'001-RFQ-01004',design:'feb-bau',month:'Feb',route:'blr-mum',routeName:'Route 456',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Feb'26",assignedOn:"18 Jan'26",targetPrice:'₹5,100',urg:{t:'',l:'gray'},
+   slots:[{status:'closed',tp:2,crtId:'CRT-03XYZ-F890',amount:'₹5,100',period:{start:"1 Feb'26",end:"28 Feb'26",days:28},perf:{tat:20,placement:22},closureType:'terminated'}]},
+  {id:'RFQ-123',num:'001-RFQ-01005',design:'feb-bau',month:'Feb',route:'dls-chn',routeName:'Route 101',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Feb'26",assignedOn:"22 Jan'26",targetPrice:'₹4,800',urg:{t:'',l:'gray'},
+   slots:[{status:'closed',tp:3,crtId:'CRT-04SHR-G901',amount:'₹4,800',period:{start:"1 Feb'26",end:"28 Feb'26",days:28},perf:{tat:90,placement:92},closureType:'expired'}]},
+  {id:'RFQ-124',num:'001-RFQ-01006',design:'feb-bau',month:'Feb',route:'hyd-kol',routeName:'Route 301',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Feb'26",assignedOn:"25 Jan'26",targetPrice:'₹5,200',urg:{t:'',l:'gray'},
+   slots:[{status:'closed',tp:4,crtId:'CRT-05GPT-H012',amount:'₹5,200',period:{start:"1 Feb'26",end:"28 Feb'26",days:28},perf:{tat:88,placement:85},closureType:'expired'}]},
+  {id:'RFQ-125',num:'001-RFQ-01007',design:'feb-bau',month:'Feb',route:'dls-mum',routeName:'Route 400',haul:'NLH',trip:'One-way',vSize:'32ft',vCount:1,times:['06:00 AM'],actDate:"1 Feb'26",assignedOn:"15 Jan'26",targetPrice:'₹2,800',urg:{t:'',l:'gray'},
+   slots:[{status:'closed',tp:5,crtId:'CRT-06RKT-I123',amount:'₹2,800',period:{start:"1 Feb'26",end:"28 Feb'26",days:28},perf:{tat:92,placement:90},closureType:'expired'}]},
+];
+
+// Tab configuration
+const TAB_CONFIG = [
+  {label:'Action Required',subTabs:[
+    {key:'unassigned',label:'Unassigned',count:10},
+    {key:'upload-errors',label:'Upload Errors',count:6},
+    {key:'rejected',label:'Rejected',count:6},
+    {key:'disputed',label:'Disputed',count:4},
+  ]},
+  {label:'Sent for Approval',subTabs:[
+    {key:'awaiting',label:'Awaiting',count:6},
+    {key:'no-response',label:'No Response',count:5},
+  ]},
+  {label:'Approved',subTabs:[
+    {key:'ready',label:'Ready',count:5},
+    {key:'pre-activation-disputes',label:'Pre Activation Disputes',count:4},
+  ]},
+  {label:'Active',subTabs:[
+    {key:'on-track',label:'On Track',count:4},
+    {key:'disputes',label:'Disputes',count:3},
+    {key:'poor-performing',label:'Poor Performing',count:4},
+    {key:'terminated',label:'Terminated',count:3},
+  ]},
+  {label:'Closed',subTabs:[
+    {key:'all-closed',label:'All',count:5},
+    {key:'expired',label:'Expired',count:4},
+    {key:'terminated-closed',label:'Terminated',count:1},
+  ]}
+];
+
+const TAB_COUNTS = [26,11,9,14,5];
+
+/* ═══════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════ */
+const STATE = { page:'overview', designId:'mar-bau', tab:0, subTab:0, expandedRow:null, designTabFilter:'live' };
+
+/* ═══════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════ */
+const svgArrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+const svgDots = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
+const svgPlus = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M12 2v20M2 12h20"/></svg>';
+
+function getRoute(rfq) { return ROUTES[rfq.route] || {}; }
+function getTp(idx) { return TRANSPORTERS[idx] || TRANSPORTERS[0]; }
+
+function getSlotStatusCounts(rfq) {
+  const counts = {};
+  rfq.slots.forEach(s => { counts[s.status] = (counts[s.status]||0) + 1; });
+  return counts;
+}
+
+function statusColor(status) {
+  const map = {'unassigned':'red','upload-error':'orange','rejected':'red','sent':'blue','approved':'green','disputed-pre':'orange','approved-disputed':'orange','active':'green','active-disputed':'red','poor-performing':'orange','terminated':'red','closed':'gray'};
+  return map[status] || 'gray';
+}
+
+function statusLabel(status) {
+  const map = {'unassigned':'Unassigned','upload-error':'Upload Error','rejected':'Rejected','sent':'Sent for Approval','approved':'Approved','disputed-pre':'Disputed','approved-disputed':'Disputed','active':'Active','active-disputed':'Active Dispute','poor-performing':'Poor Performing','terminated':'Terminated','closed':'Closed'};
+  return map[status] || status;
+}
+
+function l3StatusBadge(rfq) {
+  const counts = getSlotStatusCounts(rfq);
+  const keys = Object.keys(counts);
+  if (keys.includes('active-disputed') || keys.includes('disputed-pre') || keys.includes('approved-disputed')) return {text:'Active Dispute',cl:'red'};
+  if (keys.includes('terminated')) return {text:'Terminated',cl:'red'};
+  if (keys.includes('poor-performing')) return {text:'Poor Performing',cl:'orange'};
+  if (keys.includes('active')) return {text:'Active',cl:'green'};
+  if (keys.includes('approved')) return {text:'Approved',cl:'green'};
+  if (keys.includes('sent')) return {text:'Sent for Approval',cl:'blue'};
+  if (keys.includes('rejected')) return {text:'Rejected',cl:'red'};
+  if (keys.includes('upload-error')) return {text:'Upload Error',cl:'orange'};
+  if (keys.includes('unassigned')) return {text:'Unassigned',cl:'red'};
+  if (keys.includes('closed')) return {text:'Closed',cl:'gray'};
+  return {text:'Unknown',cl:'gray'};
+}
+
+function filterRfqs() {
+  const tab = STATE.tab;
+  const subKey = TAB_CONFIG[tab].subTabs[STATE.subTab]?.key || '';
+  return RFQS.filter(rfq => {
+    const hasStatus = (statuses) => rfq.slots.some(s => statuses.includes(s.status));
+    if (tab === 0) {
+      if (subKey === 'unassigned') return hasStatus(['unassigned']);
+      if (subKey === 'upload-errors') return hasStatus(['upload-error']);
+      if (subKey === 'rejected') return hasStatus(['rejected']);
+      if (subKey === 'disputed') return hasStatus(['disputed-pre']);
+    }
+    if (tab === 1) {
+      if (subKey === 'awaiting') return rfq.slots.some(s => s.status === 'sent' && (s.daysWaiting||0) <= 7) && !rfq.slots.some(s => s.status === 'sent' && (s.daysWaiting||0) > 7);
+      if (subKey === 'no-response') return rfq.slots.some(s => s.status === 'sent' && (s.daysWaiting||0) > 7);
+    }
+    if (tab === 2) {
+      if (subKey === 'ready') return hasStatus(['approved']);
+      if (subKey === 'pre-activation-disputes') return hasStatus(['approved-disputed']);
+    }
+    if (tab === 3) {
+      if (subKey === 'on-track') return hasStatus(['active']);
+      if (subKey === 'disputes') return hasStatus(['active-disputed']);
+      if (subKey === 'poor-performing') return hasStatus(['poor-performing']);
+      if (subKey === 'terminated') return hasStatus(['terminated']);
+    }
+    if (tab === 4) {
+      if (subKey === 'all-closed') return hasStatus(['closed']);
+      if (subKey === 'expired') return rfq.slots.some(s => s.status === 'closed' && s.closureType === 'expired');
+      if (subKey === 'terminated-closed') return rfq.slots.some(s => s.status === 'closed' && s.closureType === 'terminated');
+    }
+    return false;
+  });
+}
+
+/* ═══════════════════════════════════════
+   CELL RENDERERS
+   ═══════════════════════════════════════ */
+function renderRfqCell(rfq) {
+  const urg = rfq.urg.t ? `<div class="rfq-urg urg-${rfq.urg.l}">${rfq.urg.t}</div>` : '';
+  return `<div class="rfq-id">${rfq.num} | ${rfq.month}</div>${urg}`;
+}
+
+function renderRouteCell(rfq, withPopover) {
+  const r = getRoute(rfq);
+  const nodeCount = r.nodes ? r.nodes.length : 0;
+  let popHtml = '';
+  if (withPopover && r.nodes) {
+    const steps = r.nodes.map((n,i) => {
+      const dotClass = n.type === 'origin' ? 'orig' : n.type === 'dest' ? 'dest' : '';
+      const segHtml = n.segDist && !n.type?.includes('dest') ? `<div class="seg">${svgPlus}${n.segDist}<div class="seg-dot"></div>${n.segTime}</div>` : '';
+      return `<div class="step"><div class="track"><div class="dot ${dotClass}"></div></div><div class="ninfo"><div class="nhead"><span class="ncode">${n.code}</span><span class="nname">${n.name}</span></div>${segHtml}</div></div>`;
+    }).join('');
+    popHtml = `<div class="rt-pop"><div class="pop-head"><span class="pop-label">${rfq.routeName} · ${r.origin} → ${r.dest}</span><span class="pop-type">${rfq.trip}</span></div><div class="stepper">${steps}</div><div class="pop-foot"><div class="sf-item"><span class="sf-lbl">Total Dist.</span><span class="sf-val">${r.totalDist}</span></div><div class="sf-item"><span class="sf-lbl">Transit</span><span class="sf-val">${r.transit}</span></div><div class="sf-item"><span class="sf-lbl">Type</span><span class="sf-val">${rfq.trip}</span></div><div class="sf-item"><span class="sf-lbl">Stops</span><span class="sf-val">${r.stops}</span></div></div></div>`;
+  }
+  return `<div class="${withPopover ? 'rt-anchor' : ''}"><div><div class="rt-main"><span class="rt-origin">${r.origin||''}</span><span class="rt-dash">—</span><span class="nd-pill">${svgDots}${nodeCount} Nodes</span><span class="rt-arrow">${svgArrow}</span><span class="rt-dest">${r.dest||''}</span></div><div class="rt-meta"><span>${rfq.haul}</span><span class="rt-sep">|</span><span>${r.distance||''}km</span><span class="rt-sep">|</span><span>${rfq.trip}</span></div><div class="rt-name">${rfq.routeName}</div></div>${popHtml}</div>`;
+}
+
+function renderTimeCell(rfq) { return rfq.times.join('<br>'); }
+
+function renderVehicleCell(rfq) {
+  const alloc = rfq.slots.filter(s => s.status !== 'unassigned' && s.status !== 'upload-error' && s.status !== 'rejected').length;
+  return `<div class="vtype">${rfq.vSize} × ${rfq.vCount}</div><div class="valloc">${alloc}/${rfq.vCount} allocated</div>`;
+}
+
+function renderAssignmentStatusCell(rfq) {
+  const counts = getSlotStatusCounts(rfq);
+  let html = '';
+  Object.entries(counts).forEach(([st, ct]) => {
+    html += `<span class="status-chip ${statusColor(st)}">${ct} ${statusLabel(st)}</span>`;
+  });
+  return html;
+}
+
+function renderContractCell(slot) {
+  const tp = getTp(slot.tp);
+  return `<div class="ct-id">${slot.crtId || tp.crtId}</div><div class="ct-type">Regular</div>`;
+}
+
+function renderTransporterCell(slot, showPerf) {
+  const tp = getTp(slot.tp);
+  let perfHtml = '';
+  if (showPerf && slot.perf) {
+    const cls = slot.perf.tat >= 80 ? 'good' : slot.perf.tat >= 40 ? 'mid' : 'bad';
+    perfHtml = `<div class="tp-perf ${cls}">TAT: ${slot.perf.tat}% | Placement: ${slot.perf.placement}%</div>`;
+  }
+  return `<div class="tp-name">${tp.name}</div><div class="tp-ids">O ID · ${tp.oId}<br>T ID · ${tp.tId}</div>${perfHtml}`;
+}
+
+function renderEarningsCell(slot) { return `<div class="earn-amount">${slot.amount}/Trip</div>`; }
+
+function renderPeriodCell(slot) {
+  if (!slot.period) return '';
+  return `<div class="period-range">${slot.period.start} - ${slot.period.end}</div><div class="period-days">(${slot.period.days} Days)</div>`;
+}
+
+function renderDisputeCell(slot) {
+  if (!slot.dispute) return '';
+  return `<div class="disp-reason">${slot.dispute.reason}</div><div class="disp-date">Raised on ${slot.dispute.raised}</div>`;
+}
+
+/* ═══════════════════════════════════════
+   TABLE RENDERING
+   ═══════════════════════════════════════ */
+function getColumns() {
+  const tab = STATE.tab;
+  const subKey = TAB_CONFIG[tab].subTabs[STATE.subTab]?.key || '';
+
+  if (tab === 0 && subKey === 'disputed') return ['RFQ Details','Route Details','Placement Time','Vehicle Details','Activation Date','Transporter','Amount per Trip','Dispute Details','Action'];
+  if (tab === 0 && subKey === 'rejected') return ['RFQ Details','Route Details','Placement Time','Vehicle Details','Activation Date','Assignment Status','Rejection Reason','Action'];
+  if (tab === 0) return ['RFQ Details','Route Details','Placement Time','Vehicle Details','Activation Date','Assignment Status','Action'];
+  if (tab === 1) return ['RFQ Details','Route Details','Placement Time','Vehicle Details','Assignment Status','Activation Date','Action'];
+  if (tab === 2 && subKey === 'pre-activation-disputes') return ['RFQ','Contract Details','Route Details','Transporter Details','Earnings','Contract Period','Dispute Details','Action'];
+  if (tab === 2) return ['RFQ','Contract Details','Route Details','Transporter Details','Earnings','Contract Period','Action'];
+  if (tab === 3 && subKey === 'disputes') return ['RFQ','Contract Details','Route Details','Transporter Details','Earnings','Contract Period','Dispute Details','Action'];
+  if (tab === 3) return ['RFQ','Contract Details','Route Details','Transporter Details','Earnings','Contract Period','Action'];
+  if (tab === 4) return ['RFQ','Contract Details','Route Details','Transporter Details','Earnings','Contract Period','Closure Type','Action'];
+  return [];
+}
+
+function getActionButtons(rfq, subKey, tab) {
+  const counts = getSlotStatusCounts(rfq);
+  let btns = '';
+
+  if (tab === 0) {
+    if (subKey === 'unassigned') {
+      btns = `<button class="assign-btn" onclick="toggleInline('${rfq.id}')">Assign</button>`;
+    } else if (subKey === 'upload-errors') {
+      const errSlotIdx = rfq.slots.findIndex(s => s.status === 'upload-error');
+      btns = `<button class="action-btn primary" onclick="openL3FixError('${rfq.id}', ${errSlotIdx >= 0 ? errSlotIdx : 0})">Fix Error</button>`;
+    } else if (subKey === 'rejected') {
+      btns = `<button class="action-btn primary" onclick="toggleInline('${rfq.id}')">Reassign</button>`;
+    } else if (subKey === 'disputed') {
+      btns = `<button class="action-btn primary" onclick="showToast('Dispute resolution started')">Resolve</button>`;
+    }
+  } else if (tab === 1) {
+    const sfa_slot = rfq.slots[0];
+    if (subKey === 'no-response') {
+      btns = `<button class="nudge-btn" onclick="openNudgeConfirm('${rfq.id}', ${sfa_slot.tp})">Nudge</button>
+              <button class="action-btn orange" style="margin-left:6px" onclick="withdrawContract('${rfq.id}')">Withdraw</button>`;
+    } else {
+      btns = `<button class="action-btn outline" onclick="showToast('Reminder sent')">Remind</button>
+              <button class="withdraw-btn" style="margin-left:6px" onclick="withdrawContract('${rfq.id}')">Withdraw</button>`;
+    }
+    if (counts['unassigned']) btns += `<button class="assign-btn" onclick="toggleInline('${rfq.id}')" style="margin-top:4px">Assign Remaining</button>`;
+  } else if (tab === 2) {
+    if (subKey === 'pre-activation-disputes') {
+      const disp_slot = rfq.slots.find(s => s.dispute) || rfq.slots[0];
+      btns = `<button class="action-btn primary" onclick="openDisputeModal('${rfq.id}', ${rfq.slots.indexOf(disp_slot)})">Review</button>`;
+    }
+    else btns = `<button class="action-btn primary" onclick="showToast('Contract activated')">Activate</button>`;
+  } else if (tab === 3) {
+    if (subKey === 'disputes') {
+      const active_disp_slot = rfq.slots.find(s => s.dispute) || rfq.slots[0];
+      btns = `<button class="action-btn primary" onclick="openDisputeModal('${rfq.id}', ${rfq.slots.indexOf(active_disp_slot)})">Review</button>`;
+    } else if (subKey === 'poor-performing') {
+      btns = `<button class="nudge-btn" onclick="openNudgeConfirm('${rfq.id}', ${rfq.slots[0].tp})">Nudge</button><button class="action-btn orange" style="margin-left:6px" onclick="openTerminateModal('${rfq.id}', 0)">Terminate</button>`;
+    } else if (subKey === 'terminated') {
+      btns = `<button class="action-btn primary" onclick="toggleInline('${rfq.id}')">Reassign</button>`;
+    }
+  }
+
+  btns += `<span class="details-link" onclick="openL3('${rfq.id}')">See Details</span>`;
+  return btns;
+}
+
+function renderRow(rfq, idx) {
+  const tab = STATE.tab;
+  const subKey = TAB_CONFIG[tab].subTabs[STATE.subTab]?.key || '';
+  const withPop = idx < 3;
+  const slot = rfq.slots[0];
+  const isExpanded = STATE.expandedRow === rfq.id;
+  const expandedClass = isExpanded ? ' class="expanded-parent"' : '';
+
+  let cells = '';
+  const actionHtml = getActionButtons(rfq, subKey, tab);
+
+  if (tab === 0 && subKey === 'disputed') {
+    const dispSlot = rfq.slots.find(s => s.status === 'disputed-pre') || slot;
+    cells = `
+      <td>${renderRfqCell(rfq)}</td>
+      <td class="rt-cell">${renderRouteCell(rfq, withPop)}</td>
+      <td class="ptime">${renderTimeCell(rfq)}</td>
+      <td>${renderVehicleCell(rfq)}</td>
+      <td class="adate">${rfq.actDate}</td>
+      <td class="tp-cell">${renderTransporterCell(dispSlot, false)}</td>
+      <td>${renderEarningsCell(dispSlot)}</td>
+      <td>${renderDisputeCell(dispSlot)}</td>
+      <td><div class="act-cell">${actionHtml}</div></td>`;
+  } else if (tab === 0 && subKey === 'rejected') {
+    const rejSlot = rfq.slots.find(s => s.status === 'rejected') || slot;
+    cells = `
+      <td>${renderRfqCell(rfq)}</td>
+      <td class="rt-cell">${renderRouteCell(rfq, withPop)}</td>
+      <td class="ptime">${renderTimeCell(rfq)}</td>
+      <td>${renderVehicleCell(rfq)}</td>
+      <td class="adate">${rfq.actDate}</td>
+      <td>${renderAssignmentStatusCell(rfq)}</td>
+      <td><span style="color:var(--red);font-weight:600;font-size:13px">${rejSlot.reason || '—'}</span></td>
+      <td><div class="act-cell">${actionHtml}</div></td>`;
+  } else if (tab === 0) {
+    cells = `
+      <td>${renderRfqCell(rfq)}</td>
+      <td class="rt-cell">${renderRouteCell(rfq, withPop)}</td>
+      <td class="ptime">${renderTimeCell(rfq)}</td>
+      <td>${renderVehicleCell(rfq)}</td>
+      <td class="adate">${rfq.actDate}</td>
+      <td>${renderAssignmentStatusCell(rfq)}</td>
+      <td><div class="act-cell">${actionHtml}</div></td>`;
+  } else if (tab === 1) {
+    cells = `
+      <td>${renderRfqCell(rfq)}</td>
+      <td class="rt-cell">${renderRouteCell(rfq, withPop)}</td>
+      <td class="ptime">${renderTimeCell(rfq)}</td>
+      <td>${renderVehicleCell(rfq)}</td>
+      <td>${renderAssignmentStatusCell(rfq)}</td>
+      <td class="adate">${rfq.actDate}</td>
+      <td><div class="act-cell">${actionHtml}</div></td>`;
+  } else if (tab === 4) {
+    const showPerf = true;
+    cells = `
+      <td>${renderRfqCell(rfq)}</td>
+      <td>${renderContractCell(slot)}</td>
+      <td class="rt-cell">${renderRouteCell(rfq, withPop)}</td>
+      <td class="tp-cell">${renderTransporterCell(slot, showPerf)}</td>
+      <td>${renderEarningsCell(slot)}</td>
+      <td>${renderPeriodCell(slot)}</td>
+      <td><span class="status-chip gray" style="text-transform:capitalize">${slot.closureType || 'Expired'}</span></td>
+      <td><div class="act-cell"><span class="details-link" onclick="openL3('${rfq.id}')">See Details</span></div></td>`;
+  } else {
+    const showPerf = tab === 3;
+    const showDispute = subKey === 'pre-activation-disputes' || subKey === 'disputes';
+    const termLabel = slot.terminatedBy ? `<div class="ct-label" style="color:var(--red)">Terminated by ${slot.terminatedBy}</div>` : '';
+
+    cells = `
+      <td>${renderRfqCell(rfq)}</td>
+      <td>${renderContractCell(slot)}${termLabel}</td>
+      <td class="rt-cell">${renderRouteCell(rfq, withPop)}</td>
+      <td class="tp-cell">${renderTransporterCell(slot, showPerf)}</td>
+      <td>${renderEarningsCell(slot)}</td>
+      <td>${renderPeriodCell(slot)}</td>
+      ${showDispute ? '<td>' + renderDisputeCell(slot) + '</td>' : ''}
+      <td><div class="act-cell">${actionHtml}</div></td>`;
+  }
+
+  let html = `<tr${expandedClass}>${cells}</tr>`;
+
+  // Inline assign row
+  if (isExpanded) {
+    const colSpan = getColumns().length;
+    html += `<tr class="inline-row"><td colspan="${colSpan}"><div class="inline-content">`;
+
+    // Show ALL slot allocations for multi-vehicle
+    if (rfq.vCount > 1) {
+      html += '<div class="inline-slots">';
+      rfq.slots.forEach((s, i) => {
+        const tp = s.tp !== undefined ? getTp(s.tp) : null;
+        const stClass = s.status;
+        const slotLabel = tp ? `${s.crtId || tp.crtId} · ${tp.short}` : `Vehicle ${i+1}`;
+        const actionBtnHtml = (s.status === 'sent' || s.status === 'approved') ? `<button class="edit-btn" onclick="openConfirm()">Edit</button>` : '';
+        html += `<div class="inline-slot"><div class="inline-slot-info"><span class="inline-slot-id">${slotLabel}</span><span class="inline-slot-tp">${tp ? 'O ID · ' + tp.oId : ''}</span><span class="inline-slot-status ${stClass}">${statusLabel(s.status)}</span></div>${actionBtnHtml}</div>`;
+      });
+      html += '</div>';
+    }
+
+    // New assignment form
+    html += `<div class="inline-form">
+      <div class="inline-field"><label>Transporter</label><select><option value="">Select Transporter</option>${TRANSPORTERS.map(t => `<option value="${t.id}">${t.short}</option>`).join('')}</select></div>
+      <div class="inline-field"><label>Placement Time</label><input type="text" value="${rfq.times[0]}" readonly></div>
+      <div class="inline-field"><label>Amount per Trip</label><input type="text" placeholder="₹ Amount Per Trip"></div>
+      <div class="inline-field"><label>Start & End Date</label><input type="text" value="${rfq.actDate}" placeholder="Start & End Date"></div>
+      <button class="inline-send" onclick="sendAssign('${rfq.id}')">Send</button>
+      <button class="inline-close" onclick="toggleInline(null)">Close</button>
+    </div>`;
+
+    html += '</div></td></tr>';
+  }
+
+  return html;
+}
+
+function renderTable() {
+  const cols = getColumns();
+  const rfqs = filterRfqs();
+  document.getElementById('tableHead').innerHTML = '<tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr>';
+  document.getElementById('tableBody').innerHTML = rfqs.length > 0
+    ? rfqs.map((r,i) => renderRow(r,i)).join('')
+    : `<tr><td colspan="${cols.length}" style="text-align:center;padding:60px 24px;color:var(--g500)">No RFQs found in this category</td></tr>`;
+}
+
+/* ═══════════════════════════════════════
+   TABS + SUBTABS
+   ═══════════════════════════════════════ */
+function renderTabs() {
+  document.getElementById('tabBar').innerHTML = TAB_CONFIG.map((t,i) =>
+    `<div class="tab${STATE.tab===i?' active':''}" onclick="setTab(${i})">${t.label} (${TAB_COUNTS[i]})</div>`
+  ).join('');
+}
+
+function renderSubTabs() {
+  const subs = TAB_CONFIG[STATE.tab].subTabs;
+  if (subs.length === 0) {
+    document.getElementById('subTabBar').innerHTML = '';
+    return;
+  }
+  document.getElementById('subTabBar').innerHTML = subs.map((s,i) =>
+    `<div class="stab${STATE.subTab===i?' active':''}" onclick="setSubTab(${i})">${s.label} <span class="ct">(${s.count})</span></div>`
+  ).join('');
+}
+
+function renderFilterBar() {
+  const tab = STATE.tab;
+  const subKey = TAB_CONFIG[tab].subTabs[STATE.subTab]?.key || '';
+  const showBulk = tab === 0 && subKey === 'unassigned';
+  const showDownload = tab >= 2;
+
+  document.getElementById('filterBar').innerHTML = `
+    <div class="fbar-l">
+      <span>Filter by :</span>
+      <button class="fbtn" onclick="openFilters()">All Filters <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+    <div class="fbar-r">
+      <span>Sort by :</span>
+      <button class="fbtn">Most urgent first <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+      ${showBulk ? '<button class="bulk-btn" onclick="showToast(\'Bulk assign mode — select contracts from the table\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Bulk Assign</button>' : ''}
+      ${showDownload ? '<button class="download-btn" onclick="showToast(\'Download started\')">Download</button>' : ''}
+    </div>`;
+}
+
+function setTab(idx) {
+  STATE.tab = idx;
+  STATE.subTab = 0;
+  STATE.expandedRow = null;
+  renderTabs(); renderSubTabs(); renderFilterBar(); renderTable();
+}
+
+function setSubTab(idx) {
+  STATE.subTab = idx;
+  STATE.expandedRow = null;
+  renderSubTabs(); renderTable();
+}
+
+/* ═══════════════════════════════════════
+   DESIGN HEADER
+   ═══════════════════════════════════════ */
+function renderDesignHeader() {
+  const d = DESIGNS.find(x => x.id === STATE.designId) || DESIGNS[0];
+  const badgeClass = d.status === 'Active' ? 'active' : d.status === 'Planning' ? 'planning' : 'sale';
+  let progress = '';
+  if (d.status === 'Planning') {
+    const pct = Math.round((d.assigned / d.totalRfqs) * 100);
+    progress = `<div class="dc-progress" style="margin:0;flex:1;max-width:300px"><div class="dc-progress-text">${d.assigned}/${d.totalRfqs} RFQs assigned</div><div class="dc-progress-bar"><div class="dc-progress-fill" style="width:${pct}%"></div></div></div>`;
+  }
+  document.getElementById('designHeader').innerHTML = `<div class="design-header">
+    <div class="dh-left">
+      <div class="dh-name">${d.name.replace(' Design','')} (${d.start} – ${d.end})</div>
+      <div class="dh-meta"><b>${d.totalRfqs} RFQs</b> (NLH: ${d.nlh} | RLH: ${d.rlh})</div>
+      <span class="dh-badge dc-badge ${badgeClass}">${d.status}</span>
+    </div>
+    ${progress}
+  </div>`;
+}
+
+/* ═══════════════════════════════════════
+   OVERVIEW PAGE
+   ═══════════════════════════════════════ */
+function renderOverview() {
+  // Aggregate Action Center counts across ALL designs and months
+  const acCards = [
+    {group:0,label:'Unassigned',count:RFQS.filter(r=>r.slots.some(s=>s.status==='unassigned')).length,cta:'Assign →',color:'red',tab:0,sub:0},
+    {group:0,label:'Upload Errors',count:RFQS.filter(r=>r.slots.some(s=>s.status==='upload-error')).length,cta:'Fix Errors →',color:'orange',tab:0,sub:1},
+    {group:1,label:'No Response',count:RFQS.filter(r=>r.slots.some(s=>s.status==='sent'&&(s.daysWaiting||0)>7)).length,cta:'Follow Up →',color:'orange',tab:1,sub:1},
+    {group:1,label:'Rejected',count:RFQS.filter(r=>r.slots.some(s=>s.status==='rejected')).length,cta:'Reassign →',color:'red',tab:0,sub:2},
+    {group:1,label:'Expiring Soon',count:RFQS.filter(r=>r.slots.some(s=>s.period && ((new Date(s.period.end)-new Date())/(1000*60*60*24))<=7)).length,cta:'Review →',color:'blue',tab:3,sub:0},
+    {group:2,label:'Terminated',count:RFQS.filter(r=>r.slots.some(s=>s.status==='terminated')).length,cta:'Reassign →',color:'red',tab:3,sub:3},
+    {group:2,label:'Active Disputes',count:RFQS.filter(r=>r.slots.some(s=>['active-disputed','disputed-pre','approved-disputed'].includes(s.status))).length,cta:'Resolve →',color:'orange',tab:3,sub:1},
+    {group:2,label:'Poor Performing',count:RFQS.filter(r=>r.slots.some(s=>s.status==='poor-performing')).length,cta:'Review →',color:'blue',tab:3,sub:2},
+  ];
+
+  const totalAcItems = acCards.reduce((s,c) => s + c.count, 0);
+
+  // Count designs per AC card
+  function designBreakdown(filterFn) {
+    const byDesign = {};
+    RFQS.filter(filterFn).forEach(r => { byDesign[r.design] = (byDesign[r.design]||0)+1; });
+    return Object.entries(byDesign).map(([d,c]) => {
+      const design = DESIGNS.find(x=>x.id===d) || {name:d};
+      return design.name.replace(' Design','') + ': ' + c;
+    }).join(' · ');
+  }
+
+  const groups = [
+    {title:'Assignment',sub:'Routes needing a transporter assigned'},
+    {title:'Vendor Acceptance',sub:'Contracts sent, waiting on transporter'},
+    {title:'Signed Contracts',sub:'Live contracts needing intervention'}
+  ];
+
+  let acHtml = '<div class="ov-ac-grid">';
+  groups.forEach((g, gi) => {
+    const arrow = gi < 2 ? '<span class="arr">→</span>' : '';
+    acHtml += `<div class="ov-ac-col"><div class="ov-ac-col-head"><div><div style="font-weight:600">${g.title}</div><div style="font-size:11px;color:var(--g400);font-weight:400;margin-top:2px">${g.sub}</div></div>${arrow}</div>`;
+    acCards.filter(c => c.group === gi).forEach(c => {
+      const nlhCount = RFQS.filter(r => r.haul === 'NLH' && r.slots.some(s => {
+        if (c.label === 'Unassigned') return s.status === 'unassigned';
+        if (c.label === 'Upload Errors') return s.status === 'upload-error';
+        if (c.label === 'Rejected') return s.status === 'rejected';
+        if (c.label === 'No Response') return s.status === 'sent' && (s.daysWaiting||0) > 7;
+        if (c.label === 'Terminated') return s.status === 'terminated';
+        if (c.label === 'Active Disputes') return ['active-disputed','disputed-pre','approved-disputed'].includes(s.status);
+        if (c.label === 'Poor Performing') return s.status === 'poor-performing';
+        return false;
+      })).length;
+      const rlhCount = c.count - nlhCount;
+      acHtml += `<div class="ov-ac-card ${c.color}" onclick="navToDesign('mar-bau',${c.tab},${c.sub})"><div class="ov-ac-card-l"><div class="ov-ac-card-name">${c.label}</div><div class="ov-ac-card-count">${c.count} RFQs (NLH ${nlhCount} | RLH ${rlhCount})</div></div><div class="ov-ac-card-cta">${c.cta}</div></div>`;
+    });
+    acHtml += '</div>';
+  });
+  acHtml += '</div>';
+
+  const isLive = STATE.designTabFilter === 'live';
+  const designList = isLive ? DESIGNS : CLOSED_DESIGNS;
+
+  let designsHtml = designList.map(d => {
+    const badgeClass = d.status === 'Active' ? 'active' : d.status === 'Planning' ? 'planning' : d.status === 'Sale' ? 'sale' : 'closed';
+    const chips = d.chips.map(c => `<span class="dc-chip ${c.cl}">${c.c} ${c.l}</span>`).join('');
+    let progress = '';
+    if (d.status === 'Planning') {
+      const pct = Math.round((d.assigned / d.totalRfqs) * 100);
+      progress = `<div class="dc-progress"><div class="dc-progress-text">${d.assigned}/${d.totalRfqs} RFQs assigned</div><div class="dc-progress-bar"><div class="dc-progress-fill" style="width:${pct}%"></div></div></div>`;
+    }
+    const update = d.updates ? `<span class="dc-update">${d.updates} updates</span>` : '';
+    const daysLeft = d.daysLeft ? `<span style="font-size:12px;color:var(--g500)">${d.daysLeft} days left</span>` : '';
+    const cta = d.status === 'Planning'
+      ? `<button class="dc-cta" onclick="event.stopPropagation();navToDesign('${d.id}')">Plan Assignment →</button>`
+      : d.status === 'Closed'
+      ? `<button class="dc-cta outline" onclick="event.stopPropagation();navToDesign('${d.id}',4,0)">View Archive</button>`
+      : `<button class="dc-cta outline" onclick="event.stopPropagation();navToDesign('${d.id}')">View Contracts</button>`;
+
+    return `<div class="design-card" onclick="navToDesign('${d.id}')">
+      <div class="dc-top"><div class="dc-name">${d.name} ${update}<span class="dc-badge ${badgeClass}">${d.status}</span></div>${daysLeft}</div>
+      <div class="dc-mid"><span class="dc-period">${d.start} – ${d.end}</span><b>${d.totalRfqs} RFQs</b><span>(NLH: ${d.nlh} | RLH: ${d.rlh})</span></div>
+      ${progress}
+      <div class="dc-bottom"><div class="dc-chips">${chips}</div>${cta}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('overviewContent').innerHTML = `
+    <div class="ov-header">
+      <h2>Overview</h2>
+      <div class="ov-header-meta">March 31, 2026 · <b>NLH: 400 RFQs</b> · <b>RLH: 2000 RFQs</b></div>
+    </div>
+    <div class="ov-guide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span>Contracts follow 3 stages: <b>Assign transporter</b> → <b>Wait for vendor acceptance</b> → <b>Monitor active contracts</b>. Start with <span style="color:var(--red);font-weight:600">red</span> (Critical) items. Click any card to act.</span>
+    </div>
+    <div class="ov-ac">
+      <div class="ov-ac-head">
+        <div class="ov-ac-title">Action Center <span style="font-size:12px;font-weight:400;color:var(--g500)">(All Designs · All Months)</span> <span class="ct">${totalAcItems} items need attention</span></div>
+        <button class="ov-ac-download" onclick="showToast('Download started')">Download</button>
+      </div>
+      ${acHtml}
+    </div>
+    <div class="ov-designs">
+      <div class="ov-designs-head">
+        <h3>Designs</h3>
+        <div class="ov-designs-tabs">
+          <div class="ov-dtab ${isLive ? 'active' : ''}" onclick="STATE.designTabFilter='live';renderOverview()">Live & Planned</div>
+          <div class="ov-dtab ${!isLive ? 'active' : ''}" onclick="STATE.designTabFilter='past';renderOverview()">Past</div>
+        </div>
+      </div>
+      <div class="ov-designs-note">${isLive ? 'Active and upcoming designs. Assign all transporters before deadlines.' : 'Completed design cycles. View for historical reference.'}</div>
+      ${designsHtml}
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════
+   L3 DETAIL PAGE
+   ═══════════════════════════════════════ */
+function openL3(rfqId) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq) return;
+
+  STATE.page = 'l3';
+  STATE.l3RfqId = rfqId;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+  document.getElementById('page-l3').classList.add('visible');
+
+  const r = getRoute(rfq);
+  const badge = l3StatusBadge(rfq);
+  const routeStr = r.routeStr || (r.origin + ' → ' + r.dest);
+
+  // Overview section — info cards
+  const assignedSlots = rfq.slots.filter(s => s.tp !== undefined);
+  const primarySlot = assignedSlots[0] || rfq.slots[0];
+
+  let overviewHtml = `
+    <div class="l3-section">
+      <div class="l3-section-title">Overview</div>
+      <div class="l3-overview-grid">
+        <div class="l3-info-card">
+          <div class="l3-info-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/></svg></div>
+          <div><div class="l3-info-card-label">Trip Details</div><div class="l3-info-card-value">${rfq.haul} | Regular</div><div class="l3-info-card-sub">${r.distance || ''}km</div></div>
+        </div>
+        <div class="l3-info-card">
+          <div class="l3-info-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg></div>
+          <div><div class="l3-info-card-label">Route Details</div><div class="l3-info-card-value">${routeStr}</div><div class="l3-info-card-sub">${rfq.routeName}</div></div>
+        </div>
+        <div class="l3-info-card">
+          <div class="l3-info-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+          <div><div class="l3-info-card-label">Vehicle Size</div><div class="l3-info-card-value">${rfq.vSize}</div></div>
+        </div>
+      </div>
+      <div class="l3-overview-row2">
+        <div class="l3-info-card">
+          <div class="l3-info-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+          <div><div class="l3-info-card-label">Vehicle Assigned</div><div class="l3-info-card-value">${rfq.vCount}</div></div>
+        </div>
+        <div class="l3-info-card">
+          <div class="l3-info-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div><div class="l3-info-card-label">Placement Time</div><div class="l3-info-card-value">${rfq.times[0]}</div></div>
+        </div>
+        <div class="l3-info-card">
+          <div class="l3-info-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <div><div class="l3-info-card-label">Target Pricing</div><div class="l3-info-card-value">${rfq.targetPrice || primarySlot.amount || '—'}/Trip</div></div>
+        </div>
+        <div class="l3-info-card">
+          <div class="l3-info-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+          <div><div class="l3-info-card-label">Assigned On</div><div class="l3-info-card-value">${rfq.assignedOn || rfq.actDate}</div></div>
+        </div>
+      </div>
+    </div>`;
+
+  // Dispute Summary — only if any slot has disputes
+  const disputeSlots = rfq.slots.filter(s => s.dispute);
+  let disputeHtml = '';
+  if (disputeSlots.length > 0) {
+    const bannerText = disputeSlots.some(s => s.dispute.action === 'Approved')
+      ? 'Trips continue running normally. Payment will be updated once this is resolved.'
+      : 'Dispute is under review. The transporter has been notified.';
+    const bannerCl = disputeSlots.some(s => s.dispute.action === 'Approved') ? '' : ' warning';
+
+    disputeHtml = `<div class="l3-section">
+      <div class="l3-section-title">Dispute Summary</div>
+      <div class="l3-dispute-banner${bannerCl}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        ${bannerText}
+      </div>
+      <table class="l3-table">
+        <thead><tr><th>Dispute ID</th><th>Created Date</th><th>Issue Type</th><th>Remark</th><th>Trips Affected</th><th>Action</th></tr></thead>
+        <tbody>${disputeSlots.map(s => {
+          const slotIdx = rfq.slots.indexOf(s);
+          const isResolved = s.dispute.action === 'Approved';
+          const actionText = s.dispute.action || 'Pending';
+          const actionHtml = isResolved
+            ? `<span style="color:var(--green);font-weight:600">${actionText}</span>`
+            : `<span class="l3-link" onclick="openDisputeModal('${rfq.id}', ${slotIdx})">${actionText}</span>`;
+          return `<tr>
+          <td>${s.dispute.id || '—'}</td>
+          <td>${s.dispute.raised}</td>
+          <td>${s.dispute.type || s.dispute.reason}</td>
+          <td>${s.dispute.remark || '—'}</td>
+          <td>${s.dispute.tripsAffected || '—'}</td>
+          <td>${actionHtml}</td>
+        </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  // Contract Details table
+  let contractsHtml = `<div class="l3-section">
+    <div class="l3-contracts-head">
+      <div class="l3-section-title" style="margin-bottom:0">Contract Details <span class="l3-show-all" onclick="showToast('Showing all contracts')">Show all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
+      <button class="l3-download" onclick="showToast('Download started')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+    </div>
+    <table class="l3-table">
+      <thead><tr><th>#</th><th>Contract ID</th><th>Transporter</th><th>Contract Period</th><th>Trip Type</th><th>Rate per Trip</th><th>TAT %</th><th>On-Time Placement %</th><th>Action</th></tr></thead>
+      <tbody>`;
+
+  rfq.slots.forEach((s, i) => {
+    const tp = s.tp !== undefined ? getTp(s.tp) : null;
+    const crtId = s.crtId || (tp ? tp.crtId : '—');
+    let tpName = tp ? `O ID · ${tp.oId}<br>T ID · ${tp.tId}<br>${tp.name}` : '<span style="color:var(--g400)">Not assigned</span>';
+    if (s.status === 'upload-error') {
+      tpName = `<span style="color:var(--orange);font-weight:600;font-size:11px;display:inline-flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>${s.error || 'Upload Error'}</span>` + (tp ? `<br><span style="font-size:11px;color:var(--g500)">${tp.name}</span>` : '');
+    }
+    const period = s.period ? `${s.period.start} - ${s.period.end}<br>(${s.period.days} Days)` : '—';
+    const rate = s.amount || '—';
+    const tat = s.perf ? s.perf.tat + '%' : '—';
+    const placement = s.perf ? s.perf.placement + '%' : '—';
+
+    let actions = '';
+    if (s.status === 'upload-error') {
+      actions = `<span class="l3-action-link edit" style="color:var(--orange)" onclick="openL3FixError('${rfq.id}', ${i})">Fix Error</span>`;
+    } else if (s.status === 'unassigned') {
+      actions = `<span class="l3-action-link edit" onclick="l3ToggleAssign('${rfq.id}', ${i})">Assign</span>`;
+    } else if (s.status === 'approved-disputed') {
+      actions = `<div class="activate-blocked">Activate Blocked</div><div class="activate-blocked-hint">Resolve dispute to activate</div><span class="l3-action-link edit" style="display:block;margin-top:8px" onclick="openDisputeModal('${rfq.id}', ${i})">Review Dispute</span>`;
+    } else if (s.status === 'approved') {
+      actions = `<span class="l3-action-link edit" onclick="openL3Edit('${rfq.id}', ${i})">Edit</span><span class="l3-action-link activate" onclick="openL3Activate('${rfq.id}', ${i})">Activate</span><span class="l3-action-link terminate" onclick="openTerminateModal('${rfq.id}', ${i})">Terminate</span>`;
+    } else if (s.status === 'active') {
+      actions = `<span class="l3-action-link edit" onclick="openL3Edit('${rfq.id}', ${i})">Edit</span><span class="l3-action-link terminate" onclick="openTerminateModal('${rfq.id}', ${i})">Terminate</span>`;
+    } else if (s.status === 'active-disputed') {
+      actions = `<span class="l3-action-link edit" onclick="openL3Edit('${rfq.id}', ${i})">Edit</span><span class="l3-action-link terminate" onclick="openTerminateModal('${rfq.id}', ${i})">Terminate</span><span class="l3-action-link primary" onclick="openDisputeModal('${rfq.id}', ${i})" style="color:var(--blue);margin-top:4px">Review Dispute</span>`;
+    } else if (s.status === 'sent') {
+      actions = `<span class="l3-action-link edit" onclick="openL3Edit('${rfq.id}', ${i})">Edit</span><span class="l3-action-link" style="color:var(--red)" onclick="withdrawContract('${rfq.id}')">Withdraw</span>`;
+    } else if (s.status === 'terminated') {
+      actions = `<span class="l3-action-link edit" onclick="l3ToggleReassign('${rfq.id}', ${i})">Reassign</span>`;
+    } else if (s.status === 'rejected') {
+      actions = `<span class="l3-action-link edit" onclick="l3ToggleReassign('${rfq.id}', ${i})">Reassign</span>`;
+    } else if (s.status === 'closed') {
+      actions = '<span style="color:var(--g400);font-size:12px">Archived</span>';
+    } else {
+      actions = `<span class="l3-action-link edit" onclick="openL3Edit('${rfq.id}', ${i})">Edit</span>`;
+    }
+
+    contractsHtml += `<tr>
+      <td>${i+1}</td>
+      <td><span class="l3-link">${crtId}</span></td>
+      <td>${tpName}</td>
+      <td>${period}</td>
+      <td>Regular</td>
+      <td>${rate}</td>
+      <td>${tat}</td>
+      <td>${placement}</td>
+      <td><div class="l3-action-links">${actions}</div></td>
+    </tr>`;
+
+    // Add inline form rows for assign/reassign
+    if (s.status === 'unassigned') {
+      contractsHtml += `<tr id="l3-assign-row-${i}" style="display:none">
+        <td colspan="9">
+          <div class="l3-assign-form" id="l3-assign-form-${i}">
+            <div class="l3-assign-context">Assign a transporter for this slot</div>
+            <div class="l3-assign-fields">
+              <div class="l3-assign-field">
+                <label>Transporter</label>
+                <select id="l3-assign-tp-${i}">
+                  <option value="">Select transporter</option>
+                  ${TRANSPORTERS.map((tp, idx) => `<option value="${idx}">${tp.short}</option>`).join('')}
+                </select>
+              </div>
+              <div class="l3-assign-field">
+                <label>Placement Time</label>
+                <input type="text" id="l3-assign-time-${i}" value="${rfq.times[0] || ''}" readonly>
+              </div>
+              <div class="l3-assign-field">
+                <label>Amount per Trip</label>
+                <input type="text" id="l3-assign-amount-${i}" placeholder="₹ Amount" value="${rfq.targetPrice || ''}">
+                <div class="hint">Target: ${rfq.targetPrice || '—'}</div>
+              </div>
+              <div class="l3-assign-field">
+                <label>Start Date</label>
+                <input type="text" id="l3-assign-start-${i}" value="${rfq.actDate || ''}">
+              </div>
+              <div class="l3-assign-field">
+                <label>End Date</label>
+                <input type="text" id="l3-assign-end-${i}" placeholder="dd-mmm-yy">
+              </div>
+            </div>
+            <div class="l3-assign-btns">
+              <button class="btn-confirm" onclick="l3SendAssign('${rfq.id}', ${i})">Send</button>
+              <button class="btn-cancel" onclick="l3ToggleAssign('${rfq.id}', ${i})">Cancel</button>
+            </div>
+          </div>
+        </td>
+      </tr>`;
+    }
+
+    if (s.status === 'terminated' || s.status === 'rejected') {
+      const prevTp = s.tp !== undefined ? getTp(s.tp) : null;
+      const prevTpName = prevTp ? prevTp.name : 'Unknown';
+      contractsHtml += `<tr id="l3-reassign-row-${i}" style="display:none">
+        <td colspan="9">
+          <div class="l3-assign-form" id="l3-reassign-form-${i}">
+            <div class="l3-assign-context prev">Previously: <strong id="l3-reassign-prev-${i}">${prevTpName}</strong> — ${s.status === 'terminated' ? 'Terminated' : 'Rejected'}</div>
+            <div class="l3-assign-fields">
+              <div class="l3-assign-field">
+                <label>New Transporter</label>
+                <select id="l3-reassign-tp-${i}">
+                  <option value="">Select transporter</option>
+                  ${TRANSPORTERS.map((tp, idx) => `<option value="${idx}">${tp.short}</option>`).join('')}
+                </select>
+              </div>
+              <div class="l3-assign-field">
+                <label>Placement Time</label>
+                <input type="text" id="l3-reassign-time-${i}" value="${rfq.times[0] || ''}" readonly>
+              </div>
+              <div class="l3-assign-field">
+                <label>Amount per Trip</label>
+                <input type="text" id="l3-reassign-amount-${i}" placeholder="₹ Amount" value="${s.amount || rfq.targetPrice || ''}">
+              </div>
+              <div class="l3-assign-field">
+                <label>Start Date</label>
+                <input type="text" id="l3-reassign-start-${i}" value="${rfq.actDate || ''}">
+              </div>
+              <div class="l3-assign-field">
+                <label>End Date</label>
+                <input type="text" id="l3-reassign-end-${i}" placeholder="dd-mmm-yy">
+              </div>
+            </div>
+            <div class="l3-assign-btns">
+              <button class="btn-confirm" onclick="l3SendReassign('${rfq.id}', ${i})">Send</button>
+              <button class="btn-cancel" onclick="l3ToggleReassign('${rfq.id}', ${i})">Cancel</button>
+            </div>
+          </div>
+        </td>
+      </tr>`;
+    }
+  });
+
+  contractsHtml += '</tbody></table></div>';
+
+  // Activity Log section
+  let activityHtml = `<div class="activity-log">
+    <div class="activity-log-title">Activity Log</div>
+    <div class="activity-timeline">
+      <div class="activity-item">
+        <div class="activity-dot"></div>
+        <div class="activity-content">
+          <div class="activity-event">Contract created</div>
+          <div class="activity-time">Mar 22, 2026</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-dot"></div>
+        <div class="activity-content">
+          <div class="activity-event">Sent to ${assignedSlots[0]?.tp !== undefined ? getTp(assignedSlots[0].tp).name : 'Transporter'}</div>
+          <div class="activity-time">Mar 22, 2026</div>
+        </div>
+      </div>`;
+      
+  if (rfq.slots[0].nudgeCount && rfq.slots[0].nudgeCount > 0) {
+    activityHtml += `
+      <div class="activity-item">
+        <div class="activity-dot"></div>
+        <div class="activity-content">
+          <div class="activity-event">Nudge sent</div>
+          <div class="activity-time">Mar 28, 2026</div>
+        </div>
+      </div>`;
+  }
+  
+  if (rfq.slots[0].period) {
+    activityHtml += `
+      <div class="activity-item">
+        <div class="activity-dot"></div>
+        <div class="activity-content">
+          <div class="activity-event">Contract activated</div>
+          <div class="activity-time">Apr 1, 2026</div>
+        </div>
+      </div>`;
+  }
+  
+  activityHtml += `</div></div>`;
+
+  // Breadcrumb
+  const tabLabel = TAB_CONFIG[STATE.tab]?.label || 'Action Required';
+  const breadcrumb = `<div class="l3-breadcrumb">
+    <a onclick="navTo('overview')">Overview</a><span>›</span>
+    <a onclick="backToDesign()">${tabLabel}</a><span>›</span>
+    <span style="color:var(--g800);font-weight:500">View</span>
+  </div>`;
+
+  document.getElementById('l3Content').innerHTML = `
+    ${breadcrumb}
+    <div class="l3-title-row">
+      <div class="l3-back" onclick="backToDesign()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="l3-title">${rfq.num}</div>
+      <div class="l3-status-badge ${badge.cl}">${badge.text}</div>
+    </div>
+    ${overviewHtml}
+    ${disputeHtml}
+    ${contractsHtml}
+    ${activityHtml}
+  `;
+}
+
+function backToDesign() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+  document.getElementById('page-design').classList.add('visible');
+  STATE.page = 'design';
+}
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════ */
+function navTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+  if (page === 'overview') {
+    document.getElementById('page-overview').classList.add('visible');
+    STATE.page = 'overview';
+    renderOverview();
+  }
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  const target = document.querySelector('.sb-item[data-nav="' + (page === 'overview' ? 'overview' : 'design') + '"]');
+  if (target) target.classList.add('active');
+}
+
+function navToDesign(designId, tab, sub) {
+  STATE.page = 'design';
+  STATE.designId = designId || 'mar-bau';
+  STATE.tab = tab || 0;
+  STATE.subTab = sub || 0;
+  STATE.expandedRow = null;
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+  document.getElementById('page-design').classList.add('visible');
+
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  const target = document.querySelector('.sb-item[data-nav="design"]');
+  if (target) target.classList.add('active');
+
+  renderDesignHeader(); renderTabs(); renderSubTabs(); renderFilterBar(); renderTable();
+}
+
+/* ═══════════════════════════════════════
+   INLINE ASSIGN
+   ═══════════════════════════════════════ */
+function toggleInline(rfqId) {
+  STATE.expandedRow = STATE.expandedRow === rfqId ? null : rfqId;
+  renderTable();
+}
+
+function sendAssign(rfqId) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  STATE.expandedRow = null;
+  const crtId = rfq && rfq.slots[0] ? rfq.slots[0].crtId || 'CRT-XXXXX' : 'CRT-XXXXX';
+  showToast(`Contract ${crtId} sent to Transporter successfully`);
+  renderTable();
+}
+
+/* ═══════════════════════════════════════
+   FILTER PANEL
+   ═══════════════════════════════════════ */
+function openFilters() {
+  document.getElementById('filterOverlay').classList.add('open');
+  document.getElementById('filterPanel').classList.add('open');
+  updateFilterCount();
+}
+
+function closeFilters() {
+  document.getElementById('filterOverlay').classList.remove('open');
+  document.getElementById('filterPanel').classList.remove('open');
+}
+
+function applyFilters() {
+  closeFilters();
+  showToast('Filters applied');
+  renderTable();
+}
+
+function updateFilterCount() {
+  const checked = document.querySelectorAll('.fp-option input:checked').length;
+  document.getElementById('filterCount').textContent = checked + ' filters active';
+}
+
+/* ═══════════════════════════════════════
+   CONFIRMATION MODAL
+   ═══════════════════════════════════════ */
+function openConfirm() {
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+}
+function confirmEdit() {
+  closeConfirm();
+  showToast('Updated changes has been successfully sent to Transporter ABC');
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  clearTimeout(toastTimer);
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ═══════════════════════════════════════
+   KEYBOARD
+   ═══════════════════════════════════════ */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeFilters();
+    closeConfirm();
+    if (STATE.expandedRow) { STATE.expandedRow = null; renderTable(); }
+  }
+});
+
+
+/* ═══════════════════════════════════════
+   DISPUTE RESOLUTION
+   ═══════════════════════════════════════ */
+let currentDispute = null;
+
+function openDisputeModal(rfqId, slotIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq || !rfq.slots[slotIndex]) return;
+  
+  const slot = rfq.slots[slotIndex];
+  if (!slot.dispute) return;
+  
+  currentDispute = {rfqId, slotIndex, slot, rfq};
+  
+  document.getElementById('disputeTitle').textContent = `Resolve Dispute — ${slot.dispute.id}`;
+  document.getElementById('dispIssueType').textContent = slot.dispute.type || slot.dispute.reason;
+  document.getElementById('dispRemark').textContent = slot.dispute.remark || '—';
+  document.getElementById('dispDateRaised').textContent = slot.dispute.raised;
+  document.getElementById('dispRate').textContent = slot.amount;
+  
+  document.getElementById('newRateInput').value = slot.amount.replace('₹', '').trim();
+  document.getElementById('counterRateInput').value = '';
+  document.getElementById('counterReasonInput').value = '';
+  document.getElementById('rejectReasonInput').value = '';
+  document.querySelectorAll('input[name="resolution"]').forEach(r => r.checked = false);
+  document.getElementById('resolutionFields').style.display = 'none';
+  
+  document.getElementById('disputeOverlay').classList.add('open');
+}
+
+function selectResolution(type) {
+  document.getElementById('res' + type.charAt(0).toUpperCase() + type.slice(1)).checked = true;
+  const fields = document.getElementById('resolutionFields');
+  fields.style.display = 'block';
+  
+  document.getElementById('acceptFields').style.display = type === 'accept' ? 'block' : 'none';
+  document.getElementById('counterFields').style.display = type === 'counter' ? 'block' : 'none';
+  document.getElementById('rejectFields').style.display = type === 'reject' ? 'block' : 'none';
+}
+
+function submitDisputeResolution() {
+  const resolution = document.querySelector('input[name="resolution"]:checked');
+  if (!resolution || !currentDispute) return;
+  
+  const type = resolution.value;
+  let msg = '';
+  
+  if (type === 'accept') {
+    msg = `Dispute ${currentDispute.slot.dispute.id} resolved — Accepted`;
+  } else if (type === 'counter') {
+    msg = `Dispute ${currentDispute.slot.dispute.id} resolved — Counter-offered`;
+  } else if (type === 'reject') {
+    msg = `Dispute ${currentDispute.slot.dispute.id} resolved — Rejected`;
+  }
+  
+  closeSafely('disputeOverlay');
+  showToast(msg);
+  currentDispute = null;
+}
+
+/* ═══════════════════════════════════════
+   TERMINATION
+   ═══════════════════════════════════════ */
+let currentTerminate = null;
+
+function openTerminateModal(rfqId, slotIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq || !rfq.slots[slotIndex]) return;
+  
+  const slot = rfq.slots[slotIndex];
+  currentTerminate = {rfqId, slotIndex, slot, rfq, crtId: slot.crtId};
+  
+  document.getElementById('terminateTitle').textContent = `Terminate Contract — ${slot.crtId}`;
+  
+  const futureDate = new Date();
+  futureDate.setDate(futureDate.getDate() + 3);
+  const dateStr = futureDate.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+  document.getElementById('termEffectiveDate').textContent = dateStr;
+  
+  if (slot.period) {
+    const endDate = new Date(slot.period.end);
+    const daysRemaining = Math.max(0, Math.ceil((endDate - new Date()) / (1000*60*60*24)));
+    document.getElementById('termRemainingPeriod').textContent = daysRemaining + ' days';
+  }
+  
+  document.getElementById('terminateReasonSelect').value = '';
+  document.getElementById('terminateNotesInput').value = '';
+  document.querySelector('input[name="initiatedBy"][value="clh"]').checked = true;
+  
+  document.getElementById('terminateOverlay').classList.add('open');
+}
+
+function confirmTermination() {
+  if (!currentTerminate) return;
+  const reason = document.getElementById('terminateReasonSelect').value;
+  if (!reason) {
+    showToast('Please select a termination reason');
+    return;
+  }
+  
+  closeSafely('terminateOverlay');
+  showToast(`Contract ${currentTerminate.crtId} terminated. Effective ${new Date(new Date().setDate(new Date().getDate() + 3)).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'2-digit'})}.`);
+  currentTerminate = null;
+}
+
+/* ═══════════════════════════════════════
+   BULK UPLOAD
+   ═══════════════════════════════════════ */
+let bulkStep = 1;
+
+function openBulkUpload() {
+  bulkStep = 1;
+  document.getElementById('bulkStep1').classList.add('active');
+  document.getElementById('bulkStep2').classList.remove('active');
+  document.getElementById('bulkActionBtn').textContent = 'Next Step';
+  document.getElementById('bulkActionBtn').disabled = false;
+  document.getElementById('selectedFile').style.display = 'none';
+  document.getElementById('bulkUploadOverlay').classList.add('open');
+}
+
+function downloadBulkTemplate() {
+  showToast('Template download started');
+}
+
+function bulkUploadStep() {
+  if (bulkStep === 1) {
+    bulkStep = 2;
+    document.getElementById('bulkStep1').classList.remove('active');
+    document.getElementById('bulkStep2').classList.add('active');
+    document.getElementById('bulkActionBtn').textContent = 'Upload & Validate';
+    document.getElementById('bulkActionBtn').disabled = true;
+  } else if (bulkStep === 2) {
+    closeSafely('bulkUploadOverlay');
+    showToast('120 contracts created. 12 rows have errors — view in Upload Errors.');
+  }
+}
+
+function selectBulkFile(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  document.getElementById('fileName').textContent = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+  document.getElementById('selectedFile').style.display = 'block';
+  document.getElementById('bulkActionBtn').disabled = false;
+}
+
+/* ═══════════════════════════════════════
+   MODAL HELPERS
+   ═══════════════════════════════════════ */
+function closeSafely(overlayId) {
+  document.getElementById(overlayId).classList.remove('open');
+}
+
+/* ═══════════════════════════════════════
+   L3 INLINE ASSIGN FORM
+   ═══════════════════════════════════════ */
+let l3FormState = {};
+
+function l3ToggleAssign(rfqId, slotIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq) return;
+
+  const row = document.getElementById(`l3-assign-row-${slotIndex}`);
+  if (!row) return;
+
+  const isVisible = row.style.display !== 'none';
+  row.style.display = isVisible ? 'none' : 'table-row';
+
+  if (!isVisible) {
+    document.getElementById(`l3-assign-tp-${slotIndex}`).value = '';
+    document.getElementById(`l3-assign-time-${slotIndex}`).value = rfq.times[0] || '';
+    document.getElementById(`l3-assign-amount-${slotIndex}`).value = rfq.targetPrice || '';
+    document.getElementById(`l3-assign-start-${slotIndex}`).value = rfq.actDate || '';
+    document.getElementById(`l3-assign-end-${slotIndex}`).value = '';
+  }
+}
+
+function l3SendAssign(rfqId, slotIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq) return;
+
+  const tpIdx = parseInt(document.getElementById(`l3-assign-tp-${slotIndex}`).value);
+  if (isNaN(tpIdx)) {
+    showToast('Please select a transporter');
+    return;
+  }
+
+  const tp = getTp(tpIdx);
+  const crtId = tp.crtId;
+
+  l3ToggleAssign(rfqId, slotIndex);
+  showToast(`Contract ${crtId} sent to ${tp.name} successfully`);
+}
+
+function l3ToggleReassign(rfqId, slotIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq) return;
+
+  const row = document.getElementById(`l3-reassign-row-${slotIndex}`);
+  if (!row) return;
+
+  const isVisible = row.style.display !== 'none';
+  row.style.display = isVisible ? 'none' : 'table-row';
+
+  if (!isVisible) {
+    const slot = rfq.slots[slotIndex];
+    const prevTp = slot.tp !== undefined ? getTp(slot.tp) : null;
+
+    document.getElementById(`l3-reassign-tp-${slotIndex}`).value = '';
+    document.getElementById(`l3-reassign-time-${slotIndex}`).value = rfq.times[0] || '';
+    document.getElementById(`l3-reassign-amount-${slotIndex}`).value = slot.amount || rfq.targetPrice || '';
+    document.getElementById(`l3-reassign-start-${slotIndex}`).value = rfq.actDate || '';
+    document.getElementById(`l3-reassign-end-${slotIndex}`).value = '';
+    document.getElementById(`l3-reassign-prev-${slotIndex}`).textContent = prevTp ? `${prevTp.name}` : 'Unknown';
+  }
+}
+
+function l3SendReassign(rfqId, slotIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq) return;
+
+  const tpIdx = parseInt(document.getElementById(`l3-reassign-tp-${slotIndex}`).value);
+  if (isNaN(tpIdx)) {
+    showToast('Please select a transporter');
+    return;
+  }
+
+  const tp = getTp(tpIdx);
+  const crtId = tp.crtId;
+
+  l3ToggleReassign(rfqId, slotIndex);
+  showToast(`Contract ${crtId} sent to ${tp.name} successfully`);
+}
+
+/* ═══════════════════════════════════════
+   L3 EDIT MODAL
+   ═══════════════════════════════════════ */
+let l3EditState = null;
+
+function openL3Edit(rfqId, slotIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq || !rfq.slots[slotIndex]) return;
+
+  const slot = rfq.slots[slotIndex];
+  const tp = slot.tp !== undefined ? getTp(slot.tp) : null;
+  const crtId = slot.crtId || (tp ? tp.crtId : 'CRT-XXXXX');
+
+  l3EditState = {rfqId, slotIndex, slot, rfq, tp, crtId};
+
+  document.getElementById('confirmTitle').textContent = `Edit Contract — ${crtId}`;
+
+  const confirmBody = document.getElementById('confirmBody');
+  confirmBody.innerHTML = `
+    <div class="version-context">Current: ${slot.amount || '₹—'} · Sent ${slot.sentDate || 'N/A'}</div>
+
+    <div class="form-section">
+      <label for="l3-edit-amount">Amount per Trip</label>
+      <input type="text" id="l3-edit-amount" placeholder="₹ Amount" value="${(slot.amount || '').replace('₹', '').trim()}">
+      <div class="reason-hint">Target price: ${rfq.targetPrice || '—'}</div>
+    </div>
+
+    <div class="form-section">
+      <label for="l3-edit-start">Start Date</label>
+      <input type="text" id="l3-edit-start" value="${slot.period?.start || rfq.actDate || ''}">
+    </div>
+
+    <div class="form-section">
+      <label for="l3-edit-end">End Date</label>
+      <input type="text" id="l3-edit-end" value="${slot.period?.end || ''}">
+    </div>
+
+    <div class="form-section">
+      <label for="l3-edit-time">Placement Time</label>
+      <input type="text" id="l3-edit-time" value="${rfq.times[0] || ''}">
+    </div>
+
+    <div class="form-section">
+      <label for="l3-edit-reason">Reason for Change</label>
+      <select id="l3-edit-reason">
+        <option value="">Select a reason</option>
+        <option value="rate-revision">Rate revision</option>
+        <option value="period-change">Period change</option>
+        <option value="correction">Correction</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+  `;
+
+  const actionBtn = document.getElementById('confirmAction');
+  actionBtn.textContent = 'Save & Resend';
+  actionBtn.disabled = false;
+  actionBtn.style.background = '';
+  actionBtn.onclick = submitL3Edit;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+
+function submitL3Edit() {
+  if (!l3EditState) return;
+
+  const reason = document.getElementById('l3-edit-reason').value;
+  if (!reason) {
+    showToast('Please select a reason for change');
+    return;
+  }
+
+  closeSafely('confirmOverlay');
+  const tpName = l3EditState.tp ? l3EditState.tp.name : 'Transporter';
+  showToast(`Contract ${l3EditState.crtId} updated and resent to ${tpName}`);
+  l3EditState = null;
+}
+
+/* ═══════════════════════════════════════
+   L3 ACTIVATION MODAL
+   ═══════════════════════════════════════ */
+let l3ActivateState = null;
+
+function openL3Activate(rfqId, slotIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq || !rfq.slots[slotIndex]) return;
+
+  const slot = rfq.slots[slotIndex];
+  const crtId = slot.crtId || 'CRT-XXXXX';
+  const activationDate = slot.period?.start || rfq.actDate || 'Activation date';
+
+  l3ActivateState = {rfqId, slotIndex, crtId};
+
+  document.getElementById('confirmTitle').textContent = `Activate Contract`;
+
+  const confirmBody = document.getElementById('confirmBody');
+  confirmBody.innerHTML = `
+    <div class="activate-msg">
+      Activate contract <span class="activate-date">${crtId}</span>?<br>
+      This contract will go live on <span class="activate-date">${activationDate}</span>.
+    </div>
+
+    <div class="confirm-checkbox">
+      <input type="checkbox" id="l3-activate-confirm">
+      <label for="l3-activate-confirm">I confirm all details are correct</label>
+    </div>
+  `;
+
+  document.getElementById('confirmAction').textContent = 'Activate';
+  document.getElementById('confirmAction').disabled = true;
+  document.getElementById('confirmAction').onclick = confirmL3Activate;
+
+  document.getElementById('l3-activate-confirm').addEventListener('change', (e) => {
+    document.getElementById('confirmAction').disabled = !e.target.checked;
+  });
+
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+
+function confirmL3Activate() {
+  if (!l3ActivateState) return;
+
+  closeSafely('confirmOverlay');
+  showToast(`Contract ${l3ActivateState.crtId} activated successfully`);
+  l3ActivateState = null;
+}
+
+/* ═══════════════════════════════════════
+   NUDGE & WITHDRAW
+   ═══════════════════════════════════════ */
+function openNudgeConfirm(rfqId, tpIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq) return;
+  const tp = getTp(tpIndex);
+  const slot = rfq.slots.find(s => s.tp === tpIndex);
+  const nudgeCount = (slot?.nudgeCount || 0) + 1;
+  
+  let msg = `Send reminder to ${tp.name}? This is reminder #${nudgeCount}.`;
+  if (nudgeCount >= 3) msg += '\n\nNudged 3 times. Consider withdrawing.';
+  
+  if (confirm(msg)) {
+    showToast(`Reminder sent to ${tp.name}`);
+  }
+}
+
+/* ═══════════════════════════════════════
+   L3 FIX UPLOAD ERROR (INLINE)
+   ═══════════════════════════════════════ */
+function l3ToggleFixError(rfqId, slotIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq) return;
+
+  const row = document.getElementById(`l3-fix-row-${slotIndex}`);
+  if (!row) return;
+
+  const isVisible = row.style.display !== 'none';
+  row.style.display = isVisible ? 'none' : 'table-row';
+
+  if (!isVisible) {
+    const slot = rfq.slots[slotIndex];
+    const fixVal = document.getElementById(`l3-fix-value-${slotIndex}`);
+    if (fixVal) fixVal.value = '';
+    const fixTp = document.getElementById(`l3-fix-tp-${slotIndex}`);
+    if (fixTp) fixTp.value = slot.tp !== undefined ? slot.tp : '';
+  }
+}
+
+function l3SendFixError(rfqId, slotIndex) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq) return;
+
+  const fixVal = document.getElementById(`l3-fix-value-${slotIndex}`);
+  if (fixVal && !fixVal.value.trim()) {
+    showToast('Please enter the corrected value');
+    return;
+  }
+
+  const tpSelect = document.getElementById(`l3-fix-tp-${slotIndex}`);
+  const tpIdx = tpSelect ? parseInt(tpSelect.value) : NaN;
+  const tpName = !isNaN(tpIdx) ? getTp(tpIdx).name : 'Transporter';
+  const crtId = rfq.slots[slotIndex].crtId || 'CRT-XXXXX';
+
+  l3ToggleFixError(rfqId, slotIndex);
+  showToast(`Error fixed for ${crtId}. Contract resent to ${tpName}.`);
+}
+
+function withdrawContract(rfqId) {
+  const rfq = RFQS.find(r => r.id === rfqId);
+  if (!rfq) return;
+  
+  if (confirm(`Withdraw contract ${rfq.num} from transporter? This route will return to Action Required.`)) {
+    showToast(`Contract ${rfq.num} withdrawn. Route returned to Assign Transporter.`);
+  }
+}
+
+
+/* ═══════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════ */
+renderOverview();
+</script>
+
+<!-- DISPUTE RESOLUTION MODAL -->
+<div class="modal-overlay" id="disputeOverlay" onclick="closeSafely('disputeOverlay')">
+  <div class="modal resolve-modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3 id="disputeTitle">Resolve Dispute — [DIS-ID]</h3>
+      <div class="modal-close" onclick="closeSafely('disputeOverlay')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="modal-body">
+      <div class="dispute-summary" id="disputeSummary">
+        <div class="dispute-summary-row"><span>Issue Type:</span><b id="dispIssueType">—</b></div>
+        <div class="dispute-summary-row"><span>Remark:</span><b id="dispRemark">—</b></div>
+        <div class="dispute-summary-row"><span>Date Raised:</span><b id="dispDateRaised">—</b></div>
+        <div class="dispute-summary-row"><span>Original Rate:</span><b id="dispRate">—</b></div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <label style="font-size:12px;font-weight:600;color:var(--g600);text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:12px">Resolution Option</label>
+        
+        <div class="resolve-radio" onclick="selectResolution('accept')">
+          <input type="radio" name="resolution" value="accept" id="resAccept">
+          <div class="resolve-radio-content">
+            <div class="resolve-radio-label">Accept</div>
+            <div class="resolve-radio-desc">Accept the dispute claim and adjust rate</div>
+          </div>
+        </div>
+
+        <div class="resolve-radio" onclick="selectResolution('counter')">
+          <input type="radio" name="resolution" value="counter" id="resCounter">
+          <div class="resolve-radio-content">
+            <div class="resolve-radio-label">Counter-Offer</div>
+            <div class="resolve-radio-desc">Submit a counter proposal with reason</div>
+          </div>
+        </div>
+
+        <div class="resolve-radio" onclick="selectResolution('reject')">
+          <input type="radio" name="resolution" value="reject" id="resReject">
+          <div class="resolve-radio-content">
+            <div class="resolve-radio-label">Reject</div>
+            <div class="resolve-radio-desc">Reject the dispute with explanation</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="resolutionFields" style="display:none">
+        <div class="form-field" id="acceptFields" style="display:none">
+          <label>New Rate per Trip</label>
+          <input type="text" id="newRateInput" placeholder="₹ Amount per Trip">
+        </div>
+
+        <div id="counterFields" style="display:none">
+          <div class="form-field">
+            <label>Counter-Offer Rate</label>
+            <input type="text" id="counterRateInput" placeholder="₹ Counter Rate">
+          </div>
+          <div class="form-field">
+            <label>Reason for Counter</label>
+            <textarea id="counterReasonInput" placeholder="Explain your counter proposal..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-field" id="rejectFields" style="display:none">
+          <label>Rejection Reason</label>
+          <textarea id="rejectReasonInput" placeholder="Provide reason for rejection..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeSafely('disputeOverlay')">Cancel</button>
+      <button class="btn-confirm" onclick="submitDisputeResolution()">Submit Resolution</button>
+    </div>
+  </div>
+</div>
+
+<!-- TERMINATION MODAL -->
+<div class="modal-overlay" id="terminateOverlay" onclick="closeSafely('terminateOverlay')">
+  <div class="modal terminate-modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3 id="terminateTitle">Terminate Contract — [CRT-ID]</h3>
+      <div class="modal-close" onclick="closeSafely('terminateOverlay')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="modal-body">
+      <div class="term-warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div>A 3-day buffer period applies. Contract will remain active until <b id="termEffectiveDate">—</b>. Transporter will be notified.</div>
+      </div>
+
+      <div class="form-field">
+        <label>Reason for Termination</label>
+        <select id="terminateReasonSelect">
+          <option value="">Select Reason</option>
+          <option value="poor-perf">Poor performance</option>
+          <option value="route-cancel">Route cancelled</option>
+          <option value="rate-dispute">Rate dispute unresolved</option>
+          <option value="tp-request">Transporter request</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Notes (Optional)</label>
+        <textarea id="terminateNotesInput" placeholder="Add any additional notes..."></textarea>
+      </div>
+
+      <div class="form-field">
+        <label>Initiated By</label>
+        <div style="display:flex;gap:16px;margin-top:8px">
+          <label style="display:flex;align-items:center;gap:8px;font-weight:400;text-transform:none;letter-spacing:normal;cursor:pointer">
+            <input type="radio" name="initiatedBy" value="clh" checked>
+            <span style="font-size:13px">CLH</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-weight:400;text-transform:none;letter-spacing:normal;cursor:pointer">
+            <input type="radio" name="initiatedBy" value="transporter">
+            <span style="font-size:13px">Transporter</span>
+          </label>
+        </div>
+      </div>
+
+      <div style="background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-md);padding:12px 16px;margin-top:16px;font-size:12px;color:var(--g700)">
+        <div style="margin-bottom:6px"><b>Remaining Period:</b> <span id="termRemainingPeriod">—</span></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeSafely('terminateOverlay')">Cancel</button>
+      <button class="btn-confirm" style="background:var(--red)" onclick="confirmTermination()">Confirm Termination</button>
+    </div>
+  </div>
+</div>
+
+<!-- BULK UPLOAD MODAL -->
+<div class="modal-overlay" id="bulkUploadOverlay" onclick="closeSafely('bulkUploadOverlay')">
+  <div class="modal bulk-modal" style="width:520px" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3>Bulk Upload Contracts</h3>
+      <div class="modal-close" onclick="closeSafely('bulkUploadOverlay')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+    <div class="modal-body">
+      <div class="bulk-step active" id="bulkStep1">
+        <div style="text-align:center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;color:var(--primary);margin-bottom:12px;display:inline-block"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <div style="font-size:13px;color:var(--g700);line-height:1.6;margin-bottom:16px">Download the template, fill in contract details, and upload to assign multiple contracts at once.</div>
+          <button class="btn-confirm" style="margin-bottom:12px" onclick="downloadBulkTemplate()">Download Template</button>
+          <div style="font-size:12px;color:var(--g500)">Supports CSV, XLS, XLSX formats</div>
+        </div>
+      </div>
+
+      <div class="bulk-step" id="bulkStep2">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="upload-area" id="uploadArea" onclick="document.getElementById('bulkFileInput').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <div class="upload-area-text">Drag and drop file here or <b>click to browse</b></div>
+            <div style="font-size:11px;color:var(--g500);margin-top:6px">Max 10 MB</div>
+          </div>
+          <input type="file" id="bulkFileInput" style="display:none" onchange="selectBulkFile(event)">
+          <div id="selectedFile" style="display:none;padding:10px;background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-sm);font-size:12px;color:var(--g800)">
+            <div id="fileName">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeSafely('bulkUploadOverlay')">Cancel</button>
+      <button class="btn-confirm" id="bulkActionBtn" disabled onclick="bulkUploadStep()">Next Step</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

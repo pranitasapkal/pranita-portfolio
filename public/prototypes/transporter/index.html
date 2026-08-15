@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1440" />
+<title>Transporter — Contract Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* Mier B02 — drop .woff2 files in /fonts/ next to this HTML.
+   Falls back to Inter / system sans until the files are present. */
+@font-face { font-family:'Mier B02'; src:url('fonts/MierB02-Book.woff2') format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:'Mier B02'; src:url('fonts/MierB02-Demi.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:swap; }
+@font-face { font-family:'Mier B02'; src:url('fonts/MierB02-Bold.woff2') format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+/* ============================================================
+   TRANSPORTER CONTRACT MANAGEMENT — Final prototype
+   Mirrors the "Final Transporter panel" screen set exactly.
+   Single-file, data-driven, no build step.
+   ============================================================ */
+:root {
+  --bg: #F4F5F8;
+  --surface: #FFFFFF;
+  --panel: #FAFBFD;
+  --side: #0B1430;
+  --side-hover: #18234A;
+  --side-active: #223066;
+  --side-text: #B6BBD0;
+
+  --ink-1: #14171F;
+  --ink-2: #4A4F5E;
+  --ink-3: #7A8094;
+  --line: #E4E7EE;
+  --line-2: #EEF0F5;
+
+  --primary: #003F98;
+  --primary-2: #2F4FC6;
+  --primary-bg: #EEF1FB;
+
+  --danger: #D14B4B;
+  --danger-bg: #FDECEC;
+  --warning: #C77B00;
+  --warning-bg: #FFF3DC;
+  --success: #128A3E;
+  --success-bg: #E6F4EB;
+  --info: #1E6FB8;
+  --info-bg: #E7F1FA;
+  --neutral-bg: #F0F2F8;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 2px rgba(15,25,60,.05);
+  --shadow-md: 0 8px 24px rgba(15,25,60,.10);
+  --shadow-lg: 0 20px 48px rgba(15,25,60,.22);
+}
+*,*::before,*::after { box-sizing: border-box; margin:0; padding:0; }
+html,body { height:100%; }
+body { font-family:'Mier B02','Inter',-apple-system,BlinkMacSystemFont,sans-serif; background:var(--bg); color:var(--ink-1); font-size:13.5px; line-height:1.45; -webkit-font-smoothing:antialiased; }
+button { font-family:inherit; cursor:pointer; border:none; background:none; font-size:inherit; color:inherit; }
+input, select, textarea { font-family:inherit; font-size:inherit; color:inherit; }
+a { color:inherit; text-decoration:none; }
+
+/* ===== App shell ===== */
+.app { display:flex; min-height:100vh; }
+.sidebar { width:224px; background:var(--side); position:fixed; inset:0 auto 0 0; display:flex; flex-direction:column; z-index:40; }
+.main { margin-left:224px; flex:1; min-height:100vh; }
+
+/* ===== Sidebar ===== */
+.brand-user { padding:18px 18px 14px; display:flex; align-items:center; gap:12px; }
+.brand-avatar { width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg,#F5B5D1,#A78BFA); }
+.brand-meta strong { color:#fff; font-weight:600; font-size:14px; display:block; }
+.support { padding:10px 18px; display:flex; align-items:center; gap:10px; color:var(--side-text); font-size:13px; }
+.support svg { width:16px; height:16px; }
+.nav { padding:10px; flex:1; margin-top:12px; }
+.nav a { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; color:var(--side-text); font-size:13.5px; font-weight:500; margin-bottom:2px; cursor:pointer; position:relative; }
+.nav a:hover { background:var(--side-hover); color:#fff; }
+.nav a.active { background:var(--side-active); color:#fff; }
+.nav a svg { width:18px; height:18px; flex-shrink:0; }
+.nav .badge-dot { position:absolute; top:8px; left:24px; width:8px; height:8px; background:#D14B4B; border-radius:50%; border:2px solid var(--side); }
+.logout { padding:14px 18px; display:flex; align-items:center; gap:10px; color:var(--side-text); font-size:13.5px; cursor:pointer; }
+.logout:hover { color:#fff; }
+.valmo-foot { padding:12px 18px 14px; color:#5A6480; font-size:18px; font-weight:700; letter-spacing:1px; border-top:1px solid rgba(255,255,255,.06); }
+
+/* ===== Topbar ===== */
+.topbar { padding:18px 28px 8px; display:flex; align-items:center; justify-content:space-between; background:var(--bg); }
+.topbar h1 { font-size:22px; font-weight:700; letter-spacing:-.3px; }
+.topbar-right { display:flex; align-items:center; gap:14px; }
+.howbtn { display:inline-flex; align-items:center; gap:6px; padding:8px 10px; background:transparent; border:none; font-size:13.5px; color:var(--ink-1); font-weight:500; }
+.howbtn .play { width:22px; height:18px; background:#FF0000; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; }
+.howbtn .play::after { content:''; border-left:7px solid #fff; border-top:5px solid transparent; border-bottom:5px solid transparent; margin-left:2px; }
+.searchbox { display:flex; align-items:center; gap:8px; padding:8px 14px; background:#fff; border:1px solid var(--line); border-radius:6px; min-width:280px; }
+.searchbox input { border:none; outline:none; width:100%; font-size:13.5px; color:var(--ink-1); }
+.searchbox input::placeholder { color:var(--ink-3); }
+.searchbox svg { width:14px; height:14px; color:var(--ink-3); }
+
+.page { padding:8px 28px 48px; }
+
+/* ===== "Here's how contracts work" 4-step banner ===== */
+.hiw { background:linear-gradient(90deg, #F0F4FF 0%, #FFFFFF 80%); border:1px solid #DAE3F8; border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:14px; margin-bottom:14px; position:relative; }
+.hiw.hidden-banner { display:none; }
+.hiw-title { font-size:13px; font-weight:700; color:var(--ink-1); white-space:nowrap; max-width:90px; line-height:1.3; }
+.hiw-steps { flex:1; display:flex; align-items:center; gap:8px; min-width:0; }
+.hiw-step { font-size:12.5px; color:var(--ink-2); line-height:1.35; flex:1; min-width:0; }
+.hiw-arrow { color:#9DB2E8; font-size:14px; flex-shrink:0; }
+.hindi-pill { display:inline-flex; align-items:center; gap:6px; padding:5px 10px; background:#E4ECFC; color:var(--primary-2); border-radius:6px; font-size:12px; font-weight:600; flex-shrink:0; cursor:pointer; }
+.hindi-pill::before { content:'▶'; font-size:9px; }
+
+/* ===== Overview cards ===== */
+.overview { display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin-bottom:18px; }
+.ovc { background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; cursor:pointer; transition:border-color .15s, box-shadow .15s; min-height:84px; }
+.ovc:hover { border-color:#C7D3F7; box-shadow:var(--shadow-sm); }
+.ovc-title { font-size:14px; font-weight:700; color:var(--ink-1); display:flex; align-items:center; justify-content:space-between; gap:8px; line-height:1.25; }
+.ovc-title svg { width:14px; height:14px; color:var(--ink-3); flex-shrink:0; }
+.ovc-sub { font-size:12px; color:var(--danger); margin-top:6px; font-weight:500; }
+.ovc-sub.muted { color:var(--ink-3); }
+
+/* ===== Tabs (underline style) ===== */
+.tabs { display:flex; gap:0; background:#fff; border:1px solid var(--line); border-radius:10px 10px 0 0; padding:0 8px; }
+.tab { padding:14px 18px; font-size:14px; font-weight:500; color:var(--ink-2); cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-1px; }
+.tab:hover { color:var(--ink-1); }
+.tab.active { color:var(--primary-2); font-weight:600; border-bottom-color:var(--primary-2); }
+
+/* ===== Sub-tabs (Upcoming) ===== */
+.subtabs { background:#fff; border-left:1px solid var(--line); border-right:1px solid var(--line); padding:12px 16px 0; display:none; gap:8px; }
+.subtabs.show { display:flex; }
+.subtab { padding:10px 14px; border:1px solid var(--line); border-radius:8px; cursor:pointer; min-width:140px; background:#fff; }
+.subtab.active { border-color:var(--primary-2); background:#fff; }
+.subtab .st-title { font-size:13px; font-weight:500; color:var(--ink-1); }
+.subtab.active .st-title { color:var(--primary-2); font-weight:600; }
+.subtab .st-count { font-size:14px; font-weight:600; color:var(--ink-1); margin-top:2px; }
+
+/* ===== Filter row ===== */
+.filterbar { display:flex; align-items:center; gap:10px; padding:14px 16px; background:#fff; border-left:1px solid var(--line); border-right:1px solid var(--line); flex-wrap:wrap; }
+.filterbar .lbl { font-size:13px; color:var(--ink-2); font-weight:500; }
+.filt { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid var(--line); border-radius:6px; background:#fff; font-size:13px; color:var(--ink-2); cursor:pointer; min-width:130px; justify-content:space-between; }
+.filt:hover { border-color:#C7D3F7; }
+.filt.has-search::before { content:''; width:14px; height:14px; background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A8094' stroke-width='2'><circle cx='11' cy='11' r='7'/><path d='m21 21-4.3-4.3'/></svg>") no-repeat center / contain; }
+.filt .chev { color:var(--ink-3); font-size:10px; }
+.filterbar .sep { flex:1; }
+.sortgrp { display:inline-flex; align-items:center; gap:8px; }
+.dlbtn { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border:1px solid var(--primary-2); border-radius:6px; color:var(--primary-2); font-size:13px; font-weight:600; background:#fff; cursor:pointer; }
+.dlbtn:hover { background:var(--primary-bg); }
+.dlbtn svg { width:14px; height:14px; }
+
+/* ===== Reminder banner (Pending only) ===== */
+.rembanner { display:none; align-items:center; gap:12px; padding:12px 16px; background:#FFF3DC; border-left:1px solid var(--line); border-right:1px solid var(--line); border-top:1px solid #F7DDA8; }
+.rembanner.show { display:flex; }
+.rembanner .bell { font-size:16px; color:var(--warning); }
+.rembanner .msg { flex:1; font-size:13px; color:var(--ink-1); }
+.rembanner .msg strong { font-weight:700; }
+.rembanner button { padding:6px 12px; font-size:12.5px; font-weight:600; color:var(--primary-2); background:#fff; border:1px solid var(--primary-2); border-radius:6px; cursor:pointer; }
+
+/* Helper banner (Upcoming "Assign vehicle and driver…") */
+.helperbanner { display:none; align-items:center; gap:12px; padding:12px 16px; background:var(--primary-bg); border-left:1px solid var(--line); border-right:1px solid var(--line); border-top:1px solid #D1DBF4; }
+.helperbanner.show { display:flex; }
+.helperbanner .i { width:16px; height:16px; color:var(--primary-2); flex-shrink:0; }
+.helperbanner .msg { flex:1; font-size:13px; color:var(--ink-1); }
+.helperbanner .x { color:var(--ink-3); padding:4px; cursor:pointer; }
+.helperbanner .hindi-pill { background:#E4ECFC; }
+
+/* Helper banner (Active "Tap View to assign default vehicle…") */
+.active-tip { display:none; align-items:center; gap:12px; padding:12px 16px; background:var(--neutral-bg); border-left:1px solid var(--line); border-right:1px solid var(--line); border-top:1px solid var(--line); font-size:13px; color:var(--ink-2); }
+.active-tip.show { display:flex; }
+
+/* Closed banner */
+.closed-banner { display:none; align-items:center; gap:12px; padding:12px 16px; background:#1A2754; border-left:1px solid var(--line); border-right:1px solid var(--line); color:#fff; font-size:13px; }
+.closed-banner.show { display:flex; }
+.closed-banner strong { font-weight:700; }
+.closed-banner .x { margin-left:auto; cursor:pointer; color:#fff; opacity:.7; }
+.closed-banner .x:hover { opacity:1; }
+
+/* ===== Table ===== */
+.tablewrap { background:#fff; border:1px solid var(--line); border-top:none; border-radius:0 0 10px 10px; overflow:hidden; }
+table { width:100%; border-collapse:collapse; }
+thead th { text-align:left; padding:14px 16px; font-size:12.5px; font-weight:500; color:var(--ink-2); background:#F4F6FA; border-bottom:1px solid var(--line); white-space:nowrap; }
+thead th .ico-i { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; border:1px solid var(--ink-3); border-radius:50%; color:var(--ink-3); font-size:9px; margin-left:4px; cursor:help; position:relative; font-style:normal; }
+thead th .ico-i:hover { color:var(--primary-2); border-color:var(--primary-2); }
+thead th .ico-i:hover::after { content:attr(data-tip); position:absolute; top:22px; left:50%; transform:translateX(-50%); background:#0B1430; color:#fff; padding:8px 12px; border-radius:6px; font-size:12px; font-weight:400; white-space:normal; width:240px; z-index:20; line-height:1.4; }
+tbody td { padding:18px 16px; font-size:13px; color:var(--ink-1); border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:last-child td { border-bottom:none; }
+tbody tr:hover td { background:#FAFBFD; }
+td .ct-id { font-weight:500; color:var(--ink-1); }
+td .accept-by { color:var(--danger); font-weight:500; font-size:12.5px; margin-top:4px; display:block; }
+td .accept-by.warn { color:var(--warning); }
+td .starts-in { color:var(--danger); font-weight:500; font-size:12.5px; margin-top:4px; display:block; }
+td .starts-in.warn { color:var(--warning); }
+td .starts-in.neutral { color:var(--ink-2); }
+td .reminder-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; background:#fff; border:1px solid var(--line); color:var(--ink-2); border-radius:999px; font-size:11px; margin-top:6px; }
+td .reminder-chip::before { content:'🔔'; font-size:10px; }
+td .status-chip { display:inline-flex; align-items:center; padding:3px 10px; border-radius:6px; font-size:11.5px; font-weight:500; margin-top:6px; }
+.chip-blue { background:var(--info-bg); color:var(--info); }
+.chip-green { background:var(--success-bg); color:var(--success); }
+.chip-amber { background:var(--warning-bg); color:var(--warning); }
+.chip-red { background:var(--danger-bg); color:var(--danger); }
+.chip-neutral { background:var(--neutral-bg); color:var(--ink-2); }
+td .route-main { color:var(--ink-1); position:relative; cursor:default; }
+td .route-main .nodes-pill { background:var(--neutral-bg); color:var(--ink-2); padding:2px 8px; border-radius:999px; font-size:11.5px; font-weight:500; margin:0 4px; }
+td .route-main:hover .route-tip { display:block; }
+.route-tip { display:none; position:absolute; bottom:calc(100% + 8px); left:0; background:#0B1430; color:#fff; padding:10px 12px; border-radius:6px; font-size:12px; white-space:nowrap; z-index:30; box-shadow:var(--shadow-md); }
+.route-tip .rt-label { font-size:10.5px; color:#9DB2E8; margin-bottom:4px; }
+.route-tip .rt-value { font-size:12px; font-weight:500; color:#fff; }
+td .km { color:var(--ink-3); font-size:11.5px; margin-top:4px; display:block; }
+td .earnings-up { font-size:11px; color:var(--success); margin-top:4px; font-weight:500; }
+td .earnings-up.dn { color:var(--danger); }
+td .updated-pill { display:inline-block; padding:1px 8px; background:var(--warning-bg); color:var(--warning); border-radius:999px; font-size:10.5px; font-weight:500; margin-top:4px; }
+td .perf-row { display:flex; flex-direction:column; gap:3px; }
+td .perf-line { font-size:12px; color:var(--ink-2); }
+td .perf-line strong { color:var(--ink-1); font-weight:600; }
+td .perf-tag { display:inline-block; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:500; margin-top:4px; }
+.btn { display:inline-flex; align-items:center; justify-content:center; padding:8px 16px; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; }
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-primary:hover { background:#003078; }
+.btn-primary[disabled] { background:#9CABDA; cursor:not-allowed; }
+.btn-ghost { background:#fff; color:var(--ink-1); border:1px solid var(--line); }
+.btn-ghost:hover { background:var(--neutral-bg); }
+.btn-outline { background:#fff; color:var(--primary-2); border:1px solid var(--primary-2); }
+.btn-outline:hover { background:var(--primary-bg); }
+.btn-danger-ghost { background:#fff; color:var(--danger); border:1px solid var(--line); }
+.btn-danger-ghost:hover { border-color:var(--danger); }
+.btn-link { color:var(--danger); font-weight:500; padding:4px 0; background:none; font-size:13px; }
+.btn-link.primary { color:var(--primary-2); }
+.action-stack { display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+.action-stack .btn { min-width:96px; }
+
+/* ===== Empty/zero UI ===== */
+.zero { text-align:center; padding:80px 20px; }
+.zero-img { width:80px; height:80px; margin:0 auto 14px; background:#EEF0F5; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:36px; color:var(--ink-3); }
+.zero h3 { font-size:16px; font-weight:600; color:var(--ink-1); margin-bottom:6px; }
+.zero p { font-size:13px; color:var(--ink-2); }
+
+/* ===== Detail (L2) page ===== */
+.detail { display:none; }
+.detail.show { display:block; }
+.detail-bread { font-size:13px; color:var(--ink-3); margin-bottom:14px; padding-top:6px; }
+.detail-bread .crumb-cur { color:var(--ink-2); }
+.detail-bread .sep { margin:0 6px; color:var(--ink-3); }
+.detail-back { display:inline-flex; align-items:center; gap:10px; font-size:22px; font-weight:700; color:var(--ink-1); margin-bottom:18px; cursor:pointer; }
+.detail-back .back-arrow { color:var(--ink-2); font-size:20px; }
+.detail-back .status-pill { padding:3px 10px; border-radius:6px; font-size:12.5px; font-weight:500; }
+
+.detail-card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin-bottom:14px; }
+.detail-card h3 { font-size:15px; font-weight:600; color:var(--ink-1); margin-bottom:14px; }
+.detail-card h3 .h-tip { font-size:12.5px; color:var(--ink-2); background:var(--info-bg); padding:4px 10px; border-radius:6px; font-weight:400; margin-left:10px; }
+.ov-grid { display:grid; grid-template-columns:1fr 2fr 1fr; gap:12px; }
+.ov-grid.two-rows .ov-row-2 { grid-column:1/-1; display:grid; grid-template-columns:1fr 2fr 1fr 1fr; gap:12px; }
+.ov-cell { border:1px solid var(--line-2); border-radius:8px; padding:14px 16px; display:flex; align-items:flex-start; gap:10px; background:#fff; }
+.ov-cell .icon { width:18px; height:18px; color:var(--ink-3); margin-top:2px; flex-shrink:0; }
+.ov-cell .lbl { font-size:12px; color:var(--ink-2); margin-bottom:4px; }
+.ov-cell .val { font-size:14px; font-weight:600; color:var(--ink-1); }
+.ov-cell .sub { font-size:12px; color:var(--ink-2); margin-top:2px; }
+.ov-cell .collapse-link { color:var(--primary-2); font-size:12px; font-weight:500; margin-left:8px; cursor:pointer; }
+
+/* Dispute summary table */
+.dispute-table { width:100%; border-collapse:collapse; }
+.dispute-table th { text-align:left; padding:12px 14px; font-size:12.5px; font-weight:500; color:var(--ink-2); background:#F4F6FA; border-bottom:1px solid var(--line); }
+.dispute-table td { padding:14px; font-size:13px; color:var(--ink-1); }
+.dispute-table .ds-under { color:var(--info); font-weight:500; }
+.dispute-table .ds-resolved { color:var(--success); font-weight:500; }
+.dispute-table .ds-rejected { color:var(--danger); font-weight:500; }
+.dispute-table .ds-partial { color:var(--warning); font-weight:500; }
+.dispute-banner { display:inline-block; padding:6px 12px; border-radius:6px; font-size:12.5px; font-weight:400; }
+.db-info { background:var(--info-bg); color:var(--info); }
+.db-success { background:var(--success-bg); color:var(--success); }
+.db-warning { background:var(--warning-bg); color:var(--warning); }
+.db-danger { background:var(--danger-bg); color:var(--danger); }
+
+/* Assign vehicle / driver block */
+.assign-block { border-top:1px solid var(--line-2); padding-top:14px; }
+.assign-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px; }
+.assign-row select { padding:11px 14px; border:1px solid var(--line); border-radius:6px; background:#fff; font-size:13px; color:var(--ink-2); appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%237A8094' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; padding-right:36px; }
+.assign-helper { font-size:12.5px; color:var(--ink-2); }
+.assign-helper strong { color:var(--ink-1); font-weight:600; }
+.assigned-chip-row { display:flex; align-items:center; gap:14px; padding:10px 14px; background:var(--neutral-bg); border-radius:8px; margin-bottom:10px; }
+.assigned-chip-row .ac-date { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--ink-1); font-weight:500; }
+.assigned-chip-row .ac-date::before { content:''; width:6px; height:6px; background:var(--success); border-radius:50%; }
+.assigned-chip-row .ac-veh { font-size:13px; color:var(--ink-2); padding:0 14px; border-left:1px solid var(--line); }
+
+/* Trips card metrics */
+.trips-card .tc-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.trips-card h3 { margin-bottom:0; }
+.trips-card .view-all { color:var(--primary-2); font-size:13px; font-weight:500; cursor:pointer; }
+.term-risk { padding:14px 16px; background:#FFF4F4; border:1px solid #F5C8C8; border-radius:8px; display:flex; gap:12px; align-items:flex-start; margin-bottom:16px; }
+.term-risk.warn { background:#FFF6E0; border-color:#F4D89B; }
+.term-risk .tr-icon { font-size:18px; color:var(--danger); }
+.term-risk.warn .tr-icon { color:var(--warning); }
+.term-risk .tr-body { font-size:13px; color:var(--ink-1); line-height:1.5; }
+.term-risk .tr-body strong { font-weight:600; }
+.metrics-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; padding:10px 0 16px; border-bottom:1px solid var(--line-2); margin-bottom:0; }
+.metric { padding:0 12px; }
+.metric:not(:first-child) { border-left:1px solid var(--line-2); }
+.metric .m-label { font-size:13px; color:var(--ink-2); margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+.metric .m-label .ico-i { width:14px; height:14px; border:1px solid var(--ink-3); color:var(--ink-3); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:9px; cursor:help; font-style:normal; position:relative; }
+.metric .m-label .ico-i:hover { color:var(--primary-2); border-color:var(--primary-2); }
+.metric .m-label .ico-i:hover::after { content:attr(data-tip); position:absolute; bottom:20px; left:50%; transform:translateX(-50%); background:#0B1430; color:#fff; padding:8px 12px; border-radius:6px; font-size:11.5px; font-weight:400; white-space:normal; width:240px; z-index:30; line-height:1.4; }
+.metric .m-value { font-size:22px; font-weight:700; color:var(--ink-1); display:flex; align-items:baseline; gap:6px; }
+.metric .m-value.up { color:var(--success); }
+.metric .m-value.up::after { content:'↑'; font-size:15px; color:var(--success); }
+.metric .m-value.dn { color:var(--danger); }
+.metric .m-value.dn::after { content:'↓'; font-size:15px; color:var(--danger); }
+.metric .m-value.warn { color:var(--warning); }
+.metric .m-value.warn::after { content:'↓'; font-size:15px; color:var(--warning); }
+.metric .m-sub { font-size:12px; color:var(--ink-2); margin-top:4px; }
+.metric .m-sub strong { color:var(--ink-1); font-weight:600; }
+
+.trips-list { width:100%; border-collapse:collapse; margin-top:8px; }
+.trips-list th { text-align:left; padding:12px 14px; font-size:12.5px; font-weight:500; color:var(--ink-2); background:#F4F6FA; }
+.trips-list td { padding:14px; font-size:13px; color:var(--ink-1); border-bottom:1px solid var(--line-2); }
+.trips-list .trip-link { color:var(--primary-2); font-weight:500; }
+.trips-list .miss { color:var(--danger); font-weight:500; }
+
+.detail-footer { position:sticky; bottom:0; background:#fff; border-top:1px solid var(--line); padding:16px 20px; display:flex; justify-content:flex-end; gap:10px; margin:18px -28px 0; padding-left:28px; padding-right:28px; }
+
+/* ===== Modal ===== */
+.modal-backdrop { position:fixed; inset:0; background:rgba(15,25,60,.45); display:none; align-items:center; justify-content:center; z-index:60; padding:20px; }
+.modal-backdrop.show { display:flex; }
+.modal { background:#fff; border-radius:12px; width:100%; max-width:600px; max-height:92vh; display:flex; flex-direction:column; box-shadow:var(--shadow-lg); overflow:hidden; }
+.modal.lg { max-width:680px; }
+.modal-head { padding:16px 22px 14px; display:flex; align-items:center; justify-content:space-between; gap:12px; border-bottom:1px solid var(--line-2); }
+.modal-head h2 { font-size:16px; font-weight:600; color:var(--ink-1); display:flex; align-items:center; gap:10px; }
+.modal-head h2 .head-link { font-size:13px; color:var(--primary-2); font-weight:500; cursor:pointer; padding-left:8px; border-left:1px solid var(--line); }
+.modal-close { width:30px; height:30px; border-radius:6px; color:var(--ink-3); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+.modal-close:hover { background:#EEF0F5; color:var(--ink-1); }
+.modal-body { padding:18px 22px 20px; overflow-y:auto; flex:1; }
+.modal-foot { padding:14px 22px; border-top:1px solid var(--line-2); display:flex; justify-content:flex-end; gap:10px; background:#fff; }
+
+.mod-contract-id { font-size:14px; font-weight:600; color:var(--ink-1); margin-bottom:12px; }
+.summary-card { border:1px solid var(--line); border-radius:8px; overflow:hidden; margin-bottom:14px; }
+.summary-route { background:#F4F6FA; padding:12px 14px; display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.summary-route .sr-label { font-size:11.5px; color:var(--ink-2); font-weight:500; }
+.summary-route .sr-value { font-size:13px; font-weight:600; color:var(--ink-1); margin-top:3px; line-height:1.4; }
+.summary-route .sr-direction { color:var(--primary-2); font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:4px; white-space:nowrap; flex-shrink:0; cursor:pointer; }
+.summary-grid { padding:14px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.summary-grid .sg-cell .sg-lbl { font-size:11.5px; color:var(--ink-2); }
+.summary-grid .sg-cell .sg-val { font-size:13px; font-weight:600; color:var(--ink-1); margin-top:2px; }
+
+.assign-mod-block { background:#fff; border:1px solid var(--line); border-radius:8px; padding:14px; margin-bottom:14px; }
+.assign-mod-block h4 { font-size:13.5px; font-weight:600; color:var(--ink-1); display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.assign-mod-block h4 .opt { font-size:11px; font-weight:500; color:var(--ink-3); background:var(--neutral-bg); padding:2px 8px; border-radius:999px; }
+.assign-mod-block .am-helper { font-size:12.5px; color:var(--ink-2); margin-bottom:10px; }
+.assign-mod-block .am-row { display:grid; grid-template-columns:1fr 1fr auto; gap:8px; align-items:center; }
+.assign-mod-block select { padding:10px 12px; border:1px solid var(--line); border-radius:6px; background:#fff; appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%237A8094' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>"); background-repeat:no-repeat; background-position:right 10px center; padding-right:30px; }
+.am-saved { display:flex; align-items:center; gap:10px; padding:8px 12px; background:#F4F6FA; border-radius:6px; font-size:13px; margin-bottom:8px; }
+.am-saved .ams-dot { width:6px; height:6px; background:var(--success); border-radius:50%; }
+
+.tnc-block { padding:0; margin-top:6px; }
+.tnc-block ul { list-style:disc; padding-left:18px; margin-bottom:14px; }
+.tnc-block li { font-size:12.5px; color:var(--ink-2); line-height:1.55; margin-bottom:5px; }
+.tnc-block a { color:var(--primary-2); font-weight:600; }
+.tnc-check { display:flex; align-items:center; gap:10px; padding:10px 0 0; font-size:13px; color:var(--ink-1); border-top:1px solid var(--line-2); padding-top:14px; }
+.tnc-check input { width:16px; height:16px; accent-color:var(--primary-2); }
+
+.note-block { background:#fff; border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin-bottom:14px; }
+.note-block strong { font-weight:700; color:var(--ink-1); display:block; margin-bottom:6px; font-size:13px; }
+.note-block ul { list-style:disc; padding-left:18px; margin:0; }
+.note-block li { font-size:12.5px; color:var(--ink-2); line-height:1.5; margin-bottom:4px; }
+.note-block .loss { display:flex; align-items:center; gap:8px; padding-top:8px; margin-top:6px; border-top:1px dashed var(--line-2); }
+.note-block .loss-title { font-size:13px; font-weight:600; color:var(--ink-1); display:flex; align-items:center; gap:6px; }
+.note-block .loss-vals { font-size:12.5px; color:var(--ink-2); }
+.note-block .loss-vals strong { color:var(--danger); font-weight:600; display:inline; }
+
+.reject-warn { background:#FFF4F4; border:1px solid #F5C8C8; border-radius:8px; padding:12px 14px; font-size:13px; color:var(--ink-1); line-height:1.5; margin-bottom:14px; }
+.reject-warn .rw-title { font-weight:600; color:var(--ink-1); }
+.reject-warn .rw-vals { color:var(--danger); font-weight:600; }
+
+.form-field { margin-bottom:12px; position:relative; }
+.form-field label { display:block; font-size:12px; font-weight:500; color:var(--ink-2); margin-bottom:6px; }
+.form-field select, .form-field input, .form-field textarea { width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:6px; background:#fff; font-size:13px; color:var(--ink-1); outline:none; }
+.form-field select { appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%237A8094' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; padding-right:36px; cursor:pointer; }
+.form-field textarea { min-height:80px; resize:vertical; font-family:inherit; }
+.form-field select:focus, .form-field input:focus, .form-field textarea:focus { border-color:var(--primary-2); }
+.form-field .float-label { position:absolute; top:-7px; left:10px; background:#fff; padding:0 6px; font-size:11px; color:var(--ink-2); }
+
+/* Custom select dropdown (radio list) */
+.opt-list { background:#fff; border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow-md); overflow:hidden; }
+.opt-item { display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; font-size:13.5px; color:var(--ink-1); }
+.opt-item:hover { background:#FAFBFD; }
+.opt-item .radio { width:16px; height:16px; border:1.5px solid var(--ink-3); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+.opt-item.selected { background:var(--primary-bg); }
+.opt-item.selected .radio { border-color:var(--primary-2); }
+.opt-item.selected .radio::after { content:''; width:8px; height:8px; background:var(--primary-2); border-radius:50%; }
+
+/* Success modal (Dispute / Termination) */
+.success-mod-body { text-align:center; padding:24px 22px 18px; }
+.success-mod-body .conf { font-size:48px; margin-bottom:8px; }
+.success-mod-body h3 { font-size:18px; font-weight:700; color:var(--ink-1); margin-bottom:10px; }
+.success-mod-body p { font-size:13px; color:var(--ink-2); line-height:1.55; max-width:380px; margin:0 auto; }
+.success-mod-body p strong { color:var(--ink-1); font-weight:600; }
+.success-mod-body .info-note { background:#F4F6FA; border-radius:8px; padding:12px 14px; margin-top:14px; font-size:12.5px; color:var(--ink-2); line-height:1.5; display:flex; gap:10px; align-items:flex-start; text-align:left; }
+.success-mod-body .info-note .nico { font-size:16px; color:var(--warning); }
+.success-mod-body .info-note strong { color:var(--ink-1); font-weight:600; }
+
+/* ===== Reminder drawer ===== */
+.drawer-bd { position:fixed; inset:0; background:rgba(15,25,60,.40); opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:55; }
+.drawer-bd.show { opacity:1; pointer-events:auto; }
+.drawer { position:fixed; top:0; right:0; bottom:0; width:520px; max-width:95vw; background:#fff; box-shadow:var(--shadow-lg); transform:translateX(100%); transition:transform .25s ease; z-index:56; display:flex; flex-direction:column; }
+.drawer.show { transform:translateX(0); }
+.drawer.drawer-wide { width:600px; }
+.drawer-foot-actions { display:flex; justify-content:flex-end; gap:10px; padding:14px 22px; background:#fff; border-top:1px solid var(--line-2); }
+.drawer-head { padding:18px 22px; border-bottom:1px solid var(--line-2); display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.drawer-head h2 { font-size:16px; font-weight:600; color:var(--ink-1); display:flex; align-items:center; gap:10px; }
+.drawer-body { padding:16px 22px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:14px; }
+.drawer-foot { padding:12px 22px; border-top:1px solid var(--line-2); font-size:12.5px; color:var(--ink-3); background:#fff; }
+.rem-card { border:1px solid var(--line); border-radius:8px; padding:14px 16px; }
+.rem-card .rc-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.rem-card .rc-id { font-size:13px; font-weight:600; color:var(--ink-1); }
+.rem-card .rc-age { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; color:var(--ink-2); }
+.rem-card .rc-age::before { content:'🔔'; font-size:11px; }
+.rem-card .rc-route { font-size:13px; color:var(--ink-1); margin-top:8px; }
+.rem-card .rc-meta { font-size:12.5px; color:var(--ink-2); margin-top:4px; }
+.rem-card .rc-period { font-size:12.5px; color:var(--ink-2); margin-top:6px; }
+.rem-card .rc-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; }
+.rem-card .rc-foot .btn-outline { padding:7px 12px; font-size:12.5px; }
+.rem-card .rc-foot .accept-by { font-size:12.5px; color:var(--danger); font-weight:500; }
+.rem-card .rc-foot .accept-by.warn { color:var(--warning); }
+
+/* ===== Toast ===== */
+.toast { position:fixed; bottom:24px; right:24px; background:#0B1430; color:#fff; padding:14px 18px; border-radius:8px; box-shadow:var(--shadow-lg); display:none; align-items:center; gap:10px; font-size:13px; z-index:80; max-width:420px; }
+.toast.show { display:inline-flex; animation:slideIn .25s ease; }
+.toast .t-check { width:20px; height:20px; background:var(--success); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:#fff; font-size:13px; flex-shrink:0; }
+.toast .t-link { color:#9DB2E8; font-weight:600; margin-left:8px; cursor:pointer; }
+@keyframes slideIn { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+.hidden { display:none !important; }
+
+/* ============================================================
+   CM PASSCODE LOCK — gates the Contract Management content area only.
+   Sidebar (left 224px) stays visible & usable -> tab-only scope.
+   ============================================================ */
+.cm-lock { position:fixed; inset:0 0 0 224px; background:var(--bg); z-index:50;
+  display:flex; align-items:center; justify-content:center; padding:24px; }
+.cm-lock.hidden { display:none !important; }
+.cm-card { width:100%; max-width:420px; background:#fff; border:1px solid var(--line);
+  border-radius:14px; box-shadow:var(--shadow-md); padding:28px 28px 22px; text-align:center; }
+.cm-lock-ico { width:56px; height:56px; border-radius:50%; background:var(--primary-bg);
+  color:var(--primary); display:inline-flex; align-items:center; justify-content:center; margin-bottom:14px; }
+.cm-lock-ico svg { width:26px; height:26px; }
+.cm-card h2 { font-size:18px; font-weight:700; color:var(--ink-1); margin-bottom:6px; }
+.cm-card .cm-sub { font-size:13px; color:var(--ink-2); line-height:1.5; margin-bottom:18px; }
+.cm-card .cm-sub strong { color:var(--ink-1); }
+.cm-screen { display:none; }
+.cm-screen.active { display:block; }
+
+/* simulated SMS helper */
+.cm-sms { display:flex; gap:10px; text-align:left; background:var(--info-bg); border:1px dashed #B6D3EC;
+  border-radius:8px; padding:11px 13px; margin-bottom:16px; font-size:12px; color:var(--ink-2); line-height:1.45; }
+.cm-sms svg { width:16px; height:16px; color:var(--info); flex-shrink:0; margin-top:1px; }
+.cm-sms b { color:var(--ink-1); letter-spacing:.5px; }
+.cm-sms .demo-tag { display:inline-block; font-size:10px; font-weight:700; color:var(--info);
+  background:#fff; border:1px solid #B6D3EC; border-radius:4px; padding:1px 5px; margin-left:4px; vertical-align:1px; }
+
+/* passcode field with eye toggle */
+.cm-field { text-align:left; margin-bottom:14px; }
+.cm-field label { display:block; font-size:12px; font-weight:600; color:var(--ink-2); margin-bottom:6px; }
+.cm-inwrap { position:relative; }
+.cm-inwrap input { width:100%; padding:13px 44px 13px 14px; border:1px solid var(--line); border-radius:8px;
+  font-size:15px; color:var(--ink-1); outline:none; letter-spacing:.5px; }
+.cm-inwrap input:focus { border-color:var(--primary-2); }
+.cm-inwrap input.err { border-color:var(--danger); background:var(--danger-bg); }
+.cm-eye { position:absolute; right:6px; top:50%; transform:translateY(-50%); width:34px; height:34px;
+  border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:var(--ink-3); }
+.cm-eye:hover { background:var(--neutral-bg); color:var(--ink-1); }
+.cm-eye svg { width:18px; height:18px; }
+.cm-hint { font-size:11.5px; color:var(--ink-3); margin-top:6px; }
+
+/* inline error (icon + text, never colour alone) */
+.cm-error { display:none; align-items:center; gap:6px; justify-content:center; text-align:left;
+  color:var(--danger); font-size:12.5px; font-weight:500; margin:-4px 0 14px; }
+.cm-error.show { display:flex; }
+.cm-error svg { width:15px; height:15px; flex-shrink:0; }
+
+.cm-cta { width:100%; padding:14px; font-size:14px; font-weight:600; border-radius:8px; min-height:48px; }
+.cm-links { margin-top:14px; display:flex; flex-direction:column; gap:10px; align-items:center; }
+.cm-links a { font-size:13px; color:var(--primary-2); font-weight:600; cursor:pointer; }
+.cm-links a:hover { text-decoration:underline; }
+.cm-foot-note { margin-top:16px; padding-top:14px; border-top:1px solid var(--line-2);
+  font-size:11.5px; color:var(--ink-3); display:flex; align-items:center; justify-content:center; gap:6px; }
+.cm-foot-note svg { width:13px; height:13px; }
+.cm-demo-reset { margin-top:10px; font-size:11px; color:var(--ink-3); cursor:pointer; }
+.cm-demo-reset:hover { color:var(--danger); text-decoration:underline; }
+
+/* OTP boxes */
+.cm-otp { display:flex; gap:10px; justify-content:center; margin-bottom:14px; }
+.cm-otp input { width:48px; height:54px; text-align:center; font-size:20px; font-weight:700;
+  border:1px solid var(--line); border-radius:8px; color:var(--ink-1); outline:none; }
+.cm-otp input:focus { border-color:var(--primary-2); }
+.cm-otp input.err { border-color:var(--danger); background:var(--danger-bg); }
+.cm-resend { font-size:12px; color:var(--ink-3); margin-bottom:4px; }
+.cm-resend b { color:var(--ink-1); }
+.cm-back { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-3);
+  cursor:pointer; margin-bottom:14px; }
+.cm-back:hover { color:var(--ink-1); }
+.cm-back svg { width:14px; height:14px; }
+.cm-hindi { margin-top:4px; }
+
+/* topbar Lock button */
+.lockbtn { display:inline-flex; align-items:center; gap:6px; padding:8px 12px; background:#fff;
+  border:1px solid var(--line); border-radius:6px; font-size:13px; font-weight:500; color:var(--ink-1); }
+.lockbtn:hover { border-color:var(--primary-2); color:var(--primary-2); }
+.lockbtn svg { width:15px; height:15px; }
+
+/* intro (first-time orientation) */
+.cm-points { text-align:left; margin:2px 0 14px; padding:0; list-style:none; }
+.cm-points li { display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--ink-1); margin-bottom:10px; line-height:1.4; }
+.cm-points li svg { width:20px; height:20px; color:var(--primary); flex-shrink:0; margin-top:1px; }
+.cm-bridge { display:flex; gap:9px; align-items:flex-start; text-align:left; background:var(--info-bg); border:1px solid #CFE3F5; border-radius:8px; padding:11px 13px; margin-bottom:14px; font-size:12.5px; color:var(--ink-2); line-height:1.5; }
+.cm-bridge svg { width:16px; height:16px; color:var(--info); flex-shrink:0; margin-top:1px; }
+.cm-bridge b { color:var(--ink-1); }
+.cm-cta .cta-ico { width:17px; height:17px; margin-right:8px; }
+
+/* "keep it secret" callout on the set-password screen */
+.cm-secret { text-align:left; background:#FFF8E8; border:1px solid #F0DCA8; border-radius:10px; padding:13px 14px; margin:2px 0 16px; display:flex; gap:11px; }
+.cm-secret .sec-ico { width:34px; height:34px; border-radius:8px; background:#FBE9BE; color:#9A6B00; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+.cm-secret .sec-ico svg { width:18px; height:18px; }
+.cm-secret .sec-body { font-size:12.5px; color:#6B5414; line-height:1.5; }
+.cm-secret .sec-strong { display:block; font-size:13.5px; font-weight:700; color:#7A4E00; margin-bottom:4px; }
+
+/* support / fallback + field hint */
+.cm-support { font-size:12px; color:var(--ink-3); margin:8px 0 2px; }
+.cm-support a { color:var(--primary-2); font-weight:600; cursor:pointer; }
+.cm-field-hint { font-size:11.5px; color:var(--ink-3); margin-top:6px; text-align:left; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="brand-user">
+      <div class="brand-avatar"></div>
+      <div class="brand-meta"><strong>Karan Verma</strong></div>
+    </div>
+    <div class="support">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17v-6a8 8 0 0 1 16 0v6"/><path d="M4 17a2 2 0 0 0 2 2h1v-6H6a2 2 0 0 0-2 2v2zM20 17a2 2 0 0 1-2 2h-1v-6h1a2 2 0 0 1 2 2v2z"/></svg>
+      Valmo Support
+    </div>
+    <nav class="nav">
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg> Home</a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h13l3 4v6h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M3 17h2"/></svg> Trips</a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg> Disputes<span class="badge-dot"></span></a>
+      <a class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg> Contract Management</a>
+    </nav>
+    <div class="logout">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </div>
+    <div class="valmo-foot">VALMO</div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+    <div class="topbar">
+      <h1 id="pageTitle">Contract Management</h1>
+      <div class="topbar-right">
+        <button class="howbtn"><span class="play"></span> How it works?</button>
+        <button class="lockbtn" id="lockBtn" onclick="CMLock.lock()" title="Lock this section">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Lock
+        </button>
+        <div class="searchbox">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input placeholder="Search by Contract ID" />
+        </div>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <!-- ===== LIST VIEW ===== -->
+      <div id="listView">
+
+        <!-- "Here's how contracts work" -->
+        <div class="hiw" id="hiw">
+          <div class="hiw-title">Here's how<br>contracts work</div>
+          <div class="hiw-steps">
+            <div class="hiw-step">Accept or reject when a new contract comes in</div>
+            <span class="hiw-arrow">→</span>
+            <div class="hiw-step">Raise a dispute before it starts if something's wrong</div>
+            <span class="hiw-arrow">→</span>
+            <div class="hiw-step">Track it anytime and raise a dispute or end it if needed</div>
+            <span class="hiw-arrow">→</span>
+            <div class="hiw-step">See your summary and earnings once it ends</div>
+          </div>
+          <span class="hindi-pill" onclick="alert('Playing Hindi walkthrough… (stub)')">हिंदी में जानकारी</span>
+        </div>
+
+        <!-- Overview cards -->
+        <div class="overview">
+          <div class="ovc" onclick="switchTab('pending')">
+            <div class="ovc-title">10 Pending Contracts <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="ovc-sub">1 new added · <span id="remHeadlineSubline">3 reminders</span></div>
+          </div>
+          <div class="ovc" onclick="switchTab('active','below')">
+            <div class="ovc-title">5 Poor Performing <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="ovc-sub">1 new added</div>
+          </div>
+          <div class="ovc" onclick="switchTab('closed','terminated')">
+            <div class="ovc-title">2 Recently terminated <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="ovc-sub">1 new added</div>
+          </div>
+          <div class="ovc" onclick="switchTab('upcoming','disputed')">
+            <div class="ovc-title">5 Disputed (Upcoming) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="ovc-sub">1 new update</div>
+          </div>
+          <div class="ovc" onclick="switchTab('active','disputed')">
+            <div class="ovc-title">3 Disputed (Active) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="ovc-sub muted">No new updates</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="tabs">
+          <div class="tab active" data-tab="pending">Pending (<span data-cnt="pending">10</span>)</div>
+          <div class="tab" data-tab="upcoming">Upcoming (<span data-cnt="upcoming">10</span>)</div>
+          <div class="tab" data-tab="active">Active (<span data-cnt="active">10</span>)</div>
+          <div class="tab" data-tab="closed">Closed (<span data-cnt="closed">10</span>)</div>
+        </div>
+
+        <!-- Sub-tabs (Upcoming / Active) -->
+        <div class="subtabs" id="subtabs"></div>
+
+        <!-- Filter row -->
+        <div class="filterbar" id="filterbar"></div>
+
+        <!-- Banners -->
+        <div class="rembanner" id="remBanner">
+          <span class="bell">🔔</span>
+          <div class="msg">You've received reminders on <strong>3 contracts</strong>, accept them first</div>
+          <button onclick="openReminderDrawer()">Review reminders</button>
+        </div>
+        <div class="helperbanner" id="upcomingHelper">
+          <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div class="msg">Assign a vehicle and driver to these contract once, they'll be auto-applied to every trip. Click on <strong>View</strong> to set it up. You can always change it for individual trips.</div>
+          <span class="hindi-pill" onclick="alert('Playing Hindi walkthrough…')">हिंदी में जानकारी</span>
+          <span class="x" onclick="document.getElementById('upcomingHelper').classList.remove('show')">✕</span>
+        </div>
+        <div class="active-tip" id="activeTip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          You can move TAT or On-Time Placement from this table. Take necessary actions to improve performance.
+        </div>
+        <div class="closed-banner" id="closedBanner">
+          <span style="font-size:16px;">⛔</span>
+          <div>Here's how contracts move here: <strong>Contracts ending in Pending →</strong> <span style="opacity:.85; font-weight:400;">Accepted contracts are moved into Activation cycle, only Rejected contracts are listed here</span></div>
+          <span class="x" onclick="document.getElementById('closedBanner').classList.remove('show')">✕</span>
+        </div>
+
+        <!-- Table -->
+        <div class="tablewrap">
+          <table>
+            <thead id="thead"></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+          <div class="zero hidden" id="zeroState">
+            <div class="zero-img">📭</div>
+            <h3 id="zeroTitle">All caught up</h3>
+            <p id="zeroMsg">No contracts are waiting for your response.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DETAIL VIEW ===== -->
+      <div class="detail" id="detailView"></div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ===== Reminder drawer ===== -->
+<div class="drawer-bd" id="drawerBd" onclick="closeReminderDrawer()"></div>
+<aside class="drawer" id="reminderDrawer">
+  <div class="drawer-head">
+    <h2>3 Contracts with reminders <span class="hindi-pill">हिंदी में जानकारी</span></h2>
+    <button class="modal-close" onclick="closeReminderDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="reminderBody"></div>
+  <div class="drawer-foot">Reminders are sent by Valmo when a contract needs urgent action.</div>
+</aside>
+
+<!-- ===== Accept drawer (side drawer, not modal) ===== -->
+<div class="drawer-bd" id="acceptBd" onclick="closeAcceptDrawer()"></div>
+<aside class="drawer drawer-wide" id="acceptDrawer">
+  <div class="drawer-head">
+    <h2 id="acceptDrawerTitle">Confirm Contract Acceptance <span class="hindi-pill">हिंदी में जानकारी</span></h2>
+    <button class="modal-close" onclick="closeAcceptDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="acceptDrawerBody"></div>
+  <div class="drawer-foot drawer-foot-actions" id="acceptDrawerFoot"></div>
+</aside>
+
+<!-- ===== Modal root ===== -->
+<div class="modal-backdrop" id="modalBd">
+  <div class="modal lg" id="modal">
+    <div class="modal-head"><h2 id="modalTitle"></h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<!-- ===== Toast ===== -->
+<div class="toast" id="toast"><span class="t-check">✓</span><span id="toastMsg">Done</span><span class="t-link" id="toastLink"></span></div>
+
+<!-- ===== CM PASSCODE LOCK OVERLAY (content area only) ===== -->
+<div class="cm-lock hidden" id="cmLock">
+  <div class="cm-card">
+
+    <!-- SCREEN: first-time intro (orients a context-free new tab) -->
+    <div class="cm-screen" id="cmIntro">
+      <span class="cm-lock-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      </span>
+      <h2>Contract Management</h2>
+      <p class="cm-sub">This private page shows your contracts and money. Only you can open it.</p>
+
+      <div class="cm-bridge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
+        <div><b>OTP comes to ••••••3210.</b> Then set your password.</div>
+      </div>
+
+      <button class="btn btn-primary cm-cta" onclick="CMLock.startSetup()">
+        <svg class="cta-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
+        Get OTP
+      </button>
+      <div class="cm-foot-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+        You do this only once.
+      </div>
+      <div class="cm-demo-reset" onclick="CMLock.resetDemo()">↺ Reset demo (clear saved password)</div>
+    </div>
+
+    <!-- SCREEN: enter password (returning sessions only) -->
+    <div class="cm-screen" id="cmEnter">
+      <span class="cm-lock-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      </span>
+      <h2 id="cmEnterTitle">Contract Management</h2>
+      <p class="cm-sub" id="cmEnterSub">This page is private. Type the password you set to open it.</p>
+
+      <div class="cm-field">
+        <label for="cmEnterInput">Enter your password</label>
+        <div class="cm-inwrap">
+          <input type="password" id="cmEnterInput" placeholder="Your password" autocomplete="off"
+                 onkeydown="if(event.key==='Enter')CMLock.submitEnter()" oninput="CMLock.clearError('cmEnterErr','cmEnterInput')" />
+          <button class="cm-eye" type="button" onclick="CMLock.toggleEye('cmEnterInput',this)" aria-label="Show password">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="cm-error" id="cmEnterErr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span id="cmEnterErrMsg">Wrong password. Try again.</span></div>
+
+      <button class="btn btn-primary cm-cta" onclick="CMLock.submitEnter()">Open</button>
+      <div class="cm-links">
+        <a onclick="CMLock.goForgot()" id="cmForgotLink">Forgot password?</a>
+      </div>
+      <div class="cm-foot-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+        We ask for this every time you open the page.
+      </div>
+      <div class="cm-demo-reset" onclick="CMLock.resetDemo()">↺ Reset demo (clear saved password)</div>
+    </div>
+
+    <!-- SCREEN: set / reset passcode -->
+    <div class="cm-screen" id="cmSet">
+      <span class="cm-lock-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      </span>
+      <h2 id="cmSetTitle">Make your password</h2>
+      <p class="cm-sub">Make a password you can remember. Use 4 or more letters and numbers.</p>
+
+      <div class="cm-field">
+        <label for="cmSetInput">New password</label>
+        <div class="cm-inwrap">
+          <input type="password" id="cmSetInput" placeholder="4 or more letters and numbers" autocomplete="off" oninput="CMLock.clearError('cmSetErr','cmSetInput')" />
+          <button class="cm-eye" type="button" onclick="CMLock.toggleEye('cmSetInput',this)" aria-label="Show password">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="cm-field-hint">Tap the eye to see your password.</div>
+      </div>
+      <div class="cm-field">
+        <label for="cmSetConfirm">Type the same password again</label>
+        <div class="cm-inwrap">
+          <input type="password" id="cmSetConfirm" placeholder="Type it again" autocomplete="off"
+                 onkeydown="if(event.key==='Enter')CMLock.submitSet()" oninput="CMLock.clearError('cmSetErr','cmSetConfirm')" />
+          <button class="cm-eye" type="button" onclick="CMLock.toggleEye('cmSetConfirm',this)" aria-label="Show password">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="cm-error" id="cmSetErr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span id="cmSetErrMsg">These two passwords are different. Type the same password in both boxes.</span></div>
+
+      <div class="cm-secret">
+        <span class="sec-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="15" r="4"/><path d="M10.85 12.15 19 4M18 5l2 2M15 8l2 2"/></svg></span>
+        <div class="sec-body">
+          <span class="sec-strong">Remember this password.</span>
+          You need it every time you open this page. Forgot it? You can reset it with an OTP.
+        </div>
+      </div>
+
+      <button class="btn btn-primary cm-cta" onclick="CMLock.submitSet()">Save password</button>
+    </div>
+
+    <!-- SCREEN: forgot (send OTP) -->
+    <div class="cm-screen" id="cmForgot">
+      <span class="cm-back" onclick="CMLock.show('cmEnter')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> Back</span>
+      <span class="cm-lock-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </span>
+      <h2>Make a new password</h2>
+      <p class="cm-sub">No problem. We will send an OTP to <strong>••••••3210</strong>. Then make a new password. After that, your old password will not open the page.</p>
+      <button class="btn btn-primary cm-cta" onclick="CMLock.sendOtp()">Send OTP</button>
+    </div>
+
+    <!-- SCREEN: enter OTP (shared by first-time setup + forgot/reset) -->
+    <div class="cm-screen" id="cmOtp">
+      <span class="cm-back" id="cmOtpBack" onclick="CMLock.show('cmForgot')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> Back</span>
+      <span class="cm-lock-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </span>
+      <h2 id="cmOtpTitle">Type your OTP</h2>
+      <p class="cm-sub" id="cmOtpSub">We sent an OTP to <strong>••••••3210</strong>. Read your SMS. Type the 4 numbers below.</p>
+      <div class="cm-sms hidden" id="cmOtpHelper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <div>Demo OTP: <b id="cmOtpVal">4821</b><span class="demo-tag">DEMO</span></div>
+      </div>
+      <div class="cm-otp" id="cmOtpBoxes">
+        <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" />
+        <input maxlength="1" inputmode="numeric" />
+        <input maxlength="1" inputmode="numeric" />
+        <input maxlength="1" inputmode="numeric" />
+      </div>
+      <div class="cm-error" id="cmOtpErr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span>This OTP is wrong. Read your SMS and type again.</span></div>
+      <div class="cm-resend" id="cmResend">No OTP? Resend in <b id="cmResendT">0:30</b></div>
+      <button class="btn btn-primary cm-cta" onclick="CMLock.verifyOtp()">Check OTP</button>
+      <div class="cm-support">Still no OTP, or wrong number? <a>Call Valmo support</a></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* =============================================================
+   DATA
+   ============================================================= */
+
+const VEHICLES = ['KA 01 AB 1234', 'KA 12 CD 5678', 'KA 24 EF 9012'];
+const DRIVERS = ['Ravindra V', 'Suresh Kumar', 'Ramesh K'];
+
+const ROUTE_FULL = 'BLR → A1H → B7HH → CVGF → DLS';
+const ROUTE_SHORT = (id) => {
+  return { from:'BLR', nodes:4, to:'DLS', haul:'NLH', km:'1400 km', full: ROUTE_FULL };
+};
+
+function mk(over) {
+  const base = {
+    id:'CR-12345678-1234', haul:'NLH', vehicle:'32 ft', period:"1 May 2026 – 30 May 2026", placement:'07:00 AM · One way',
+    rate:'₹4,500/trip', tat:'1 day', earnings:'₹4,500/trip', from:'BLR', to:'DLS', nodes:4, km:'1400 km',
+    fullRoute:'BLR → A1H → B7HH → CVGF → DLS', ratePerTrip:'₹42,000', total:'₹1,42,000', tatLong:'3 days',
+    contractPeriodFull:'1 Feb’26 – 28 Feb’26'
+  };
+  return Object.assign({}, base, over);
+}
+
+const contracts = [
+  // ===== PENDING (10) — Accept by red/orange, some with reminder chips =====
+  mk({ tab:'pending', id:'CR-12345678-1234', acceptBy:'3hrs', acceptUrgent:true, reminder:'2h ago' }),
+  mk({ tab:'pending', id:'CR-98765432-4321', acceptBy:'3hrs', acceptUrgent:true, from:'BLR', to:'DLS', nodes:6, km:'1200 km' }),
+  mk({ tab:'pending', id:'CR-12345678-1234', acceptBy:'3hrs', acceptUrgent:true, reminder:'2h ago' }),
+  mk({ tab:'pending', id:'CR-76543210-4321', acceptBy:'Tomorrow', acceptWarn:true, from:'BLR', to:'EFG', nodes:8, km:'1800 km', haul:'NLH' }),
+  mk({ tab:'pending', id:'CR-12345678-1234', acceptBy:'Tomorrow', acceptWarn:true, reminder:'2h ago' }),
+  mk({ tab:'pending', id:'CR-87654321-4321', acceptBy:'10 May', from:'BLR', to:'ABC', nodes:6, km:'2200 km' }),
+  mk({ tab:'pending', id:'CR-65432198-3210', acceptBy:'24 Apr', from:'BLR', to:'GHI', nodes:10, km:'2000 km' }),
+  mk({ tab:'pending', id:'CR-19283746-5566', acceptBy:'24 Apr', from:'BLR', to:'JKL', nodes:5, km:'1500 km' }),
+  mk({ tab:'pending', id:'CR-28371923-9090', acceptBy:'24 Apr', from:'BLR', to:'MNO', nodes:7, km:'1700 km' }),
+  mk({ tab:'pending', id:'CR-39482910-7766', acceptBy:'24 Apr', from:'BLR', to:'PQR', nodes:4, km:'1100 km' }),
+
+  // ===== UPCOMING (10 + 10) =====
+  mk({ tab:'upcoming', sub:'all', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', earnings:'₹4,500/trip', dispute:'under' }),
+  mk({ tab:'upcoming', sub:'all', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft' }),
+  mk({ tab:'upcoming', sub:'all', id:'CR-12345678-1234', starts:'4 day', startsWarn:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft' }),
+  mk({ tab:'upcoming', sub:'all', id:'CR-12345678-1234', starts:'4 day', startsWarn:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft' }),
+  mk({ tab:'upcoming', sub:'all', id:'CR-12345678-1234', starts:'8 day', startsNeutral:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', earnings:'₹5,500/trip', earningsUpdated:true, dispute:'resolved' }),
+  mk({ tab:'upcoming', sub:'all', id:'CR-12345678-1234', starts:'4 day', startsWarn:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft' }),
+  mk({ tab:'upcoming', sub:'all', id:'CR-12345678-1234', starts:'4 day', startsWarn:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft' }),
+  mk({ tab:'upcoming', sub:'all', id:'CR-12345678-1234', starts:'4 day', startsWarn:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft' }),
+  mk({ tab:'upcoming', sub:'all', id:'CR-12345678-1234', starts:'4 day', startsWarn:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft' }),
+  mk({ tab:'upcoming', sub:'all', id:'CR-12345678-1234', starts:'4 day', startsWarn:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft' }),
+  // Disputed before Activation
+  mk({ tab:'upcoming', sub:'disputed', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', dispute:'under' }),
+  mk({ tab:'upcoming', sub:'disputed', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', dispute:'rejected' }),
+  mk({ tab:'upcoming', sub:'disputed', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', earnings:'₹5,500/trip', earningsUpdated:true, dispute:'resolved' }),
+  mk({ tab:'upcoming', sub:'disputed', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', dispute:'under' }),
+  mk({ tab:'upcoming', sub:'disputed', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', dispute:'under' }),
+  mk({ tab:'upcoming', sub:'disputed', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', dispute:'under' }),
+  mk({ tab:'upcoming', sub:'disputed', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', dispute:'under' }),
+  mk({ tab:'upcoming', sub:'disputed', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', dispute:'under' }),
+  mk({ tab:'upcoming', sub:'disputed', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', dispute:'under' }),
+  mk({ tab:'upcoming', sub:'disputed', id:'CR-12345678-1234', starts:'1 day', startsUrgent:true, from:'SRT', to:'MUM', nodes:2, km:'200 km', haul:'RLH', vehicle:'32ft', dispute:'under' }),
+
+  // ===== ACTIVE (10) =====
+  mk({ tab:'active', id:'CR-12345678-1234', acceptedOn:'1 Apr 26', perf:'good', tatPct:'14%', otpPct:'12%', performance:'Poor Performance' }),
+  mk({ tab:'active', id:'CR-12345678-1234', acceptedOn:'1 Apr 26', perf:'good', tatPct:'14%', otpPct:'12%', performance:'Poor Performance' }),
+  mk({ tab:'active', id:'CR-12345678-1234', acceptedOn:'1 Apr 26', perf:'good', tatPct:'14%', otpPct:'12%', performance:'Poor Performance' }),
+  mk({ tab:'active', id:'CR-12345678-1234', acceptedOn:'1 Apr 26', perf:'good', tatPct:'14%', otpPct:'12%', performance:'Poor Performance', dispute:'under', activeSub:'disputed' }),
+  mk({ tab:'active', id:'CR-12345678-1234', acceptedOn:'1 Apr 26', perf:'good', tatPct:'14%', otpPct:'12%', performance:'Poor Performance', dispute:'under', activeSub:'disputed' }),
+  mk({ tab:'active', id:'CR-12345678-1234', acceptedOn:'1 Apr 26', perf:'good', tatPct:'14%', otpPct:'12%', performance:'Poor Performance', terminating:true, activeSub:'terminating' }),
+  mk({ tab:'active', id:'CR-12345678-1234', acceptedOn:'1 Apr 26', perf:'good', tatPct:'14%', otpPct:'12%', performance:'Poor Performance', terminating:true, activeSub:'terminating' }),
+  mk({ tab:'active', id:'CR-12345678-1234', acceptedOn:'1 Apr 26', perf:'good', tatPct:'14%', otpPct:'12%', performance:'Poor Performance', activeSub:'below' }),
+  mk({ tab:'active', id:'CR-12345678-1234', acceptedOn:'1 Apr 26', perf:'good', tatPct:'14%', otpPct:'12%', performance:'Poor Performance', activeSub:'below' }),
+  mk({ tab:'active', id:'CR-12345678-1234', acceptedOn:'1 Apr 26', perf:'good', tatPct:'14%', otpPct:'12%', performance:'Poor Performance', activeSub:'below' }),
+
+  // ===== CLOSED (10) =====
+  mk({ tab:'closed', id:'CR-12345678-1234', status:'Completed', perfShown:true, tatPct:'14%', otpPct:'12%', performance:'Poor Performance' }),
+  mk({ tab:'closed', id:'CR-12345678-1234', status:'Terminated by Valmo', perfShown:true }),
+  mk({ tab:'closed', id:'CR-12345678-1234', status:'Terminated by You', perfShown:true }),
+  mk({ tab:'closed', id:'CR-12345678-1234', status:'Rejected', perfShown:false }),
+  mk({ tab:'closed', id:'CR-12345678-1234', status:'Cancelled by Valmo', perfShown:false }),
+  mk({ tab:'closed', id:'CR-12345678-1234', status:'No Response', perfShown:false }),
+  mk({ tab:'closed', id:'CR-12345678-1234', status:'Completed', perfShown:true }),
+  mk({ tab:'closed', id:'CR-12345678-1234', status:'Completed', perfShown:true }),
+  mk({ tab:'closed', id:'CR-12345678-1234', status:'Completed', perfShown:true }),
+  mk({ tab:'closed', id:'CR-12345678-1234', status:'Completed', perfShown:true }),
+];
+
+const REMINDERS = [
+  { id:'CR-28441001-001', route:'BLR → A1H → B7HH → CVGF → DLS · NLH · 4 stops', meta:'32ft · ₹4,500/trip', period:'1 Apr’26 – 30 Apr’26', age:'5h ago', acceptBy:'3 hrs', urgent:true },
+  { id:'CR-28441001-001', route:'BLR → A1H → B7HH → CVGF → DLS · NLH · 4 stops', meta:'32ft · ₹4,500/trip', period:'1 Apr’26 – 30 Apr’26', age:'5h ago', acceptBy:'3 hrs', urgent:true },
+  { id:'CR-28441001-001', route:'BLR → A1H → B7HH → CVGF → DLS · NLH · 4 stops', meta:'32ft · ₹4,500/trip', period:'1 Apr’26 – 30 Apr’26', age:'5h ago', acceptBy:'tomorrow', urgent:false },
+];
+
+/* =============================================================
+   STATE
+   ============================================================= */
+const state = {
+  tab: 'pending',
+  sub: 'all',
+  filters: {}, sort: '',
+};
+
+const tabConfig = {
+  pending: {
+    cols: ['Contract ID', 'Route Details (i)', 'Vehicle Details', 'Contract Period', 'Placement Time', 'Earnings', 'Action'],
+    filters: ['Source Node', 'Haul Type', 'Billing Type', 'Vehicle Size'],
+    sort: ['Most Urgent First', 'By Date', 'Earnings: High → Low', 'Earnings: Low → High'],
+    sortDefault: 'Most Urgent First',
+    zero: { title:'All caught up', msg:'No contracts are waiting for your response.' },
+  },
+  upcoming: {
+    cols: ['Contract ID', 'Route Details (i)', 'Vehicle Details', 'Contract Period (i)', 'Placement Time', 'Earnings (i)', 'Action'],
+    filters: ['Source Node', 'Haul Type', 'Billing Type', 'Vehicle Size'],
+    sort: ['Most Urgent First', 'By Date', 'Active Disputes First', 'Earnings: High → Low', 'Earnings: Low → High'],
+    sortDefault: 'Start soonest',
+    zero: { title:'All caught up', msg:'No upcoming contracts. Accepted contracts will appear here' },
+  },
+  active: {
+    cols: ['Contract ID', 'Acceptance (i)', 'Vehicle Details', 'Contract Period', 'Placement Time', 'Amount (i)', 'Performance', 'Action'],
+    filters: ['Source Node', 'Haul Type', 'Billing Type', 'Vehicle Size', 'Performance'],
+    sort: ['Expiring Soon', 'By Date', 'Active Disputes First', 'Earnings: High → Low', 'Earnings: Low → High'],
+    sortDefault: 'Most urgent first',
+    zero: { title:'All caught up', msg:'No active contracts running' },
+  },
+  closed: {
+    cols: ['Contract ID', 'Route Details (i)', 'Vehicle Details', 'Contract Period', 'Placement Time', 'Amount (i)', 'Performance', 'Action'],
+    filters: ['Source Node', 'Haul Type', 'Billing Type', 'Contract Period'],
+    sort: ['Newest First', 'Oldest First', 'Terminated', 'Rejected', 'Cancelled', 'Earnings: High → Low', 'Earnings: Low → High'],
+    sortDefault: 'Newest First',
+    zero: { title:'All caught up', msg:'No completed contracts yet' },
+  }
+};
+
+const tooltips = {
+  'Route Details': 'Total km and major stops in this route. Hover to see full sequence.',
+  'Contract Period': 'Start and end date of this contract.',
+  'Earnings': 'Estimated earnings per trip on this contract.',
+  'Acceptance': 'Date when this contract was accepted by you.',
+  'Amount': 'Earnings per trip for this contract.',
+};
+
+/* =============================================================
+   RENDERING — list view
+   ============================================================= */
+
+function switchTab(tab, sub) {
+  state.tab = tab;
+  state.sub = sub || 'all';
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  render();
+}
+
+function setSubtab(sub) {
+  state.sub = sub;
+  document.querySelectorAll('.subtab').forEach(s => s.classList.toggle('active', s.dataset.sub === sub));
+  render();
+}
+
+const subtabConfig = {
+  upcoming: [
+    { key:'all',      title:'All Upcoming',              count:10 },
+    { key:'disputed', title:'Disputed before Activation', count:10 },
+  ],
+  active: [
+    { key:'all',         title:'All Active',         count:10 },
+    { key:'below',       title:'Poor Performing',    count:5 },
+    { key:'disputed',    title:'Disputed (Active)',  count:3 },
+    { key:'terminating', title:'Terminating',        count:2 },
+  ],
+};
+
+function renderSubtabs() {
+  const cfg = subtabConfig[state.tab];
+  const el = document.getElementById('subtabs');
+  if (!cfg) { el.classList.remove('show'); el.innerHTML = ''; return; }
+  el.classList.add('show');
+  el.innerHTML = cfg.map(s => `
+    <div class="subtab ${s.key === state.sub ? 'active' : ''}" data-sub="${s.key}" onclick="setSubtab('${s.key}')">
+      <div class="st-title">${s.title}</div>
+      <div class="st-count">${s.count}</div>
+    </div>
+  `).join('');
+}
+
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+function renderFilterbar() {
+  const cfg = tabConfig[state.tab];
+  const html = `
+    <span class="lbl">Filter by :</span>
+    ${cfg.filters.map(f => `
+      <div class="filt ${f==='Source Node'?'has-search':''}" onclick="openFilter('${f}')">
+        ${f==='Source Node'?'':''}<span>${f}</span><span class="chev">▾</span>
+      </div>
+    `).join('')}
+    <span class="sep"></span>
+    <span class="sortgrp">
+      <span class="lbl">Sort by :</span>
+      <div class="filt" style="min-width:160px;" onclick="openSort()"><span id="sortLabel">${cfg.sortDefault}</span><span class="chev">▾</span></div>
+    </span>
+    <button class="dlbtn">Download <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg></button>
+  `;
+  document.getElementById('filterbar').innerHTML = html;
+}
+
+function renderTableHead() {
+  const cfg = tabConfig[state.tab];
+  document.getElementById('thead').innerHTML = '<tr>' + cfg.cols.map(c => {
+    const m = c.match(/^(.+)\s*\(i\)$/);
+    if (m) {
+      const name = m[1].trim();
+      return `<th>${name} <i class="ico-i" data-tip="${tooltips[name]||''}">i</i></th>`;
+    }
+    return `<th>${c}</th>`;
+  }).join('') + '</tr>';
+}
+
+function rowsForTab() {
+  return contracts.filter(c => {
+    if (c.tab !== state.tab) return false;
+    if (state.tab === 'upcoming') return (c.sub || 'all') === state.sub;
+    if (state.tab === 'active') {
+      if (state.sub === 'all') return true;
+      return (c.activeSub || '') === state.sub;
+    }
+    return true;
+  });
+}
+
+function renderRow(c) {
+  switch (state.tab) {
+    case 'pending':
+      return renderRowPending(c);
+    case 'upcoming':
+      return renderRowUpcoming(c);
+    case 'active':
+      return renderRowActive(c);
+    case 'closed':
+      return renderRowClosed(c);
+  }
+}
+
+function renderRowPending(c) {
+  let acceptCls = c.acceptUrgent ? '' : (c.acceptWarn ? 'warn' : 'warn');
+  return `<tr>
+    <td>
+      <div class="ct-id">${c.id}</div>
+      <span class="accept-by ${acceptCls}">Accept by ${c.acceptBy}</span>
+      ${c.reminder ? `<div class="reminder-chip">Reminder · ${c.reminder}</div>` : ''}
+    </td>
+    <td>
+      <div class="route-main">
+        ${c.from} <span class="nodes-pill">${c.nodes} Nodes</span> ${c.to} | ${c.haul}
+        <div class="route-tip"><div class="rt-label">Route sequence</div><div class="rt-value">${c.fullRoute}</div></div>
+      </div>
+      <span class="km">${c.km}</span>
+    </td>
+    <td>${c.vehicle}</td>
+    <td>1 May 2026 - 30 May 2026<span class="km">${c.tat}</span></td>
+    <td>07:00 AM<span class="km">One way</span></td>
+    <td>${c.rate}</td>
+    <td>
+      <div class="action-stack">
+        <button class="btn btn-primary" onclick="openAcceptModal(${contracts.indexOf(c)})">Accept</button>
+        <button class="btn-link" onclick="openRejectModal(${contracts.indexOf(c)})">Reject</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderRowUpcoming(c) {
+  const disputeChip = c.dispute === 'under' ? '<span class="status-chip chip-blue">Dispute under review</span>' :
+                      c.dispute === 'resolved' ? '<span class="status-chip chip-green">Dispute Resolved</span>' :
+                      c.dispute === 'rejected' ? '<span class="status-chip chip-red">Dispute Rejected</span>' : '';
+  const startCls = c.startsUrgent ? '' : (c.startsWarn ? 'warn' : 'neutral');
+  return `<tr>
+    <td>
+      <div class="ct-id">${c.id}</div>
+      <span class="starts-in ${startCls}">Starts in ${c.starts}</span>
+      ${disputeChip ? `<div style="margin-top:6px;">${disputeChip}</div>` : ''}
+    </td>
+    <td>
+      <div class="route-main">${c.from} <span class="nodes-pill">${c.nodes} Nodes</span> ${c.to} | ${c.haul}</div>
+      <span class="km">${c.km}</span>
+    </td>
+    <td>${c.vehicle}</td>
+    <td>1 Apr'26- 30 Apr'26</td>
+    <td>06:00AM<span class="km">One way</span></td>
+    <td>${c.earnings}${c.earningsUpdated ? '<span class="updated-pill">Updated</span>' : ''}</td>
+    <td>
+      <div class="action-stack">
+        <button class="btn btn-ghost" onclick="openDetail(${contracts.indexOf(c)})">View</button>
+        ${c.dispute === 'under' || c.dispute === 'resolved' || c.dispute === 'rejected' ? '' : '<button class="btn-link" onclick="openDisputeModal('+contracts.indexOf(c)+')">Raise Dispute</button>'}
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderRowActive(c) {
+  const perfTag = c.terminating ? '<span class="perf-tag chip-amber">Terminating</span>' :
+                  c.dispute ? '<span class="perf-tag chip-blue">Disputed</span>' :
+                  '<span class="perf-tag chip-red">' + (c.performance || 'Poor Performance') + '</span>';
+  return `<tr>
+    <td>
+      <div class="ct-id">${c.id}</div>
+      ${c.activeSub==='disputed' ? '<span class="status-chip chip-blue" style="margin-top:6px;">Disputed (Active)</span>' :
+        c.activeSub==='terminating' ? '<span class="status-chip chip-amber" style="margin-top:6px;">Terminating</span>' : ''}
+    </td>
+    <td>${c.acceptedOn}</td>
+    <td>${c.vehicle}</td>
+    <td>1 Apr 26-30 Apr 26</td>
+    <td>06:00 AM<span class="km">One way</span></td>
+    <td>${c.earnings}</td>
+    <td>
+      <div class="perf-row">
+        <span class="perf-line">TAT <strong>${c.tatPct}</strong></span>
+        <span class="perf-line">OTP <strong>${c.otpPct}</strong></span>
+        ${perfTag}
+      </div>
+    </td>
+    <td>
+      <div class="action-stack">
+        <button class="btn btn-ghost" onclick="openDetail(${contracts.indexOf(c)})">View</button>
+        ${c.terminating ? '' : '<button class="btn-link primary" onclick="openDisputeModal('+contracts.indexOf(c)+')">Raise Dispute</button>'}
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderRowClosed(c) {
+  let chipCls = 'chip-green', chipLabel = c.status;
+  if (/Terminated/i.test(c.status)) chipCls = 'chip-red';
+  if (/Rejected|Cancelled|No Response/i.test(c.status)) chipCls = 'chip-neutral';
+  return `<tr>
+    <td>
+      <div class="ct-id">${c.id}</div>
+      <span class="status-chip ${chipCls}" style="margin-top:6px;">${chipLabel}</span>
+    </td>
+    <td>
+      <div class="route-main">${c.from} <span class="nodes-pill">${c.nodes} Nodes</span> ${c.to} | ${c.haul}</div>
+      <span class="km">${c.km}</span>
+    </td>
+    <td>${c.vehicle}</td>
+    <td>1 Apr 26-30 Apr 26</td>
+    <td>06:00 AM<span class="km">One way</span></td>
+    <td>${c.earnings}</td>
+    <td>${c.perfShown ? `<div class="perf-row"><span class="perf-line">TAT <strong>${c.tatPct||'89%'}</strong></span><span class="perf-line">OTP <strong>${c.otpPct||'87%'}</strong></span></div>` : '—'}</td>
+    <td><button class="btn btn-ghost" onclick="openDetail(${contracts.indexOf(c)})">View</button></td>
+  </tr>`;
+}
+
+function render() {
+  // Banner visibility — banner removed in Closed only (per sunset logic, banner kept Pending/Upcoming/Active)
+  document.getElementById('hiw').classList.toggle('hidden-banner', state.tab === 'closed');
+
+  // Sub-tabs (Upcoming + Active)
+  renderSubtabs();
+
+  // Reminder banner — Pending tab only
+  document.getElementById('remBanner').classList.toggle('show', state.tab === 'pending');
+
+  // Upcoming helper banner — Upcoming/All
+  document.getElementById('upcomingHelper').classList.toggle('show', state.tab === 'upcoming' && state.sub === 'all');
+
+  // Active tip — not shown by default; can be enabled if needed
+  document.getElementById('activeTip').classList.remove('show');
+
+  // Closed banner — only in closed
+  document.getElementById('closedBanner').classList.toggle('show', state.tab === 'closed');
+
+  renderFilterbar();
+  renderTableHead();
+
+  const rows = rowsForTab();
+  const tbody = document.getElementById('tbody');
+  const zero = document.getElementById('zeroState');
+  if (rows.length === 0) {
+    tbody.innerHTML = '';
+    zero.classList.remove('hidden');
+    const z = tabConfig[state.tab].zero;
+    document.getElementById('zeroTitle').textContent = z.title;
+    document.getElementById('zeroMsg').textContent = z.msg;
+  } else {
+    zero.classList.add('hidden');
+    tbody.innerHTML = rows.map(renderRow).join('');
+  }
+}
+
+/* =============================================================
+   FILTER & SORT — pickers
+   ============================================================= */
+
+const filterOptions = {
+  'Source Node':   ['BLR - Bangalore', 'MUM - Mumbai', 'DEL - Delhi', 'LKO - Lucknow'],
+  'Haul Type':     ['NLH', 'RLH', 'FM Carting', 'NULL'],
+  'Billing Type':  ['Regular', 'Adhoc', 'RFQ', 'CoLoading', 'Railways'],
+  'Vehicle Size':  ['7ft', '8ft', '10ft', '12ft', '20ft', '22ft', '32ft', '42ft'],
+  'Contract Period': ['All Months', 'Mar’26', 'Feb’26', 'Jan’26', 'Custom Date Range'],
+  'Performance':   ['All', 'On track', 'Needs improvement', 'Poor performance'],
+};
+
+function openFilter(name) {
+  const opts = filterOptions[name] || [];
+  const search = (name === 'Source Node' || name === 'Haul Type') ? `<div style="padding:10px;border-bottom:1px solid var(--line-2);"><input placeholder="Search by ${name === 'Source Node' ? 'Route Name' : 'route name'}" style="width:100%; padding:8px 12px; border:1px solid var(--line); border-radius:6px;" /></div>` : '';
+  const body = `<div class="opt-list">${search}${opts.map((o,i)=>`<div class="opt-item ${i===0?'selected':''}"><span class="radio"></span>${o}</div>`).join('')}</div>`;
+  showModal(name, body, '', { small:true });
+}
+
+function openSort() {
+  const opts = tabConfig[state.tab].sort;
+  const body = `<div class="opt-list">${opts.map((o,i)=>`<div class="opt-item ${i===0?'selected':''}" onclick="setSort('${o}')"><span class="radio"></span>${o}</div>`).join('')}</div>`;
+  showModal('Sort by', body, '', { small:true });
+}
+
+function setSort(label) {
+  document.getElementById('sortLabel').textContent = label;
+  closeModal();
+}
+
+/* =============================================================
+   MODALS — Accept / Reject / Dispute / Terminate / Success
+   ============================================================= */
+
+function showModal(title, body, footHTML, opts) {
+  document.getElementById('modalTitle').innerHTML = title;
+  document.getElementById('modalBody').innerHTML = body;
+  document.getElementById('modalFoot').innerHTML = footHTML || '';
+  const md = document.getElementById('modal');
+  md.classList.toggle('lg', !(opts && opts.small));
+  document.getElementById('modalBd').classList.add('show');
+}
+function closeModal() { document.getElementById('modalBd').classList.remove('show'); }
+
+function summaryCardHTML(c, opts={}) {
+  return `
+    <div class="summary-card">
+      <div class="summary-route">
+        <div><div class="sr-label">Route Details</div><div class="sr-value">${c.fullRoute} | ${c.haul}</div></div>
+        <span class="sr-direction">Get Direction ↗</span>
+      </div>
+      <div class="summary-grid">
+        <div class="sg-cell"><div class="sg-lbl">TAT (per trip)</div><div class="sg-val">${c.tat}</div></div>
+        <div class="sg-cell"><div class="sg-lbl">Contract Period</div><div class="sg-val">${c.contractPeriodFull}</div></div>
+        <div class="sg-cell"><div class="sg-lbl">Placement Time</div><div class="sg-val">06:00 AM · One way</div></div>
+        <div class="sg-cell"><div class="sg-lbl">Vehicles Size</div><div class="sg-val">${c.vehicle}</div></div>
+        <div class="sg-cell"><div class="sg-lbl">Rate Per Trip</div><div class="sg-val">${c.ratePerTrip}</div></div>
+        <div class="sg-cell"><div class="sg-lbl">Total Earning</div><div class="sg-val">${c.total}</div></div>
+      </div>
+    </div>
+  `;
+}
+
+function openAcceptModal(idx) {
+  const c = contracts[idx];
+  const isNLH = c.haul === 'NLH';
+  const body = `
+    <div class="mod-contract-id">Contract overview ${c.id}</div>
+    ${summaryCardHTML(c)}
+    ${isNLH ? `
+      <div class="assign-mod-block" id="assignBlock">
+        <h4>Assign your vehicles &amp; drivers (applied to all trips) <span class="opt">Optional</span></h4>
+        <div class="am-helper">Vehicle and driver can be updated anytime before trip</div>
+        <div class="am-row">
+          <select id="acVeh"><option value="">Select Vehicle</option>${VEHICLES.map(v=>`<option>${v}</option>`).join('')}</select>
+          <select id="acDrv"><option value="">Select Driver</option>${DRIVERS.map(d=>`<option>${d}</option>`).join('')}</select>
+          <button class="btn btn-outline" onclick="saveAssign()">Save</button>
+        </div>
+      </div>` : ''}
+    <div class="tnc-block">
+      <strong style="font-size:13px; display:block; margin-bottom:8px;">Terms &amp; Conditions:</strong>
+      <ul>
+        <li>This contract applies from the contract start date until the contract end date (last day included).</li>
+        <li>Valmo can change placement times or end this contract early for business, compliance, or performance reason</li>
+        <li>On Termination, you must still run trips for the next 3 days after the day of termination</li>
+        <li>The above terms are a summary. Read the full <a>Terms &amp; Conditions</a> before accepting.</li>
+      </ul>
+      <label class="tnc-check"><input type="checkbox" id="tncChk" onchange="document.getElementById('acceptBtn').disabled = !this.checked"> I have the read the <a>Terms &amp; Conditions</a></label>
+    </div>
+  `;
+  const foot = `
+    <button class="btn btn-ghost" onclick="closeAcceptDrawer()">Go Back</button>
+    <button class="btn btn-primary" id="acceptBtn" disabled onclick="confirmAccept('${c.id}')">Accept Contract</button>
+  `;
+  document.getElementById('acceptDrawerBody').innerHTML = body;
+  document.getElementById('acceptDrawerFoot').innerHTML = foot;
+  document.getElementById('acceptBd').classList.add('show');
+  document.getElementById('acceptDrawer').classList.add('show');
+}
+
+function closeAcceptDrawer() {
+  document.getElementById('acceptBd').classList.remove('show');
+  document.getElementById('acceptDrawer').classList.remove('show');
+}
+
+function saveAssign() {
+  const v = document.getElementById('acVeh').value, d = document.getElementById('acDrv').value;
+  if (!v || !d) return alert('Select both vehicle & driver');
+  document.getElementById('assignBlock').innerHTML = `
+    <h4>Assign your vehicles &amp; drivers (applied to all trips) <span class="opt">Optional</span></h4>
+    <div class="am-saved"><span class="ams-dot"></span><strong>${v}</strong> · ${d} <button class="btn-link primary" style="margin-left:auto;" onclick="(function(){location.reload();})()">Edit</button></div>
+    <div class="am-helper">Vehicle and driver can be updated anytime before start trip</div>
+  `;
+}
+
+function confirmAccept(id) {
+  closeAcceptDrawer();
+  showToast(`Contract ${id} has been Accepted.`, 'View detail');
+}
+
+function openRejectModal(idx) {
+  const c = contracts[idx];
+  const body = `
+    <div class="mod-contract-id">Are you sure you want to reject the Contract ${c.id}?</div>
+    <div class="reject-warn">
+      <div class="rw-title">Rejection may impact your performance rating and result in a cancellation fees.</div>
+      <div style="margin-top:6px;">Total <span class="rw-vals">₹15000</span> · Per Trip <span class="rw-vals">₹500</span></div>
+    </div>
+    <div class="form-field">
+      <label>Reason for rejection</label>
+      <select id="rejectReason" onchange="rejectReasonChanged(this.value)">
+        <option value="">Select Issue</option>
+        <option>Rate not acceptable</option>
+        <option>I can't move the vehicles available for the contract</option>
+        <option>My vehicle is unavailable on the contract period</option>
+        <option>I can't carry that demand</option>
+        <option>Other reason</option>
+      </select>
+    </div>
+    <div id="rejectExtra"></div>
+  `;
+  const foot = `
+    <button class="btn btn-ghost" onclick="closeModal()">Go Back</button>
+    <button class="btn btn-primary" onclick="confirmReject('${c.id}')">Confirm Rejection</button>
+  `;
+  showModal(`Reject Contract <span class="head-link">Edit if needed</span>`, body, foot);
+}
+
+function rejectReasonChanged(v) {
+  const wrap = document.getElementById('rejectExtra');
+  if (v === 'Rate not acceptable') {
+    wrap.innerHTML = `<div class="form-field"><label>Enter revised rate</label><input id="revisedRate" placeholder="" /></div>`;
+  } else if (v === 'Other reason') {
+    wrap.innerHTML = `<div class="form-field"><label>Describe the issue*</label><textarea placeholder="Rate too low - this route costs ₹14,000 but quoted ₹12,500"></textarea></div>`;
+  } else { wrap.innerHTML = ''; }
+}
+
+function confirmReject(id) {
+  closeModal();
+  showToast(`Contract ${id} rejected.`);
+}
+
+function openDisputeModal(idx) {
+  const c = contracts[idx];
+  const body = `
+    <div class="mod-contract-id">Contract ${c.id}</div>
+    ${summaryCardHTML(c)}
+    <div class="note-block">
+      <strong>Note:</strong>
+      <ul>
+        <li>Raising a dispute will flag all trips under this contract.</li>
+        <li>Trips will continue running normally, financial settlement will be adjusted once the dispute is resolved.</li>
+      </ul>
+    </div>
+    <div class="form-field">
+      <select id="dispReason" onchange="disputeReasonChanged(this.value)">
+        <option value="">Select the issue</option>
+        <option>Rate not acceptable</option>
+        <option>I don't run on this route</option>
+        <option>I don't have this vehicle size available</option>
+        <option>My vehicle or driver isn't free for these dates</option>
+        <option>Distance (KM) mentioned is incorrect</option>
+        <option>I can't serve entire contract period</option>
+        <option>Other reason</option>
+      </select>
+    </div>
+    <div id="dispExtra"></div>
+  `;
+  const foot = `
+    <button class="btn btn-ghost" onclick="closeModal()">Go Back</button>
+    <button class="btn btn-primary" onclick="confirmDispute('${c.id}')">Submit Dispute</button>
+  `;
+  showModal(`Raise Dispute <span class="hindi-pill">हिंदी में जानकारी</span>`, body, foot);
+}
+
+function disputeReasonChanged(v) {
+  const wrap = document.getElementById('dispExtra');
+  if (v === 'Rate not acceptable') {
+    wrap.innerHTML = `<div class="form-field"><input id="revisedRate" placeholder="Enter revised rate" /></div>`;
+  } else if (v === 'Other reason') {
+    wrap.innerHTML = `<div class="form-field"><textarea placeholder="Describe the issue*"></textarea></div>`;
+  } else { wrap.innerHTML = ''; }
+}
+
+function confirmDispute(id) {
+  // Success modal
+  const body = `
+    <div class="success-mod-body">
+      <div class="conf">🎉</div>
+      <h3>Dispute Raised Successfully!</h3>
+      <p>Dispute raised for the contract <strong>CR-72345678-20</strong>. Our team is reviewing your case now, expect an update within 24 hours. View case details in the <strong>Disputes</strong> section.</p>
+    </div>
+  `;
+  const foot = `<button class="btn btn-primary" onclick="closeModal(); showToast('Dispute raised on Contract CT-TRIP-10421 successfully.');">Ok, Got it</button>`;
+  showModal(`Raise Dispute <span class="hindi-pill">हिंदी में जानकारी</span>`, body, foot);
+}
+
+function openTerminateModal(idx) {
+  const c = contracts[idx];
+  const body = `
+    <div class="mod-contract-id">Are you sure you want to terminate ${c.id}?</div>
+    ${summaryCardHTML(c)}
+    <div class="note-block">
+      <strong>Note:</strong>
+      <ul>
+        <li>This contract will remain active for <strong>3 days (buffer period)</strong></li>
+        <li>After <strong>21 Feb'26</strong>, the contract will become inactive</li>
+      </ul>
+      <div class="loss">
+        <div class="loss-title">💰 Potential earning loss</div>
+      </div>
+      <div class="loss-vals">Total: <strong>₹1,40,000</strong> · Per Trip: <strong>₹28,000</strong></div>
+    </div>
+    <div class="form-field">
+      <select id="termReason">
+        <option value="">Select the reason for termination</option>
+        <option>Rate not acceptable</option>
+        <option>I don't have this vehicle size available</option>
+        <option>My vehicle or driver are unavailable for the contract period</option>
+        <option>I can't serve entire contract period</option>
+        <option>Other reason</option>
+      </select>
+    </div>
+  `;
+  const foot = `
+    <button class="btn btn-ghost" onclick="closeModal()">Go Back</button>
+    <button class="btn btn-primary" onclick="confirmTerminate('${c.id}')">Confirm Termination</button>
+  `;
+  showModal(`Terminate Contract <span class="hindi-pill">हिंदी में जानकारी</span>`, body, foot);
+}
+
+function confirmTerminate(id) {
+  const body = `
+    <div class="success-mod-body">
+      <div class="conf">🎉</div>
+      <h3>Contract Terminated Successfully!</h3>
+      <p>CT-12345678-12 will end on <strong>21 Feb'26</strong> (3 days remaining).</p>
+      <div class="info-note">
+        <span class="nico">⚠️</span>
+        <div><strong>Note:</strong> You'll need to keep running trips for <strong>3 more days</strong> after today. After that, the contract ends and you won't receive new trips on this route</div>
+      </div>
+    </div>
+  `;
+  const foot = `<button class="btn btn-ghost" onclick="closeModal()">Close</button>`;
+  showModal('Contract Terminated', body, foot);
+}
+
+/* =============================================================
+   Toast
+   ============================================================= */
+
+function showToast(msg, link) {
+  document.getElementById('toastMsg').textContent = msg;
+  const lnk = document.getElementById('toastLink');
+  lnk.textContent = link || '';
+  lnk.style.display = link ? 'inline' : 'none';
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+/* =============================================================
+   Reminder drawer
+   ============================================================= */
+
+function openReminderDrawer() {
+  document.getElementById('reminderBody').innerHTML = REMINDERS.map(r => `
+    <div class="rem-card">
+      <div class="rc-top">
+        <div class="rc-id">${r.id}</div>
+        <div class="rc-age">Reminded ${r.age}</div>
+      </div>
+      <div class="rc-route">${r.route}</div>
+      <div class="rc-meta">${r.meta}</div>
+      <div class="rc-period">${r.period}</div>
+      <div class="rc-foot">
+        <button class="btn btn-outline" onclick="closeReminderDrawer(); openAcceptModal(0);">Review &amp; Accept</button>
+        <!-- (Accept opens as side drawer, not popup) -->
+        <span class="accept-by ${r.urgent?'':'warn'}">${r.urgent?'Accept in 3 hrs':'Accept by tomorrow'}</span>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('drawerBd').classList.add('show');
+  document.getElementById('reminderDrawer').classList.add('show');
+}
+
+function closeReminderDrawer() {
+  document.getElementById('drawerBd').classList.remove('show');
+  document.getElementById('reminderDrawer').classList.remove('show');
+}
+
+/* =============================================================
+   DETAIL (L2) page
+   ============================================================= */
+
+function openDetail(idx) {
+  const c = contracts[idx];
+  const isActive = c.tab === 'active';
+  const isUpcoming = c.tab === 'upcoming';
+  const isClosed = c.tab === 'closed';
+  const isPoor = isActive && (c.activeSub === 'below' || (!c.activeSub && c.tatPct === '14%'));
+  const isDisputed = !!c.dispute;
+  const isTerminating = !!c.terminating;
+  const isTerminatedBy = isClosed && c.status === 'Terminated by You';
+
+  const breadcrumb = isUpcoming ? 'Upcoming Contracts' :
+                     isActive   ? (isPoor ? 'Active contracts > Poor Performing' :
+                                   isDisputed ? 'Active contracts > Disputed (Active)' : 'Active contracts') :
+                     'Closed Contracts';
+  const statusLabel = isUpcoming ? (isDisputed ? 'Disputed' : 'Upcoming') :
+                      isActive ? (isPoor ? 'Poor Performing' : (isDisputed ? 'Disputed (Active)' : (isTerminating ? 'Terminating' : 'Active'))) :
+                      isTerminatedBy ? 'Terminated by You' : c.status;
+  const statusCls = isUpcoming ? 'chip-amber' :
+                    isActive ? (isPoor ? 'chip-red' : (isDisputed ? 'chip-blue' : (isTerminating ? 'chip-amber' : 'chip-green'))) :
+                    /Terminated/.test(c.status) ? 'chip-red' :
+                    /Completed/.test(c.status) ? 'chip-green' : 'chip-neutral';
+
+  // Dispute summary for any tab when contract has a dispute
+  const dsTone = c.dispute === 'resolved' ? 'success' : c.dispute === 'rejected' ? 'danger' : c.dispute === 'partial' ? 'warning' : 'info';
+  const dsLabel = c.dispute === 'resolved' ? 'Dispute resolved. Rate adjustment applied to affected trips.' :
+                  c.dispute === 'rejected' ? 'Dispute rejected. No adjustment applied.' :
+                  c.dispute === 'partial' ? 'Dispute partially resolved. Partial rate adjustment applied.' :
+                  'Valmo support agent will share an update within 24 hours';
+  const dsStatusHTML = c.dispute === 'resolved' ? '<td class="ds-resolved">Dispute Resolved</td>' :
+                       c.dispute === 'rejected' ? '<td class="ds-rejected">Rejected</td>' :
+                       c.dispute === 'partial' ? '<td class="ds-partial">Partially Approved</td>' :
+                       '<td class="ds-under">Under Review</td>';
+  const disputeSummaryHTML = isDisputed ? `
+    <div class="detail-card">
+      <h3>Dispute Summary <span class="h-tip db-${dsTone}">${dsLabel}</span></h3>
+      <table class="dispute-table">
+        <thead><tr><th>Dispute ID</th><th>Created Date</th><th>${isUpcoming ? 'Details' : 'Issue Type'}</th><th>Dispute Status</th><th>${isUpcoming ? 'Last Updates' : (c.dispute === 'resolved' || c.dispute === 'rejected' ? 'Remark' : 'Trips Affected')}</th><th>Updated Date</th><th>Action</th></tr></thead>
+        <tbody><tr>
+          <td>${isUpcoming ? 'DIS373833312068' : 'DS1234567890'}</td>
+          <td>${isUpcoming ? '30 Apr&rsquo;26,<br>08:00 AM' : '9 Feb&rsquo;26,<br>08:00 AM'}</td>
+          <td>${isUpcoming ? 'Rate not acceptable' : 'Distance issues (KM mismatch)'}</td>
+          ${dsStatusHTML}
+          <td>${isUpcoming ? 'Valmo support agent will share an update within 24 hours' : (c.dispute === 'rejected' ? '-' : '14 trips (from 15 Feb onward)')}</td>
+          <td>${isUpcoming ? '1 May&rsquo;26,<br>10:00 PM' : '9 Feb&rsquo;26,<br>08:00 AM'}</td>
+          <td><button class="btn btn-outline" style="padding:6px 14px;">View</button></td>
+        </tr></tbody>
+      </table>
+    </div>
+  ` : '';
+
+  // Vehicles assign or trips card
+  let middleCardHTML = '';
+  if (isUpcoming) {
+    middleCardHTML = `
+      ${disputeSummaryHTML}
+      <div class="detail-card">
+        <h3>Assign your vehicles &amp; drivers (applied to all trips) <span class="h-tip" style="background:var(--neutral-bg); color:var(--ink-3);">Optional</span></h3>
+        <div class="assign-block">
+          <div class="assigned-chip-row">
+            <span class="ac-date">1 Mar'26 - 30 Mar'26 - Vehicle &amp; Driver</span>
+            <span class="ac-veh">KA-12-AB-1234 (32ft) | Ramesh K.</span>
+            <button class="btn btn-outline" style="margin-left:auto; padding:6px 14px;">Edit</button>
+          </div>
+          <div class="assign-helper">This vehicle and driver will repeat for all <strong>30 trips</strong> under this contract. You can change a vehicle or driver for any specific day from the Trips page later.</div>
+        </div>
+      </div>
+    `;
+  } else if (isActive || isClosed) {
+    const totalTrips = isClosed ? '21/21' : '18/21';
+    const compLine = isClosed ? '20 Trips Completed | 1 Missed' : '18 Trips Completed | 2 Trips Upcoming | 1 Missed';
+    const tatVal = isPoor ? '14%' : (isClosed ? '89%' : (isActive && !isPoor && !isDisputed ? '40%' : '89%'));
+    const otpVal = isPoor ? '12%' : (isClosed ? '87%' : (isActive && !isPoor && !isDisputed ? '75%' : '87%'));
+    const tatTone = isPoor ? 'dn' : (parseInt(tatVal)<60 ? 'warn' : 'dn');
+    const otpTone = isPoor ? 'dn' : (parseInt(otpVal)<60 ? 'warn' : 'up');
+    const riskBanner = isPoor ? `
+      <div class="term-risk">
+        <span class="tr-icon">⚠️</span>
+        <div class="tr-body"><strong>Termination Risk:</strong> Performance is below acceptable levels, Your <strong>TAT is 14%</strong> and <strong>On time placement is 12%</strong> and Target is <strong>80%</strong>. If this continues, Valmo may end this contract. Focus on improving placement times and turnaround to keep this route.</div>
+      </div>
+    ` : (isActive && !isClosed && !isDisputed && !isTerminating ? `
+      <div class="term-risk warn">
+        <span class="tr-icon">⚠️</span>
+        <div class="tr-body"><strong>Termination Risk:</strong> Performance needs improvement, Your <strong>TAT is 40%</strong> and <strong>On time placement is 45 %</strong> and Target is <strong>80%</strong>. Improve this to avoid issues. Consistent low performance can lead to contract termination..</div>
+      </div>
+    ` : '');
+    middleCardHTML = `
+      ${disputeSummaryHTML}
+      <div class="detail-card trips-card">
+        <div class="tc-head"><h3>Trips under this contract</h3><span class="view-all">View all 18 trips →</span></div>
+        ${riskBanner}
+        <div class="metrics-row">
+          <div class="metric">
+            <div class="m-label">Trip progress <i class="ico-i" data-tip="Trips completed out of total trips in this contract. Includes completed, upcoming, and missed trips.">i</i></div>
+            <div class="m-value">${totalTrips}</div>
+            <div class="m-sub">${compLine}</div>
+          </div>
+          <div class="metric">
+            <div class="m-label">TAT Compliance <i class="ico-i" data-tip="% of trips where TAT was met, compared against last week's TAT to show trend (↑ improving, ↓ declining).">i</i></div>
+            <div class="m-value ${tatTone}">${tatVal}</div>
+            <div class="m-sub">${isPoor ? '2 Trips within TAT | 17% TAT last week' : '16 Trips within TAT | <strong>94%</strong> TAT last week'}</div>
+          </div>
+          <div class="metric">
+            <div class="m-label">On-Time Placement <i class="ico-i" data-tip="Percentage of trips where your vehicle reached origin on time.">i</i></div>
+            <div class="m-value ${otpTone}">${otpVal}</div>
+            <div class="m-sub">Placed on time: 2/18 trips | <strong>94%</strong> last week</div>
+          </div>
+        </div>
+        <table class="trips-list">
+          <thead><tr><th>Date</th><th>Trip ID</th><th>Status</th><th>TAT</th><th>Placement</th></tr></thead>
+          <tbody>
+            <tr><td>20 Feb'26</td><td><span class="trip-link">TR-123456789-1234</span></td><td>Upcoming</td><td>—</td><td>—</td></tr>
+            <tr><td>19 Feb'26</td><td><span class="trip-link">TR-123456789-1234</span></td><td>Completed</td><td>89%</td><td>90%</td></tr>
+            <tr><td>18 Feb'26</td><td><span class="trip-link">TR-123456789-1234</span></td><td>Completed</td><td>81%</td><td>89%</td></tr>
+            <tr><td>17 Feb'26</td><td><span class="trip-link">TR-123456789-1234</span></td><td><span class="miss">Missed (Placement failure)</span></td><td>—</td><td>—</td></tr>
+            <tr><td>16 Feb'26</td><td><span class="trip-link">TR-123456789-1234</span></td><td>Completed</td><td>89%</td><td>92%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  // Footer action buttons
+  let footerBtns = '';
+  if (isUpcoming) footerBtns = `<button class="btn btn-ghost" onclick="openDisputeModal(${idx})">Raise Dispute</button>`;
+  else if (isActive && !isTerminating) footerBtns = `<button class="btn btn-ghost" onclick="openTerminateModal(${idx})">Terminate Contract</button> <button class="btn btn-ghost" onclick="openDisputeModal(${idx})">Raise Dispute</button>`;
+  else if (isActive && isTerminating) footerBtns = `<button class="btn btn-ghost" onclick="openTerminateModal(${idx})">Terminate Contract</button>`;
+  else if (isTerminatedBy) footerBtns = `<button class="btn btn-ghost" onclick="openDisputeModal(${idx})">Raise Dispute</button>`;
+  else if (isClosed && c.status === 'Completed') footerBtns = '';
+
+  // Top-row of overview cells — varies by state
+  const accDateLabel = isUpcoming ? 'Accepted On' : isActive ? 'Accepted On' : 'Accepted On';
+  const accDateValue = '21 Mar\'26';
+
+  document.getElementById('detailView').innerHTML = `
+    <div class="detail-bread">${breadcrumb} <span class="sep">›</span> <span class="crumb-cur">View</span></div>
+    <div class="detail-back" onclick="closeDetail()"><span class="back-arrow">←</span> ${c.id} <span class="status-pill ${statusCls}">${statusLabel}</span></div>
+
+    <div class="detail-card">
+      <h3>Contract Overview</h3>
+      <div class="ov-grid two-rows">
+        <div class="ov-cell">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l4 14 4-7 7-4z"/></svg>
+          <div><div class="lbl">Trip Details</div><div class="val">${c.haul} | Regular</div><div class="sub">1400km</div></div>
+        </div>
+        <div class="ov-cell">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <div style="flex:1;"><div class="lbl">Route Details</div><div class="val">BLR → ABC → QWE → YUI → GHJ → DEL <span class="collapse-link">Collapse</span></div><div class="sub">Route 123</div></div>
+        </div>
+        <div class="ov-cell">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M17 11h3l-1 5h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+          <div><div class="lbl">Vehicle Size</div><div class="val">32 ft</div></div>
+        </div>
+        <div class="ov-row-2">
+          <div class="ov-cell">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <div><div class="lbl">TAT</div><div class="val">2 days</div></div>
+          </div>
+          <div class="ov-cell">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+            <div><div class="lbl">Contract Period details</div><div class="val">1 Feb'26 - 28 Feb'26</div><div class="sub">06:00AM · One way</div></div>
+          </div>
+          <div class="ov-cell">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="14" r="6"/><path d="M9 6h6l-2 5h-2z"/></svg>
+            <div><div class="lbl">Earnings</div><div class="val">₹4,500/ Trip</div></div>
+          </div>
+          <div class="ov-cell">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
+            <div><div class="lbl">${accDateLabel}</div><div class="val">${accDateValue}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    ${middleCardHTML}
+
+    ${footerBtns ? `<div class="detail-footer">${footerBtns}</div>` : ''}
+  `;
+
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('detailView').classList.add('show');
+}
+
+function closeDetail() {
+  document.getElementById('detailView').classList.remove('show');
+  document.getElementById('listView').style.display = '';
+}
+
+/* =============================================================
+   CM PASSCODE LOCK — session gate for the Contract Management area
+   - User passcode persists across sessions  -> localStorage 'cmPasscode'
+   - "Unlocked for this session" only         -> sessionStorage 'cmUnlocked'
+     (cleared automatically when the tab/browser is closed -> re-locks)
+   Prototype-only: a real build MUST enforce this server-side.
+   ============================================================= */
+const CMLock = {
+  DEMO_OTP: '4821',             // simulated 4-digit OTP
+  MIN_LEN: 4,
+  attempts: 0,
+  _resendTimer: null,
+  _otpContext: 'first',         // 'first' (first-time setup) | 'forgot' (reset)
+
+  pass()      { return localStorage.getItem('cmPasscode'); },     // null = never set
+  isSet()     { return !!this.pass(); },
+  isUnlocked(){ return sessionStorage.getItem('cmUnlocked') === '1'; },
+
+  el(id){ return document.getElementById(id); },
+
+  init() {
+    // Re-lock on a fresh session; stay open if already unlocked this session.
+    if (this.isUnlocked()) { this._hide(); return; }
+    this._gate();
+  },
+
+  // Route to the correct entry screen:
+  //   first-time (no password set) -> auto-send OTP -> verify -> set password
+  //   returning (password set)     -> ask for password
+  _gate() {
+    this._showOverlay();
+    if (this.isSet()) this._openEnter();
+    else this._startFirstTime();
+  },
+
+  _startFirstTime() {
+    this._otpContext = 'first';
+    this.show('cmIntro');        // orient the user first; OTP only after they tap "Get OTP"
+  },
+
+  startSetup() {                 // intro "Get OTP" button
+    this._otpContext = 'first';
+    this.sendOtp();
+  },
+
+  goForgot() {
+    this._otpContext = 'forgot';
+    this.show('cmForgot');
+  },
+
+  _openEnter() {
+    this.el('cmEnterInput').value = '';
+    this.clearError('cmEnterErr','cmEnterInput');
+    this.show('cmEnter');
+  },
+
+  _showOverlay() { this.el('cmLock').classList.remove('hidden'); document.body.style.overflow = 'hidden'; },
+  _hide()        { this.el('cmLock').classList.add('hidden'); document.body.style.overflow = ''; },
+
+  show(screen) {
+    document.querySelectorAll('.cm-screen').forEach(s => s.classList.toggle('active', s.id === screen));
+    // autofocus the primary input of the shown screen
+    const focusMap = { cmEnter:'cmEnterInput', cmSet:'cmSetInput' };
+    const f = focusMap[screen];
+    if (f) setTimeout(() => this.el(f) && this.el(f).focus(), 60);
+    if (screen === 'cmOtp') setTimeout(() => this.el('cmOtpBoxes').querySelector('input').focus(), 60);
+  },
+
+  toggleEye(inputId, btn) {
+    const inp = this.el(inputId);
+    const showing = inp.type === 'text';
+    inp.type = showing ? 'password' : 'text';
+    btn.innerHTML = showing
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2M9.9 4.2A9.6 9.6 0 0 1 12 4c6.5 0 10 7 10 7a17 17 0 0 1-3.1 3.9M6.1 6.1A17 17 0 0 0 2 11s3.5 7 10 7a9.6 9.6 0 0 0 3-.5"/></svg>';
+  },
+
+  showError(errId, inputId, msg) {
+    const e = this.el(errId); if (msg && e.querySelector('span')) e.querySelector('span').textContent = msg;
+    e.classList.add('show');
+    if (inputId) this.el(inputId).classList.add('err');
+  },
+  clearError(errId, inputId) {
+    this.el(errId).classList.remove('show');
+    if (inputId) this.el(inputId).classList.remove('err');
+  },
+
+  /* ---- enter password (returning sessions) ---- */
+  submitEnter() {
+    const val = this.el('cmEnterInput').value.trim();
+    if (!val) { this.showError('cmEnterErr','cmEnterInput','Please type your password.'); return; }
+    if (val !== this.pass()) {
+      this.attempts++;
+      this.showError('cmEnterErr','cmEnterInput','Wrong password. Try again.');
+      if (this.attempts >= 3) {                       // surface recovery after repeated misses
+        this.el('cmForgotLink').textContent = 'Forgot password? Make a new one →';
+        this.el('cmForgotLink').style.color = 'var(--danger)';
+      }
+      return;
+    }
+    this.attempts = 0;
+    this._unlock();
+  },
+
+  /* ---- set / reset password ---- */
+  submitSet() {
+    const a = this.el('cmSetInput').value;
+    const b = this.el('cmSetConfirm').value;
+    if (a.length < this.MIN_LEN) { this.showError('cmSetErr','cmSetInput','Password is too short. Use 4 or more letters and numbers.'); return; }
+    if (a !== b) { this.showError('cmSetErr','cmSetConfirm','These two passwords are different. Type the same password in both boxes.'); return; }
+    localStorage.setItem('cmPasscode', a);
+    this.el('cmSetInput').value = ''; this.el('cmSetConfirm').value = '';
+    this._unlock(true);
+  },
+
+  _unlock(wasSet) {
+    sessionStorage.setItem('cmUnlocked','1');
+    this._hide();
+    if (typeof showToast === 'function')
+      showToast(wasSet ? 'Done! Your password is saved.' : 'Welcome back. This page is open now.');
+  },
+
+  _resetForgotLink() {
+    this.el('cmForgotLink').textContent = 'Forgot password?';
+    this.el('cmForgotLink').style.color = '';
+  },
+
+  /* ---- manual lock (also the demo "new session" trigger) ---- */
+  lock() {
+    sessionStorage.removeItem('cmUnlocked');
+    this.attempts = 0;
+    this._resetForgotLink();
+    this._gate();
+  },
+
+  /* ---- OTP screen (shared: first-time setup + forgot/reset) ---- */
+  sendOtp() {
+    const first = this._otpContext === 'first';
+    this.el('cmOtpTitle').textContent = 'Type your OTP';
+    this.el('cmOtpSub').innerHTML = "We sent an OTP to <strong>••••••3210</strong>. Read your SMS. Type the 4 numbers below.";
+    this.el('cmOtpBack').style.display = '';                    // Back always available (first -> intro, forgot -> reset)
+    this.el('cmOtpBack').onclick = () => this.show(first ? 'cmIntro' : 'cmForgot');
+    this.el('cmOtpHelper').classList.remove('hidden');
+    this.el('cmOtpVal').textContent = this.DEMO_OTP;
+    this.el('cmOtpBoxes').querySelectorAll('input').forEach(i => { i.value=''; i.classList.remove('err'); });
+    this.clearError('cmOtpErr');
+    this.show('cmOtp');
+    this._startResend();
+  },
+
+  _startResend() {
+    const wrap = this.el('cmResend');
+    wrap.innerHTML = "No OTP? Resend in <b id='cmResendT'>0:30</b>";   // rebuild span each run
+    let t = 30;
+    const tick = () => {
+      const el = this.el('cmResendT');
+      if (!el) { clearInterval(this._resendTimer); return; }
+      const m = Math.floor(t/60), s = String(t%60).padStart(2,'0');
+      el.textContent = `${m}:${s}`;
+      if (t <= 0) { clearInterval(this._resendTimer);
+        wrap.innerHTML = "No OTP? <b style='color:var(--primary-2);cursor:pointer' onclick='CMLock.sendOtp()'>Send OTP again</b>"; return; }
+      t--;
+    };
+    clearInterval(this._resendTimer); tick(); this._resendTimer = setInterval(tick, 1000);
+  },
+
+  verifyOtp() {
+    const code = Array.from(this.el('cmOtpBoxes').querySelectorAll('input')).map(i => i.value).join('');
+    if (code !== this.DEMO_OTP) {
+      this.el('cmOtpBoxes').querySelectorAll('input').forEach(i => i.classList.add('err'));
+      this.showError('cmOtpErr');
+      return;
+    }
+    clearInterval(this._resendTimer);
+    this.clearError('cmOtpErr');
+    // verified -> let them set their password (first-time) or a new one (forgot)
+    this.el('cmSetTitle').textContent = this._otpContext === 'first' ? 'Make your password' : 'Make a new password';
+    this.el('cmSetInput').value=''; this.el('cmSetConfirm').value='';
+    this.clearError('cmSetErr','cmSetInput'); this.clearError('cmSetErr','cmSetConfirm');
+    this.show('cmSet');
+  },
+
+  /* ---- demo helper: wipe saved password so the first-time flow can be re-tested ---- */
+  resetDemo() {
+    localStorage.removeItem('cmPasscode');
+    sessionStorage.removeItem('cmUnlocked');
+    this.attempts = 0;
+    this._resetForgotLink();
+    this.el('cmSetTitle').textContent = 'Make your password';
+    this._gate();
+    if (typeof showToast === 'function') showToast('Demo reset — first-time setup will show again.');
+  },
+};
+
+// OTP box auto-advance / backspace
+document.querySelectorAll('#cmOtpBoxes input').forEach((box, i, all) => {
+  box.addEventListener('input', () => {
+    box.value = box.value.replace(/\D/g,'');
+    CMLock.clearError('cmOtpErr');
+    all.forEach(b => b.classList.remove('err'));
+    if (box.value && i < all.length-1) all[i+1].focus();
+  });
+  box.addEventListener('keydown', e => {
+    if (e.key === 'Backspace' && !box.value && i > 0) all[i-1].focus();
+    if (e.key === 'Enter') CMLock.verifyOtp();
+  });
+});
+
+/* =============================================================
+   INIT
+   ============================================================= */
+render();
+CMLock.init();   // gate the Contract Management area on load
+</script>
+</body>
+</html>

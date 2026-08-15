@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pranita Sapkal — Product Designer</title>
+<style>
+@font-face { font-family: 'Archivo Variable'; font-style: normal; font-weight: 100 900; src: url('file:///Users/pranitakeshavraosapkal/Claude/Portfolio/node_modules/@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Archivo Expanded'; font-style: normal; font-weight: 400; font-stretch: 75% 125%; src: url('file:///Users/pranitakeshavraosapkal/Claude/Portfolio/node_modules/@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; src: url('file:///Users/pranitakeshavraosapkal/Claude/Portfolio/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 500; src: url('file:///Users/pranitakeshavraosapkal/Claude/Portfolio/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Instrument Serif'; font-style: italic; font-weight: 400; src: url('file:///Users/pranitakeshavraosapkal/Claude/Portfolio/node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2') format('woff2'); }
+
+@page { size: A4; margin: 13mm 14mm; }
+
+*, ::before, ::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ink:    #16181D;
+  --muted:  #565B66;
+  --accent: #B87514;
+  --paper:  #F4F1EA;
+  --rule:   rgba(22, 24, 29, 0.15);
+}
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Archivo Variable', Arial, sans-serif;
+  font-size: 9.5pt;
+  line-height: 1.36;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 6mm;
+  padding-bottom: 3.5mm;
+  border-bottom: 0.4px solid var(--rule);
+  margin-bottom: 3mm;
+}
+.hleft { flex: 1; min-width: 0; }
+.name {
+  font-family: 'Archivo Expanded', 'Archivo Variable', sans-serif;
+  font-weight: 900; font-size: 30pt; font-stretch: expanded;
+  letter-spacing: -0.015em; text-transform: uppercase;
+  line-height: 0.95; color: var(--ink); margin-bottom: 2.5mm;
+}
+.role {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 7pt;
+  color: var(--muted); text-transform: uppercase; letter-spacing: 0.09em;
+}
+.hright { display: flex; flex-direction: column; align-items: flex-end; gap: 2mm; flex-shrink: 0; }
+.photo { width: 28mm; height: 28mm; object-fit: cover; display: block; }
+.contact {
+  font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt;
+  color: var(--muted); text-align: right; line-height: 1.7;
+}
+
+.lead { margin-bottom: 3mm; }
+.lead-line {
+  display: block; font-family: 'Instrument Serif', Georgia, serif; font-style: italic;
+  font-size: 11pt; line-height: 1.3; color: var(--ink); margin-bottom: 1.5mm;
+}
+.summary { font-size: 8.5pt; color: var(--muted); line-height: 1.45; }
+
+.sec { margin-bottom: 3mm; }
+.sh {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 7pt;
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--accent);
+  border-bottom: 0.4px solid var(--rule); padding-bottom: 0.8mm; margin-bottom: 2mm;
+}
+
+.job { margin-bottom: 3mm; }
+.job:last-child { margin-bottom: 0; }
+.jh { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.8mm; }
+.jmeta { flex: 1; font-size: 9pt; min-width: 0; }
+.jorg  { font-weight: 700; }
+.jsep  { color: rgba(22, 24, 29, 0.3); }
+.jtitle, .jloc { color: var(--muted); }
+.jdates {
+  font-family: 'IBM Plex Mono', monospace; font-size: 7pt; color: var(--muted);
+  white-space: nowrap; flex-shrink: 0; margin-left: 3mm;
+}
+.jrole { font-size: 8.3pt; color: var(--muted); font-style: italic; margin: 0 0 1.4mm 0; }
+
+/* Grouped project blocks (Meesho) */
+.proj { margin-bottom: 2mm; }
+.proj:last-child { margin-bottom: 0; }
+.ph { margin-bottom: 0.6mm; }
+.pname { font-weight: 700; font-size: 8.9pt; color: var(--ink); }
+.pnote {
+  font-family: 'IBM Plex Mono', monospace; font-size: 6.6pt; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-left: 1.6mm;
+}
+
+ul { list-style: none; padding-left: 2mm; }
+li { font-size: 9pt; line-height: 1.34; padding-left: 3mm; position: relative; margin-bottom: 0.5mm; }
+li::before { content: '\2013'; position: absolute; left: 0; color: var(--accent); }
+
+.sr { display: flex; gap: 2.5mm; align-items: baseline; margin-bottom: 1.2mm; }
+.slabel {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 7pt;
+  color: var(--accent); letter-spacing: 0.07em; text-transform: uppercase;
+  white-space: nowrap; min-width: 26mm; flex-shrink: 0;
+}
+.sitems { font-size: 8.5pt; color: var(--muted); line-height: 1.35; }
+
+.edu-row { display: flex; gap: 4mm; flex-wrap: wrap; margin-bottom: 1.5mm; }
+.edu { flex: 1; min-width: 78mm; font-size: 9pt; line-height: 1.4; }
+.enote  { color: var(--muted); font-size: 8pt; }
+.eschool { color: var(--muted); font-size: 8.5pt; }
+.eyrs   { font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; color: var(--muted); }
+.langs  { font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; color: var(--muted); }
+
+.foot {
+  border-top: 0.4px solid var(--rule); margin-top: 3mm; padding-top: 1.5mm;
+  display: flex; justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace; font-size: 7pt; color: var(--muted);
+}
+
+@media print {
+  html, body { width: auto; }
+  .proj { page-break-inside: avoid; }
+  .sr   { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hleft">
+    <div class="name">Pranita Sapkal</div>
+    <div class="role">Product Designer · Logistics Platforms &amp; Systems</div>
+  </div>
+  <div class="hright">
+    
+    <div class="contact"><div>sapkalp1997@gmail.com</div><div>+91 8767897103</div><div>linkedin.com/in/pranita-sapkal-86364010a</div><div>behance.net/pranitasapkal</div></div>
+  </div>
+</header>
+
+<div class="lead">
+  <span class="lead-line">I design the systems that move things.</span>
+  <p class="summary">Product designer for the internal platforms that run India's logistics at scale. On Meesho's Valmo network I design the systems that plan trips, manage transporters, and run vendor contracts — partnering with product and engineering from 0→1 to launch. I design the operating model, not just the screens. Earlier: 3 years across web, mobile, and design systems.</p>
+</div>
+
+<div class="sec">
+  <div class="sh">01 / Experience</div>
+  <div class="job">
+  <div class="jh">
+    <div class="jmeta"><span class="jorg">Meesho (Valmo Transportation)</span><span class="jsep"> · </span><span class="jtitle">Product Designer</span></div>
+    <span class="jdates">Jun 2025 – Present</span>
+  </div>
+  <p class="jrole">Product designer on Valmo's logistics platform — designing the systems that plan trips, manage transporters, and run vendor contracts, with product and engineering from 0→1 to launch.</p>
+  <div class="proj">
+    <div class="ph"><span class="pname">Transporter Panel — SetuX</span> <span class="pnote">live flagship</span></div>
+    <ul><li>Designed the transporter-facing panel (SetuX) that Valmo's transporters run their operations on — accept or reject assigned trips, assign vehicles and drivers, track in-transit and completed trips, confirm trip cost, and raise disputes.</li><li>Led the V1→V2 actionability redesign — re-segmenting completed trips into pending-confirmation / confirmed / no-action-needed and adding guided banners with Hindi vernacular audio for low-literacy partners — lifting on-panel cost visibility from ~70% to ~96% (NLH) and ~93% to ~99.8% (RLH).</li><li>The pre-trip cost-acknowledgement flow cut invoice discrepancies from ~20% to under 2% and tightened Planned-vs-Actual delta from 5% to 1% (~₹10 Cr annual impact); in-app vehicle/driver assignment cut unattributed vehicle data from ~15% to under 1% at 98% adoption within two weeks.</li><li>Designed the end-to-end disputes flow — raise, track, and resolve (in-place rate update vs mid-contract split) — into one shared, trackable record; the reconciliation and dispute layer feeds a transporter payout cycle compressed from ~90 to ~7 days (NPS &gt; 60). Built throughout for low-literacy users (icon-plus-text, high-contrast, accessible).</li></ul>
+  </div>
+<div class="proj">
+    <div class="ph"><span class="pname">TMS Admin — Trip Creation, Placement &amp; Multi-Origin</span></div>
+    <ul><li>Designed the admin panel Area Managers use to create trips individually or in bulk against a route master, routing every exception into a &quot;needs action&quot; queue; the area-manager persona shifted the system from passive observer to active moderator of data quality (scaled to ~100 sort centres), helping lift trip cost visibility to 97% and compliance to 99%.</li><li>Redesigned multi-origin trip creation as a 2-click node-based route builder (chosen after rejecting 5 interaction patterns), eliminating two data-corruption workarounds; designed the trip-creation control layer — auto-trip review, adhoc cost guardrails, duplicate detection — and direction type (one-way / round-trip) across the trip lifecycle.</li></ul>
+  </div>
+<div class="proj">
+    <div class="ph"><span class="pname">Contract Management (CLH)</span> <span class="pnote">designing 0→1</span></div>
+    <ul><li>Designing Valmo's contract-lifecycle system from 0→1 — the workspace that turns network-design route requirements into signed, running vendor contracts, replacing an offline spreadsheet-and-phone process with one auditable source of truth across a CLH (Central Linehaul) admin panel and a transporter-facing contract side.</li><li>Modeled the full lifecycle: a Design → RFQ → Contract hierarchy with an immutability rule (one contract = exactly one transporter, rate, route, vehicle size and direction), a 6-state lifecycle (needs action → sent for approval → upcoming → active → disputed → closed), and a network-design re-upload diff that detects route changes and pre-closes affected contracts on a 3-day notice.</li><li>Designed the CLH workspace as a two-level model — an Action Required queue (unassigned / upload-error / rejected / pre-closed RFQs) where managers allocate a transporter and rate per vehicle, inline or in bulk, guardrailed against a benchmark cost and surfaced with best-fit vendor recommendations, plus monitoring tabs that show every contract's stage at a glance — and the transporter contract side (review, accept, counter-offer). Locked a v4 IA across 14 flows and 130+ screens.</li></ul>
+  </div>
+</div>
+<div class="job">
+  <div class="jh">
+    <div class="jmeta"><span class="jorg">Wizrdom</span><span class="jsep"> · </span><span class="jtitle">UI/UX &amp; Graphic Designer</span></div>
+    <span class="jdates">Jan 2024 – Jun 2025</span>
+  </div>
+  <ul><li>Owned end-to-end product UI/UX from research and wireframes through dev-ready handoff across client web and mobile products, alongside brand, social, and motion content.</li><li>Ran multiple projects at once, presented solutions to stakeholders, and mentored junior designers.</li></ul>
+</div>
+<div class="job">
+  <div class="jh">
+    <div class="jmeta"><span class="jorg">Huntment</span><span class="jsep"> · </span><span class="jtitle">UI/UX Designer (Remote, UAE)</span></div>
+    <span class="jdates">Nov 2023 – Jan 2024</span>
+  </div>
+  <ul><li>Designed DoJoin Ride, a multi-service app for the UAE market — IA, end-to-end user flows, and hi-fi UI; ran user testing and aligned designs to business goals with cross-functional teams.</li></ul>
+</div>
+<div class="job">
+  <div class="jh">
+    <div class="jmeta"><span class="jorg">AuraSmart</span><span class="jsep"> · </span><span class="jtitle">UI/UX Designer</span></div>
+    <span class="jdates">Jan 2023 – Nov 2023</span>
+  </div>
+  <ul><li>Designed smart-home automation app experiences end-to-end — wireframes, prototypes, and a reusable design system; ran usability tests and improved UX writing. (Started as intern Jan 2023, converted to full-time May 2023.)</li></ul>
+</div>
+</div>
+
+<div class="sec">
+  <div class="sh">02 / Skills</div>
+  <div class="sr"><span class="slabel">Design</span><span class="sitems">Interaction Design, Information Architecture, Enterprise / B2B UX, Systems Design, 0→1 Product Discovery, Design Systems &amp; Tokens, Inclusive / Low-Literacy Design, Accessibility (WCAG 2.1 AA), Usability Testing (moderated, multilingual)</span></div>
+<div class="sr"><span class="slabel">Tools</span><span class="sitems">Figma (Variables, Dev Mode, Auto Layout, Plugin API), Interactive HTML/CSS/JS prototyping, Adobe Photoshop / Illustrator, Excalidraw / FigJam</span></div>
+<div class="sr"><span class="slabel">Ways of Working</span><span class="sitems">ADRs (decision records), IA specifications, State matrices, Severity (P0–P3) audits, PRD/KRD gap analysis, Field research (LODs), AI-assisted workflow (Claude Code), Built internal Figma plugins for design QA &amp; dev-handoff</span></div>
+<div class="sr"><span class="slabel">Domain</span><span class="sitems">Logistics &amp; supply chain, TMS, Contract lifecycle management, B2B internal tools, Marketplace operations</span></div>
+</div>
+
+<div class="sec">
+  <div class="sh">03 / Education</div>
+  <div class="edu-row"><div class="edu">
+  <strong>M.Des, Experience Design</strong> <span class="enote">CGPA 8.05</span><br>
+  <span class="eschool">National Institute of Fashion Technology, Bangalore</span> <span class="eyrs">2021–2023</span>
+</div>
+<div class="edu">
+  <strong>B.Tech, Information Technology</strong><br>
+  <span class="eschool">VJTI, Mumbai</span> <span class="eyrs">2014–2018</span>
+</div></div>
+  <div class="langs">Languages · English (professional) · Hindi · Marathi (native)</div>
+</div>
+
+<footer class="foot">
+  <span>PRANITA SAPKAL — PRODUCT DESIGNER</span>
+  <span>Updated Jul 2026</span>
+</footer>
+
+</body>
+</html>

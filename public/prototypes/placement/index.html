@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Trip Edit — Single & Multi-Origin</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, "Inter", "Segoe UI", system-ui, sans-serif; }
+  body { background: #2a2d33; color: #1a1a1a; min-height: 100vh; padding: 24px; }
+  .crumb { color: #c9c9c9; font-size: 13px; margin-bottom: 8px; letter-spacing: .3px; text-transform: uppercase; }
+
+  /* Section accent colors */
+  :root {
+    --src: #4f46e5;   /* indigo */
+    --src-bg: #eef2ff;
+    --dst: #0d9488;   /* teal */
+    --dst-bg: #ccfbf1;
+    --rto: #d97706;   /* amber */
+    --rto-bg: #fef3c7;
+  }
+
+  /* Mode switcher */
+  .mode-switch {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    background: #fff; border-radius: 999px; padding: 4px; display: flex; gap: 4px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.25);
+  }
+  .mode-switch button {
+    border: none; background: transparent; padding: 8px 16px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; cursor: pointer; color: #6b7280;
+  }
+  .mode-switch button.active { background: #0a1a3a; color: #fff; }
+
+  .shell { display: flex; background: #fff; border-radius: 8px; overflow: hidden; min-height: 92vh; }
+
+  /* Sidebar */
+  .sidebar { width: 240px; background: #0a1a3a; color: #fff; display: flex; flex-direction: column; padding: 20px 14px; }
+  .profile { display: flex; align-items: center; gap: 10px; padding: 10px 8px 18px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,#f5b7c2,#a89cf5); }
+  .name { font-weight: 600; font-size: 14px; }
+  .nav { margin-top: 18px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .nav a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; color: #e9ebef; text-decoration: none; font-size: 14px; }
+  .nav a.active { background: #1f3470; }
+  .sidebar-foot { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.08); }
+  .valmo { font-weight: 800; letter-spacing: 1px; }
+
+  /* Main */
+  .main { flex: 1; background: #eef2f8; padding: 20px 28px 100px; position: relative; }
+  .breadc { display: flex; align-items: center; gap: 8px; color: #6b7280; font-size: 13px; margin-bottom: 10px; }
+  .breadc strong { color: #1a1a1a; font-weight: 500; }
+  .title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .back { width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; }
+  .trip-id { font-size: 22px; font-weight: 700; letter-spacing: .2px; }
+  .pill { display: inline-flex; align-items: center; padding: 4px 12px; font-size: 12px; border-radius: 999px; background: #e0eaff; color: #1d4ed8; font-weight: 500; }
+  .pill.amber { background: #fef3c7; color: #92400e; }
+  .pill.green { background: #d1fae5; color: #047857; }
+  .pill.red   { background: #fee2e2; color: #b91c1c; }
+  .pill.gray  { background: #e5e7eb; color: #374151; }
+  .pill.purple{ background: #ede9fe; color: #6d28d9; }
+
+  /* Card */
+  .card { background: #fff; border-radius: 10px; padding: 22px 24px; margin-bottom: 18px; border: 1px solid #e5e8ef; }
+  .card-h { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+  .card-h h2 { font-size: 16px; font-weight: 600; }
+  .meta { color: #6b7280; font-size: 12px; }
+  .meta a { color: #2563eb; }
+
+  /* Inputs */
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .fld { position: relative; }
+  .fld label { position: absolute; top: -7px; left: 12px; font-size: 11px; padding: 0 4px; background: #fff; color: #6b7280; z-index: 1; }
+  .fld .ctrl { width: 100%; padding: 14px 36px 14px 12px; border: 1px solid #d6dae3; border-radius: 6px; background: #fff; font-size: 14px; appearance: none; cursor: pointer; }
+  .fld .caret { position: absolute; right: 12px; top: 22px; color: #6b7280; pointer-events: none; }
+  .fld .sub { font-size: 12px; color: #4b5563; margin-top: 6px; }
+  .fld .sub.warn { color: #b45309; }
+  .fld .sub.err  { color: #b91c1c; font-weight: 500; }
+  .fld .sub.use a { color: #2563eb; }
+  .static .ctrl { background: transparent; border: none; padding: 0; font-size: 16px; font-weight: 500; cursor: default; }
+  .static label { position: static; padding: 0; background: transparent; font-size: 11px; color: #6b7280; display: block; margin-bottom: 4px; }
+
+  /* Nodes */
+  .nodes-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  .nodes-head h2 { font-size: 16px; font-weight: 600; }
+  .nodes-head .info { color: #6b7280; font-size: 13px; }
+
+  .add-block {
+    padding: 8px 0 20px;
+    border-bottom: 1px solid #eef0f4;
+    margin-bottom: 22px;
+  }
+  .add-title { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px; }
+  .add-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .add-row.single { grid-template-columns: 1fr auto; }
+  .btn-group { display: flex; gap: 10px; }
+
+  /* Role buttons — all equal, color-coded by section */
+  .btn-role {
+    height: 48px; padding: 0 18px;
+    background: #fff;
+    border: 1px solid #d6dae3;
+    border-radius: 6px;
+    font-weight: 600; font-size: 14px;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    color: #1a1a1a;
+    white-space: nowrap;
+    transition: all .15s;
+  }
+  .btn-role:hover { background: #f6f8fc; }
+  .btn-role .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .btn-role.src .dot { background: var(--src); }
+  .btn-role.dst .dot { background: var(--dst); }
+  .btn-role.rto .dot { background: var(--rto); }
+  .btn-role.src:hover { border-color: var(--src); background: var(--src-bg); }
+  .btn-role.dst:hover { border-color: var(--dst); background: var(--dst-bg); }
+  .btn-role.rto:hover { border-color: var(--rto); background: var(--rto-bg); }
+  .info-ic {
+    width: 16px; height: 16px; border-radius: 50%; background: #f3f4f7; color: #6b7280;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+    margin-left: 4px;
+    cursor: help;
+  }
+  .btn-primary {
+    height: 48px; padding: 0 22px; border: none; background: #0a1a3a; color: #fff;
+    font-weight: 600; font-size: 14px; border-radius: 6px; cursor: pointer;
+  }
+  .btn-primary:disabled { background: #c5cad6; cursor: not-allowed; }
+
+  .inline-err {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background:#fef2f2; border:1px solid #fecaca; color:#b91c1c;
+    font-size:13px; border-radius:6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .inline-err .x { background: none; border: none; color: #b91c1c; cursor: pointer; margin-left: auto; font-weight: 700; }
+
+  /* Sections */
+  .section { margin-top: 8px; }
+  .section + .section { margin-top: 22px; }
+  .sec-h { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .sec-h .accent { width: 8px; height: 8px; border-radius: 50%; }
+  .sec-h.src .accent { background: var(--src); }
+  .sec-h.dst .accent { background: var(--dst); }
+  .sec-h.rto .accent { background: var(--rto); }
+  .sec-h .name { font-size: 13px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: #1a1a1a; }
+  .sec-h .count { font-size: 12px; color: #6b7280; }
+  .sec-h .badge { font-size: 10px; padding: 2px 8px; border-radius: 999px; background: var(--rto-bg); color: #92400e; letter-spacing: .4px; font-weight: 600; }
+  .sec-h .hint { font-size: 12px; color: #6b7280; font-weight: 400; margin-left: auto; }
+
+  /* Section flash on add */
+  .sec-flash { animation: flash 1s ease-out; }
+  @keyframes flash {
+    0%   { background: rgba(0,0,0,0); }
+    20%  { background: rgba(79,70,229,.08); }
+    100% { background: rgba(0,0,0,0); }
+  }
+
+  .node-list { display: flex; flex-direction: column; gap: 10px; }
+  .node {
+    display: grid;
+    grid-template-columns: 24px 80px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    background: #f6f8fc;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid #eceff5;
+  }
+  .node.compact { grid-template-columns: 24px 1fr auto; }
+  .node .drag { color: #9aa0aa; cursor: grab; font-size: 18px; line-height: 1; user-select: none; }
+  .node .seq { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+  .node .body .code { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .node .body .addr { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .icon-btn { background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px; font-size: 15px; }
+  .icon-btn:hover { color: #b91c1c; }
+
+  .empty-state { padding: 18px; text-align: center; color: #9aa0aa; font-size: 13px; border: 1px dashed #e1e4eb; border-radius: 8px; }
+
+  .source-strip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px; background: #f6f8fc; border: 1px solid #eceff5; border-radius: 8px;
+    margin-bottom: 18px;
+  }
+  .source-strip .lbl { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: .4px; font-weight: 600; }
+  .source-strip .val { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .source-strip .addr { font-size: 12px; color: #6b7280; }
+
+  /* Footer */
+  .footer {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 16px 28px; background: #fff; border-top: 1px solid #e5e8ef;
+    display: flex; justify-content: flex-end;
+  }
+  .submit { background: #0a1a3a; color: #fff; border: none; padding: 14px 34px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1a1a1a; color: #fff; padding: 12px 18px; border-radius: 8px; font-size: 13px;
+    opacity: 0; transition: all .25s; pointer-events: none; z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: #b91c1c; }
+</style>
+</head>
+<body>
+  <div class="mode-switch">
+    <button id="modeSingle" class="active" onclick="setMode('single')">Single-Origin (94%)</button>
+    <button id="modeMulti" onclick="setMode('multi')">Multi-Origin (6%)</button>
+  </div>
+
+  <div class="crumb">UPCOMING TRIPS &gt; Trip EDIT</div>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="profile">
+        <div class="avatar"></div>
+        <div class="name">Karan Verma</div>
+      </div>
+      <nav class="nav">
+        <a><span>🎧</span> Valmo Support</a>
+        <a><span>🏠</span> Home</a>
+        <a class="active"><span>📁</span> Trips</a>
+        <a><span>📁</span> Route Master</a>
+      </nav>
+      <div class="sidebar-foot">
+        <a style="color:#fff;text-decoration:none;font-size:14px;display:flex;align-items:center;gap:10px;"><span>↩</span> Log Out</a>
+        <div class="valmo">VALMO</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="breadc"><span>Trips</span> <span>›</span> <strong>Edit Details</strong></div>
+      <div class="title-row">
+        <span class="back">‹</span>
+        <span class="trip-id">TR373833312068</span>
+        <span class="pill">Upcoming</span>
+        <span class="pill gray" id="modeTag">Single-Origin</span>
+        <span class="pill green">ROUND_TRIP</span>
+      </div>
+
+      <section class="card">
+        <div class="card-h">
+          <h2>Trip Overview</h2>
+          <div class="meta">Last updated by <a href="#">ops.lead@example.com</a> on Apr 15, 2025 6PM</div>
+        </div>
+        <div class="grid">
+          <div class="fld" id="sourceField">
+            <label>Source Node</label>
+            <select class="ctrl"><option>BLR</option></select>
+            <span class="caret">▾</span>
+          </div>
+          <div class="fld">
+            <label>Transporter Details</label>
+            <select class="ctrl"><option>12345 -1234567- S…</option></select>
+            <span class="caret">▾</span>
+            <div class="sub">Sai Roadways PVT LTD</div>
+            <div class="sub warn">⚠ Pending ACK</div>
+          </div>
+          <div class="fld">
+            <label>Required Vehicle Size</label>
+            <select class="ctrl"><option>24ft</option></select>
+            <span class="caret">▾</span>
+          </div>
+          <div class="fld">
+            <label>Vehicle Details</label>
+            <select class="ctrl"><option>DL01AB1234 - 32..</option></select>
+            <span class="caret">▾</span>
+            <div class="sub use">In Use: <a href="#">TR-09933-0988</a></div>
+            <div class="sub err">No GPS Present</div>
+          </div>
+          <div class="fld">
+            <label>Driver Details</label>
+            <select class="ctrl"><option>9812345678 - Rame..</option></select>
+            <span class="caret">▾</span>
+            <div class="sub use">In Use: <a href="#">TR-09933-0988</a></div>
+          </div>
+          <div class="fld">
+            <label>Route Name</label>
+            <select class="ctrl"><option>Route 1</option></select>
+            <span class="caret">▾</span>
+            <div class="sub">Modified</div>
+          </div>
+          <div class="fld">
+            <label>Billing Type &amp; Hours</label>
+            <select class="ctrl"><option>Regular - 12 hr</option></select>
+            <span class="caret">▾</span>
+          </div>
+          <div class="fld">
+            <label>Placement Date &amp; Time</label>
+            <input class="ctrl" value="08/10/2025 | 7:00" />
+            <span class="caret">📅</span>
+          </div>
+          <div class="fld static">
+            <label>Expected End Time</label>
+            <div class="ctrl">17 Jul'25, 02:00 PM (TAT 16 Hrs)</div>
+          </div>
+          <div class="fld static">
+            <label>Drivers Required</label>
+            <div class="ctrl">2</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="nodes-head">
+          <h2>Nodes</h2>
+          <div class="info">NLH | 1400 km</div>
+        </div>
+
+        <!-- MULTI: Node Code + 3 role buttons -->
+        <div class="add-block" id="addBlockMulti" style="display:none;">
+          <div class="add-title">Add Node</div>
+          <div class="add-row">
+            <div class="fld">
+              <label>Node Code</label>
+              <select class="ctrl" id="nodeCodeMulti"><option value="">Select a node from the original contract</option></select>
+              <span class="caret">▾</span>
+            </div>
+            <div class="btn-group">
+              <button class="btn-role src" id="btnAddSrc"><span class="dot"></span>Add as Source</button>
+              <button class="btn-role dst" id="btnAddDst"><span class="dot"></span>Add as Destination</button>
+              <button class="btn-role rto" id="btnAddRto">
+                <span class="dot"></span>Add as RTO
+                <span class="info-ic" title="RTO Destination Nodes are origins eligible to receive return freight on ROUND_TRIP. Must already be in Source Nodes.">i</span>
+              </button>
+            </div>
+          </div>
+          <div class="inline-err" id="addErr" style="display:none;">
+            <span>⚠</span><span id="addErrMsg"></span>
+            <button class="x" onclick="clearAddError()">×</button>
+          </div>
+        </div>
+
+        <!-- SINGLE: read-only source + add destination -->
+        <div id="singleBlock">
+          <div class="source-strip">
+            <span class="lbl">Source</span>
+            <span class="val">BLR — Bengaluru</span>
+            <span class="addr" style="margin-left:8px;">AECS Layout Sector 3, 15th main road, 560068</span>
+            <span class="pill purple" style="margin-left:auto;">First Origin</span>
+          </div>
+          <div class="add-block">
+            <div class="add-title">Add Destination Node</div>
+            <div class="add-row single">
+              <div class="fld">
+                <label>Node Code</label>
+                <select class="ctrl" id="nodeCodeSingle"><option value="">Select a node</option></select>
+                <span class="caret">▾</span>
+              </div>
+              <button class="btn-primary" id="addBtnSingle" disabled>Add</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="sec-h dst">
+              <span class="accent"></span>
+              <span class="name">Destination Nodes</span>
+              <span class="count" id="dstCountSingle">· 0</span>
+              <span class="hint">Drag to reorder</span>
+            </div>
+            <div class="node-list" id="dstListSingle"></div>
+          </div>
+
+          <div class="section">
+            <div class="sec-h rto">
+              <span class="accent"></span>
+              <span class="name">RTO Return</span>
+              <span class="badge">ROUND_TRIP</span>
+              <span class="hint">Return freight comes back to source automatically</span>
+            </div>
+            <div class="node-list">
+              <div class="node compact">
+                <span class="drag" style="opacity:.3;cursor:default;">≡</span>
+                <div class="body">
+                  <div class="code">BLR — Bengaluru</div>
+                  <div class="addr">Return target · auto-mirrored from Source</div>
+                </div>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MULTI: three sections -->
+        <div id="multiBlock" style="display:none;">
+          <div class="section">
+            <div class="sec-h src" id="secSrc">
+              <span class="accent"></span>
+              <span class="name">Source Nodes (Origins)</span>
+              <span class="count" id="srcCount">· 2</span>
+              <span class="hint">Drag to reorder · First in list = First Origin</span>
+            </div>
+            <div class="node-list" id="srcList"></div>
+          </div>
+
+          <div class="section">
+            <div class="sec-h dst" id="secDst">
+              <span class="accent"></span>
+              <span class="name">Destination Nodes</span>
+              <span class="count" id="dstCount">· 1</span>
+              <span class="hint">Drag to reorder</span>
+            </div>
+            <div class="node-list" id="dstList"></div>
+          </div>
+
+          <div class="section">
+            <div class="sec-h rto" id="secRto">
+              <span class="accent"></span>
+              <span class="name">RTO Destination Nodes</span>
+              <span class="count" id="rtoCount">· 2</span>
+              <span class="badge">ROUND_TRIP</span>
+              <span class="hint">Subset of Source — remove to exclude an origin from return freight</span>
+            </div>
+            <div class="node-list" id="rtoList"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <button class="submit">Submit Trip</button>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+const contractSnapshot = {
+  single: {
+    source: [ { code: 'BLR', name: 'Bengaluru', addr: 'AECS Layout Sector 3, 15th main road, 560068' } ],
+    destination: [
+      { code: 'KOL', name: 'Kolkata',   addr: 'AECS Layout Sector 3, 15th main road, 560068' },
+      { code: 'SVT', name: 'Surat',     addr: 'AECS Layout Sector 3, 15th main road, 560068' },
+      { code: 'NDSL',name: 'New Delhi', addr: 'AECS Layout Sector 3, 15th main road, 560068' },
+      { code: 'GHY', name: 'Guwahati',  addr: 'Sixmile, Khanapara, 781022' },
+    ]
+  },
+  multi: {
+    source: [
+      { code: 'BLR', name: 'Bengaluru', addr: 'AECS Layout Sector 3, 15th main road, 560068' },
+      { code: 'SVT', name: 'Surat',     addr: 'AECS Layout Sector 3, 15th main road, 560068' },
+      { code: 'PNQ', name: 'Pune',      addr: 'Hinjewadi Phase 2, 411057' },
+    ],
+    destination: [
+      { code: 'KOL', name: 'Kolkata',   addr: 'AECS Layout Sector 3, 15th main road, 560068' },
+      { code: 'GHY', name: 'Guwahati',  addr: 'Sixmile, Khanapara, 781022' },
+    ]
+  }
+};
+
+let mode = 'single';
+let trip;
+
+function resetTrip() {
+  if (mode === 'single') {
+    trip = {
+      source:      [ {...contractSnapshot.single.source[0]} ],
+      destination: [
+        {...contractSnapshot.single.destination[1]},
+        {...contractSnapshot.single.destination[2]},
+        {...contractSnapshot.single.destination[0]},
+      ],
+      rto: [ {...contractSnapshot.single.source[0]} ],
+    };
+  } else {
+    trip = {
+      source:      [ {...contractSnapshot.multi.source[0]}, {...contractSnapshot.multi.source[1]} ],
+      destination: [ {...contractSnapshot.multi.destination[0]} ],
+      rto:         [ {...contractSnapshot.multi.source[0]}, {...contractSnapshot.multi.source[1]} ],
+    };
+  }
+}
+
+function setMode(m) {
+  mode = m;
+  resetTrip();
+  document.getElementById('modeSingle').classList.toggle('active', m === 'single');
+  document.getElementById('modeMulti').classList.toggle('active', m === 'multi');
+  document.getElementById('modeTag').textContent = m === 'single' ? 'Single-Origin' : 'Multi-Origin';
+  document.getElementById('singleBlock').style.display = m === 'single' ? '' : 'none';
+  document.getElementById('multiBlock').style.display  = m === 'multi'  ? '' : 'none';
+  document.getElementById('addBlockMulti').style.display = m === 'multi' ? '' : 'none';
+  document.getElementById('sourceField').style.display = m === 'single' ? '' : 'none';
+  clearAddError();
+  refresh();
+}
+
+/* ---------- Render ---------- */
+function nodeRow(n, idx, sectionKey, opts = {}) {
+  const { showSeq = true, compact = false } = opts;
+  const row = document.createElement('div');
+  row.className = 'node' + (compact ? ' compact' : '');
+  row.draggable = true;
+  row.dataset.idx = idx;
+  row.dataset.section = sectionKey;
+  row.innerHTML = compact
+    ? `<span class="drag">≡</span>
+       <div class="body"><div class="code">${n.code} — ${n.name}</div><div class="addr">${n.addr}</div></div>
+       <button class="icon-btn" data-action="delete">🗑</button>`
+    : `<span class="drag">≡</span>
+       <span class="seq">${showSeq ? 'Node ' + (idx+1) : ''}</span>
+       <div class="body"><div class="code">${n.code} — ${n.name}</div><div class="addr">${n.addr}</div></div>
+       <button class="icon-btn" data-action="delete">🗑</button>`;
+  row.querySelector('[data-action="delete"]').addEventListener('click', () => removeNode(sectionKey, idx));
+  row.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', JSON.stringify({ section: sectionKey, idx }));
+    row.style.opacity = '.4';
+  });
+  row.addEventListener('dragend', () => row.style.opacity = '1');
+  row.addEventListener('dragover', e => e.preventDefault());
+  row.addEventListener('drop', e => {
+    e.preventDefault();
+    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+    if (data.section !== sectionKey) {
+      toast('Nodes cannot move across sections. Roles are locked.', true);
+      return;
+    }
+    reorder(sectionKey, data.idx, idx);
+  });
+  return row;
+}
+
+function renderList(elId, arr, sectionKey, opts) {
+  const el = document.getElementById(elId);
+  el.innerHTML = '';
+  if (arr.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.textContent = 'No nodes added yet';
+    el.appendChild(empty);
+  } else {
+    arr.forEach((n, i) => el.appendChild(nodeRow(n, i, sectionKey, opts)));
+  }
+}
+
+function refresh() {
+  if (mode === 'single') {
+    renderList('dstListSingle', trip.destination, 'destination', { showSeq: true });
+    document.getElementById('dstCountSingle').textContent = '· ' + trip.destination.length;
+    refreshDropdownSingle();
+  } else {
+    renderList('srcList', trip.source, 'source', { showSeq: true });
+    renderList('dstList', trip.destination, 'destination', { showSeq: true });
+    renderList('rtoList', trip.rto, 'rto', { compact: true });
+    document.getElementById('srcCount').textContent = '· ' + trip.source.length;
+    document.getElementById('dstCount').textContent = '· ' + trip.destination.length;
+    document.getElementById('rtoCount').textContent = '· ' + trip.rto.length;
+    refreshDropdownMulti();
+  }
+}
+
+/* ---------- Dropdown population ---------- */
+// Multi dropdown: shows every contract node not already in trip.source/trip.destination,
+// plus current source nodes not in RTO (for RTO add-back). Buttons validate on click.
+function multiDropdownNodes() {
+  const snap = contractSnapshot.multi;
+  const out = new Map();
+  snap.source.forEach(n => { if (!trip.source.some(s => s.code === n.code)) out.set(n.code, n); });
+  snap.destination.forEach(n => { if (!trip.destination.some(d => d.code === n.code)) out.set(n.code, n); });
+  trip.source.forEach(n => { if (!trip.rto.some(r => r.code === n.code)) out.set(n.code, n); });
+  return Array.from(out.values());
+}
+function singleDropdownNodes() {
+  const present = new Set(trip.destination.map(n => n.code));
+  return contractSnapshot.single.destination.filter(n => !present.has(n.code));
+}
+
+function fillSelect(select, opts, placeholder) {
+  const cur = select.value;
+  select.innerHTML = '';
+  const ph = document.createElement('option');
+  ph.value = ''; ph.textContent = placeholder;
+  select.appendChild(ph);
+  opts.forEach(n => {
+    const o = document.createElement('option');
+    o.value = n.code;
+    o.textContent = `${n.code} — ${n.name}`;
+    select.appendChild(o);
+  });
+  if (opts.some(n => n.code === cur)) select.value = cur;
+}
+
+function refreshDropdownMulti() {
+  fillSelect(document.getElementById('nodeCodeMulti'), multiDropdownNodes(), 'Select a node from the original contract');
+}
+function refreshDropdownSingle() {
+  const sel = document.getElementById('nodeCodeSingle');
+  fillSelect(sel, singleDropdownNodes(), 'Select a node');
+  document.getElementById('addBtnSingle').disabled = !sel.value;
+}
+
+/* ---------- Add (Multi) — validate on click ---------- */
+function showAddError(msg) {
+  document.getElementById('addErrMsg').textContent = msg;
+  document.getElementById('addErr').style.display = 'flex';
+}
+function clearAddError() {
+  document.getElementById('addErr').style.display = 'none';
+}
+
+function handleAddMulti(target) {
+  clearAddError();
+  const code = document.getElementById('nodeCodeMulti').value;
+  if (!code) {
+    showAddError('Select a node first.');
+    return;
+  }
+
+  const snap = contractSnapshot.multi;
+  const isContractSource = snap.source.some(n => n.code === code);
+  const isContractDest   = snap.destination.some(n => n.code === code);
+  const inTripSource     = trip.source.some(n => n.code === code);
+  const inTripDest       = trip.destination.some(n => n.code === code);
+  const inTripRto        = trip.rto.some(n => n.code === code);
+
+  if (target === 'source') {
+    if (!isContractSource) { showAddError(`${code} was a destination in the original contract — it cannot be added as a Source.`); return; }
+    if (inTripSource)       { showAddError(`${code} is already in Source Nodes.`); return; }
+    const node = snap.source.find(n => n.code === code);
+    trip.source.push({ ...node });
+    if (!inTripRto) trip.rto.push({ ...node }); // auto-mirror
+    afterAdd('source', node);
+    return;
+  }
+  if (target === 'destination') {
+    if (!isContractDest) { showAddError(`${code} was a source in the original contract — it cannot be added as a Destination.`); return; }
+    if (inTripDest)      { showAddError(`${code} is already in Destination Nodes.`); return; }
+    const node = snap.destination.find(n => n.code === code);
+    trip.destination.push({ ...node });
+    afterAdd('destination', node);
+    return;
+  }
+  if (target === 'rto') {
+    if (!inTripSource) { showAddError(`RTO must be a subset of Source. ${code} is not currently in Source Nodes — add it to Source first.`); return; }
+    if (inTripRto)     { showAddError(`${code} is already in RTO Destination Nodes.`); return; }
+    const node = trip.source.find(n => n.code === code);
+    trip.rto.push({ ...node });
+    afterAdd('rto', node);
+    return;
+  }
+}
+
+function afterAdd(section, node) {
+  toast(`Added ${node.code} to ${labelOf(section)}.`);
+  document.getElementById('nodeCodeMulti').value = '';
+  refresh();
+  // Flash the target section header
+  const flashEl = document.getElementById('sec' + section[0].toUpperCase() + section.slice(1, 3));
+  if (flashEl) {
+    flashEl.classList.remove('sec-flash');
+    void flashEl.offsetWidth;
+    flashEl.classList.add('sec-flash');
+  }
+}
+
+function labelOf(t) {
+  return t === 'source' ? 'Source Nodes' : t === 'destination' ? 'Destination Nodes' : 'RTO Destination Nodes';
+}
+
+function handleAddSingle() {
+  const code = document.getElementById('nodeCodeSingle').value;
+  if (!code) return;
+  const node = contractSnapshot.single.destination.find(n => n.code === code);
+  if (!node) return;
+  trip.destination.push({ ...node });
+  toast(`Added ${node.code} to Destination Nodes.`);
+  refresh();
+}
+
+function removeNode(section, idx) {
+  const n = trip[section][idx];
+  trip[section].splice(idx, 1);
+  if (section === 'source') {
+    trip.rto = trip.rto.filter(r => r.code !== n.code);
+  }
+  toast(`Removed ${n.code} from ${labelOf(section)}.`);
+  refresh();
+}
+
+function reorder(section, from, to) {
+  if (from === to) return;
+  const arr = trip[section];
+  const [moved] = arr.splice(from, 1);
+  arr.splice(to, 0, moved);
+  refresh();
+}
+
+let toastTimer;
+function toast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('error', isError);
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+document.getElementById('nodeCodeMulti').addEventListener('change', clearAddError);
+document.getElementById('nodeCodeSingle').addEventListener('change', e => {
+  document.getElementById('addBtnSingle').disabled = !e.target.value;
+});
+document.getElementById('btnAddSrc').addEventListener('click', () => handleAddMulti('source'));
+document.getElementById('btnAddDst').addEventListener('click', () => handleAddMulti('destination'));
+document.getElementById('btnAddRto').addEventListener('click', () => handleAddMulti('rto'));
+document.getElementById('addBtnSingle').addEventListener('click', handleAddSingle);
+
+setMode('single');
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "name": "pranita-portfolio",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "optimize-images": "node scripts/optimize-images.mjs",
+    "nda-scan": "node scripts/nda-scan.mjs",
+    "build:resume": "node resume/build-resume.mjs",
+    "build:docx": "node resume/build-docx.mjs",
+    "build:svg": "node resume/build-svg.mjs",
+    "build:cv": "node resume/build-resume.mjs && node resume/build-docx.mjs",
+    "shots:assignment": "node scripts/export-assignment-shots.mjs",
+    "diagrams:assignment": "node scripts/gen-assignment-diagrams.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "^5.2.5",
+    "@fontsource/ibm-plex-mono": "^5.2.5",
+    "@fontsource/instrument-serif": "^5.2.5",
+    "@gsap/react": "^2.1.2",
+    "@react-three/drei": "^10.0.6",
+    "@react-three/fiber": "^9.1.2",
+    "gsap": "^3.13.0",
+    "lenis": "^1.3.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.5.0",
+    "three": "^0.175.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@types/three": "^0.175.0",
+    "@vitejs/plugin-react": "^4.4.1",
+    "docx": "^9.7.1",
+    "sharp": "^0.34.1",
+    "tailwindcss": "^4.1.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.2"
+  }
+}

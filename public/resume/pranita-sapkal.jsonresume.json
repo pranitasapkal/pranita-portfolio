@@ -1,0 +1,195 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  "basics": {
+    "name": "Pranita Sapkal",
+    "label": "Product Designer",
+    "email": "sapkalp1997@gmail.com",
+    "phone": "+91 8767897103",
+    "url": "",
+    "summary": "Product designer for the platforms that run one of India's largest logistics networks. On Meesho's Valmo network I'm the sole designer behind three products taken from 0→1 to launch: the systems that plan trips, manage transporters, and run vendor contracts, now used by transporters and managers across India. Partnering with product and engineering, I design the operating model, not just the screens. Earlier: 3 years across web, mobile, and design systems.",
+    "location": {
+      "city": "Bangalore",
+      "region": "Karnataka",
+      "countryCode": "IN"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "pranita-sapkal-86364010a",
+        "url": "https://linkedin.com/in/pranita-sapkal-86364010a"
+      },
+      {
+        "network": "Behance",
+        "username": "pranitasapkal",
+        "url": "https://behance.net/pranitasapkal"
+      },
+      {
+        "network": "Dribbble",
+        "username": "Pranitas03",
+        "url": "https://dribbble.com/Pranitas03"
+      },
+      {
+        "network": "Medium",
+        "username": "@Pranitasapkal",
+        "url": "https://medium.com/@Pranitasapkal"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Meesho (Valmo Transportation)",
+      "position": "Product Designer, Transporter Panel (SetuX) — live flagship",
+      "startDate": "2025-06",
+      "endDate": "",
+      "highlights": [
+        "Designed SetuX, a unified transporter platform to accept trips, assign vehicles and drivers, track execution, confirm cost, and raise disputes, replacing scattered email and WhatsApp workflows.",
+        "Led the V1→V2 redesign that made completed trips clearer and added Hindi audio for low-literacy partners, lifting cost visibility from ~70% to ~96%.",
+        "Designed the upfront cost-acknowledgement flow, cutting invoice errors from ~20% to under 2% (~₹10 Cr impact).",
+        "Designed the disputes flow to raise, track, and resolve issues in one place, cutting the payout cycle from ~90 to ~7 days (NPS > 60)."
+      ]
+    },
+    {
+      "name": "Meesho (Valmo Transportation)",
+      "position": "Product Designer, TMS Admin (Trip Creation, Placement & Multi-Origin)",
+      "startDate": "2025-06",
+      "endDate": "",
+      "highlights": [
+        "Designed the Area Manager admin panel for bulk trip creation, turning managers into active moderators of data quality across ~100 sort centres (97% cost visibility, 99% compliance).",
+        "Redesigned multi-origin trip creation into a simple 2-click route builder, removing two workarounds that were corrupting trip data."
+      ]
+    },
+    {
+      "name": "Meesho (Valmo Transportation)",
+      "position": "Product Designer, Contract Management (CLH) — designing 0→1",
+      "startDate": "2025-06",
+      "endDate": "",
+      "highlights": [
+        "Designing Valmo's contract-lifecycle system from 0→1, turning route plans into signed, running vendor contracts and replacing an offline spreadsheet process with one auditable source of truth.",
+        "Modeled the full contract lifecycle and designed the CLH manager workspace to assign transporters and rates (with cost guardrails and best-fit suggestions) plus a transporter side to review and accept, across 14 flows and 130+ screens."
+      ]
+    },
+    {
+      "name": "Wizrdom",
+      "position": "UI/UX & Graphic Designer",
+      "startDate": "2024-01",
+      "endDate": "2025-06",
+      "highlights": [
+        "Designed end-to-end UI/UX for client web and mobile products, taking work from research and wireframes through prototypes to high-fidelity, dev-ready handoff.",
+        "Created social, graphic, and motion content for marketing, using performance metrics to refine what shipped.",
+        "Ran multiple projects simultaneously, presenting to stakeholders and mentoring junior designers."
+      ]
+    },
+    {
+      "name": "Huntment",
+      "position": "UI/UX Designer (Remote, UAE)",
+      "startDate": "2023-11",
+      "endDate": "2024-01",
+      "highlights": [
+        "Designed DoJoin Ride, a multi-service app for the UAE market, delivering user flows, wireframes, and hi-fi interfaces across its features.",
+        "Partnered with cross-functional teams to align designs with business goals, running user testing to optimize the experience."
+      ]
+    },
+    {
+      "name": "AuraSmart",
+      "position": "UI/UX Designer",
+      "startDate": "2023-01",
+      "endDate": "2023-11",
+      "highlights": [
+        "Designed smart-home automation app experiences end-to-end, taking them from research and user flows to high-fidelity prototypes.",
+        "Built a reusable design system, running usability testing to validate and refine flows.",
+        "Shaped branding direction and improved UX writing across the product."
+      ]
+    },
+    {
+      "name": "OnerosTech",
+      "position": "UI/UX Design Intern",
+      "startDate": "2022-06",
+      "endDate": "2022-08",
+      "highlights": [
+        "Designed a personal-finance app (loan tracking, bill reminders) from lo-fi to hi-fi, adding micro-interactions to improve usability.",
+        "Researched real usability issues and applied UX principles to the solutions, also designing a sports-betting app interface for clarity and ease of use."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Rooted",
+      "description": "Designed the product experience for this AI plant-care app (now in beta), spanning plant identification, condition-based watering schedules, and photo-based problem diagnosis.",
+      "url": "https://rootedplant.org",
+      "highlights": [
+        "Designed the product experience for this AI plant-care app (now in beta), spanning plant identification, condition-based watering schedules, and photo-based problem diagnosis."
+      ]
+    },
+    {
+      "name": "Yantrava",
+      "description": "Helped design the website for Yantrava Labs, a studio building independent, AI-driven software products.",
+      "url": "https://yantrava.com",
+      "highlights": [
+        "Helped design the website for Yantrava Labs, a studio building independent, AI-driven software products."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "National Institute of Fashion Technology, Bangalore",
+      "studyType": "M.Des in Experience Design",
+      "area": "",
+      "startDate": "2021",
+      "endDate": "2023",
+      "score": "CGPA 8.05"
+    },
+    {
+      "institution": "VJTI, Mumbai",
+      "studyType": "B.Tech in Information Technology",
+      "area": "",
+      "startDate": "2014",
+      "endDate": "2018",
+      "score": ""
+    }
+  ],
+  "skills": [
+    {
+      "name": "Design",
+      "keywords": [
+        "Interaction Design",
+        "Information Architecture",
+        "Enterprise / B2B UX",
+        "Systems Design",
+        "0→1 Product Discovery",
+        "Design Systems & Tokens",
+        "Inclusive / Low-Literacy Design",
+        "Accessibility",
+        "Usability Testing (moderated, multilingual)"
+      ]
+    },
+    {
+      "name": "Tools",
+      "keywords": [
+        "Figma (Variables, Dev Mode, Auto Layout, Plugin API)",
+        "Interactive HTML prototyping",
+        "Adobe Photoshop / Illustrator",
+        "Excalidraw / FigJam",
+        "Claude Code"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "professional"
+    },
+    {
+      "language": "Hindi",
+      "fluency": ""
+    },
+    {
+      "language": "Marathi",
+      "fluency": "native"
+    }
+  ],
+  "meta": {
+    "canonical": "",
+    "version": "v1.0.0",
+    "theme": "onepage"
+  }
+}
