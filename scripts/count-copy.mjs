@@ -1,0 +1,99 @@
+#!/usr/bin/env node
+/**
+ * scripts/count-copy.mjs
+ * Measures the reader-facing copy in a case study, so the ADR-004 length budget is a
+ * check rather than a claim.
+ *
+ *   node scripts/count-copy.mjs                    all cases
+ *   node scripts/count-copy.mjs transporter-panel  one case
+ *
+ * Method matches how the reference cases were measured (visible paragraph text only):
+ * every string in the case object except identifiers and alt text, split at 12 words into
+ * "prose" and "short elements". The ratio between those two is the point — the reference
+ * pages carry most of their meaning in short elements, with prose only connecting them.
+ */
+import { build } from 'esbuild'
+import { writeFileSync, mkdirSync, rmSync, readdirSync } from 'fs'
+import { resolve, dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const casesDir = resolve(root, 'src/content/cases')
+const tmp = resolve(root, '.copy-count-tmp')
+
+// Identifiers and accessibility text — never rendered as reading copy.
+const SKIP = new Set(['src', 'slug', 'code', 'id', 'href', 'poster', 'browserSlug', 'alt'])
+const PROSE_MIN = 12
+
+const words = (s) => (s.match(/\S+/g) || []).length
+const pct = (a, p) => a[Math.floor(a.length * p)]
+
+function collect(value, key, into) {
+  if (typeof value === 'string') {
+    if (SKIP.has(key)) return
+    const n = words(value)
+    if (n) into.push(n)
+    return
+  }
+  if (Array.isArray(value)) return value.forEach((v) => collect(v, key, into))
+  if (value && typeof value === 'object') {
+    return Object.entries(value).forEach(([k, v]) => collect(v, k, into))
+  }
+}
+
+const only = process.argv[2]
+const files = readdirSync(casesDir)
+  .filter((f) => f.endsWith('.tsx'))
+  .map((f) => f.replace(/\.tsx$/, ''))
+  .filter((f) => !only || f === only)
+
+if (!files.length) {
+  console.error(`No case file matched "${only}" in src/content/cases/`)
+  process.exit(1)
+}
+
+mkdirSync(tmp, { recursive: true })
+// Import through the registry so we don't need to know each file's export name.
+writeFileSync(resolve(tmp, 'entry.mjs'), `export { caseStudies } from '${casesDir}/index.ts'`)
+await build({
+  entryPoints: [resolve(tmp, 'entry.mjs')],
+  bundle: true, format: 'esm', platform: 'node', logLevel: 'silent',
+  outfile: resolve(tmp, 'bundle.mjs'),
+})
+const { caseStudies } = await import(`${resolve(tmp, 'bundle.mjs')}?v=${files.join()}`)
+rmSync(tmp, { recursive: true, force: true })
+
+// Budget from ADR-004. Shape matters more than the absolute total: the reference pages
+// run 550–800 words, but carry no 8-step process, no decision spotlights and far fewer
+// evidence tables, so a like-for-like total is not the same target.
+const BUDGET = { median: [18, 22], p75: 30, max: 60, over60: 0 }
+let failed = false
+
+for (const cs of Object.values(caseStudies)) {
+  if (only && cs.slug !== only) continue
+  const lens = []
+  collect(cs, 'root', lens)
+  const prose = lens.filter((n) => n >= PROSE_MIN).sort((a, b) => a - b)
+  const short = lens.filter((n) => n < PROSE_MIN)
+  const total = lens.reduce((a, b) => a + b, 0)
+  const median = pct(prose, 0.5)
+  const p75 = pct(prose, 0.75)
+  const max = prose[prose.length - 1]
+  const over = prose.filter((n) => n > BUDGET.max).length
+
+  const bad = []
+  if (median < BUDGET.median[0] || median > BUDGET.median[1]) bad.push('median')
+  if (p75 > BUDGET.p75) bad.push('p75')
+  if (over > BUDGET.over60) bad.push('>60w')
+  if (bad.length) failed = true
+
+  console.log(`\n${cs.code}  ${cs.title}`)
+  console.log(`  total            ${total}w`)
+  console.log(`  prose            ${prose.length} paras, ${prose.reduce((a, b) => a + b, 0)}w`)
+  console.log(`  short elements   ${short.length}   (ratio ${(short.length / prose.length).toFixed(1)}:1)`)
+  console.log(`  median / p75     ${median} / ${p75}   (target ${BUDGET.median.join('–')} / ≤${BUDGET.p75})`)
+  console.log(`  longest / >60w   ${max} / ${over}   (target ≤${BUDGET.max} / ${BUDGET.over60})`)
+  console.log(bad.length ? `  OVER BUDGET: ${bad.join(', ')}` : '  within budget')
+}
+
+process.exit(failed ? 1 : 0)
