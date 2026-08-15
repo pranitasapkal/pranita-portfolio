@@ -1,14 +1,19 @@
 /**
  * EditorialCaseLayout — walletsprout-style long-scroll case shell (ADR-001).
  * Serif editorial hero (eyebrow · title · one-liner · Domain/Role/Timeline/Scale pills)
- * → cover board → chapters rendered full-width top-to-bottom (no sticky nav) with boards
- * interleaved → Decision Spotlights → Reflection → Next case.
+ * → cover board → TL;DR → chapters rendered full-width top-to-bottom (no sticky nav) with
+ * boards interleaved → Decision Spotlights → Reflection → Next case.
+ *
+ * The TL;DR was authored on every case but rendered only by CaseLayout, so editorial cases
+ * silently dropped their problem statement, outcomes and stat tiles — a reader scrolled eight
+ * chapters with nothing summarising the work. Fixed 2026-08-15; both layouts now show it.
  * Real-content cases (cs.noindex) inject a robots noindex tag and skip the NDA chip.
  */
 import { useEffect } from 'react'
 import { SEOHead } from '../chrome/SEOHead'
 import { ArrowCircle } from '../primitives/ArrowCircle'
 import { BlockRenderer } from './BlockRenderer'
+import { TldrBlock } from './TldrBlock'
 import { Board } from './blocks/Board'
 import type { CaseStudy } from '../../content/types'
 
@@ -78,6 +83,14 @@ export function EditorialCaseLayout({ cs }: EditorialCaseLayoutProps) {
             />
           </section>
         )}
+
+        {/* ── TLDR ─────────────────────────────────────────────────── */}
+        <TldrBlock
+          problem={cs.tldr.problem}
+          outcomes={cs.tldr.outcomes}
+          summary={cs.tldr.summary}
+          stats={cs.tldr.stats}
+        />
 
         {/* ── CHAPTERS (long-scroll) ───────────────────────────────── */}
         <div className="max-w-5xl mx-auto px-6 md:px-12 py-8 flex flex-col gap-28">
