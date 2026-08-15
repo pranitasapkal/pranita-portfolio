@@ -105,8 +105,13 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
                 >
                   {/* Chapter header */}
                   <div className="flex flex-col gap-2 border-b border-line pb-6">
+                    {/* When `title` is a claim, `kicker` carries the process-step name so the
+                        8-step sequence stays visible here as it does in the editorial layout. */}
                     <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">
                       STEP {String(chapter.step).padStart(2, '0')}
+                      {chapter.kicker && (
+                        <span className="text-text-lo"> / {chapter.kicker}</span>
+                      )}
                     </span>
                     <h2
                       id={`chapter-heading-${chapter.step}`}

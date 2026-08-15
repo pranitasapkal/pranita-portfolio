@@ -46,16 +46,15 @@ function collect(value, key, into) {
   }
 }
 
-const only = process.argv[2]
-const files = readdirSync(casesDir)
+// Accept a slug (`network-design-central`), a code (`NDC-02`) or any unambiguous prefix of
+// either (`ndc`, `tpn`) — the three identifiers differ per case and guessing is pure friction.
+const only = process.argv[2]?.toLowerCase()
+const fileNames = readdirSync(casesDir)
   .filter((f) => f.endsWith('.tsx'))
   .map((f) => f.replace(/\.tsx$/, ''))
-  .filter((f) => !only || f === only)
 
-if (!files.length) {
-  console.error(`No case file matched "${only}" in src/content/cases/`)
-  process.exit(1)
-}
+const matches = (cs) =>
+  !only || cs.slug.toLowerCase().startsWith(only) || cs.code.toLowerCase().startsWith(only)
 
 mkdirSync(tmp, { recursive: true })
 // Import through the registry so we don't need to know each file's export name.
@@ -65,7 +64,7 @@ await build({
   bundle: true, format: 'esm', platform: 'node', logLevel: 'silent',
   outfile: resolve(tmp, 'bundle.mjs'),
 })
-const { caseStudies } = await import(`${resolve(tmp, 'bundle.mjs')}?v=${files.join()}`)
+const { caseStudies } = await import(`${resolve(tmp, 'bundle.mjs')}?v=${fileNames.join()}`)
 rmSync(tmp, { recursive: true, force: true })
 
 // Budget from ADR-004, revised 2026-08-15.
@@ -81,8 +80,10 @@ rmSync(tmp, { recursive: true, force: true })
 const BUDGET = { median: [18, 30], p75: 40, max: 60, over60: 0 }
 let failed = false
 
+let matched = 0
 for (const cs of Object.values(caseStudies)) {
-  if (only && cs.slug !== only) continue
+  if (!matches(cs)) continue
+  matched++
   const lens = []
   collect(cs, 'root', lens)
   const prose = lens.filter((n) => n >= PROSE_MIN).sort((a, b) => a - b)
@@ -106,6 +107,11 @@ for (const cs of Object.values(caseStudies)) {
   console.log(`  median / p75     ${median} / ${p75}   (target ${BUDGET.median.join('–')} / ≤${BUDGET.p75})`)
   console.log(`  longest / >60w   ${max} / ${over}   (target ≤${BUDGET.max} / ${BUDGET.over60})`)
   console.log(bad.length ? `  OVER BUDGET: ${bad.join(', ')}` : '  within budget')
+}
+
+if (only && !matched) {
+  console.error(`No case matched "${process.argv[2]}". Try a slug or a code, e.g. NDC-02. Files: ${fileNames.join(', ')}`)
+  process.exit(1)
 }
 
 process.exit(failed ? 1 : 0)

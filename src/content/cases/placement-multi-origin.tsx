@@ -13,6 +13,9 @@ export const placement: CaseStudy = {
   title: 'Placement & Assignment — the Multi-Origin Route Builder',
   oneLiner:
     "Six percent of trips were quietly corrupting the data everyone else depended on — and the fix wasn't allowed to cost the other ninety-four percent a single click.",
+  eyebrow: 'VALMO (MEESHO) · INTERNAL TMS · PROTOTYPE',
+  domain: 'Trip planning & assignment',
+  scale: '~6% of trips · ~20% of national lanes',
   meta: {
     role: 'Product Designer — end-to-end (research, IA, interaction design, prototype)',
     team: 'Valmo TMS — Placement & Assignment pod (design, PM, ops-tech engineering)',
@@ -38,7 +41,10 @@ export const placement: CaseStudy = {
     {
       id: 'problem-understanding',
       step: 1,
-      title: 'Problem Understanding',
+      kicker: 'Problem Understanding',
+      navLabel: 'Faking it',
+      ghost: 'FAKE',
+      title: 'The tool could not express reality, so the ground invented one.',
       blocks: [
         {
           type: 'text',
@@ -51,6 +57,23 @@ export const placement: CaseStudy = {
         {
           type: 'text',
           body: "The constraint that shaped everything: the fix could not tax the majority. An Assignment Manager touches hundreds of trips a week, and 94% of them are single-origin.\n\nA redesign that added even one click, one field, or one moment of \"which mode am I in?\" to that flow would cost more in aggregate than the 6% problem it solved.\n\nThe brief I set myself: make the 6% expressible, keep the 94% untouched.",
+        },
+        {
+          type: 'problemTabs',
+          items: [
+            {
+              label: 'Delete and recreate',
+              body: 'Delete the trip after the first pickup, then recreate it from the second hub. The trip completes, and its history is destroyed — the first leg is orphaned from the record it belongs to.',
+            },
+            {
+              label: 'Fake a zero-bag challan',
+              body: 'Raise a dispatch document for nothing at the extra hub, so the system lets the vehicle through. A fabricated document enters the freight record, and every downstream consumer reads it as real.',
+            },
+            {
+              label: 'Who pays for it',
+              body: 'Billing, utilisation reporting and transporter payouts are all computed from these records. A minority of trips were quietly falsifying the input to all three.',
+            },
+          ],
         },
         {
           type: 'statRow',
@@ -73,8 +96,17 @@ export const placement: CaseStudy = {
     {
       id: 'objective',
       step: 2,
-      title: 'Objective',
+      kicker: 'Objective',
+      navLabel: 'The 94% rule',
+      ghost: '94%',
+      title: 'Make the 6% expressible without charging the 94% a single click.',
       blocks: [
+        {
+          type: 'statementBand',
+          eyebrow: 'The problem, stated',
+          statement:
+            'How might one vehicle collecting from several hubs become one honest trip record, without adding a single step for the 94% of trips that collect from one?',
+        },
         {
           type: 'text',
           body: "One measurable target with a hard guard-rail: a multi-origin route is managed as a single trip record with explicit node roles (Source, Destination, RTO Destination), and the single-origin flow gains zero additional clicks, fields, or decisions.\n\nConcretely, the design had to satisfy four requirements from the KRD: three node sections on the trip edit page (FR-T02); node additions restricted to the original contract snapshot with no role changes post-creation (FR-T03); RTO destinations always a subset of source nodes (FR-T04); and reordering scoped within a section, never across sections.\n\nOn top of those, I set my own interaction budget: adding a node in the multi-origin builder must cost at most 2 clicks, because an AM adding the fourth node of a route should not pay a per-node tax that a form designed for one node never charged.",
@@ -97,7 +129,10 @@ export const placement: CaseStudy = {
     {
       id: 'user-persona',
       step: 3,
-      title: 'User Persona',
+      kicker: 'User Persona',
+      navLabel: 'Seconds per trip',
+      ghost: 'SPEED',
+      title: 'He measures the tool in seconds, because his week is trips times seconds.',
       blocks: [
         {
           type: 'text',
@@ -131,7 +166,10 @@ export const placement: CaseStudy = {
     {
       id: 'information-architecture',
       step: 4,
-      title: 'Information Architecture',
+      kicker: 'Information Architecture',
+      navLabel: 'Three roles',
+      ghost: 'ROLES',
+      title: 'Three node roles, and a contract snapshot that bounds them.',
       blocks: [
         {
           type: 'text',
@@ -161,7 +199,10 @@ export const placement: CaseStudy = {
     {
       id: 'user-flow',
       step: 5,
-      title: 'User Flow',
+      kicker: 'User Flow',
+      navLabel: 'Two clicks',
+      ghost: 'TWO',
+      title: 'Adding a node had to cost two clicks, however many nodes there were.',
       blocks: [
         {
           type: 'text',
@@ -191,7 +232,10 @@ export const placement: CaseStudy = {
     {
       id: 'lo-fi-wireframes',
       step: 6,
-      title: 'Lo-fi Wireframes',
+      kicker: 'Lo-fi Wireframes',
+      navLabel: 'Six, to ship one',
+      ghost: 'SIX',
+      title: 'I built six add-node patterns to ship one.',
       blocks: [
         {
           type: 'text',
@@ -247,7 +291,10 @@ export const placement: CaseStudy = {
     {
       id: 'prototype',
       step: 7,
-      title: 'Prototype',
+      kicker: 'Prototype',
+      navLabel: 'Wired, not drawn',
+      ghost: 'LIVE',
+      title: 'Every rule in the spec is wired, not described.',
       blocks: [
         {
           type: 'text',
@@ -284,7 +331,10 @@ export const placement: CaseStudy = {
     {
       id: 'business-aspects',
       step: 8,
-      title: 'Business Aspects',
+      kicker: 'Business Aspects',
+      navLabel: 'What it stops',
+      ghost: 'TRUST',
+      title: 'Corrupt trip data is what billing and payouts are computed from.',
       blocks: [
         {
           type: 'text',

@@ -11,6 +11,9 @@ export const ndc: CaseStudy = {
   ...summaries['network-design-central'],
   title: 'Network Design Central',
   oneLiner: 'The solver designs the routes. I designed the agreement.',
+  eyebrow: 'VALMO (MEESHO) · INTERNAL OPS PANEL · 0→1',
+  domain: 'Network planning',
+  scale: '~80 sort centres · 10,000+ delivery centres',
   meta: {
     role: 'Product Designer — solo design owner',
     team: 'Product, Data Science, Analytics, Tech (linehaul pod)',
@@ -36,7 +39,10 @@ export const ndc: CaseStudy = {
     {
       id: 'problem-understanding',
       step: 1,
-      title: 'Problem Understanding',
+      kicker: 'Problem Understanding',
+      navLabel: 'The bottleneck',
+      ghost: 'AGREE',
+      title: 'The solver was never the bottleneck. Agreement was.',
       blocks: [
         {
           type: 'text',
@@ -48,7 +54,28 @@ export const ndc: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'When I audited the PM-built feature prototype meant to replace this, I found a feature inventory, not a tool: an empty dashboard of 3 navigation cards, an invisible and unenforced Inputs→Creation→Review→Alignment pipeline, six different status vocabularies, and two very different user roles sharing one shell.\n\nA planner opening it could not answer three questions: what is happening across my network, what needs me, and where did I leave off.',
+          body: 'When I audited the PM-built feature prototype meant to replace this, I found a feature inventory, not a tool. A planner opening it could not answer three questions: what is happening across my network, what needs me, and where did I leave off.',
+        },
+        {
+          type: 'problemTabs',
+          items: [
+            {
+              label: 'An empty dashboard',
+              body: 'Three navigation cards and nothing else. The screen a planner lands on every morning held no state, no queue, and no sense of the deadline — so orientation happened somewhere other than the tool.',
+            },
+            {
+              label: 'An invisible pipeline',
+              body: 'Inputs → Creation → Review → Alignment existed in the requirements and nowhere in the interface. Nothing enforced the order, so a planner could push a design built on inputs that had never been validated.',
+            },
+            {
+              label: 'Six vocabularies for one lifecycle',
+              body: 'Six modules had each invented their own words for the same states. Amber alone meant four different things depending on which screen you were reading, which makes a status colour worse than no status at all.',
+            },
+            {
+              label: 'Two roles in one shell',
+              body: 'A central planner and a regional reviewer shared an interface with a persona toggle. An alignment ritual only works if reviewers physically cannot touch inputs, runs, or another region’s plan.',
+            },
+          ],
         },
         {
           type: 'text',
@@ -75,8 +102,17 @@ export const ndc: CaseStudy = {
     {
       id: 'objective',
       step: 2,
-      title: 'Objective',
+      kicker: 'Objective',
+      navLabel: 'The targets',
+      ghost: 'TARGET',
+      title: 'I wrote the targets before I drew a screen.',
       blocks: [
+        {
+          type: 'statementBand',
+          eyebrow: 'The problem, stated',
+          statement:
+            'How might one central planner and dozens of regional ops leads reach a shared, checkable agreement before a freeze that cannot be undone?',
+        },
         {
           type: 'text',
           body: 'I set measurable process targets in the redesign spec before touching a single screen, because "make it usable" is not a brief.\n\n**Time-to-orient** — a planner landing on the dashboard understands the state of the network in under 30 seconds. Previously unmeasurable because the dashboard held nothing.\n\n**Clicks to primary task** — create a route design from 5 to ≤2 from the dashboard.\n\n**Status vocabularies** — from 6 to 1. Six modules had each invented their own words for the same lifecycle; amber alone meant four different things.\n\n**"Where is design X?"** — answerable from one view, without hunting. All four states (empty / loading / error / populated) defined on every screen.',
@@ -107,7 +143,10 @@ export const ndc: CaseStudy = {
     {
       id: 'user-persona',
       step: 3,
-      title: 'User Persona',
+      kicker: 'User Persona',
+      navLabel: 'Two shells',
+      ghost: 'ROLES',
+      title: 'Two users, and letting them share a shell was the mistake.',
       blocks: [
         {
           type: 'text',
@@ -116,6 +155,20 @@ export const ndc: CaseStudy = {
         {
           type: 'text',
           body: 'The PM prototype handled this with a persona toggle in one shared interface.\n\nI locked the opposite: production is real per-user login with two different shells — the Ops Lead gets a stripped interface containing only Ops Alignment and the map (the prototype keeps a clearly-labelled "Demo: view as…" switch, because a prototype has no auth).\n\nThis is a trust decision as much as a UX one: an alignment ritual only works if reviewers physically cannot touch inputs, runs, or other regions\' plans.',
+        },
+        {
+          type: 'matrix',
+          title: 'Two users who need opposite things from the same data',
+          columns: ['', 'Central Network Planner', 'Ops Lead / Regional PoC'],
+          rows: [
+            ['How many', 'One, for the whole network', '3–4 per sort centre'],
+            ['Owns', 'Inputs, runs, comparison, the freeze', 'Judgement about their own region'],
+            ['Scarce resource', 'Situational awareness across ~80 sort centres', 'Time — this is not their main job'],
+            ['Should see', 'Everything, densely', 'One plan and a map. Nothing else.'],
+            ['Shipped as', 'Full planner shell', 'Stripped shell — Ops Alignment and the map'],
+          ],
+          totalNote:
+            'The PM prototype gave both a persona toggle inside one interface. Production is per-user login with two different shells.',
         },
         {
           type: 'statRow',
@@ -138,7 +191,10 @@ export const ndc: CaseStudy = {
     {
       id: 'information-architecture',
       step: 4,
-      title: 'Information Architecture',
+      kicker: 'Information Architecture',
+      navLabel: 'One spine',
+      ghost: 'SPINE',
+      title: 'One spine, one vocabulary, one place for navigation.',
       blocks: [
         {
           type: 'text',
@@ -170,7 +226,10 @@ export const ndc: CaseStudy = {
     {
       id: 'user-flow',
       step: 5,
-      title: 'User Flow',
+      kicker: 'User Flow',
+      navLabel: 'The month',
+      ghost: 'CYCLE',
+      title: 'The month is the flow.',
       blocks: [
         {
           type: 'text',
@@ -207,7 +266,10 @@ export const ndc: CaseStudy = {
     {
       id: 'lo-fi-wireframes',
       step: 6,
-      title: 'Lo-fi Wireframes',
+      kicker: 'Lo-fi Wireframes',
+      navLabel: 'The cockpit',
+      ghost: 'LO-FI',
+      title: 'The dashboard held three cards. It needed a cockpit.',
       blocks: [
         {
           type: 'text',
@@ -238,7 +300,10 @@ export const ndc: CaseStudy = {
     {
       id: 'prototype',
       step: 7,
-      title: 'Prototype',
+      kicker: 'Prototype',
+      navLabel: 'At real scale',
+      ghost: 'SCALE',
+      title: 'I prototyped at eighty sort centres, not five.',
       blocks: [
         {
           type: 'text',
@@ -270,7 +335,10 @@ export const ndc: CaseStudy = {
     {
       id: 'business-aspects',
       step: 8,
-      title: 'Business Aspects',
+      kicker: 'Business Aspects',
+      navLabel: 'What pays for it',
+      ghost: 'COST',
+      title: 'A design only saves money if it survives alignment intact.',
       blocks: [
         {
           type: 'text',
@@ -289,6 +357,11 @@ export const ndc: CaseStudy = {
           stats: [
             { value: 'double-digit%', label: 'vehicle utilization improvement target', fuzzed: true },
           ],
+        },
+        {
+          type: 'ndaNote',
+          title: 'On the numbers I am not claiming',
+          body: 'The utilization and distance targets belong to the solver programme, not to this panel — the panel exists so a solver-led design survives alignment and freezes on time. The design targets here (clicks, orientation time, one vocabulary) are enforced by the spec and stakeholder review, not measured on a live cycle.',
         },
         {
           type: 'image',

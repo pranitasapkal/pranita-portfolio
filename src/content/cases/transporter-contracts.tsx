@@ -13,6 +13,9 @@ export const transporter: CaseStudy = {
   title: 'Transporter Contract Management',
   oneLiner:
     'Everything that makes an ops power-tool good actively fails a user who reads slowly and trusts the screen literally — so the work was subtraction, with discipline.',
+  eyebrow: 'VALMO (MEESHO) · TRANSPORTER-FACING · IN BUILD',
+  domain: 'Vendor contract management',
+  scale: '15–70 contracts a month · 34 row states',
   meta: {
     role: 'Product Designer — sole designer, end to end',
     team: 'Valmo Transportation (Meesho) — with PM and engineering counterparts',
@@ -38,7 +41,10 @@ export const transporter: CaseStudy = {
     {
       id: 'problem-understanding',
       step: 1,
-      title: 'Problem Understanding',
+      kicker: 'Problem Understanding',
+      navLabel: 'The wrong answer',
+      ghost: 'LITERAL',
+      title: 'The obvious answer was an ops dashboard. That answer was wrong.',
       blocks: [
         {
           type: 'text',
@@ -51,6 +57,27 @@ export const transporter: CaseStudy = {
         {
           type: 'text',
           body: "So the design problem was not \"build a contract table.\"\n\nIt was: take a domain with a genuinely complex lifecycle — Pending → Upcoming → Active → Closed, disputes, terminations with a 3-day trip buffer, performance flags, SLA reminders — and present it so a slow, literal reader can act on it correctly, alone, on the first monthly batch day.\n\nThe whole project is subtraction: from a full ops-tool vocabulary down to what survives contact with this persona.",
+        },
+        {
+          type: 'problemTabs',
+          items: [
+            {
+              label: 'Filters he has to assemble',
+              body: 'Stacked dropdowns assume you already know which subset you want. This user does not arrive with a query — he arrives with a question, and the panel has to answer it before he can phrase it.',
+            },
+            {
+              label: 'Actions hidden until hover',
+              body: 'A control revealed on hover is invisible to someone scanning for what to do next. If the action is not in the row at rest, for this reader it does not exist.',
+            },
+            {
+              label: 'Columns that reshuffle per tab',
+              body: 'Clever conditional layouts teach a literal reader that the panel is arbitrary. Once he believes that, he stops trusting any number on it — including the correct ones.',
+            },
+            {
+              label: 'Status carried by colour',
+              body: 'A coloured dot is a convention you have to be taught. Every urgency and delay signal here is a chip carrying text as well, because the colour is the decoration and the word is the message.',
+            },
+          ],
         },
         {
           type: 'statRow',
@@ -73,8 +100,17 @@ export const transporter: CaseStudy = {
     {
       id: 'objective',
       step: 2,
-      title: 'Objective',
+      kicker: 'Objective',
+      navLabel: 'Four jobs',
+      ghost: 'ALONE',
+      title: 'Four jobs, done alone, without a phone call.',
       blocks: [
+        {
+          type: 'statementBand',
+          eyebrow: 'The problem, stated',
+          statement:
+            'How might a transporter who reads slowly accept, reject, track and dispute a contract on his own — on the first batch day, without calling anyone?',
+        },
         {
           type: 'text',
           body: "The objective had two halves — one for the transporter, one for the business — and one measurable bar for each.\n\nFor the transporter: complete the four core jobs — accept a contract, reject one, find what needs action today, and check whether an active contract is in trouble — without calling support and without a walkthrough.\n\nThe proxy metrics I designed against: land on the actionable subset by default, never strand the user in an empty filtered view, and keep every row to exactly one primary CTA.\n\nSo the Urgent chip auto-selects when its count is above zero, an \"All\" fallback chip stays visible on every tab, and the correct next action is never a choice among equals.\n\nFor the business: protect SLA compliance on pending contracts (a delayed accept is a breach risk — hence deadline-based urgency at ≤48 hours), and reduce avoidable rejections by showing economic consequences before the reject action commits.",
@@ -97,7 +133,10 @@ export const transporter: CaseStudy = {
     {
       id: 'user-persona',
       step: 3,
-      title: 'User Persona',
+      kicker: 'User Persona',
+      navLabel: 'Reads it literally',
+      ghost: 'TRUST',
+      title: 'He reads the screen literally, so the screen cannot bluff.',
       blocks: [
         {
           type: 'text',
@@ -131,7 +170,10 @@ export const transporter: CaseStudy = {
     {
       id: 'information-architecture',
       step: 4,
-      title: 'Information Architecture',
+      kicker: 'Information Architecture',
+      navLabel: 'Named views',
+      ghost: 'NAMES',
+      title: 'Named views instead of filters he has to assemble.',
       blocks: [
         {
           type: 'text',
@@ -166,7 +208,10 @@ export const transporter: CaseStudy = {
     {
       id: 'user-flow',
       step: 5,
-      title: 'User Flow',
+      kicker: 'User Flow',
+      navLabel: 'One action a row',
+      ghost: 'ONE',
+      title: 'One primary action per row, so the next step is never a choice.',
       blocks: [
         {
           type: 'text',
@@ -211,7 +256,10 @@ export const transporter: CaseStudy = {
     {
       id: 'lo-fi-wireframes',
       step: 6,
-      title: 'Lo-fi Wireframes',
+      kicker: 'Lo-fi Wireframes',
+      navLabel: 'What I removed',
+      ghost: 'CUT',
+      title: 'The work was removing what ops tools get praised for.',
       blocks: [
         {
           type: 'text',
@@ -281,7 +329,10 @@ export const transporter: CaseStudy = {
     {
       id: 'prototype',
       step: 7,
-      title: 'Prototype',
+      kicker: 'Prototype',
+      navLabel: 'I judged my own',
+      ghost: '2.8',
+      title: 'I scored my own screens 2.8 out of 5 before anyone else could.',
       blocks: [
         {
           type: 'text',
@@ -330,7 +381,10 @@ export const transporter: CaseStudy = {
     {
       id: 'business-aspects',
       step: 8,
-      title: 'Business Aspects',
+      kicker: 'Business Aspects',
+      navLabel: 'What it protects',
+      ghost: 'SLA',
+      title: 'A late accept is a breach, so urgency had to be a deadline, not a mood.',
       blocks: [
         {
           type: 'text',

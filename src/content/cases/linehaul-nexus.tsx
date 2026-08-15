@@ -55,6 +55,7 @@ export const clh: CaseStudy = {
       id: 'what-this-is',
       step: 1,
       kicker: 'Context',
+      navLabel: 'What this is',
       ghost: 'Context',
       title: 'What this is',
       blocks: [
@@ -79,6 +80,7 @@ export const clh: CaseStudy = {
       id: 'the-problem',
       step: 2,
       kicker: 'The problem',
+      navLabel: 'The problem',
       ghost: 'Problem',
       title: 'The planning half was software. The contracting half was WhatsApp.',
       blocks: [
@@ -119,6 +121,7 @@ export const clh: CaseStudy = {
       id: 'inherited',
       step: 3,
       kicker: 'Starting point',
+      navLabel: 'What I inherited',
       ghost: 'Audit',
       title: 'What I inherited, and why I audited it first',
       blocks: [
@@ -151,6 +154,7 @@ export const clh: CaseStudy = {
       id: 'object-model',
       step: 4,
       kicker: 'The model',
+      navLabel: 'The object model',
       ghost: 'Model',
       title: 'A route is not a contract',
       blocks: [
@@ -184,6 +188,7 @@ export const clh: CaseStudy = {
       id: 'architecture',
       step: 5,
       kicker: 'Architecture',
+      navLabel: 'Three levels',
       ghost: 'Structure',
       title: 'Three levels, five stages, one rule',
       blocks: [
@@ -233,6 +238,7 @@ export const clh: CaseStudy = {
       id: 'flows',
       step: 6,
       kicker: 'The flows',
+      navLabel: 'The flows',
       ghost: 'Flows',
       title: 'How a route becomes a running contract',
       blocks: [
@@ -345,6 +351,7 @@ export const clh: CaseStudy = {
       id: 'decisions',
       step: 7,
       kicker: 'The decisions',
+      navLabel: 'Contested calls',
       ghost: 'Decisions',
       title: 'Four calls that shaped the system',
       blocks: [
@@ -424,6 +431,7 @@ export const clh: CaseStudy = {
       id: 'states',
       step: 8,
       kicker: 'Edge cases',
+      navLabel: 'Edge cases',
       ghost: 'States',
       title: 'The states that decide whether it survives a bad week',
       blocks: [
@@ -447,6 +455,7 @@ export const clh: CaseStudy = {
       id: 'how-it-was-made',
       step: 9,
       kicker: 'Process',
+      navLabel: 'How I worked',
       ghost: 'Process',
       title: 'Structure first, pixels after',
       blocks: [
