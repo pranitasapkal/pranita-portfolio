@@ -21,7 +21,7 @@ export const summaries = {
     cardTitle: 'The Transporter Panel',
     cardOneLiner:
       'Every trip ran on a chat thread and got paid two months later — I designed the panel that replaced both.',
-    stats: ['182 screens', '5 lifecycle states', '7 bilingual categories'],
+    stats: ['154 screens', '5 lifecycle states', '7 bilingual categories'],
     browserSlug: 'pranita.design/tpn',
   },
 
