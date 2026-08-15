@@ -623,18 +623,13 @@ export const transporterPanel: CaseStudy = {
               reason:
                 'The row states the rule ("Dispute Window Open till 1 Apr") rather than showing a dead control.',
             },
-            {
-              pattern: 'Blank cells',
-              reason:
-                'Replaced everywhere by a named absence — No RFQ Linked, No GPS Present, As per existing Billing Process.',
-            },
           ],
         },
         {
           type: 'statRow',
           stats: [
             { value: '6 written, 2 overruled', label: 'self-imposed table rules' },
-            { value: '6', label: 'patterns rejected and replaced' },
+            { value: '5', label: 'patterns rejected and replaced' },
           ],
         },
       ],
