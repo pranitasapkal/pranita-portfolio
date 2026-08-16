@@ -124,9 +124,35 @@ export function WorkIndex() {
               />
             </div>
           ))}
-          {/* keep the right meta column readable */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0b0c0e]/85" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0b0c0e]/70 via-transparent to-[#0b0c0e]/50" />
+          {/* Deep veil over the blurred art — it read washed-out at lower opacity
+              (Manav, 2026-08-16); the covers now only tint the black. */}
+          <div className="absolute inset-0 bg-[#0b0c0e]/72" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0b0c0e]/90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0b0c0e]/70 via-transparent to-[#0b0c0e]/60" />
+          {/* Faint route-network line work behind the meta column — the job,
+              drawn once: nodes, dashed linehaul legs, a destination pin. */}
+          <svg
+            className="absolute right-[2vw] top-1/2 -translate-y-1/2 w-[38vw] max-w-[640px] opacity-60"
+            viewBox="0 0 640 440"
+            fill="none"
+            aria-hidden="true"
+          >
+            <g stroke="#edeff3" strokeOpacity="0.09" strokeWidth="1.5">
+              <path d="M60 360 C 140 300, 180 260, 250 210" strokeDasharray="2 8" />
+              <path d="M250 210 C 330 160, 400 190, 470 150" strokeDasharray="2 8" />
+              <path d="M470 150 C 520 120, 560 90, 590 60" strokeDasharray="2 8" />
+              <path d="M250 210 C 300 270, 380 300, 470 290" strokeDasharray="2 8" />
+              <circle cx="60" cy="360" r="7" />
+              <circle cx="250" cy="210" r="10" />
+              <circle cx="470" cy="150" r="7" />
+              <circle cx="470" cy="290" r="7" />
+              <circle cx="250" cy="210" r="22" strokeDasharray="1 6" />
+            </g>
+            <g stroke="#edeff3" strokeOpacity="0.14" strokeWidth="1.5">
+              <path d="M590 60 c -7 -12 -7 -22 0 -30 c 7 8 7 18 0 30 Z" />
+              <circle cx="590" cy="38" r="3" />
+            </g>
+          </svg>
         </div>
         <div className="absolute top-28 left-[6vw] z-20">
           <SectionTag>{draft.work.tag}</SectionTag>
@@ -186,7 +212,7 @@ export function WorkIndex() {
                 <div className="flex items-start gap-3">
                   <Link
                     to={`/work/${cs.slug}`}
-                    className="font-sans font-extralight uppercase text-strong leading-[1.02] tracking-[0.04em] text-[clamp(2.2rem,3.4vw,3.8rem)] hover:text-accent transition-colors duration-200"
+                    className="font-sans font-black uppercase text-strong leading-[1.02] tracking-tight text-[clamp(2.2rem,3.4vw,3.8rem)] hover:text-accent transition-colors duration-200"
                   >
                     {cs.cardTitle}
                   </Link>
