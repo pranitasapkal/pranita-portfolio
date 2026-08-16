@@ -216,7 +216,20 @@ export const draft = {
       {
         prompt: 'MY QUALITY CONTROL TEAM:',
         caption: 'Two supervisors. Zero chill. Every screen ships past them first.',
-        images: ['/beyond/cats.jpg'],
+        // qc-01..09 supplied by Manav 2026-08-16 (source: Figma- Assignment module/cats/,
+        // gitignored staging). qc-05 includes Pranita herself — flagged for her OK.
+        images: [
+          '/beyond/cats.jpg',
+          '/beyond/qc-01.jpg',
+          '/beyond/qc-02.jpg',
+          '/beyond/qc-03.jpg',
+          '/beyond/qc-04.jpg',
+          '/beyond/qc-05.jpg',
+          '/beyond/qc-06.jpg',
+          '/beyond/qc-07.jpg',
+          '/beyond/qc-08.jpg',
+          '/beyond/qc-09.jpg',
+        ],
       },
       {
         prompt: 'WHERE MY MONEY ACTUALLY GOES:',
