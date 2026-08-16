@@ -1,3 +1,34 @@
+# Task: Transporter Panel page on the Debo reference (ACTIVE, 2026-08-16)
+
+Reference: debodyutibiswas.framer.website/whylo — re-derived live (colors, type, layout, card
+formats), not from the prior session's handoff. Plan: `~/.claude/plans/go-through-the-meory-harmonic-island.md`
+
+## Plan
+- [x] D1 Checkpoint commit `7d70a87` — white `.v1-paper` pages + ResearchDeck
+- [x] D2 Palette + type: `pop-*` accent set in v1 @theme (contrast table in theme.css);
+      `.v1-paper` re-declares fonts → Fraunces display/serif/body, Geist Mono (installed)
+- [x] D3 Layout + hero: TPN moved `editorial` → `standard` (sticky ChapterNav + GO BACK);
+      `heroShot` renders `deviceFrame` (laptop screen, no keyboard) under the meta row.
+      `heroMeta` block NOT needed — CaseLayout's meta row already carries ROLE/TEAM/TIMELINE/SKILLS
+- [x] D4 Chapters reordered: problem → objective → research → flow → screens → rules →
+      tab-by-tab → business; Debo eyebrows on all 8 (THE PROBLEM … SUCCESS METRICS)
+- [x] D4b Problem cards SHIPPED per Manav's mock: blue `pop-blue` panel, SEVEN questions
+      (his two additions: ETA + where-to-raise-dispute), persona line under each, punchline;
+      `problemTabs` folded in, leftover facts in a follow-up text block. 0 facts lost.
+- [x] D5 Competitor matrix in THE RESEARCH (Amazon Relay · Flipkart · Delhivery · Swiggy) —
+      **DRAFT: Pranita must fact-check the rows before publish** (public sources only)
+- [ ] D6 3D illustration: style spec + ONE sample SVG → approval gate → second illo
+- [~] D7 Verified: build green · nda-scan clean · check:facts 0 lost · live browser at 1440
+      (blue panel, 7 cards, eyebrows, GO BACK, hero mockup all render). Still owed: 360 sweep,
+      reduced-motion pass, count:copy honest misses (1,887w / 71 paras — evidence-carried)
+
+## Blocked
+- Memoji image file (user to drop at `refs/problem-memoji.png`) — placeholder until then
+- On-ground research photos → `researchDeck.items[].src`
+- PR #1 open, commits already in by hand — close/retarget, never merge
+
+---
+
 # Task: Full revamp — two parallel lanes (ACTIVE, started 2026-08-15)
 
 Pranita rewrites all copy; a collaborator rebuilds the visual system via a GitHub fork + PRs.

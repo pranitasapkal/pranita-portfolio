@@ -75,6 +75,22 @@ export type Block =
     }
   /** The NDA boundary, stated openly instead of implied by omission. */
   | { type: 'ndaNote'; title: string; body: string }
+  // Debo-reference blocks (ADR-007) — the whylo case-study devices.
+  /** A screenshot inside a laptop-display frame (screen only, no keyboard deck). */
+  | { type: 'deviceFrame'; src: string; alt: string; caption?: string; placeholder?: boolean }
+  /**
+   * The reference's problem format: a central illustration with numbered
+   * quote-cards around it — each a question in the persona's own voice plus one
+   * terse context line — closed by a full-width punchline. `illustration` is
+   * optional so the section reads complete before the image file arrives.
+   */
+  | {
+      type: 'problemCards'
+      illustration?: string
+      illustrationAlt: string
+      punchline?: string
+      items: { quote: string; context: string }[]
+    }
 
 export interface StatItem {
   value: string
@@ -90,6 +106,8 @@ export interface Chapter {
   kicker?: string
   /** Short beat name for the sticky nav, e.g. "Two failures". Falls back to `title`. */
   navLabel?: string
+  /** Mono all-caps section label, Debo-style ("THE PROBLEM"). Replaces the STEP NN eyebrow when set. */
+  eyebrow?: string
   /** One giant ghost word rendered behind the chapter header (editorial layout only). */
   ghost?: string
   blocks: Block[]
@@ -130,6 +148,8 @@ export interface CaseStudy extends CaseSummary {
   domain?: string
   scale?: string
   coverBoard?: { src: string; alt: string; placeholder?: boolean; tone?: 'light' | 'dark' }
+  /** Hero mockup rendered under the meta row (Debo-style laptop screen, no keyboard). */
+  heroShot?: { src: string; alt: string }
   meta: {
     role: string
     team: string

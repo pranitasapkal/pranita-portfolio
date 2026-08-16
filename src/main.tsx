@@ -5,6 +5,9 @@ import '@fontsource-variable/archivo/index.css'
 import '@fontsource/instrument-serif/400-italic.css'
 import '@fontsource/ibm-plex-mono/400.css'
 import '@fontsource/ibm-plex-mono/500.css'
+/* Geist Mono — eyebrow labels on the white case pages (.v1-paper re-declares --font-mono) */
+import '@fontsource/geist-mono/400.css'
+import '@fontsource/geist-mono/500.css'
 /* v2 type layers: Fraunces (display serif) · Hanken Grotesk (body) · Caveat (handwritten micro) */
 import '@fontsource-variable/fraunces/index.css'
 import '@fontsource-variable/hanken-grotesk/index.css'

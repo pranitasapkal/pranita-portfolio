@@ -90,6 +90,27 @@
   --color-paper-ink: #16181d;
   --color-paper-mute: #565b66;
 
+  /* Reference accent set (derived live from debodyutibiswas.framer.website/whylo,
+   * 2026-08-16). Theme-invariant; used on the white case pages. Raw values are
+   * FILLS/HIGHLIGHTS ONLY; the -deep variant of each is the text-safe pairing.
+   * Contrast on #ffffff (computed, not estimated):
+   *   yellow 1.68 (fill only; ink-on-yellow 10.03) → deep #805e09 5.96
+   *   red    4.20 (large text/UI only)             → deep #b3301b 6.26
+   *   blue   7.72 (text-safe; white-on-blue 7.72)  → deep = raw
+   *   green  3.78 (large text/UI only)             → deep #067506 5.91
+   *   purple 4.65 (body-text OK)                   → deep #4f41a8 7.91
+   * All -deep ≥ 4.5:1 body; raws ≥ 3:1 where marked large/UI. Re-derive on change. */
+  --color-pop-yellow: #fcbe1c;
+  --color-pop-yellow-deep: #805e09;
+  --color-pop-red: #e24027;
+  --color-pop-red-deep: #b3301b;
+  --color-pop-blue: #1d41d0;
+  --color-pop-blue-deep: #1d41d0;
+  --color-pop-green: #029902;
+  --color-pop-green-deep: #067506;
+  --color-pop-purple: #7466cc;
+  --color-pop-purple-deep: #4f41a8;
+
 
   --font-display: 'Archivo Variable', 'Archivo', sans-serif;
   --font-body: 'Archivo Variable', 'Archivo', sans-serif;
@@ -132,5 +153,13 @@
   --color-paper: #1d1d1f;
   --color-paper-ink: #ffffff;
   --color-paper-mute: #a6a9b0;
+
+  /* Reference type roles: serif headlines + serif body (Tiempos → Fraunces),
+   * mono eyebrow labels (Geist Mono). Utilities resolve var(--font-*), so
+   * re-declaring here re-skins case pages without touching block components. */
+  --font-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  --font-serif: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  --font-body: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  --font-mono: 'Geist Mono', 'IBM Plex Mono', ui-monospace, monospace;
 }
 

@@ -44,6 +44,13 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
         aria-label="Chapter navigation"
         className="hidden lg:flex flex-col gap-0.5 sticky top-24 self-start min-w-[200px] max-w-[220px]"
       >
+        {/* Debo-style back link heads the rail */}
+        <a
+          href="/"
+          className="flex items-center gap-2 px-2 pb-4 font-mono text-[11px] tracking-[0.2em] uppercase text-text-lo hover:text-text-hi transition-colors duration-200"
+        >
+          <span aria-hidden="true">←</span> Go back
+        </a>
         {chapters.map((chapter) => {
           const isActive = activeId === chapter.id
           return (
@@ -67,9 +74,12 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
                 aria-hidden="true"
               />
               <span className="flex flex-col gap-0.5">
-                <span className="font-mono text-[10px] tracking-[0.12em] uppercase opacity-60">
-                  STEP {String(chapter.step).padStart(2, '0')}
-                </span>
+                {/* Eyebrow-labelled cases (Debo-style) drop the STEP counter in the rail */}
+                {!chapter.eyebrow && (
+                  <span className="font-mono text-[10px] tracking-[0.12em] uppercase opacity-60">
+                    STEP {String(chapter.step).padStart(2, '0')}
+                  </span>
+                )}
                 <span className="font-mono text-xs leading-snug">
                   {chapter.navLabel ?? chapter.title}
                 </span>

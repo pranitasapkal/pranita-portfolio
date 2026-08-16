@@ -10,6 +10,7 @@ import { ArrowCircle } from '../primitives/ArrowCircle'
 import { TldrBlock } from './TldrBlock'
 import { ChapterNav } from './ChapterNav'
 import { BlockRenderer } from './BlockRenderer'
+import { DeviceFrame } from './blocks/DeviceFrame'
 import type { CaseStudy } from '../../content/types'
 
 interface CaseLayoutProps {
@@ -78,6 +79,13 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
               </PillTag>
             </a>
           </div>
+
+          {/* Hero mockup — the panel inside a laptop screen (Debo-style, ADR-007) */}
+          {cs.heroShot && (
+            <div className="pt-8">
+              <DeviceFrame src={cs.heroShot.src} alt={cs.heroShot.alt} />
+            </div>
+          )}
         </section>
 
         {/* ── TLDR ─────────────────────────────────────────────────── */}
@@ -105,12 +113,16 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
                 >
                   {/* Chapter header */}
                   <div className="flex flex-col gap-2 border-b border-line pb-6">
-                    {/* When `title` is a claim, `kicker` carries the process-step name so the
-                        8-step sequence stays visible here as it does in the editorial layout. */}
+                    {/* `eyebrow` is the Debo-style mono section label ("THE PROBLEM");
+                        cases without one keep the STEP NN sequence. */}
                     <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">
-                      STEP {String(chapter.step).padStart(2, '0')}
-                      {chapter.kicker && (
-                        <span className="text-text-lo"> / {chapter.kicker}</span>
+                      {chapter.eyebrow ?? (
+                        <>
+                          STEP {String(chapter.step).padStart(2, '0')}
+                          {chapter.kicker && (
+                            <span className="text-text-lo"> / {chapter.kicker}</span>
+                          )}
+                        </>
                       )}
                     </span>
                     <h2

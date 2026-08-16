@@ -31,10 +31,16 @@ export const transporterPanel: CaseStudy = {
   title: 'The Transporter Panel',
   oneLiner:
     'Every trip ran on a chat thread and got paid two months later. I designed the panel that replaced it — and its hardest screen is the one where a man agrees, irreversibly, to what he’s owed.',
-  layout: 'editorial',
+  // Debo-reference structure (2026-08-16): sticky section nav, white page, mono
+  // section eyebrows. The editorial long-scroll was this page's previous shell.
+  layout: 'standard',
   eyebrow: 'VALMO (MEESHO) · TRANSPORTER-FACING · LIVE',
   domain: 'Logistics ops tooling',
   scale: '5 lifecycle states · 154 unique screens',
+  heroShot: {
+    src: '/work/transporter-panel/pending-default.png',
+    alt: 'The Transporter Panel on the Pending tab — five lifecycle tabs, three summary cards, the trips table',
+  },
   meta: {
     role: 'Product Designer — sole designer, end to end',
     team: 'Valmo Transportation (Meesho) — with PM, FinOps and engineering counterparts',
@@ -56,12 +62,13 @@ export const transporterPanel: CaseStudy = {
   },
 
   chapters: [
-    // ── 01 ────────────────────────────────────────────────────────────────
+    // ── 01 ────────────────────────────────────────────────────────────────────
     {
       id: 'problem-understanding',
       step: 1,
       navLabel: 'The chat thread',
       ghost: 'CHAT',
+      eyebrow: 'THE PROBLEM',
       title: 'Every trip he ran existed as a message in a chat thread.',
       blocks: [
         {
@@ -93,21 +100,49 @@ export const transporterPanel: CaseStudy = {
           caption: 'One trip, five records, and he could see only his own.',
         },
         {
-          type: 'problemTabs',
+          // The reference's problem device (ADR-007): his questions around the
+          // illustration, each with the persona point that explains it beneath.
+          // Composition + the seven questions locked with Manav 2026-08-16 (his
+          // mock); facts unchanged from the problemTabs block this replaces.
+          type: 'problemCards',
+          illustrationAlt:
+            'A fleet owner, hand over his face — the nightly reconciliation mood',
           items: [
             {
-              label: 'Bad data going in',
-              body: 'An area manager’s plan reached the system by hand — retyped at every depot by temporary hires measured on compliance targets.\n\nA vehicle number typed under pressure is good enough to dispatch and wrong enough to break the payment.\n\nWrong numbers, wrong transporter, missing GPS — and the biggest class, return journeys booked as two separate one-way trips.',
+              quote: 'Which of last night’s trips still needs a truck?',
+              context: 'He runs 20–80 trips a day. The thread stops being a record at twenty.',
             },
             {
-              label: 'No visibility coming out',
-              body: 'He could not see which trips Valmo had acknowledged, so he invoiced from his own spreadsheet.\n\nNothing led back to a record — everything led back to one person he happened to know. If that person was busy, so was his payment.',
+              quote: 'What is the ETA of this trip?',
+              context: 'He owns the trucks. He is never on the truck — the screen is all he sees of a run.',
             },
             {
-              label: 'A ceiling at twenty trips',
-              body: 'The interim answer was a WhatsApp assignment module — trips pushed as messages to accept, reject or update.\n\nIt worked for the right reason: data ownership moved to whoever’s payout depended on it. It could not survive a scroll.\n\nWhatsApp stayed on as a notification channel; the panel became the record.',
+              quote: 'Why is the vehicle number wrong again?',
+              context: 'Retyped at every depot. One in three trips carried an error.',
+            },
+            {
+              quote: 'Did Valmo even acknowledge this trip?',
+              context: 'Nothing led back to a record. He invoiced from his own spreadsheet.',
+            },
+            {
+              quote: 'When and how much will I be paid?',
+              context: 'His words, verbatim. The spreadsheet is the only record he trusts.',
+            },
+            {
+              quote: 'Who do I call about this payment?',
+              context: 'One person he happened to know. Busy contact, stalled payout.',
+            },
+            {
+              quote: 'Where do I raise the dispute about this trip?',
+              context: 'By phone, uncategorised — if he knew whom to call.',
             },
           ],
+          punchline:
+            'Nobody refused to pay him. The records just never agreed on what to pay.',
+        },
+        {
+          type: 'text',
+          body: 'Behind the questions, one machine. An area manager’s plan reached the system by hand — retyped at every depot by temporary hires measured on compliance targets. Wrong numbers, wrong transporter, missing GPS — and the biggest class, return journeys booked as two separate one-way trips.\n\nThe interim answer was a WhatsApp assignment module — trips pushed as messages to accept, reject or update. It worked for the right reason: data ownership moved to whoever’s payout depended on it. It could not survive a scroll.\n\nWhatsApp stayed on as a notification channel; the panel became the record.',
         },
         {
           type: 'image',
@@ -119,12 +154,13 @@ export const transporterPanel: CaseStudy = {
       ],
     },
 
-    // ── 02 ────────────────────────────────────────────────────────────────
+    // ── 02 ────────────────────────────────────────────────────────────────────
     {
       id: 'objective',
       step: 2,
       navLabel: 'The one sentence',
       ghost: 'AGREE',
+      eyebrow: 'THE ONE SENTENCE',
       title: 'Confirmation had to become the payout trigger.',
       blocks: [
         {
@@ -183,12 +219,13 @@ export const transporterPanel: CaseStudy = {
       ],
     },
 
-    // ── 03 ────────────────────────────────────────────────────────────────
+    // ── 03 ────────────────────────────────────────────────────────────────────
     {
       id: 'user-persona',
       step: 3,
       navLabel: 'Who I designed for',
       ghost: 'OWNER',
+      eyebrow: 'THE RESEARCH',
       title: 'He owns the trucks. He is never on the truck.',
       blocks: [
         {
@@ -261,6 +298,41 @@ export const transporterPanel: CaseStudy = {
           ],
         },
         {
+          type: 'text',
+          body: 'After the field work, the desk work: I looked at how the platforms running comparable fleets put trips and money in front of a transporter.',
+        },
+        {
+          // DRAFT — competitor rows pending Pranita's fact-check before publish
+          // (public sources only; no internal knowledge of these platforms).
+          type: 'matrix',
+          title: 'What comparable platforms give a transporter',
+          columns: ['Platform', 'What its transporter-facing tool covers', 'What that left open'],
+          rows: [
+            [
+              'Amazon Relay',
+              'A carrier portal and app — load board, trip status, settlements in one account',
+              'Built for literate, English-first fleet back offices',
+            ],
+            [
+              'Flipkart',
+              'Transport partners run on internal vendor portals; nothing trip-level is public',
+              'No public evidence of a per-trip money view for the fleet owner',
+            ],
+            [
+              'Delhivery',
+              'Partner and fleet apps — trip assignment, proof of delivery, driver-first',
+              'The owner sees operations; payout agreement stays offline',
+            ],
+            [
+              'Swiggy',
+              'A delivery-partner app — gig onboarding, shift earnings for the rider',
+              'Individual-rider model; no fleet-owner bulk view at all',
+            ],
+          ],
+          totalNote:
+            'In what these platforms show publicly, none puts the fleet owner’s payout agreement on a screen — the trip is tracked, the money is announced. That gap is the panel’s whole thesis.',
+        },
+        {
           type: 'matrix',
           title: 'What transporters asked for, and what it became',
           columns: ['They asked for', 'What it became'],
@@ -277,107 +349,13 @@ export const transporterPanel: CaseStudy = {
       ],
     },
 
-    // ── 04 ────────────────────────────────────────────────────────────────
-    {
-      id: 'information-architecture',
-      step: 4,
-      navLabel: 'The right-hand edge',
-      ghost: 'SHAPE',
-      title: 'The action column is the tab’s thesis.',
-      blocks: [
-        {
-          type: 'text',
-          body: 'Five tabs in the order a trip moves. Above them, three summary cards, each carrying the number that sends him there.\n\nPending Assignment (10) with a red "2 Trip at risk" pill. In-Transit Trips (12) split On Time / Delayed. Completed split Pending Confirmation / Trips Under Dispute.',
-        },
-        {
-          type: 'image',
-          frame: 'none',
-          src: '/work/transporter-panel/hierarchy-tree.png',
-          alt: 'The five tabs under one root, each with its columns and its single action',
-          caption: 'One root, five tabs, one action each.',
-        },
-        {
-          type: 'screensGrid',
-          cols: 2,
-          items: [
-            {
-              src: '/work/transporter-panel/pending-default.png',
-              alt: 'Pending Assignment tab — empty vehicle and driver pickers, Accept and Reject in the action column',
-              caption: '01 · Pending — staff it, then Accept.',
-            },
-            {
-              src: '/work/transporter-panel/upcoming-list.png',
-              alt: 'Upcoming tab — vehicle and driver filled in, Update and Reject in the action column',
-              caption: '02 · Upcoming — now editable: Update or Reject.',
-            },
-            {
-              src: '/work/transporter-panel/in-transit.png',
-              alt: 'In-Transit tab — Live Updates column where the action column would be',
-              caption: '03 · In-Transit — Live Updates, no action column.',
-            },
-            {
-              src: '/work/transporter-panel/completed-default.png',
-              alt: 'Completed tab — four sub-pills and the Confirm Details / Raise Dispute pair on every row',
-              caption: '04 · Completed — Confirm Details or Raise Dispute.',
-            },
-            {
-              src: '/work/transporter-panel/cancelled-remarks.png',
-              alt: 'Cancelled tab — Missed Earning column and the Remark the transporter gave',
-              caption: '05 · Cancelled — Missed Earning, and his own Remark.',
-            },
-          ],
-        },
-        {
-          type: 'image',
-          frame: 'none',
-          src: '/work/transporter-panel/dg-actions.png',
-          alt: 'The action column read down all five tabs — Accept, Update, none, Confirm Details, none',
-          caption: 'A column should disappear, not fill with dead buttons.',
-        },
-        {
-          type: 'matrix',
-          title: 'The vocabulary shifts with the state, because the column means a different thing',
-          columns: ['Column', 'Pending / Upcoming', 'In-Transit', 'Completed', 'Cancelled'],
-          rows: [
-            ['Time', 'Placement Time', 'Departure Time', 'Placement + Completed Time', 'Placement Time'],
-            ['Money', 'Expected Earnings', 'Expected Earnings', 'Total Earnings', 'Missed Earning'],
-          ],
-          totalNote:
-            'Naming the last one Missed Earning rather than reusing Expected Earnings is the difference between a log and an explanation.',
-        },
-        {
-          type: 'text',
-          body: 'The biggest structural call was taking disagreements out of the trip — a dispute can be about a rate, a deduction, a bank account.\n\nSo Disputes became a top-level surface, tracked in one list. This release wires one entry point, from Completed; the structure lets others land later.',
-        },
-        {
-          type: 'annotatedShot',
-          src: '/work/transporter-panel/completed-default.png',
-          alt: 'Completed tab with four sub-pills and the illustrated payments explainer',
-          caption: 'The most structure, because the most risk.',
-          notes: [
-            {
-              title: 'The pill worth money leads with the money',
-              body: 'Sub-pills state value, not count: ten trips worth ₹37,500.',
-            },
-            {
-              title: 'An explainer before a single row',
-              body: '"What should I do for my Payments?" — which billing type he is, before he touches a row.',
-            },
-            {
-              title: 'Every row shows what its money rests on',
-              body: 'A contracted row shows its contract — Contract ID: 001-RFQ-00944. A trip booked without one shows Rate: ₹20/km instead, and its earnings cell says No RFQ Linked.',
-            },
-          ],
-        },
-      ],
-    },
-
-    // ── 05 ────────────────────────────────────────────────────────────────
+    // ── 04 ────────────────────────────────────────────────────────────────────
     {
       id: 'user-flow',
-      step: 5,
+      step: 4,
       navLabel: 'Where money moves',
       ghost: 'RISK',
+      eyebrow: 'WHERE MONEY MOVES',
       title: 'Two screens can cost him money in a single click.',
       blocks: [
         {
@@ -523,12 +501,57 @@ export const transporterPanel: CaseStudy = {
       ],
     },
 
-    // ── 06 ────────────────────────────────────────────────────────────────
+    // ── 05 ────────────────────────────────────────────────────────────────────
+    {
+      id: 'prototype',
+      step: 5,
+      navLabel: 'What shipped',
+      ghost: '154',
+      eyebrow: 'WHAT SHIPPED',
+      title: '154 screens, and 92 of them on the one tab that pays.',
+      blocks: [
+        {
+          type: 'beforeAfter',
+          before: {
+            src: '/work/transporter-panel/before-chaos.png',
+            alt: 'The pre-panel state — one trip held across five disconnected records',
+            label: 'Before',
+          },
+          after: {
+            src: '/work/transporter-panel/pending-default.png',
+            alt: 'The five-tab transporter panel with its Trip Management summary cards',
+            label: 'After',
+          },
+          caption: 'Five records nobody could reconcile — five states anyone can read.',
+        },
+        {
+          type: 'matrix',
+          title: 'Screens per tab',
+          columns: ['Tab', 'Screens', 'Share'],
+          rows: [
+            ['Pending Assignment', '26', '17%'],
+            ['Upcoming', '23', '15%'],
+            ['In-Transit', '6', '4%'],
+            ['Completed', '92', '60%'],
+            ['Cancelled', '7', '4%'],
+          ],
+          totalNote:
+            '154 unique screens, after stripping duplicates and fragments from a 182-file export. The weight follows the risk: every failure state on Completed, the dispute lifecycle drawn to Partial Approved, Reopened and Reraise.',
+        },
+        {
+          type: 'text',
+          body: 'The bar was that every tab ships its full state set — loading, empty, error. Not met everywhere; the gap is named below.',
+        },
+      ],
+    },
+
+    // ── 06 ────────────────────────────────────────────────────────────────────
     {
       id: 'lo-fi-wireframes',
       step: 6,
       navLabel: 'Rules I broke',
       ghost: 'RULES',
+      eyebrow: 'THE RULES',
       title: 'I wrote six rules for this table, then broke two of them on purpose.',
       blocks: [
         {
@@ -597,55 +620,109 @@ export const transporterPanel: CaseStudy = {
       ],
     },
 
-    // ── 07 ────────────────────────────────────────────────────────────────
+    // ── 07 ────────────────────────────────────────────────────────────────────
     {
-      id: 'prototype',
+      id: 'information-architecture',
       step: 7,
-      navLabel: 'What shipped',
-      ghost: '154',
-      title: '154 screens, and 92 of them on the one tab that pays.',
+      navLabel: 'The right-hand edge',
+      ghost: 'SHAPE',
+      eyebrow: 'TAB BY TAB',
+      title: 'The action column is the tab’s thesis.',
       blocks: [
         {
-          type: 'beforeAfter',
-          before: {
-            src: '/work/transporter-panel/before-chaos.png',
-            alt: 'The pre-panel state — one trip held across five disconnected records',
-            label: 'Before',
-          },
-          after: {
-            src: '/work/transporter-panel/pending-default.png',
-            alt: 'The five-tab transporter panel with its Trip Management summary cards',
-            label: 'After',
-          },
-          caption: 'Five records nobody could reconcile — five states anyone can read.',
+          type: 'text',
+          body: 'Five tabs in the order a trip moves. Above them, three summary cards, each carrying the number that sends him there.\n\nPending Assignment (10) with a red "2 Trip at risk" pill. In-Transit Trips (12) split On Time / Delayed. Completed split Pending Confirmation / Trips Under Dispute.',
+        },
+        {
+          type: 'image',
+          frame: 'none',
+          src: '/work/transporter-panel/hierarchy-tree.png',
+          alt: 'The five tabs under one root, each with its columns and its single action',
+          caption: 'One root, five tabs, one action each.',
+        },
+        {
+          type: 'screensGrid',
+          cols: 2,
+          items: [
+            {
+              src: '/work/transporter-panel/pending-default.png',
+              alt: 'Pending Assignment tab — empty vehicle and driver pickers, Accept and Reject in the action column',
+              caption: '01 · Pending — staff it, then Accept.',
+            },
+            {
+              src: '/work/transporter-panel/upcoming-list.png',
+              alt: 'Upcoming tab — vehicle and driver filled in, Update and Reject in the action column',
+              caption: '02 · Upcoming — now editable: Update or Reject.',
+            },
+            {
+              src: '/work/transporter-panel/in-transit.png',
+              alt: 'In-Transit tab — Live Updates column where the action column would be',
+              caption: '03 · In-Transit — Live Updates, no action column.',
+            },
+            {
+              src: '/work/transporter-panel/completed-default.png',
+              alt: 'Completed tab — four sub-pills and the Confirm Details / Raise Dispute pair on every row',
+              caption: '04 · Completed — Confirm Details or Raise Dispute.',
+            },
+            {
+              src: '/work/transporter-panel/cancelled-remarks.png',
+              alt: 'Cancelled tab — Missed Earning column and the Remark the transporter gave',
+              caption: '05 · Cancelled — Missed Earning, and his own Remark.',
+            },
+          ],
+        },
+        {
+          type: 'image',
+          frame: 'none',
+          src: '/work/transporter-panel/dg-actions.png',
+          alt: 'The action column read down all five tabs — Accept, Update, none, Confirm Details, none',
+          caption: 'A column should disappear, not fill with dead buttons.',
         },
         {
           type: 'matrix',
-          title: 'Screens per tab',
-          columns: ['Tab', 'Screens', 'Share'],
+          title: 'The vocabulary shifts with the state, because the column means a different thing',
+          columns: ['Column', 'Pending / Upcoming', 'In-Transit', 'Completed', 'Cancelled'],
           rows: [
-            ['Pending Assignment', '26', '17%'],
-            ['Upcoming', '23', '15%'],
-            ['In-Transit', '6', '4%'],
-            ['Completed', '92', '60%'],
-            ['Cancelled', '7', '4%'],
+            ['Time', 'Placement Time', 'Departure Time', 'Placement + Completed Time', 'Placement Time'],
+            ['Money', 'Expected Earnings', 'Expected Earnings', 'Total Earnings', 'Missed Earning'],
           ],
           totalNote:
-            '154 unique screens, after stripping duplicates and fragments from a 182-file export. The weight follows the risk: every failure state on Completed, the dispute lifecycle drawn to Partial Approved, Reopened and Reraise.',
+            'Naming the last one Missed Earning rather than reusing Expected Earnings is the difference between a log and an explanation.',
         },
         {
           type: 'text',
-          body: 'The bar was that every tab ships its full state set — loading, empty, error. Not met everywhere; the gap is named below.',
+          body: 'The biggest structural call was taking disagreements out of the trip — a dispute can be about a rate, a deduction, a bank account.\n\nSo Disputes became a top-level surface, tracked in one list. This release wires one entry point, from Completed; the structure lets others land later.',
+        },
+        {
+          type: 'annotatedShot',
+          src: '/work/transporter-panel/completed-default.png',
+          alt: 'Completed tab with four sub-pills and the illustrated payments explainer',
+          caption: 'The most structure, because the most risk.',
+          notes: [
+            {
+              title: 'The pill worth money leads with the money',
+              body: 'Sub-pills state value, not count: ten trips worth ₹37,500.',
+            },
+            {
+              title: 'An explainer before a single row',
+              body: '"What should I do for my Payments?" — which billing type he is, before he touches a row.',
+            },
+            {
+              title: 'Every row shows what its money rests on',
+              body: 'A contracted row shows its contract — Contract ID: 001-RFQ-00944. A trip booked without one shows Rate: ₹20/km instead, and its earnings cell says No RFQ Linked.',
+            },
+          ],
         },
       ],
     },
 
-    // ── 08 ────────────────────────────────────────────────────────────────
+    // ── 08 ────────────────────────────────────────────────────────────────────
     {
       id: 'business-aspects',
       step: 8,
       navLabel: 'What it is accountable to',
       ghost: 'CHAIN',
+      eyebrow: 'SUCCESS METRICS',
       title: 'The panel is one link in a chain that ends in a payment.',
       blocks: [
         {

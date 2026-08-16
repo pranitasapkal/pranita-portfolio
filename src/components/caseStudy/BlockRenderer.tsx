@@ -26,6 +26,8 @@ import { BeforeAfter } from './blocks/BeforeAfter'
 import { AnnotatedShot } from './blocks/AnnotatedShot'
 import { NdaNote } from './blocks/NdaNote'
 import { ResearchDeck } from './blocks/ResearchDeck'
+import { DeviceFrame } from './blocks/DeviceFrame'
+import { ProblemCards } from './blocks/ProblemCards'
 
 interface BlockRendererProps {
   blocks: Block[]
@@ -125,6 +127,26 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
                 key={i}
                 title={block.title}
                 note={block.note}
+                items={block.items}
+              />
+            )
+          case 'deviceFrame':
+            return (
+              <DeviceFrame
+                key={i}
+                src={block.src}
+                alt={block.alt}
+                caption={block.caption}
+                placeholder={block.placeholder}
+              />
+            )
+          case 'problemCards':
+            return (
+              <ProblemCards
+                key={i}
+                illustration={block.illustration}
+                illustrationAlt={block.illustrationAlt}
+                punchline={block.punchline}
                 items={block.items}
               />
             )
