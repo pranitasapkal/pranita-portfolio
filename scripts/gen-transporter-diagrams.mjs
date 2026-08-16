@@ -25,8 +25,11 @@ mkdirSync(outDir, { recursive: true })
 mkdirSync(tmp, { recursive: true })
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
-const INK = '#17181D', MUT = '#6C7180', ACC = '#C77E1A', SOFT = '#FBF0DE'
-const LINE = '#D9D4CA', PAPER = '#FBFAF7', CARD = '#FFFFFF', STOP = '#B4322B'
+/* Re-inked 2026-08-16 (Manav: the amber annotations were barely visible).
+   Accent = the site cobalt on a cobalt wash (6.9:1); annotations darkened
+   #6C7180 → #4A4F5C (7.4:1 on white); paper matches the pure-white pages. */
+const INK = '#17181D', MUT = '#4A4F5C', ACC = '#1d41d0', SOFT = '#E8ECFB'
+const LINE = '#C9CCD6', PAPER = '#FFFFFF', CARD = '#FFFFFF', STOP = '#B4322B'
 
 const ROUGH = 'border-radius:255px 12px 225px 15px/15px 225px 15px 255px;'
 const ROUGH2 = 'border-radius:15px 225px 15px 255px/225px 15px 255px 15px;'
@@ -241,7 +244,9 @@ const hierarchy = page(1700, 620, 'What the panel had to account for',
 
 const jobs = [
   ['dg-lifecycle', lifecycle], ['dg-actions', actions], ['dg-confirm', confirm],
-  ['before-chaos', beforeChaos], ['hierarchy-tree', hierarchy],
+  // before-chaos.png is now Manav's supplied 3D illustration (2026-08-16) —
+  // NEVER regenerate it here or the file gets clobbered.
+  ['hierarchy-tree', hierarchy],
 ]
 for (const [name, html] of jobs) {
   const p = resolve(tmp, `${name}.html`)
