@@ -6,6 +6,20 @@
 import { useState } from 'react'
 import { BrowserFrame } from '../../primitives/BrowserFrame'
 import { PhoneFrame } from '../../primitives/PhoneFrame'
+import manifest from '../../../lib/image-manifest.json'
+
+// JSON imports widen tuples to number[], so read defensively rather than asserting a tuple.
+const dimensions: Record<string, number[]> = manifest
+
+/**
+ * Case-study images are authored as `.png` paths in src/content/. `npm run optimize-images`
+ * emits a WebP beside every one of them (~76% smaller across the set), so we serve the WebP
+ * and keep the PNG as the <picture> fallback. The content lane keeps writing .png and never
+ * has to know. If the WebP is missing, the fallback simply wins.
+ */
+function webpFor(src: string) {
+  return src.replace(/\.png$/i, '.webp')
+}
 
 interface ImageBlockProps {
   frame: 'browser' | 'phone' | 'none'
@@ -39,15 +53,23 @@ function Img({ src, alt, placeholder }: { src: string; alt: string; placeholder?
     return <PendingFrame alt={alt} />
   }
 
+  const dim = dimensions[src]
+
   return (
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      decoding="async"
-      className="w-full block"
-      onError={() => setErrored(true)}
-    />
+    <picture>
+      <source srcSet={webpFor(src)} type="image/webp" />
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        // Reserving the box stops the decode from shifting layout, which in turn stops
+        // ScrollTrigger start positions drifting on a slow connection.
+        {...(dim?.length === 2 ? { width: dim[0], height: dim[1] } : {})}
+        className="w-full h-auto block"
+        onError={() => setErrored(true)}
+      />
+    </picture>
   )
 }
 

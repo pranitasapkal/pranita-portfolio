@@ -50,8 +50,8 @@ One thing **not** verified: the ASM card's appearance in the home Work section. 
 
 | Issue | Detail |
 |---|---|
-| `npm run optimize-images` is broken | `scripts/optimize-images.mjs` does not exist. Pre-existing; nothing depends on it. |
-| `npm run nda-scan` reports 224 hits | All pre-existing, triaged in `tasks/todo.md`. 206 are a false positive (`0.77` matching map coordinates in `public/geo/*.json` — the check needs scoping to `₹0.77`). The rest are real and known. **This script needs a file that isn't in this repo — it will skip cleanly instead.** |
+| `npm run covers` needs a live dev server | It captures the sanitized prototypes over http from :5173. Run `npm run dev` first. |
+| `npm run nda-scan` is inert here | It needs `content/fuzzing-map.json`, which is gitignored and not in this repo, so it prints a notice and exits 0 **without checking anything**. A green run proves nothing. The old 224-hit era is over on `revamp` (numeric tokens anchored, `geo/` skipped) but the gate itself is a no-op without that file. |
 | `content/case-studies/CLH-SCRIPT-v3.md` | A working draft sitting in a scanned directory. Probably belongs in `tasks/`. |
 | Case data is duplicated | `src/components/home/CaseIndex.tsx` has its own hardcoded `CASES` array separate from `src/content/cases/index.ts`. This is deliberate (home copy is shorter) but the `code` field renders in both places and must stay in sync. `NODE_SIGNATURES` is indexed by card position — a new card without a matching SVG renders blank. |
 

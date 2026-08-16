@@ -91,15 +91,14 @@ export const site = {
     /** Rendered as separate words for the pull-up entrance. */
     nameWords: ['PRANITA', 'SAPKAL'],
     nameAriaLabel: 'PRANITA SAPKAL',
-    subline:
-      'Product designer for the systems that move things — logistics UX at Meesho (Valmo).',
+    subline: 'Product designer for the systems that keep the real world moving.',
     stats: [
       { value: '10,000+', label: 'delivery nodes planned', fuzzed: true },
       { value: '5→2', label: 'clicks to task start' },
       { value: '8', label: 'tools built' },
       { value: '5', label: 'flagship systems' },
     ] as StatCallout[],
-    portraitAlt: 'Portrait photograph — coming soon',
+    portraitAlt: 'Portrait photograph, coming soon',
     portraitPlaceholderLabel: 'Portrait',
     scrollCue: 'Scroll',
   },
@@ -108,7 +107,7 @@ export const site = {
     servicesHeading: 'What I do',
     paragraphs: [
       'I design dense ops workbenches for logistics planners who need complete situational awareness in seconds, and low-literacy transporter interfaces for delivery partners who trust the screen literally.',
-      'My work is about operating models — decision loops, alignment rituals, permission structures — not just screen design. Every case study here documents a system, not a surface.',
+      'My work is about operating models: decision loops, alignment rituals, permission structures, not just screen design. Every case study here documents a system, not a surface.',
       'I also build the tools I use: eight Figma plugins, run daily on production files, that automate the audit work I would otherwise do by hand.',
     ],
     services: [
@@ -165,7 +164,7 @@ export const site = {
         name: 'CLH IA AUDITOR',
         category: 'AUDIT',
         oneLiner:
-          'Validates frames against IA Spec v4 — checks column order, identity blocks, and tab naming.',
+          'Validates frames against IA Spec v4: checks column order, identity blocks, and tab naming.',
       },
       {
         name: 'CLH DS ENFORCER',
@@ -188,7 +187,7 @@ export const site = {
         name: 'CLH A11Y CHECKER',
         category: 'AUDIT',
         oneLiner:
-          'WCAG 2.1 AA — contrast ratios, touch-target sizing (44×44 min), and text minimum sizes.',
+          'WCAG 2.1 AA: contrast ratios, touch-target sizing (44×44 min), and text minimum sizes.',
       },
       {
         name: 'CLH HANDOFF SPEC',
@@ -218,17 +217,17 @@ export const site = {
     items: [
       {
         title: 'Dispute-flow Redesign',
-        desc: 'Hundreds of disputes weekly — reordered by real frequency and made proof-gated. Removed the assumption that every dispute type deserves equal visual weight.',
+        desc: 'Hundreds of disputes weekly, reordered by real frequency and made proof-gated. Removed the assumption that every dispute type deserves equal visual weight.',
         tags: ['Valmo', 'Mobile', 'Transporter-facing'],
       },
       {
         title: 'Transporter Trips Panel',
-        desc: 'Five-tab trip lifecycle — Pending, Upcoming, In-Transit, Completed, Cancelled — with live GPS states and one primary CTA per row throughout.',
+        desc: 'Five-tab trip lifecycle (Pending, Upcoming, In-Transit, Completed, Cancelled) with live GPS states and one primary CTA per row throughout.',
         tags: ['Valmo', 'Desktop panel', 'Lifecycle UX'],
       },
       {
         title: 'Tibil Website',
-        desc: 'End-to-end product website design for a B2B fintech startup — information architecture, visual system, and responsive layout.',
+        desc: 'End-to-end product website design for a B2B fintech startup: information architecture, visual system, and responsive layout.',
         tags: ['Website', 'B2B'],
         earlier: true,
       },
@@ -269,7 +268,7 @@ export const site = {
       tag: 'ESSAY',
       title: 'The Secret Sauce of Great UX Design: Empathy',
       blurb:
-        'Published on Medium — on why empathy is the foundation every tool, flow, and decision should be built on.',
+        'Published on Medium, on why empathy is the foundation every tool, flow, and decision should be built on.',
       source: 'medium.com/@Pranitasapkal',
       href: 'https://medium.com/@Pranitasapkal/the-secret-sauce-of-great-ux-design-empathy-5b68e01ee1c0',
       ariaLabel:

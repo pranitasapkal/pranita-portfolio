@@ -127,7 +127,8 @@ Never copy anything back in from the sibling project folders. `public/prototypes
 
 ## Known rough edges
 
-- `npm run optimize-images` points at `scripts/optimize-images.mjs`, which has never existed.
-  Nothing depends on it.
+- `npm run nda-scan` is **inert** without `content/fuzzing-map.json` (gitignored, not in this
+  repo): it prints a notice and exits 0 without checking anything. A green run here proves
+  nothing — ask Pranita for the file before trusting it as a gate.
 - `content/case-studies/CLH-SCRIPT-v3.md` is a working draft sitting in a scanned directory.
   It probably belongs in `tasks/`, pending a check that the CLH generator scripts don't read it.

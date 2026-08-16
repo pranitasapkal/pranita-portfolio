@@ -25,3 +25,6 @@ content/fuzzing-map.json
 # Local tooling scratch
 .playwright-mcp/
 tsconfig.node.tsbuildinfo
+
+# Local design references (baseline captures) — not part of the build
+.design/

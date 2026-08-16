@@ -2,6 +2,10 @@
  * CaseStudyPage — route /work/:slug
  * Looks up slug in the case registry; falls back to NotFound for unknown slugs.
  * Scrolls to top on slug change.
+ *
+ * The `.v1-ink` wrapper pins these pages to the v1 dark ink system regardless
+ * of the site theme — the v2 light-first tokens moved the body onto semantic
+ * surfaces, and case pages are out of scope for the v2 restyle (ADR-004).
  */
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
@@ -38,7 +42,15 @@ export default function CaseStudyPage() {
 
   const cs = slug ? caseStudies[slug] : undefined
 
-  if (!cs) return <NotFound />
-
-  return cs.layout === 'editorial' ? <EditorialCaseLayout cs={cs} /> : <CaseLayout cs={cs} />
+  return (
+    <div className="v1-ink bg-ink-0 text-text-hi font-body min-h-screen">
+      {!cs ? (
+        <NotFound />
+      ) : cs.layout === 'editorial' ? (
+        <EditorialCaseLayout cs={cs} />
+      ) : (
+        <CaseLayout cs={cs} />
+      )}
+    </div>
+  )
 }
