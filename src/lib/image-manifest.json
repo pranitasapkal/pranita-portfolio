@@ -1,0 +1,302 @@
+{
+  "/work/assignment/cancelled-remarks.png": [
+    1600,
+    1260
+  ],
+  "/work/assignment/completed-default.png": [
+    1600,
+    1206
+  ],
+  "/work/assignment/confirm-active-dispute.png": [
+    1600,
+    1206
+  ],
+  "/work/assignment/dg-actions.png": [
+    1600,
+    660
+  ],
+  "/work/assignment/dg-confirm.png": [
+    1600,
+    659
+  ],
+  "/work/assignment/dg-lifecycle.png": [
+    1600,
+    664
+  ],
+  "/work/assignment/in-transit.png": [
+    1600,
+    1260
+  ],
+  "/work/assignment/missing-trip-challan.png": [
+    1600,
+    1263
+  ],
+  "/work/assignment/pending-default.png": [
+    1600,
+    1260
+  ],
+  "/work/assignment/raise-dispute-form.png": [
+    1600,
+    2257
+  ],
+  "/work/assignment/reject-consequences.png": [
+    1600,
+    1258
+  ],
+  "/work/assignment/route-timeline.png": [
+    1600,
+    771
+  ],
+  "/work/assignment/upcoming-list.png": [
+    1600,
+    1260
+  ],
+  "/work/clh/01-pre-panel.png": [
+    1600,
+    900
+  ],
+  "/work/clh/02-objective.png": [
+    1600,
+    900
+  ],
+  "/work/clh/03-persona.png": [
+    1600,
+    900
+  ],
+  "/work/clh/04-ia-diagram.png": [
+    1600,
+    1311
+  ],
+  "/work/clh/04-l2-table.png": [
+    1600,
+    900
+  ],
+  "/work/clh/05-flow-map.png": [
+    1600,
+    900
+  ],
+  "/work/clh/05-inline-assign.png": [
+    1600,
+    900
+  ],
+  "/work/clh/06-early-ia.png": [
+    1600,
+    1307
+  ],
+  "/work/clh/07-nlh-slots.png": [
+    1600,
+    900
+  ],
+  "/work/clh/cover.png": [
+    1600,
+    900
+  ],
+  "/work/clh/d1-mixed-states.png": [
+    1600,
+    1658
+  ],
+  "/work/clh/d2-inline-assign.png": [
+    1600,
+    1258
+  ],
+  "/work/clh/d3-has-transporter-col.png": [
+    1500,
+    601
+  ],
+  "/work/clh/d3-no-transporter-col.png": [
+    1500,
+    600
+  ],
+  "/work/clh/dg-flow.png": [
+    1600,
+    940
+  ],
+  "/work/clh/dg-model.png": [
+    1600,
+    760
+  ],
+  "/work/clh/dg-month.png": [
+    1600,
+    620
+  ],
+  "/work/clh/f1-nd-create.png": [
+    1400,
+    1104
+  ],
+  "/work/clh/f1-nd-failed.png": [
+    1400,
+    1104
+  ],
+  "/work/clh/f1-nd-rules.png": [
+    1500,
+    1473
+  ],
+  "/work/clh/f1-nd-success.png": [
+    1400,
+    1104
+  ],
+  "/work/clh/f1-nd-upload.png": [
+    1400,
+    1103
+  ],
+  "/work/clh/f2-filled.png": [
+    1400,
+    1100
+  ],
+  "/work/clh/f2-inline.png": [
+    1400,
+    1100
+  ],
+  "/work/clh/f2-queue.png": [
+    1400,
+    1100
+  ],
+  "/work/clh/f2-sent.png": [
+    1400,
+    1100
+  ],
+  "/work/clh/f3-bulk-modal.png": [
+    1400,
+    1100
+  ],
+  "/work/clh/f3-bulk-success.png": [
+    1400,
+    1100
+  ],
+  "/work/clh/f4-awaiting.png": [
+    1400,
+    1102
+  ],
+  "/work/clh/f4-no-response.png": [
+    1400,
+    1100
+  ],
+  "/work/clh/f5-reason.png": [
+    1400,
+    1103
+  ],
+  "/work/clh/f5-reassigned.png": [
+    1400,
+    1100
+  ],
+  "/work/clh/f5-rejected.png": [
+    1400,
+    1100
+  ],
+  "/work/clh/f6-error-detail.png": [
+    1400,
+    1103
+  ],
+  "/work/clh/f6-error-queue.png": [
+    1400,
+    1100
+  ],
+  "/work/clh/f7-upcoming.png": [
+    1400,
+    1102
+  ],
+  "/work/clh/f7-verify.png": [
+    1400,
+    1103
+  ],
+  "/work/clh/f8-active.png": [
+    1400,
+    1103
+  ],
+  "/work/clh/f9-closed.png": [
+    1300,
+    1023
+  ],
+  "/work/clh/f9-dispute-reject.png": [
+    1300,
+    1024
+  ],
+  "/work/clh/f9-dispute.png": [
+    1300,
+    1024
+  ],
+  "/work/clh/f9-termination.png": [
+    1300,
+    1024
+  ],
+  "/work/clh/m-date.png": [
+    1000,
+    811
+  ],
+  "/work/clh/m-multi.png": [
+    1000,
+    811
+  ],
+  "/work/clh/m-rate.png": [
+    1000,
+    811
+  ],
+  "/work/clh/m-time.png": [
+    1000,
+    771
+  ],
+  "/work/clh/screens/s01-ar-rejected.png": [
+    1200,
+    675
+  ],
+  "/work/clh/screens/s02-ar-upload-errors.png": [
+    1200,
+    675
+  ],
+  "/work/clh/screens/s03-sfa-awaiting.png": [
+    1200,
+    675
+  ],
+  "/work/clh/screens/s04-sfa-no-response.png": [
+    1200,
+    675
+  ],
+  "/work/clh/screens/s05-bulk-reminder.png": [
+    1200,
+    675
+  ],
+  "/work/clh/screens/s06-approved-ready.png": [
+    1200,
+    675
+  ],
+  "/work/clh/screens/s07-active-on-track.png": [
+    1200,
+    675
+  ],
+  "/work/clh/screens/s08-active-disputes.png": [
+    1200,
+    675
+  ],
+  "/work/clh/screens/s09-fully-fulfilled.png": [
+    1200,
+    675
+  ],
+  "/work/clh/screens/s10-closed.png": [
+    1200,
+    675
+  ],
+  "/work/clh/sot-network-design.png": [
+    1600,
+    1571
+  ],
+  "/work/clh/sot-overview.png": [
+    1600,
+    1329
+  ],
+  "/work/clh/st-disputed.png": [
+    1200,
+    945
+  ],
+  "/work/clh/st-preclosed.png": [
+    1200,
+    943
+  ],
+  "/work/clh/st-termination.png": [
+    1200,
+    945
+  ],
+  "/work/clh/st-upload-error.png": [
+    1200,
+    946
+  ]
+}

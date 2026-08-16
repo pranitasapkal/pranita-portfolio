@@ -4,24 +4,34 @@ html {
   scroll-behavior: smooth;
 }
 
+/* v2: body sits on the semantic surface layer and flips with [data-theme].
+   Case-study pages opt back into the v1 dark ink system via their own
+   wrapper (see CaseStudyPage.tsx) — they never rely on the body again. */
 body {
-  @apply bg-ink-0 text-text-hi font-body antialiased;
+  @apply bg-surface-0 text-strong font-sans antialiased;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: var(--color-signal);
-  color: var(--color-ink-0);
+  background: var(--accent);
+  color: var(--accent-ink);
 }
 
-/* Visible focus for keyboard users — signal ring, never removed. */
+/* Visible focus for keyboard users — accent ring, never removed.
+   --accent is theme-aware, and on the always-dark bands the dark-mode value
+   would vanish in light theme, so bands re-declare the ring color below. */
 :focus-visible {
-  outline: 2px solid var(--color-signal);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 2px;
 }
 
-/* Grain overlay host (texture applied via component) */
+.band :focus-visible,
+.v1-ink :focus-visible {
+  outline-color: #aab9ff;
+}
+
+/* Grain overlay host — dark surfaces only; invisible/muddy on light. */
 .grain {
   pointer-events: none;
   position: fixed;

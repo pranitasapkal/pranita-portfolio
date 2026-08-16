@@ -26,3 +26,6 @@ content/fuzzing-map.json
 .playwright-mcp/
 tsconfig.node.tsbuildinfo
 .facts-snapshot.json
+
+# Local design references (baseline captures) — not part of the build
+.design/

@@ -8,6 +8,7 @@
 import { createContext, useContext, useEffect, useRef, type ReactNode } from 'react'
 import Lenis from 'lenis'
 import { gsap, ScrollTrigger } from './gsap'
+import { usePrefersReducedMotion } from './useMediaQuery'
 
 const LenisContext = createContext<Lenis | null>(null)
 
@@ -22,12 +23,12 @@ interface SmoothScrollProps {
 export function SmoothScroll({ children }: SmoothScrollProps) {
   const lenisRef = useRef<Lenis | null>(null)
 
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
+  const prefersReducedMotion = usePrefersReducedMotion()
 
+  useEffect(() => {
     // Native scroll under reduced motion — don't instantiate Lenis at all.
+    // Reactive: toggling the preference mid-session tears Lenis down (or brings
+    // it back) instead of leaving smooth scroll running against the user's wish.
     if (prefersReducedMotion) return
 
     const lenis = new Lenis()
@@ -48,7 +49,7 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
       lenis.destroy()
       lenisRef.current = null
     }
-  }, [])
+  }, [prefersReducedMotion])
 
   return (
     <LenisContext.Provider value={lenisRef.current}>

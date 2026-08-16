@@ -4,13 +4,6 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          three: ['three', '@react-three/fiber', '@react-three/drei'],
-        },
-      },
-    },
-  },
+  // No manualChunks: the only entry here was the `three` split, removed with the
+  // WebGL hero (ADR-004). Route-level lazy() now does all the code splitting.
 })

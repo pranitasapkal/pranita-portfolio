@@ -39,7 +39,7 @@ export const summaries = {
     code: 'CLH-03',
     cardTitle: 'Contract Lifecycle Hub',
     cardOneLiner:
-      'One panel had to hold two contradictory realities — national contracts fan out to many vehicles, regional contracts stay strictly one-to-one.',
+      'One panel had to hold two contradictory realities: national contracts fan out to many vehicles, regional contracts stay strictly one-to-one.',
     stats: ['130+ screens', '14 end-to-end flows', '4 contested decisions'],
     browserSlug: 'pranita.design/clh',
   },

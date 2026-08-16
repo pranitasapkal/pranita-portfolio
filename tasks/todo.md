@@ -25,10 +25,76 @@ all 5 cards with correct copy + node signatures (**settles the TPN-01 card that 
 confirmed**) · `/work/transporter-panel` and `/work/linehaul-nexus` both render, 49 images load,
 `noindex` intact · zero console errors.
 
-## Phase 1 — parallel lanes (NEXT)
-- [ ] Text: home/about/footer copy → sets the voice → then cases TPN→NDC→CLH→TCM→PLC → resume → SEO
+## Phase 1 — parallel lanes (IN PROGRESS)
+- [x] Text: all five cases cut onto the ADR-005 template (TPN→NDC→CLH→TCM→PLC)
+- [ ] Text: home/about/footer copy → sets the voice → then resume → SEO
 - [ ] Design: new system in `/dev/kitchen-sink` first, then applied; decides the two-layout question
 - [ ] Rebase `text/*` on `revamp` whenever a design PR merges
+
+### Design lane — ADR-004 landed (2026-08-15, branch `design/foundation`, uncommitted)
+- [x] Dropped "THE NETWORK" + WebGL entirely — deleted `src/components/three/` (808 lines),
+      `public/geo/*` (~342 kB), `scripts/generate-india-points.mjs`, the `three`/`@react-three/*`
+      deps, and the `manualChunks` block that existed only to split them.
+      **Desktop first load 1,300.8 kB → 422.4 kB** (gzip 377.0 → 140.9, −62%).
+- [x] Hero rebuilt type-led; the 150vh pin is gone, so static screenshots of `/` work now.
+- [x] Corrected `docs/DESIGN-BRIEF.md`, `CLAUDE.md`, `README.md` — they mandated the WebGL floor
+      and the dropped identity. Also killed the reference to the master plan that no longer exists.
+- [x] `tasks/decisions/ADR-004-visual-system-v2.md` written (concept + WebGL drop; token
+      replacement appended once a direction is picked).
+- [x] **2px overflow at 360 fixed** — root cause was the footer email's `1.375rem` clamp *floor*
+      overriding `5.2vw`, not `.grain`/route-overlay as previously recorded. Measured 0px.
+- [x] Motion compliance: 6 components moved off one-shot `window.matchMedia` onto
+      `withReducedMotion()` / the new reactive hook. `withReducedMotion` now passes a cleanup fn.
+- [x] `src/lib/useMediaQuery.ts` (`useSyncExternalStore`) — fixes the read-once-never-update bug
+      in `Hero`/`MagneticWrap`/`Footer`/`CaseIndex`/`SmoothScroll`.
+- [x] `KitchenSink` lazy-loaded — was shipping a dev route in every visitor's main chunk.
+- [x] ~~Blocked: reference brief~~ — **resolved 2026-08-15: Manav supplied the brief himself**
+      (6 refs + screenshot section map). Research digest: `.design/RESEARCH.md`.
+
+### Design lane — v2 homepage SHIPPED (2026-08-15, later same day, uncommitted)
+- [x] v2 token layer: light-first + always-dark bands, working dark toggle (pre-paint script,
+      no FOUC), all contrast pairs computed ≥ AA (table in theme.css). v1 tokens scoped to
+      case pages via `.v1-ink`.
+- [x] Fonts: + Fraunces Variable, Hanken Grotesk Variable, Caveat.
+- [x] New primitives: PillButton, MetaLine, SectionTag, RolePill, UnderlineAccent, ThemeToggle,
+      DragCard (drag/fling/peek/shuffle, inert on touch + reduced motion). Kitchen sink rebuilt.
+- [x] New chrome: floating pill Navbar (name · Work · LinkedIn · Resume · toggle, `.force-dark`
+      on case routes), Footer = contact band. Loader + GrainOverlay deleted (dead concept).
+- [x] New home: Hero → StatementFold → WorkIndex → BeyondGrid → Approach → PluginsShowcase →
+      WritingStrip → Footer. Old About/CaseIndex/RouteSpine/Toolkit/SecondaryWork/ProcessStrip/
+      Writing deleted.
+- [x] Copy quarantine: every net-new string in `src/content/site-v2-draft.ts` (marked DRAFT,
+      **Pranita rewrites**); real slots still read site.ts/summaries.ts.
+- [x] **Verified in browser**: light+dark at 1440 and 360 — 0px overflow, 0 stuck reveals under
+      forced reduced motion (Lenis correctly off), all 5 covers load, drag+shuffle cycle the
+      deck, Peek hidden on touch, case pages unchanged w/ legible dark nav, theme persists
+      through reload with correct pre-paint value + theme-color meta. Build green (tsc clean),
+      main chunk 410.75 kB.
+- [x] scroll-world skill installed globally (`~/.claude/skills/scroll-world`) — install-only,
+      not used on the site.
+- [ ] Pranita: rewrite `site-v2-draft.ts`, decide fate of now-unrendered site.ts fields
+      (hero.ghost/stats, about, process), swap DragCard deck content, portrait, resume PDF.
+
+### Design lane — v2 homepage LOCKED with Manav, section by section (2026-08-16)
+Single standard mode (no theme toggle; `.force-dark` per section — all dark except footer).
+- [x] S1 Hero: hello line + meesho RolePill + serif headline (marker highlight + underline) +
+      DragCard deck (Peek/Shuffle). 4+ years copy, one-line subline, no em dashes anywhere.
+- [x] S2 Signature fold: compact manifesto on grid paper + wagging vector cat (chibi, SVG tail).
+- [x] S3 Selected Work: roshan-sahu-style fixed frame, per-project wipe/settle + pre-blurred
+      backdrops, CSS sticky + raw scroll math (NO ScrollTrigger pin — it silently failed).
+      Perf-tuned: 60fps measured (194 frames, worst 17.6ms).
+- [x] S4 Rooted: ASC screenshot marquee w/ edge vignettes (pause n/a) + How-it-works green trio.
+- [x] S5 Beyond grid: uniform black cards, hover lift/accent; Valmo pair → Rooted/Yantrava
+      links → earlier work.
+- [x] S6 Approach: 4 cols, hero dark. S7 Plugins: compact uniform 4×2 grid w/ accent icons.
+- [x] S8 Beyond Pixels: "Things that aren't on my resume" — hover-expand rows w/ pause-on-hover
+      marquee carousels (cats real, placeholders for the rest → public/beyond/).
+- [x] S9 Writing card. S10 Footer: light closer, compact, magnetic bold email.
+- [x] Committed on design/foundation for Pranita's review.
+
+**Correction to earlier notes:** `npm run optimize-images` is **not** broken — the script exists
+and works (commit `e6aacc9`). And `npm run nda-scan` is **inert**, not clean: without
+`content/fuzzing-map.json` it exits 0 without checking anything. Docs corrected.
 
 ## Phase 2 — integration
 - [ ] Design PRs merged, text merged last, full verification sweep, `revamp` → `public-main`

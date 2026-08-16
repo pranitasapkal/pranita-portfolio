@@ -14,9 +14,15 @@ contract lifecycles, and interfaces for delivery partners who read slowly and tr
 screen literally. The audience is design hiring managers, most of whom know nothing about
 logistics. Five case studies, a home index, a resume, no blog.
 
-The current identity is called "THE NETWORK": near-black ground, amber as the single accent,
-a teal reserved for data marks, a warm paper section that inverts to light, and a dashed-line
-route motif running through the logo, the scroll cue, the 404 and the case-card marks.
+The identity **was** called "THE NETWORK": near-black ground, amber as the single accent, a teal
+reserved for data marks, a warm paper section that inverts to light, and a dashed-line route
+motif running through the logo, the scroll cue, the 404 and the case-card marks.
+
+> **Superseded — ADR-004.** The logistics theming is dropped: no India-map hero, no route/hub/
+> package motifs, no "THE NETWORK" ghost wordmark. The WebGL hero went with it. The tokens in
+> `theme.css` still ship and are still what you build against today, but they encode a concept
+> that is no longer the target — replacing them is expected, not a transgression. What is *not*
+> up for grabs is the floor below.
 
 ---
 
@@ -82,11 +88,13 @@ re-derive them.
 
 ### Performance and platform
 
-- **No WebGL below 768px.** The hero probes for an actual WebGL context and falls back to
-  `SceneFallback` (a static SVG) on small screens, reduced-motion, or a failed probe. Keep all
-  three exits.
-- **Case-study pages never load Three.js.** It is a separate ~1 MB chunk, lazily imported by
-  the hero only. Do not import it anywhere else.
+- **No WebGL, anywhere.** ADR-004 removed the 3D hero, its static SVG fallback, and the
+  `three` / `@react-three/*` dependencies — 878 kB off the desktop first load. Do not
+  reintroduce a WebGL or canvas-3D layer without a new ADR. The old "no WebGL below 768px /
+  keep all three exits" and "case pages never load Three.js" rules are retired: there is no
+  Three.js left to gate.
+- **Routes stay lazy.** `CaseStudyPage` and `KitchenSink` are `lazy()` + `Suspense`; only the
+  shell and `Home` ship in the main chunk. A new route gets the same treatment.
 - Keep the home page free of case-study prose — see the note in `CONTRIBUTING.md` about
   `summaries.ts`. It is a ~150 kB difference in the initial bundle.
 
@@ -110,8 +118,10 @@ re-derive them.
 
 ## Things worth knowing before you start
 
-- **The hero is ScrollTrigger-pinned** inside a 150vh section, so a static screenshot only
-  ever shows the hero. Verify anything below it by actually scrolling.
+- **The hero is no longer pinned.** It was a 150vh section with an inner sticky wrapper purely
+  so ScrollTrigger could dolly the 3D camera; with the camera gone it is a plain `min-h-screen`
+  section. The old trap — a static screenshot of the page only ever re-rendering the pinned
+  hero — is retired with it. Screenshots of the home page now work normally.
 - **The work index is a sticky stack.** Each card is `position: sticky` with a staggered top
   offset; `paddingBottom` creates the scroll travel between cards. If you change the stack
   mechanic, the `stickyTop` value in the ScrollTrigger has to match the inline `top`.
@@ -120,8 +130,9 @@ re-derive them.
 - **The toolkit section inverts to a light "paper" ground** and stamps a spec-sheet mark on
   first scroll-into-view. It is the one light section; if you drop the inversion, the paper
   tokens become dead.
-- **If the hero shows the SVG fallback on a capable machine**, the browser's GPU process has
-  probably crash-locked — check `chrome://gpu` and restart it. It is not necessarily your bug.
+- **The `nda-scan` gate is inert without `content/fuzzing-map.json`**, which is gitignored and
+  not in this repo. Without it the script prints a notice and exits 0 — a green run proves
+  nothing. Ask Pranita for the file before trusting the check.
 
 ## Verifying your work
 

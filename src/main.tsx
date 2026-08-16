@@ -5,6 +5,10 @@ import '@fontsource-variable/archivo/index.css'
 import '@fontsource/instrument-serif/400-italic.css'
 import '@fontsource/ibm-plex-mono/400.css'
 import '@fontsource/ibm-plex-mono/500.css'
+/* v2 type layers: Fraunces (display serif) · Hanken Grotesk (body) · Caveat (handwritten micro) */
+import '@fontsource-variable/fraunces/index.css'
+import '@fontsource-variable/hanken-grotesk/index.css'
+import '@fontsource/caveat/500.css'
 import './styles/base.css'
 // Register GSAP plugins once before any component uses them.
 import './lib/gsap'
