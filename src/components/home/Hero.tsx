@@ -7,7 +7,7 @@
  * Entrance runs on mount inside withReducedMotion(); the reduced branch
  * registers nothing, so everything renders at rest.
  */
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { gsap, useGSAP } from '../../lib/gsap'
 import { EASE, DURATIONS, withReducedMotion } from '../../lib/motion'
 import { site } from '../../content/site'
@@ -21,9 +21,6 @@ import { DragCard } from '../primitives/DragCard'
 export function Hero() {
   const hostRef = useRef<HTMLElement>(null)
   const h = draft.hero
-  /* Cozy-room illustration (Manav, 2026-08-16) — drop the file at
-     public/hero/cozy.png; until then the slot renders a labelled frame. */
-  const [illoMissing, setIlloMissing] = useState(false)
 
   useGSAP(
     () => {
@@ -51,29 +48,9 @@ export function Hero() {
       aria-label={site.hero.sectionAriaLabel}
       className="force-dark bg-surface-0 min-h-screen flex items-center overflow-x-clip"
     >
-      <div className="w-full max-w-[1800px] mx-auto px-6 md:px-[6vw] pt-32 pb-20 grid grid-cols-1 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.25fr)_minmax(0,0.95fr)] gap-12 xl:gap-10 items-center">
-        {/* ── Cozy-room illustration, seated left ── */}
-        <div data-hero-reveal className="order-2 xl:order-1 flex justify-center xl:justify-start">
-          {illoMissing ? (
-            <div className="w-full max-w-[420px] aspect-square rounded-3xl border border-dashed border-line-soft flex items-center justify-center p-8">
-              <span className="font-hand text-2xl text-soft text-center">
-                illustration on its way — drop /hero/cozy.png
-              </span>
-            </div>
-          ) : (
-            <img
-              src="/hero/cozy.png"
-              alt="An illustrated reading corner — her with a book, two cats asleep around her"
-              width={1297}
-              height={1236}
-              onError={() => setIlloMissing(true)}
-              className="w-full max-w-[420px] h-auto rounded-3xl -rotate-1 shadow-[var(--shadow-card)]"
-            />
-          )}
-        </div>
-
+      <div className="w-full max-w-[1800px] mx-auto px-6 md:px-[6vw] pt-32 pb-20 grid grid-cols-1 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-16 items-center">
         {/* ── Text column ── */}
-        <div className="order-1 xl:order-2 flex flex-col items-start gap-8">
+        <div className="flex flex-col items-start gap-8">
           <div data-hero-reveal className="flex flex-col items-start gap-3">
             <p className="font-hand text-2xl md:text-3xl text-soft -rotate-1">{h.hello}</p>
             <RolePill
@@ -120,7 +97,7 @@ export function Hero() {
         </div>
 
         {/* ── Interactive deck ── */}
-        <div data-hero-reveal className="order-3 flex justify-center xl:justify-end xl:pr-6">
+        <div data-hero-reveal className="flex justify-center xl:justify-end xl:pr-10">
           <DragCard />
         </div>
       </div>
