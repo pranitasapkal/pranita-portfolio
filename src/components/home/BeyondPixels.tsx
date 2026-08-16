@@ -48,15 +48,15 @@ export function BeyondPixels() {
         <div className="flex flex-col">
           {b.items.map((item, i) => {
             const open = active === i
-            /* Per-row hover pop (Manav, 2026-08-16, his ref = cobalt on light):
-               dark saturated shades sink into the black band (cobalt on it is
-               2.5:1), so hover floods the row light and the text goes dark —
-               orange 4.63, cobalt 6.90, pink 5.40 on #f2f2f3, all AA.
-               focus-visible matches hover. */
+            /* Per-row hover pop (Manav, 2026-08-16): text-only, no bg flood.
+               Saturated-but-luminous takes on his trio so they hold on the
+               black band — orange 7.50, cobalt 5.38, pink 6.43. focus-visible
+               matches hover. */
+            const popText = ['#ff7a1a', '#5b7cff', '#ff4fa3'][i % 3]
             const pop = [
-              'hover:bg-[#f2f2f3] hover:text-[#c2410c] focus-visible:bg-[#f2f2f3] focus-visible:text-[#c2410c]',
-              'hover:bg-[#f2f2f3] hover:text-[#1d41d0] focus-visible:bg-[#f2f2f3] focus-visible:text-[#1d41d0]',
-              'hover:bg-[#f2f2f3] hover:text-[#be185d] focus-visible:bg-[#f2f2f3] focus-visible:text-[#be185d]',
+              'hover:text-[#ff7a1a] focus-visible:text-[#ff7a1a]',
+              'hover:text-[#5b7cff] focus-visible:text-[#5b7cff]',
+              'hover:text-[#ff4fa3] focus-visible:text-[#ff4fa3]',
             ][i % 3]
             return (
               <div
@@ -83,6 +83,9 @@ export function BeyondPixels() {
                   <div className="overflow-hidden">
                     <div className="flex flex-col items-center gap-6 pb-10">
                       <p className="font-serif-display italic text-soft text-lg md:text-xl text-center">
+                        <span aria-hidden="true" style={{ color: popText }}>
+                          {'— '}
+                        </span>
                         {item.caption}
                       </p>
                       {/* endless marquee; hover pauses it */}

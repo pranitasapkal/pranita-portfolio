@@ -75,6 +75,12 @@ export function Approach() {
           {a.columns.map((col, i) => (
             <div key={col.title} data-approach-col className="flex flex-col items-start gap-5 text-strong">
               {MARKS[i % MARKS.length]}
+              {/* Small accent rule — the site trio (+ teal) echoed subtly. */}
+              <span
+                aria-hidden="true"
+                className="h-[3px] w-7 rounded-full"
+                style={{ backgroundColor: ['#ff7a1a', '#5b7cff', '#ff4fa3', '#62d9c9'][i % 4] }}
+              />
               <h3 className="font-sans font-semibold text-xl">{col.title}</h3>
               <p className="font-sans text-[15px] leading-relaxed text-soft">{col.body}</p>
             </div>
