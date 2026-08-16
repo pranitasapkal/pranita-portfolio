@@ -12,7 +12,7 @@ import { draft } from '../../content/site-v2-draft'
 
 /* White text, cobalt hover (#5b7cff = 5.38:1 on the dark glass) — his spec. */
 const LINK_CLS =
-  'px-3 py-1.5 font-sans text-[14px] font-medium text-[#edeff3] hover:text-[#5b7cff] focus-visible:text-[#5b7cff] transition-colors duration-200'
+  'px-4 py-2 font-sans text-[17px] md:text-lg font-semibold text-[#edeff3] hover:text-[#5b7cff] focus-visible:text-[#5b7cff] transition-colors duration-200'
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -73,18 +73,18 @@ export function Navbar() {
         role="banner"
         className="fixed top-0 inset-x-0 z-50 bg-[#0b0c0e]/80 backdrop-blur-md border-b border-line-soft"
       >
-        <div className="max-w-[1800px] mx-auto px-5 md:px-[4vw] py-2.5 flex items-center justify-between gap-4">
+        <div className="max-w-[1800px] mx-auto px-5 md:px-[4vw] py-3 flex items-center justify-between gap-4">
         <a
           href="/"
           aria-label={site.nav.homeAriaLabel}
-          className="flex items-center gap-3 font-sans font-bold text-[15px] text-[#edeff3] tracking-tight whitespace-nowrap"
+          className="flex items-center gap-4 font-sans font-bold text-lg md:text-xl text-[#edeff3] tracking-tight whitespace-nowrap"
         >
           <img
             src="/home/nav-avatar.png"
             alt=""
             width={240}
             height={259}
-            className="h-10 w-10 object-contain"
+            className="h-16 w-16 md:h-20 md:w-20 object-contain"
           />
           {draft.nav.name}
         </a>
@@ -105,7 +105,7 @@ export function Navbar() {
           <a
             href={site.nav.resumeHref}
             download
-            className="px-3 py-1.5 font-sans text-[14px] font-bold text-[#edeff3] hover:text-[#5b7cff] focus-visible:text-[#5b7cff] transition-colors duration-200"
+            className="px-4 py-2 font-sans text-[17px] md:text-lg font-bold text-[#edeff3] hover:text-[#5b7cff] focus-visible:text-[#5b7cff] transition-colors duration-200"
           >
             {draft.nav.resumeLabel}
           </a>
