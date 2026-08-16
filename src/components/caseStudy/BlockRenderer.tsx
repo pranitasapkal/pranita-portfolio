@@ -25,6 +25,7 @@ import { InsightNotes } from './blocks/InsightNotes'
 import { BeforeAfter } from './blocks/BeforeAfter'
 import { AnnotatedShot } from './blocks/AnnotatedShot'
 import { NdaNote } from './blocks/NdaNote'
+import { ResearchDeck } from './blocks/ResearchDeck'
 
 interface BlockRendererProps {
   blocks: Block[]
@@ -116,6 +117,15 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
                 alt={block.alt}
                 caption={block.caption}
                 notes={block.notes}
+              />
+            )
+          case 'researchDeck':
+            return (
+              <ResearchDeck
+                key={i}
+                title={block.title}
+                note={block.note}
+                items={block.items}
               />
             )
           case 'ndaNote':

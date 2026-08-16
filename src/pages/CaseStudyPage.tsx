@@ -3,9 +3,10 @@
  * Looks up slug in the case registry; falls back to NotFound for unknown slugs.
  * Scrolls to top on slug change.
  *
- * The `.v1-ink` wrapper pins these pages to the v1 dark ink system regardless
- * of the site theme — the v2 light-first tokens moved the body onto semantic
- * surfaces, and case pages are out of scope for the v2 restyle (ADR-004).
+ * The `.v1-paper` wrapper re-declares the v1 token names with light values, so
+ * case pages render on white while every block component keeps using the v1
+ * utilities unchanged. Pranita's call, 2026-08-16: case studies on white, home
+ * page untouched. Swap back to `.v1-ink` to return them to the dark system.
  */
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
@@ -43,7 +44,7 @@ export default function CaseStudyPage() {
   const cs = slug ? caseStudies[slug] : undefined
 
   return (
-    <div className="v1-ink bg-ink-0 text-text-hi font-body min-h-screen">
+    <div className="v1-paper bg-ink-0 text-text-hi font-body min-h-screen">
       {!cs ? (
         <NotFound />
       ) : cs.layout === 'editorial' ? (

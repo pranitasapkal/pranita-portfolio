@@ -199,7 +199,7 @@ export const transporterPanel: CaseStudy = {
           type: 'wordList',
           title: 'How I found this out',
           items: [
-            { word: 'I talked to them', note: 'Transporters, and the points of contact who work their accounts.' },
+            { word: 'I talked to them', note: '20\u201330 transporters and their points of contact, in person and on calls.' },
             {
               word: 'I read the complaints',
               note: 'The dispute ticket log, grouped by what people were actually angry about.',
@@ -213,6 +213,43 @@ export const transporterPanel: CaseStudy = {
         {
           type: 'text',
           body: 'The ticket log settled one thing early: the overwhelming majority of complaints were about the rate, not the service. Hence these seven categories.',
+        },
+        {
+          type: 'researchDeck',
+          title: 'On the ground',
+          note: 'I went to the sort centres and watched the handover happen — the paperwork, the phone calls, the moment a vehicle number gets typed. Then I sat with transporters, in person and on calls, and asked them to walk me through their last week.',
+          items: [
+            {
+              alt: 'At a sort centre during the night dispatch window',
+              caption: 'Watching a dispatch get recorded',
+              place: 'Sort centre',
+            },
+            {
+              alt: 'The paper challan a driver carries, photographed on the desk',
+              caption: 'The challan, where the Trip ID actually lives',
+              place: 'Sort centre',
+            },
+            {
+              alt: 'A transporter showing his own spreadsheet of trips and expected payments',
+              caption: 'His spreadsheet — the record he actually trusted',
+              place: 'In person',
+            },
+            {
+              alt: 'The WhatsApp assignment thread open on a transporter phone',
+              caption: 'The thread the panel had to replace',
+              place: 'In person',
+            },
+            {
+              alt: 'A remote interview session with a fleet owner',
+              caption: 'Walking through a week of trips, call by call',
+              place: 'Virtual',
+            },
+            {
+              alt: 'Notes and affinity clusters from the interview rounds',
+              caption: 'Where the eight findings came from',
+              place: 'Synthesis',
+            },
+          ],
         },
         {
           type: 'insightNotes',

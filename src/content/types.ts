@@ -62,6 +62,17 @@ export type Block =
       caption?: string
       notes: { title?: string; body: string }[]
     }
+  /**
+   * Field-research photographs as a draggable card deck (ADR-006).
+   * `src` is optional — a card without one renders a labelled placeholder frame,
+   * so the section reads complete before the photographs arrive.
+   */
+  | {
+      type: 'researchDeck'
+      title?: string
+      note?: string
+      items: { src?: string; alt: string; caption: string; place?: string }[]
+    }
   /** The NDA boundary, stated openly instead of implied by omission. */
   | { type: 'ndaNote'; title: string; body: string }
 

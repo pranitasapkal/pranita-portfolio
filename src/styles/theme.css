@@ -90,6 +90,7 @@
   --color-paper-ink: #16181d;
   --color-paper-mute: #565b66;
 
+
   --font-display: 'Archivo Variable', 'Archivo', sans-serif;
   --font-body: 'Archivo Variable', 'Archivo', sans-serif;
   --font-serif: 'Instrument Serif', serif;
@@ -102,3 +103,34 @@
   --duration-crossfade: 650ms;
   --duration-camera: 1200ms;
 }
+
+/*
+ * `.v1-paper` — the same v1 token names, re-declared light, so case-study pages
+ * render on white without touching a single block component. Same mechanism as
+ * `.force-dark` above: the Tailwind utilities resolve `var(--color-*)`, so
+ * re-declaring the custom properties on a subtree re-skins everything inside.
+ *
+ * The accent is inverted rather than reused. Amber #ffb547 reads 10.7:1 on dark
+ * ink and only 1.9:1 on white, and three blocks pair `bg-signal` with
+ * `text-ink-0`. A DARK amber solves both directions at once: 6.4:1 as text on
+ * white, and 6.4:1 behind the now-white `text-ink-0` when used as a fill.
+ *
+ * Contrast on #ffffff (computed, not estimated):
+ *   text-hi 16.83 · text-lo 7.13 · signal 6.39 · beacon 5.43
+ *   text-hi on ink-1 15.92 · text-lo on ink-1 6.74 · white on signal 6.39
+ * All ≥ 4.5:1 body, ≥ 3:1 large/UI. Re-derive if any value changes.
+ */
+.v1-paper {
+  --color-ink-0: #ffffff;
+  --color-ink-1: #f6f6f4;
+  --color-ink-2: #eceae5;
+  --color-line: rgba(29, 29, 31, 0.14);
+  --color-text-hi: #1d1d1f;
+  --color-text-lo: #55585e;
+  --color-signal: #8a5200;
+  --color-beacon: #0f766e;
+  --color-paper: #1d1d1f;
+  --color-paper-ink: #ffffff;
+  --color-paper-mute: #a6a9b0;
+}
+
