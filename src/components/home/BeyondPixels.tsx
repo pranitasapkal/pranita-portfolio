@@ -48,15 +48,15 @@ export function BeyondPixels() {
         <div className="flex flex-col">
           {b.items.map((item, i) => {
             const open = active === i
-            /* Per-row hover pop (Manav, 2026-08-16): text-only, no bg flood.
-               Saturated-but-luminous takes on his trio so they hold on the
-               black band — orange 7.50, cobalt 5.38, pink 6.43. focus-visible
+            /* Per-row hover pop — the Namrata-family accents (Manav,
+               2026-08-16), luminous enough for the black band: orange 8.38,
+               cobalt 5.38, green 8.96. Text-only, no bg flood; focus-visible
                matches hover. */
-            const popText = ['#ff7a1a', '#5b7cff', '#ff4fa3'][i % 3]
+            const popText = ['#ff8a4d', '#5b7cff', '#4fc48e'][i % 3]
             const pop = [
-              'hover:text-[#ff7a1a] focus-visible:text-[#ff7a1a]',
+              'hover:text-[#ff8a4d] focus-visible:text-[#ff8a4d]',
               'hover:text-[#5b7cff] focus-visible:text-[#5b7cff]',
-              'hover:text-[#ff4fa3] focus-visible:text-[#ff4fa3]',
+              'hover:text-[#4fc48e] focus-visible:text-[#4fc48e]',
             ][i % 3]
             return (
               <div

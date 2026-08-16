@@ -79,7 +79,7 @@ export function Approach() {
               <span
                 aria-hidden="true"
                 className="h-[3px] w-7 rounded-full"
-                style={{ backgroundColor: ['#ff7a1a', '#5b7cff', '#ff4fa3', '#62d9c9'][i % 4] }}
+                style={{ backgroundColor: ['#ff8a4d', '#5b7cff', '#4fc48e', '#e8a33d'][i % 4] }}
               />
               <h3 className="font-sans font-semibold text-xl">{col.title}</h3>
               <p className="font-sans text-[15px] leading-relaxed text-soft">{col.body}</p>

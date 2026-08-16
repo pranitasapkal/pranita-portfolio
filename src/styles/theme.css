@@ -90,26 +90,26 @@
   --color-paper-ink: #16181d;
   --color-paper-mute: #565b66;
 
-  /* Reference accent set (derived live from debodyutibiswas.framer.website/whylo,
-   * 2026-08-16). Theme-invariant; used on the white case pages. Raw values are
-   * FILLS/HIGHLIGHTS ONLY; the -deep variant of each is the text-safe pairing.
-   * Contrast on #ffffff (computed, not estimated):
-   *   yellow 1.68 (fill only; ink-on-yellow 10.03) → deep #805e09 5.96
-   *   red    4.20 (large text/UI only)             → deep #b3301b 6.26
-   *   blue   7.72 (text-safe; white-on-blue 7.72)  → deep = raw
-   *   green  3.78 (large text/UI only)             → deep #067506 5.91
-   *   purple 4.65 (body-text OK)                   → deep #4f41a8 7.91
-   * All -deep ≥ 4.5:1 body; raws ≥ 3:1 where marked large/UI. Re-derive on change. */
-  --color-pop-yellow: #fcbe1c;
-  --color-pop-yellow-deep: #805e09;
-  --color-pop-red: #e24027;
-  --color-pop-red-deep: #b3301b;
+  /* Accent set — the Namrata-reference family (Manav, 2026-08-16): cobalt,
+   * brick red, forest green, mustard, lavender. Theme-invariant; used on the
+   * white case pages. Raw values are FILLS/HIGHLIGHTS ONLY; the -deep variant
+   * is the text-safe pairing. Contrast on #ffffff (computed, not estimated):
+   *   yellow (mustard) 2.16 (fill only)  → deep #7a5410 6.77
+   *   red (brick)      4.08 (large only) → deep #a83227 6.67
+   *   blue (cobalt)    7.72 (text-safe)  → deep = raw
+   *   green (forest)   4.99 (body OK)    → deep #256247 7.20
+   *   purple (lavender) 2.61 (fill only) → deep #3d4fc4 6.74
+   * All -deep ≥ 4.5:1 body; raws marked fill-only never carry text. Re-derive on change. */
+  --color-pop-yellow: #e8a33d;
+  --color-pop-yellow-deep: #7a5410;
+  --color-pop-red: #d94f42;
+  --color-pop-red-deep: #a83227;
   --color-pop-blue: #1d41d0;
   --color-pop-blue-deep: #1d41d0;
-  --color-pop-green: #029902;
-  --color-pop-green-deep: #067506;
-  --color-pop-purple: #7466cc;
-  --color-pop-purple-deep: #4f41a8;
+  --color-pop-green: #2f7d5b;
+  --color-pop-green-deep: #256247;
+  --color-pop-purple: #8f9ce4;
+  --color-pop-purple-deep: #3d4fc4;
 
 
   --font-display: 'Archivo Variable', 'Archivo', sans-serif;
