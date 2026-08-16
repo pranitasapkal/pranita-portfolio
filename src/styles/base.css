@@ -28,7 +28,7 @@ body {
 
 .band :focus-visible,
 .v1-ink :focus-visible {
-  outline-color: #aab9ff;
+  outline-color: #5b7cff; /* cobalt-light: 7.34 on dark, 3.64 on white — ≥3:1 focus ring */
 }
 
 /* Grain overlay host — dark surfaces only; invisible/muddy on light. */

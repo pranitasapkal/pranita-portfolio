@@ -6,12 +6,13 @@
  * surface layer, bands never flip. Set pre-paint by the inline script in
  * index.html (localStorage 'theme' → prefers-color-scheme fallback).
  *
- * Contrast (WCAG AA, computed 2026-08-15 — see ADR-004 for the script):
+ * Contrast (WCAG AA; accents recomputed 2026-08-16 for the one-cobalt rule —
+ * every blue is now #1d41d0 on light / #5b7cff on dark, Manav's palette):
  *   light: text-strong/surface-0 16.83 · text-soft/surface-0 7.13 ·
- *          text-soft/surface-1 6.59 · accent/surface-0 6.28 · white/btn 16.83
+ *          text-soft/surface-1 6.59 · accent/surface-0 7.72 · white/btn 16.83
  *   dark:  text-strong/surface-0 17.49 · text-soft/surface-0 8.32 ·
- *          text-soft/surface-2 7.24 · accent/surface-0 8.38
- *   band:  text 18.10 · soft 7.99 · accent 10.70
+ *          text-soft/surface-2 7.24 · accent/surface-0 5.38 (deep 7.34)
+ *   band:  text 18.10 · soft 7.99 · accent 5.38
  *   gradients: white on blue 6.28 · white on red 5.00
  * All ≥ 4.5:1 body, ≥ 3:1 large/UI. Re-derive if any value changes.
  */
@@ -22,8 +23,8 @@
   --text-strong: #1d1d1f;
   --text-soft: #55585e;
   --line-soft: rgba(29, 29, 31, 0.12);
-  --accent: #2b4fe4;
-  --accent-deep: #2743cb;
+  --accent: #1d41d0;
+  --accent-deep: #16339f;
   --accent-ink: #ffffff; /* text on solid accent / solid dark buttons */
   --shadow-pill: 0 8px 30px rgba(29, 29, 31, 0.10), 0 2px 8px rgba(29, 29, 31, 0.06);
   --shadow-card: 0 20px 60px rgba(29, 29, 31, 0.12);
@@ -39,8 +40,8 @@
   --text-strong: #f2f2f3;
   --text-soft: #a6a9b0;
   --line-soft: rgba(242, 242, 243, 0.14);
-  --accent: #8fa5ff;
-  --accent-deep: #aab9ff;
+  --accent: #5b7cff;
+  --accent-deep: #7d99ff;
   --accent-ink: #0b0c0e;
   --shadow-pill: 0 8px 30px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.55);
@@ -63,7 +64,7 @@
   --color-band-text: #f2f2f3;
   --color-band-soft: #9ea3ac;
   --color-band-line: rgba(242, 242, 243, 0.14);
-  --color-band-accent: #aab9ff;
+  --color-band-accent: #5b7cff;
 
   /* v2 type layers: display serif / body grotesk / mono meta / handwritten micro */
   --font-serif-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
