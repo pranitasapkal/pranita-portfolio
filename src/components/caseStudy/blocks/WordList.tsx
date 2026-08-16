@@ -24,12 +24,12 @@ export function WordList({ title, items, highlight = 0 }: WordListProps) {
           return (
             <li
               key={i}
-              className={`flex flex-col md:flex-row md:items-baseline gap-1 md:gap-6 py-4 border-b border-line ${
-                active ? '' : 'opacity-40'
+              className={`md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,40ch)] md:items-baseline flex flex-col gap-1 md:gap-x-10 py-4 border-b border-line ${
+                active ? '' : 'opacity-60'
               }`}
             >
               <span
-                className={`font-display font-black tracking-tight text-2xl md:text-4xl ${
+                className={`font-display font-black tracking-tight text-xl md:text-3xl ${
                   active ? 'text-signal' : 'text-text-hi'
                 }`}
               >

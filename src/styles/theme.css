@@ -151,18 +151,22 @@
   --color-line: rgba(29, 29, 31, 0.14);
   --color-text-hi: #1d1d1f;
   --color-text-lo: #55585e;
-  --color-signal: #8a5200;
+  /* Signal on white pages is the bright cobalt (Manav's reference, 2026-08-16):
+     #1d41d0 computes 7.72:1 as text on white AND behind white text — every
+     accent (highlights, nav dot, arrows, chips) flips bright in one token. */
+  --color-signal: #1d41d0;
   --color-beacon: #0f766e;
   --color-paper: #1d1d1f;
   --color-paper-ink: #ffffff;
   --color-paper-mute: #a6a9b0;
 
-  /* Case pages use the HOME PAGE type system (Manav, 2026-08-16): Fraunces for
-   * display/serif, Hanken Grotesk for body, mono inherits IBM Plex. Utilities
-   * resolve var(--font-*), so re-declaring here re-skins case pages without
-   * touching block components. */
-  --font-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
-  --font-serif: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  /* Case-page type (Manav, 2026-08-16, replacing the serif round he rejected):
+   * Bricolage Grotesque for display — chunky friendly grotesk in his
+   * reference's spirit — Hanken Grotesk for body, mono inherits IBM Plex.
+   * Utilities resolve var(--font-*), so re-declaring here re-skins case pages
+   * without touching block components. */
+  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', 'Archivo Variable', sans-serif;
+  --font-serif: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', 'Archivo Variable', sans-serif;
   --font-body: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif;
 }
 

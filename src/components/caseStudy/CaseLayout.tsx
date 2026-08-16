@@ -89,7 +89,7 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
                 <span className="font-mono text-[10px] tracking-widest uppercase text-text-lo/60">
                   {key}
                 </span>
-                <span className="font-mono text-xs text-text-lo">{val}</span>
+                <span className="font-body text-sm text-text-hi">{val}</span>
               </div>
             ))}
           </div>
@@ -155,7 +155,7 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
                     </span>
                     <h2
                       id={`chapter-heading-${chapter.step}`}
-                      className="font-display font-black text-3xl md:text-4xl text-text-hi tracking-tight"
+                      className="font-display font-black text-3xl md:text-4xl text-signal tracking-tight"
                     >
                       {chapter.title}
                     </h2>
