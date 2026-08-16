@@ -84,18 +84,24 @@ export function BeyondPixels() {
                             const slides = [...real, ...fill]
                             return [...slides, ...slides].map((slide, k) =>
                               slide.src ? (
-                                <img
+                                /* Uniform padded tile: mixed portrait/landscape
+                                   shots cover-crop to one box size. */
+                                <div
                                   key={k}
-                                  src={slide.src}
-                                  alt=""
-                                  loading="lazy"
-                                  draggable={false}
-                                  className="h-44 md:h-56 w-auto rounded-xl border border-line-soft object-cover"
-                                />
+                                  className="h-44 md:h-56 w-56 md:w-72 shrink-0 rounded-2xl border border-line-soft bg-surface-2/60 p-2"
+                                >
+                                  <img
+                                    src={slide.src}
+                                    alt=""
+                                    loading="lazy"
+                                    draggable={false}
+                                    className="w-full h-full rounded-xl object-cover"
+                                  />
+                                </div>
                               ) : (
                                 <div
                                   key={k}
-                                  className="h-44 md:h-56 w-56 md:w-72 shrink-0 rounded-xl border border-dashed border-line-soft flex items-center justify-center"
+                                  className="h-44 md:h-56 w-56 md:w-72 shrink-0 rounded-2xl border border-dashed border-line-soft flex items-center justify-center"
                                 >
                                   <span className="font-hand text-xl text-soft">{b.placeholderNote}</span>
                                 </div>
