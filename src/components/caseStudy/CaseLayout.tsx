@@ -26,6 +26,13 @@ const POP_TEXT = [
   'text-pop-purple-deep',
   'text-pop-yellow-deep',
 ]
+const POP_BG = [
+  'bg-pop-blue/8',
+  'bg-pop-red/8',
+  'bg-pop-green/8',
+  'bg-pop-purple/8',
+  'bg-pop-yellow/10',
+]
 
 export function CaseLayout({ cs }: CaseLayoutProps) {
   return (
@@ -185,22 +192,26 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
               What I'd flag against myself.
             </h2>
           </div>
-          <ul className="flex flex-col gap-6 list-none p-0 m-0 max-w-[65ch]">
-            {cs.reflections.map((r) => (
-              <li key={r.title} className="flex gap-4 border-b border-line pb-6 last:border-b-0">
-                <span className="font-mono text-signal shrink-0 pt-1" aria-hidden="true">
-                  —
+          {/* Numbered accent cards — same tinted-panel language as the stat
+              tiles and screenshot panels, filling the full column. */}
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none p-0 m-0">
+            {cs.reflections.map((r, i) => (
+              <li
+                key={r.title}
+                className={`flex flex-col gap-2 rounded-2xl border border-line p-6 md:p-7 ${POP_BG[i % POP_BG.length]}`}
+              >
+                <span
+                  className={`font-mono text-sm tabular-nums ${POP_TEXT[i % POP_TEXT.length]}`}
+                  aria-hidden="true"
+                >
+                  {String(i + 1).padStart(2, '0')}.
                 </span>
-                <div className="flex flex-col gap-2">
-                  <h3 className="font-display font-black text-lg md:text-xl text-text-hi tracking-tight leading-snug">
-                    {r.title}
-                  </h3>
-                  {r.body && (
-                    <p className="font-body text-sm md:text-base text-text-lo leading-relaxed">
-                      {r.body}
-                    </p>
-                  )}
-                </div>
+                <h3 className="font-display font-black text-xl md:text-2xl text-text-hi tracking-tight leading-snug">
+                  {r.title}
+                </h3>
+                {r.body && (
+                  <p className="font-body text-base text-text-lo leading-relaxed">{r.body}</p>
+                )}
               </li>
             ))}
           </ul>
