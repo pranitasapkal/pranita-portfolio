@@ -1,32 +1,26 @@
 /**
- * Navbar — v2 floating pill (Sandeep ref): name left; Work · LinkedIn ·
- * Resume right. Always the dark glass pill (single standard mode, `.force-dark`
- * scope) — legible over both dark and light sections.
+ * Navbar — sticky top bar (Manav's ref, 2026-08-16): his line-art avatar +
+ * name left, the same menu right. Dark glass only — never a white bg — text
+ * white, hover in the site cobalt. Replaces the floating pill.
  *
- * Mobile (<768px): name + hamburger → full-screen overlay. Escape closes,
+ * Mobile (<768px): avatar + hamburger → full-screen overlay. Escape closes,
  * focus-trapped, body scroll locked — behavior carried over from v1 verbatim.
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { site } from '../../content/site'
 import { draft } from '../../content/site-v2-draft'
 
+/* White text, cobalt hover (#5b7cff = 5.38:1 on the dark glass) — his spec. */
 const LINK_CLS =
-  'px-3 py-1.5 font-sans text-[14px] font-medium text-soft hover:text-strong transition-colors duration-200 rounded-full'
+  'px-3 py-1.5 font-sans text-[14px] font-medium text-[#edeff3] hover:text-[#5b7cff] focus-visible:text-[#5b7cff] transition-colors duration-200'
 
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const firstLinkRef = useRef<HTMLAnchorElement>(null)
   const hamburgerRef = useRef<HTMLButtonElement>(null)
 
   const linkedIn = site.footer.socials.find((s) => s.label === 'LinkedIn')
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 32)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   const closeMenu = useCallback(() => {
     setMenuOpen(false)
@@ -74,28 +68,24 @@ export function Navbar() {
 
   return (
     <div className="force-dark">
-      {/* Translucent glass pill. Big at rest, shrinks on scroll (Yantrava ref):
-          width + padding animate via CSS transition on the master ease; the
-          global reduced-motion rule collapses it to an instant snap. */}
+      {/* Full-width sticky bar, dark glass — no white bg by spec. */}
       <header
         role="banner"
-        className={[
-          'fixed left-1/2 -translate-x-1/2 z-50',
-          'flex items-center justify-between gap-2 md:gap-5',
-          'w-[calc(100vw-2rem)]',
-          'rounded-full backdrop-blur-xl border border-line-soft',
-          'transition-[width,max-width,padding,top,background-color,box-shadow]',
-          'duration-500 ease-[cubic-bezier(0.65,0,0.35,1)]',
-          scrolled
-            ? 'top-4 max-w-[640px] pl-6 pr-2.5 py-2 bg-surface-2/75 shadow-[var(--shadow-pill)]'
-            : 'top-6 max-w-[min(88vw,1080px)] pl-6 md:pl-9 pr-2.5 md:pr-4 py-2 md:py-4 bg-surface-2/55 shadow-[0_2px_14px_rgba(0,0,0,0.07)]',
-        ].join(' ')}
+        className="fixed top-0 inset-x-0 z-50 bg-[#0b0c0e]/80 backdrop-blur-md border-b border-line-soft"
       >
+        <div className="max-w-[1800px] mx-auto px-5 md:px-[4vw] py-2.5 flex items-center justify-between gap-4">
         <a
           href="/"
           aria-label={site.nav.homeAriaLabel}
-          className="font-sans font-bold text-[15px] text-strong tracking-tight whitespace-nowrap"
+          className="flex items-center gap-3 font-sans font-bold text-[15px] text-[#edeff3] tracking-tight whitespace-nowrap"
         >
+          <img
+            src="/home/nav-avatar.png"
+            alt=""
+            width={240}
+            height={259}
+            className="h-10 w-10 object-contain"
+          />
           {draft.nav.name}
         </a>
 
@@ -115,7 +105,7 @@ export function Navbar() {
           <a
             href={site.nav.resumeHref}
             download
-            className="px-4 py-1.5 font-sans text-[14px] font-bold text-strong bg-surface-1 rounded-full hover:bg-line-soft transition-colors duration-200"
+            className="px-3 py-1.5 font-sans text-[14px] font-bold text-[#edeff3] hover:text-[#5b7cff] focus-visible:text-[#5b7cff] transition-colors duration-200"
           >
             {draft.nav.resumeLabel}
           </a>
@@ -133,6 +123,7 @@ export function Navbar() {
           <span className="w-5 h-0.5 bg-strong rounded-full" />
           <span className="w-5 h-0.5 bg-strong rounded-full" />
         </button>
+        </div>
       </header>
 
       {/* Mobile overlay */}
