@@ -48,12 +48,15 @@ export function BeyondPixels() {
         <div className="flex flex-col">
           {b.items.map((item, i) => {
             const open = active === i
-            /* Per-row hover pop (Manav, 2026-08-16): dark orange / blue / pink.
-               All ≥ 4.5:1 on the near-black band; focus-visible matches hover. */
+            /* Per-row hover pop (Manav, 2026-08-16, his ref = cobalt on light):
+               dark saturated shades sink into the black band (cobalt on it is
+               2.5:1), so hover floods the row light and the text goes dark —
+               orange 4.63, cobalt 6.90, pink 5.40 on #f2f2f3, all AA.
+               focus-visible matches hover. */
             const pop = [
-              'hover:text-[#ff8a3d] focus-visible:text-[#ff8a3d]',
-              'hover:text-[#7f9cff] focus-visible:text-[#7f9cff]',
-              'hover:text-[#ff7ac2] focus-visible:text-[#ff7ac2]',
+              'hover:bg-[#f2f2f3] hover:text-[#c2410c] focus-visible:bg-[#f2f2f3] focus-visible:text-[#c2410c]',
+              'hover:bg-[#f2f2f3] hover:text-[#1d41d0] focus-visible:bg-[#f2f2f3] focus-visible:text-[#1d41d0]',
+              'hover:bg-[#f2f2f3] hover:text-[#be185d] focus-visible:bg-[#f2f2f3] focus-visible:text-[#be185d]',
             ][i % 3]
             return (
               <div
