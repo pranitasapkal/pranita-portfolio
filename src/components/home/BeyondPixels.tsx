@@ -48,6 +48,13 @@ export function BeyondPixels() {
         <div className="flex flex-col">
           {b.items.map((item, i) => {
             const open = active === i
+            /* Per-row hover pop (Manav, 2026-08-16): dark orange / blue / pink.
+               All ≥ 4.5:1 on the near-black band; focus-visible matches hover. */
+            const pop = [
+              'hover:text-[#ff8a3d] focus-visible:text-[#ff8a3d]',
+              'hover:text-[#7f9cff] focus-visible:text-[#7f9cff]',
+              'hover:text-[#ff7ac2] focus-visible:text-[#ff7ac2]',
+            ][i % 3]
             return (
               <div
                 key={item.prompt}
@@ -59,7 +66,7 @@ export function BeyondPixels() {
                   type="button"
                   aria-expanded={open}
                   onClick={() => setActive(open ? null : i)}
-                  className="w-full py-8 md:py-10 font-display font-black uppercase tracking-tight text-center leading-none text-[clamp(1.4rem,3.4vw,2.8rem)] transition-colors duration-200 text-strong hover:text-accent"
+                  className={`w-full py-8 md:py-10 font-display font-black uppercase tracking-tight text-center leading-none text-[clamp(1.4rem,3.4vw,2.8rem)] transition-colors duration-200 text-strong ${pop}`}
                 >
                   {item.prompt}
                 </button>
