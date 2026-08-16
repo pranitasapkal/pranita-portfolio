@@ -1,56 +1,4 @@
 {
-  "/work/assignment/cancelled-remarks.png": [
-    1600,
-    1260
-  ],
-  "/work/assignment/completed-default.png": [
-    1600,
-    1206
-  ],
-  "/work/assignment/confirm-active-dispute.png": [
-    1600,
-    1206
-  ],
-  "/work/assignment/dg-actions.png": [
-    1600,
-    660
-  ],
-  "/work/assignment/dg-confirm.png": [
-    1600,
-    659
-  ],
-  "/work/assignment/dg-lifecycle.png": [
-    1600,
-    664
-  ],
-  "/work/assignment/in-transit.png": [
-    1600,
-    1260
-  ],
-  "/work/assignment/missing-trip-challan.png": [
-    1600,
-    1263
-  ],
-  "/work/assignment/pending-default.png": [
-    1600,
-    1260
-  ],
-  "/work/assignment/raise-dispute-form.png": [
-    1600,
-    2257
-  ],
-  "/work/assignment/reject-consequences.png": [
-    1600,
-    1258
-  ],
-  "/work/assignment/route-timeline.png": [
-    1600,
-    771
-  ],
-  "/work/assignment/upcoming-list.png": [
-    1600,
-    1260
-  ],
   "/work/clh/01-pre-panel.png": [
     1600,
     900
@@ -298,5 +246,73 @@
   "/work/clh/st-upload-error.png": [
     1200,
     946
+  ],
+  "/work/transporter-panel/before-chaos.png": [
+    1600,
+    621
+  ],
+  "/work/transporter-panel/cancelled-remarks.png": [
+    1600,
+    1260
+  ],
+  "/work/transporter-panel/completed-default.png": [
+    1600,
+    1206
+  ],
+  "/work/transporter-panel/confirm-active-dispute.png": [
+    1600,
+    1206
+  ],
+  "/work/transporter-panel/dg-actions.png": [
+    1600,
+    660
+  ],
+  "/work/transporter-panel/dg-confirm.png": [
+    1600,
+    659
+  ],
+  "/work/transporter-panel/dg-lifecycle.png": [
+    1600,
+    664
+  ],
+  "/work/transporter-panel/disputes-list.png": [
+    1600,
+    1262
+  ],
+  "/work/transporter-panel/hierarchy-tree.png": [
+    1600,
+    584
+  ],
+  "/work/transporter-panel/in-transit.png": [
+    1600,
+    1260
+  ],
+  "/work/transporter-panel/missing-trip-challan.png": [
+    1600,
+    1264
+  ],
+  "/work/transporter-panel/pending-default.png": [
+    1600,
+    1260
+  ],
+  "/work/transporter-panel/raise-dispute-details.png": [
+    1600,
+    1254
+  ],
+  "/work/transporter-panel/raise-dispute-form.png": [
+    1600,
+    1264
+  ],
+  "/work/transporter-panel/reject-consequences.png": [
+    1600,
+    1258
+  ],
+  "/work/transporter-panel/route-timeline.png": [
+    1600,
+    771
+  ],
+  "/work/transporter-panel/upcoming-list.png": [
+    1600,
+    1260
   ]
 }
