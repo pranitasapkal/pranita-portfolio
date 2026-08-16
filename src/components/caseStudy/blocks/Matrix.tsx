@@ -38,7 +38,7 @@ export function Matrix({ title, columns, rows, totalNote }: MatrixProps) {
                 {row.map((cell, ci) => (
                   <td
                     key={ci}
-                    className={`px-5 py-3 font-body text-sm leading-relaxed ${ci === 0 ? 'text-text-hi font-medium' : 'text-text-lo'}`}
+                    className={`px-5 py-3 font-body text-base leading-relaxed ${ci === 0 ? 'text-text-hi font-medium' : 'text-text-lo'}`}
                   >
                     {cell}
                   </td>
@@ -49,7 +49,7 @@ export function Matrix({ title, columns, rows, totalNote }: MatrixProps) {
         </table>
       </div>
       {totalNote && (
-        <p className="px-5 pb-4 font-mono text-xs text-text-lo">{totalNote}</p>
+        <p className="px-5 pb-4 font-body text-sm text-text-lo">{totalNote}</p>
       )}
     </div>
   )

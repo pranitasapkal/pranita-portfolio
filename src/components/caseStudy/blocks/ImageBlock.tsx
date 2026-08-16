@@ -86,13 +86,16 @@ export function ImageBlock({ frame, src, alt, caption, slug, placeholder }: Imag
   }
 
   return (
+    // Caption leads the frame (Manav, 2026-08-16): the key decision reads first,
+    // then the screen proves it — sitting on a solid soft-cobalt panel, the
+    // reference's subtle-yet-pop presentation.
     <figure className="flex flex-col gap-3 my-2">
-      {framed}
       {caption && (
-        <figcaption className="font-mono text-xs text-text-lo tracking-wide">
+        <figcaption className="font-body font-medium text-base text-text-hi">
           {caption}
         </figcaption>
       )}
+      <div className="rounded-3xl bg-pop-blue/8 p-5 md:p-8">{framed}</div>
     </figure>
   )
 }

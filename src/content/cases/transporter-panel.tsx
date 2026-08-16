@@ -363,14 +363,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Assign and accept. A pending row shows Assign Vehicle and Assign Driver empty, Accept disabled. Fill both and it turns solid — the button’s state is the instruction.\n\nEvery deadline counts down to placement time — the hour the loaded vehicle must be at the depot. Miss it without accepting and the trip auto-rejects.',
-        },
-        {
-          type: 'image',
-          frame: 'browser',
-          src: '/work/transporter-panel/upcoming-list.png',
-          alt: 'Upcoming tab — filled vehicle and driver dropdowns, Update disabled until a change is made',
-          caption: 'Once staffed, Update stays disabled until something changes.',
+          body: 'Assign and accept. A pending row shows Assign Vehicle and Assign Driver empty, Accept disabled. Fill both and it turns solid — the button’s state is the instruction. Once staffed, Update stays disabled until something changes.\n\nEvery deadline counts down to placement time — the hour the loaded vehicle must be at the depot. Miss it without accepting and the trip auto-rejects.',
         },
         {
           type: 'challengeSolution',
@@ -392,21 +385,7 @@ export const transporterPanel: CaseStudy = {
         },
         {
           type: 'text',
-          body: 'Track. In-Transit swaps the action column for Live Updates — "40km to NDSL New Delhi Hub" with a signal, "-" without, plus an amber No GPS Present chip.',
-        },
-        {
-          type: 'image',
-          frame: 'browser',
-          src: '/work/transporter-panel/in-transit.png',
-          alt: 'In-Transit tab with Live Updates column and a No GPS Present chip',
-          caption: 'A missing tracker is stated, not hidden behind a stale position.',
-        },
-        {
-          type: 'image',
-          frame: 'none',
-          src: '/work/transporter-panel/route-timeline.png',
-          alt: 'Route Timelines panel showing STA / ATA / STD / ATD per node beside a live tracking placeholder',
-          caption: 'The route panel spells out its own abbreviations rather than assuming them.',
+          body: 'Track. In-Transit swaps the action column for Live Updates — "40km to NDSL New Delhi Hub" with a signal, "-" without, plus an amber No GPS Present chip.\n\nA missing tracker is stated, not hidden behind a stale position, and the route panel spells out its own abbreviations rather than assuming them.',
         },
         {
           type: 'text',

@@ -38,16 +38,18 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
       <main id="main">
         {/* ── HERO — the one black band on an otherwise white page ──── */}
         <div className="v1-ink bg-ink-0 text-text-hi relative overflow-hidden">
-          {/* Static glow field — accent light bleeding into the black, home-page
-              energy with zero motion (safe under prefers-reduced-motion). */}
+          {/* Big subtle grey grid (Manav, 2026-08-16, replacing the glow) —
+              static CSS, fades out toward the bottom so the mockup sits clean. */}
           <div
             aria-hidden="true"
             className="absolute inset-0 pointer-events-none"
             style={{
-              background:
-                'radial-gradient(640px 420px at 12% -5%, rgba(29,65,208,0.45), transparent 70%),' +
-                'radial-gradient(520px 360px at 88% 12%, rgba(255,181,71,0.22), transparent 70%),' +
-                'radial-gradient(760px 520px at 50% 110%, rgba(116,102,204,0.28), transparent 72%)',
+              backgroundImage:
+                'linear-gradient(rgba(237,239,243,0.07) 1px, transparent 1px),' +
+                'linear-gradient(90deg, rgba(237,239,243,0.07) 1px, transparent 1px)',
+              backgroundSize: '88px 88px',
+              maskImage: 'linear-gradient(to bottom, black 55%, transparent 95%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, black 55%, transparent 95%)',
             }}
           />
         <section className="relative w-full pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto flex flex-col gap-8">
@@ -167,53 +169,8 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
           </div>
         </div>
 
-        {/* ── DECISION SPOTLIGHTS ──────────────────────────────────── */}
-        <section className="bg-ink-1 border-t border-line" aria-labelledby="spotlights-heading">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 flex flex-col gap-10">
-            <div className="flex flex-col gap-2">
-              <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">
-                Decision Spotlights
-              </span>
-              <h2
-                id="spotlights-heading"
-                className="font-display font-black text-2xl md:text-3xl text-text-hi tracking-tight"
-              >
-                What I kept, what I cut, and why.
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {cs.spotlights.map((spot, i) => (
-                <article
-                  key={i}
-                  className="flex flex-col gap-4 p-6 rounded-xl border border-line bg-ink-0 hover:border-signal/30 transition-colors duration-300"
-                >
-                  <p className="font-body text-text-hi text-sm leading-relaxed">
-                    {spot.decision}
-                  </p>
-                  <div className="border-t border-line pt-4 flex flex-col gap-3">
-                    <div className="flex flex-col gap-1">
-                      <span className="font-mono text-[10px] tracking-widest uppercase text-text-lo/60">
-                        What I rejected
-                      </span>
-                      <p className="font-mono text-xs text-text-lo line-through decoration-text-lo/40 leading-relaxed">
-                        {spot.rejected}
-                      </p>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="font-mono text-[10px] tracking-widest uppercase text-signal/70">
-                        Why
-                      </span>
-                      <p className="font-body text-xs text-text-lo leading-relaxed">
-                        {spot.why}
-                      </p>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* Decision Spotlights removed (Manav, 2026-08-16) — the argued decisions
+            live in the chapters; `cs.spotlights` data is retained in content. */}
 
         {/* ── REFLECTION ───────────────────────────────────────────── */}
         <section className="max-w-7xl mx-auto px-6 md:px-12 py-16 flex flex-col gap-6" aria-labelledby="reflection-heading">
