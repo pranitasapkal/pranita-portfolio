@@ -1,3 +1,28 @@
+# HANDOFF TO THE CONTENT PASS (2026-08-16, evening — branch `merge/design-foundation`)
+
+The design round is pushed; the next reviewer owns CONTENT. Everything below is live on the
+branch (build green, nda-scan clean, check:facts TPN 0 lost at every commit).
+
+**What changed today (design lane, Manav directing):** white case pages on the Debo structure ·
+Bricolage Grotesque display + Hanken body · one-cobalt rule (#1d41d0 light / #5b7cff dark)
+across the whole site · Namrata-family accent palette (mustard/brick/cobalt/forest/lavender,
+contrast table in theme.css) · problem section = Manav's composite image, live cards <lg ·
+his 3D before-diagram + line-art fold scene + nav avatar · research deck auto-shuffles with
+6 real field photos · Beyond Pixels: 9 cat photos + 25 art originals + per-row hovers ·
+sticky dark navbar · re-inked generated diagrams · Decision Spotlights section REMOVED.
+
+**Content reviewer's queue (in order):**
+1. Competitor matrix rows in THE RESEARCH (Transporter Panel) — DRAFT, fact-check before publish.
+2. qc-05.jpg (public/beyond/) is a photo of Pranita herself; field-04..06 show colleagues'
+   faces — confirm she's fine with these on the public repo/site.
+3. Decision Spotlights no longer render — spotlights data still in content files; keep or fold.
+4. All `site-v2-draft.ts` strings are still DRAFT — her voice pass pending; captions on the
+   QC row ("Two supervisors") now understate the roster.
+5. Copy budget honest misses: TPN 1,919w vs 1,800 / 71 paras vs 50 — evidence-carried.
+6. PR #1 is open with commits already merged by hand — close or retarget, never merge.
+
+---
+
 # Task: Transporter Panel page on the Debo reference (ACTIVE, 2026-08-16)
 
 Reference: debodyutibiswas.framer.website/whylo — re-derived live (colors, type, layout, card
