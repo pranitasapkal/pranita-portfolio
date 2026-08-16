@@ -42,7 +42,7 @@ export function Text({ body }: TextProps) {
       {paragraphs.map((para, i) => (
         <p
           key={i}
-          className="font-body text-text-hi leading-[1.75] text-base md:text-lg max-w-[75ch]"
+          className="font-body text-text-hi leading-[1.75] text-base md:text-lg"
         >
           {renderInline(para)}
         </p>

@@ -89,7 +89,7 @@ export function ImageBlock({ frame, src, alt, caption, slug, placeholder }: Imag
     <figure className="flex flex-col gap-3 my-2">
       {framed}
       {caption && (
-        <figcaption className="font-mono text-xs text-text-lo tracking-wide text-center">
+        <figcaption className="font-mono text-xs text-text-lo tracking-wide">
           {caption}
         </figcaption>
       )}
