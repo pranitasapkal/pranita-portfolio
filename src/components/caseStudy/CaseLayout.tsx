@@ -37,8 +37,20 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
 
       <main id="main">
         {/* ── HERO — the one black band on an otherwise white page ──── */}
-        <div className="v1-ink bg-ink-0 text-text-hi">
-        <section className="w-full pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto flex flex-col gap-8">
+        <div className="v1-ink bg-ink-0 text-text-hi relative overflow-hidden">
+          {/* Static glow field — accent light bleeding into the black, home-page
+              energy with zero motion (safe under prefers-reduced-motion). */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(640px 420px at 12% -5%, rgba(29,65,208,0.45), transparent 70%),' +
+                'radial-gradient(520px 360px at 88% 12%, rgba(255,181,71,0.22), transparent 70%),' +
+                'radial-gradient(760px 520px at 50% 110%, rgba(116,102,204,0.28), transparent 72%)',
+            }}
+          />
+        <section className="relative w-full pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto flex flex-col gap-8">
           {/* Code stamp */}
           <div className="flex items-center gap-3">
             <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">

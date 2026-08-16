@@ -142,9 +142,12 @@
  * All ≥ 4.5:1 body, ≥ 3:1 large/UI. Re-derive if any value changes.
  */
 .v1-paper {
+  /* Fresh white throughout (Manav, 2026-08-16): the warm #f6f6f4/#eceae5 washes
+     read cream against #ffffff — surfaces are now white too, borders carry the
+     structure; ink-2 is the one neutral (not warm) recess tone. */
   --color-ink-0: #ffffff;
-  --color-ink-1: #f6f6f4;
-  --color-ink-2: #eceae5;
+  --color-ink-1: #ffffff;
+  --color-ink-2: #f4f4f5;
   --color-line: rgba(29, 29, 31, 0.14);
   --color-text-hi: #1d1d1f;
   --color-text-lo: #55585e;
