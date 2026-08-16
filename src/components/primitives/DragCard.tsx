@@ -177,6 +177,12 @@ export function DragCard() {
                 zIndex: 10 - pos,
               }}
             >
+              {/* Lace edging (Manav, 2026-08-16): a dotted stitch ring inside the
+                  solid card face — the semicircle-lace read without extra DOM. */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-2 rounded-[20px] border-[3px] border-dotted border-current opacity-30 pointer-events-none"
+              />
               <p className="font-hand text-xl opacity-80">{card.kicker}</p>
               <p className="font-serif-display text-[26px] md:text-[30px] leading-[1.15] font-medium">
                 {card.line}
