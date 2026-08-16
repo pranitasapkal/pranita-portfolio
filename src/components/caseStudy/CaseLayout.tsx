@@ -17,6 +17,16 @@ interface CaseLayoutProps {
   cs: CaseStudy
 }
 
+/* Section accents cycle the reference palette (text-safe deep variants only —
+   contrast table in theme.css). Brighter per-section labels, home-page style. */
+const POP_TEXT = [
+  'text-pop-blue',
+  'text-pop-red-deep',
+  'text-pop-green-deep',
+  'text-pop-purple-deep',
+  'text-pop-yellow-deep',
+]
+
 export function CaseLayout({ cs }: CaseLayoutProps) {
   return (
     <>
@@ -26,8 +36,9 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
       />
 
       <main id="main">
-        {/* ── HERO ─────────────────────────────────────────────────── */}
-        <section className="w-full pt-32 pb-16 px-6 md:px-12 max-w-5xl mx-auto flex flex-col gap-8">
+        {/* ── HERO — the one black band on an otherwise white page ──── */}
+        <div className="v1-ink bg-ink-0 text-text-hi">
+        <section className="w-full pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto flex flex-col gap-8">
           {/* Code stamp */}
           <div className="flex items-center gap-3">
             <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">
@@ -87,6 +98,7 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
             </div>
           )}
         </section>
+        </div>
 
         {/* ── TLDR ─────────────────────────────────────────────────── */}
         <TldrBlock
@@ -97,7 +109,7 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
         />
 
         {/* ── CHAPTERS ─────────────────────────────────────────────── */}
-        <div className="max-w-5xl mx-auto px-6 md:px-12 py-16">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-16">
           {/* Column on mobile so the chip bar stacks above the chapters and its
               overflow-x scroll stays bounded; row with the sticky rail on lg. */}
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-stretch lg:items-start">
@@ -117,7 +129,9 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
                   <div className="flex flex-col gap-2 border-b border-line pb-6">
                     {/* `eyebrow` is the Debo-style mono section label ("THE PROBLEM");
                         cases without one keep the STEP NN sequence. */}
-                    <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">
+                    <span
+                      className={`font-mono text-xs tracking-[0.2em] uppercase font-medium ${POP_TEXT[(chapter.step - 1) % POP_TEXT.length]}`}
+                    >
                       {chapter.eyebrow ?? (
                         <>
                           STEP {String(chapter.step).padStart(2, '0')}
@@ -129,7 +143,7 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
                     </span>
                     <h2
                       id={`chapter-heading-${chapter.step}`}
-                      className="font-display font-black text-2xl md:text-3xl text-text-hi tracking-tight"
+                      className="font-display font-black text-3xl md:text-4xl text-text-hi tracking-tight"
                     >
                       {chapter.title}
                     </h2>
@@ -143,7 +157,7 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
 
         {/* ── DECISION SPOTLIGHTS ──────────────────────────────────── */}
         <section className="bg-ink-1 border-t border-line" aria-labelledby="spotlights-heading">
-          <div className="max-w-5xl mx-auto px-6 md:px-12 py-16 flex flex-col gap-10">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 flex flex-col gap-10">
             <div className="flex flex-col gap-2">
               <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">
                 Decision Spotlights
@@ -190,7 +204,7 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
         </section>
 
         {/* ── REFLECTION ───────────────────────────────────────────── */}
-        <section className="max-w-5xl mx-auto px-6 md:px-12 py-16 flex flex-col gap-6" aria-labelledby="reflection-heading">
+        <section className="max-w-7xl mx-auto px-6 md:px-12 py-16 flex flex-col gap-6" aria-labelledby="reflection-heading">
           <div className="flex flex-col gap-2 border-b border-line pb-6">
             <span className="font-mono text-xs tracking-[0.2em] uppercase text-text-lo">
               Reflection
@@ -227,7 +241,7 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
         <section className="border-t border-line" aria-label="Next case study">
           <a
             href={`/work/${cs.next.slug}`}
-            className="group flex flex-col md:flex-row items-start md:items-center justify-between gap-6 max-w-5xl mx-auto px-6 md:px-12 py-12 hover:bg-ink-1 transition-colors duration-300"
+            className="group flex flex-col md:flex-row items-start md:items-center justify-between gap-6 max-w-7xl mx-auto px-6 md:px-12 py-12 hover:bg-ink-1 transition-colors duration-300"
           >
             <div className="flex flex-col gap-2">
               <span className="font-mono text-xs tracking-[0.2em] uppercase text-text-lo">

@@ -26,7 +26,7 @@ export function TldrBlock({ problem, outcomes, summary, stats }: TldrBlockProps)
       className="w-full border-t-2 border-signal bg-ink-1"
       aria-label="60-second read"
     >
-      <div className="max-w-5xl mx-auto px-6 md:px-12 py-12 flex flex-col gap-10">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 flex flex-col gap-10">
         <SectionLabel number="00" label="60-second read" />
 
         {/* Problem */}

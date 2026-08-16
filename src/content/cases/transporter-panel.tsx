@@ -66,7 +66,7 @@ export const transporterPanel: CaseStudy = {
     {
       id: 'problem-understanding',
       step: 1,
-      navLabel: 'The chat thread',
+      navLabel: 'The Problem',
       ghost: 'CHAT',
       eyebrow: 'THE PROBLEM',
       title: 'Every trip he ran existed as a message in a chat thread.',
@@ -145,13 +145,8 @@ export const transporterPanel: CaseStudy = {
           type: 'text',
           body: 'Behind the questions, one machine. An area manager’s plan reached the system by hand — retyped at every depot by temporary hires measured on compliance targets. Wrong numbers, wrong transporter, missing GPS — and the biggest class, return journeys booked as two separate one-way trips.\n\nThe interim answer was a WhatsApp assignment module — trips pushed as messages to accept, reject or update. It worked for the right reason: data ownership moved to whoever’s payout depended on it. It could not survive a scroll.\n\nWhatsApp stayed on as a notification channel; the panel became the record.',
         },
-        {
-          type: 'image',
-          frame: 'browser',
-          src: '/work/transporter-panel/pending-default.png',
-          alt: 'The five-tab transporter panel with the Trip Management summary cards',
-          caption: 'The panel that replaced the thread.',
-        },
+        // The pending-default screenshot that closed this chapter now lives in the
+        // hero mockup — one image, one home.
       ],
     },
 
@@ -159,9 +154,9 @@ export const transporterPanel: CaseStudy = {
     {
       id: 'objective',
       step: 2,
-      navLabel: 'The one sentence',
+      navLabel: 'Objective',
       ghost: 'AGREE',
-      eyebrow: 'THE ONE SENTENCE',
+      eyebrow: 'OBJECTIVE',
       title: 'Confirmation had to become the payout trigger.',
       blocks: [
         {
@@ -224,9 +219,9 @@ export const transporterPanel: CaseStudy = {
     {
       id: 'user-persona',
       step: 3,
-      navLabel: 'Who I designed for',
+      navLabel: 'Research',
       ghost: 'OWNER',
-      eyebrow: 'THE RESEARCH',
+      eyebrow: 'RESEARCH',
       title: 'He owns the trucks. He is never on the truck.',
       blocks: [
         {
@@ -354,9 +349,9 @@ export const transporterPanel: CaseStudy = {
     {
       id: 'user-flow',
       step: 4,
-      navLabel: 'Where money moves',
+      navLabel: 'User Flow',
       ghost: 'RISK',
-      eyebrow: 'WHERE MONEY MOVES',
+      eyebrow: 'USER FLOW',
       title: 'Two screens can cost him money in a single click.',
       blocks: [
         {
@@ -506,9 +501,9 @@ export const transporterPanel: CaseStudy = {
     {
       id: 'prototype',
       step: 5,
-      navLabel: 'What shipped',
+      navLabel: 'Screens',
       ghost: '154',
-      eyebrow: 'WHAT SHIPPED',
+      eyebrow: 'THE SCREENS',
       title: '154 screens, and 92 of them on the one tab that pays.',
       blocks: [
         {
@@ -550,9 +545,9 @@ export const transporterPanel: CaseStudy = {
     {
       id: 'lo-fi-wireframes',
       step: 6,
-      navLabel: 'Rules I broke',
+      navLabel: 'Design Decisions',
       ghost: 'RULES',
-      eyebrow: 'THE RULES',
+      eyebrow: 'DESIGN DECISIONS',
       title: 'I wrote six rules for this table, then broke two of them on purpose.',
       blocks: [
         {
@@ -625,7 +620,7 @@ export const transporterPanel: CaseStudy = {
     {
       id: 'information-architecture',
       step: 7,
-      navLabel: 'The right-hand edge',
+      navLabel: 'Tab by Tab',
       ghost: 'SHAPE',
       eyebrow: 'TAB BY TAB',
       title: 'The action column is the tab’s thesis.',
@@ -721,9 +716,9 @@ export const transporterPanel: CaseStudy = {
     {
       id: 'business-aspects',
       step: 8,
-      navLabel: 'What it is accountable to',
+      navLabel: 'Impact',
       ghost: 'CHAIN',
-      eyebrow: 'SUCCESS METRICS',
+      eyebrow: 'IMPACT',
       title: 'The panel is one link in a chain that ends in a payment.',
       blocks: [
         {

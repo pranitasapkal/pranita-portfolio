@@ -154,12 +154,31 @@
   --color-paper-ink: #ffffff;
   --color-paper-mute: #a6a9b0;
 
-  /* Reference type roles: serif headlines + serif body (Tiempos → Fraunces),
-   * mono eyebrow labels (Geist Mono). Utilities resolve var(--font-*), so
-   * re-declaring here re-skins case pages without touching block components. */
+  /* Case pages use the HOME PAGE type system (Manav, 2026-08-16): Fraunces for
+   * display/serif, Hanken Grotesk for body, mono inherits IBM Plex. Utilities
+   * resolve var(--font-*), so re-declaring here re-skins case pages without
+   * touching block components. */
   --font-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
   --font-serif: 'Fraunces Variable', 'Fraunces', Georgia, serif;
-  --font-body: 'Fraunces Variable', 'Fraunces', Georgia, serif;
-  --font-mono: 'Geist Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --font-body: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, sans-serif;
+}
+
+/*
+ * `.v1-ink` — the v1 dark values, re-declarable on a subtree INSIDE `.v1-paper`,
+ * so a single section (the case hero band) can go black while the rest of the
+ * page stays white. Mirrors the v1 @theme defaults above.
+ */
+.v1-ink {
+  --color-ink-0: #0a0c10;
+  --color-ink-1: #12151c;
+  --color-ink-2: #1c202a;
+  --color-line: rgba(237, 239, 243, 0.1);
+  --color-text-hi: #edeff3;
+  --color-text-lo: #9ba3b0;
+  --color-signal: #ffb547;
+  --color-beacon: #62d9c9;
+  --color-paper: #f4f1ea;
+  --color-paper-ink: #16181d;
+  --color-paper-mute: #565b66;
 }
 
