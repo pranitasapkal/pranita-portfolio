@@ -251,34 +251,44 @@ export const transporterPanel: CaseStudy = {
           type: 'researchDeck',
           title: 'On the ground',
           note: 'I went to the sort centres and watched the handover happen — the paperwork, the phone calls, the moment a vehicle number gets typed. Then I sat with transporters, in person and on calls, and asked them to walk me through their last week.',
+          // Photos supplied by Manav 2026-08-16 (lod photos staging folder);
+          // captions rewritten to match what each frame actually shows. The
+          // challan and WhatsApp-thread cards this replaces argued claims that
+          // already live elsewhere (ch5 challan image, ch1 thread narrative).
           items: [
             {
-              alt: 'At a sort centre during the night dispatch window',
+              src: '/work/transporter-panel/field-01.jpg',
+              alt: 'The sort-centre floor mid-shift — conveyor running, dispatch bags staged',
               caption: 'Watching a dispatch get recorded',
               place: 'Sort centre',
             },
             {
-              alt: 'The paper challan a driver carries, photographed on the desk',
-              caption: 'The challan, where the Trip ID actually lives',
+              src: '/work/transporter-panel/field-02.jpg',
+              alt: 'A handheld scanner mid-entry beside the trolleys',
+              caption: 'The moment a trip gets typed',
               place: 'Sort centre',
             },
             {
-              alt: 'A transporter showing his own spreadsheet of trips and expected payments',
+              src: '/work/transporter-panel/field-04.jpg',
+              alt: 'A fleet owner walking us through his spreadsheet on a laptop',
               caption: 'His spreadsheet — the record he actually trusted',
               place: 'In person',
             },
             {
-              alt: 'The WhatsApp assignment thread open on a transporter phone',
-              caption: 'The thread the panel had to replace',
-              place: 'In person',
+              src: '/work/transporter-panel/field-03.jpg',
+              alt: 'Parcels staged in a back room, waiting for a truck',
+              caption: 'Where the parcels wait for a truck',
+              place: 'Field visit',
             },
             {
-              alt: 'A remote interview session with a fleet owner',
-              caption: 'Walking through a week of trips, call by call',
-              place: 'Virtual',
+              src: '/work/transporter-panel/field-05.jpg',
+              alt: 'The team walking the sort-centre floor between dispatch bags',
+              caption: 'Walking the floor where the handover happens',
+              place: 'Sort centre',
             },
             {
-              alt: 'Notes and affinity clusters from the interview rounds',
+              src: '/work/transporter-panel/field-06.jpg',
+              alt: 'The synthesis session — one room, every laptop open',
               caption: 'Where the eight findings came from',
               place: 'Synthesis',
             },

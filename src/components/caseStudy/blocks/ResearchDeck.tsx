@@ -3,9 +3,9 @@
  *
  * The interaction is deliberately the same as the home hero's `DragCard`, so the
  * two read as one site: a small stack with fixed offsets, drag the top card and
- * fling it past a threshold to send it to the back, plus Peek (fans the deck)
- * and Shuffle (advances one). Reused rather than re-invented — a second flick
- * gesture with different physics on the same page would just look like a bug.
+ * fling it past a threshold to send it to the back. The deck advances on its
+ * own (Manav, 2026-08-16 — buttons removed): a 3s cycle that pauses on hover
+ * and while dragging, and never runs under reduced motion or off-screen tabs.
  *
  * A card with no `src` renders a labelled placeholder frame instead of an image,
  * so this section reads finished before Pranita's sort-centre photographs land.
@@ -14,7 +14,7 @@
  * Reduced motion / coarse pointer: dragging is off and the deck renders as a
  * static fanned stack; Shuffle still works as an instant, discrete change.
  */
-import { useRef, useState, useCallback, useId } from 'react'
+import { useRef, useState, useCallback, useEffect, useId } from 'react'
 import { gsap } from '../../../lib/gsap'
 import { useHasFinePointer, usePrefersReducedMotion } from '../../../lib/useMediaQuery'
 import { useReveal } from './useReveal'
@@ -72,23 +72,18 @@ export function ResearchDeck({ title, note, items }: ResearchDeckProps) {
     })
   }, [interactive, cycle, settle])
 
-  const peek = useCallback(() => {
-    const host = hostRef.current
-    if (!host || !interactive) return
-    const cards = host.querySelectorAll<HTMLElement>('[data-deck-card]')
-    gsap.to(cards, {
-      x: (i) => STACK[Math.min(i, STACK.length - 1)].x + i * 30,
-      rotate: (i) => STACK[Math.min(i, STACK.length - 1)].r + i * 3,
-      duration: 0.35, ease: 'power3.out', stagger: 0.02,
-      onComplete: () => {
-        gsap.to(cards, {
-          x: (i) => STACK[Math.min(i, STACK.length - 1)].x,
-          rotate: (i) => STACK[Math.min(i, STACK.length - 1)].r,
-          delay: 0.55, duration: 0.4, ease: 'power3.out',
-        })
-      },
-    })
-  }, [interactive])
+  /* Continuous self-shuffle. Paused while hovered or dragging (WCAG 2.2.2 —
+     hover is the pause control), skipped when the tab is hidden, and never
+     started under reduced motion — those users get the static fanned stack. */
+  const paused = useRef(false)
+  useEffect(() => {
+    if (reduced) return
+    const id = window.setInterval(() => {
+      if (paused.current || drag.current.dragging || document.hidden) return
+      shuffle()
+    }, 3000)
+    return () => window.clearInterval(id)
+  }, [reduced, shuffle])
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
@@ -143,7 +138,9 @@ export function ResearchDeck({ title, note, items }: ResearchDeckProps) {
           ref={hostRef}
           role="group"
           aria-roledescription="card deck"
-          aria-label={`${items.length} field-research photographs. Use Shuffle to advance.`}
+          aria-label={`${items.length} field-research photographs, cycling automatically. Hover to pause.`}
+          onMouseEnter={() => { paused.current = true }}
+          onMouseLeave={() => { paused.current = false }}
           /* mb clears the back cards' stack offsets (up to +29px) and their drop
              shadows, which otherwise bleed into whatever block follows. */
           className="relative shrink-0 w-[280px] h-[350px] md:w-[320px] md:h-[400px] mb-14"
@@ -223,32 +220,13 @@ export function ResearchDeck({ title, note, items }: ResearchDeckProps) {
             <p className="font-body text-text-lo leading-relaxed max-w-[46ch]">{note}</p>
           )}
 
-          <div className="flex items-center gap-3">
-            {interactive && (
-              <button
-                type="button"
-                onClick={peek}
-                className="rounded-full border border-line px-4 py-1.5 font-mono text-xs tracking-wider text-text-lo hover:text-text-hi hover:border-text-lo transition-colors duration-200"
-              >
-                Peek
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={shuffle}
-              aria-controls={liveId}
-              className="rounded-full bg-signal text-ink-0 px-4 py-1.5 font-mono text-xs tracking-wider hover:opacity-90 transition-opacity duration-200"
-            >
-              Shuffle
-            </button>
-            <span className="font-mono text-[11px] text-text-lo tabular-nums">
-              {topIdx + 1} / {items.length}
-            </span>
-          </div>
+          <span className="font-mono text-[11px] text-text-lo tabular-nums">
+            {topIdx + 1} / {items.length}
+          </span>
 
-          {/* Announces the front card to screen readers as the deck cycles, since
-              the visual stack order carries that information for everyone else. */}
-          <p id={liveId} aria-live="polite" className="sr-only">
+          {/* Names the front card for screen readers; deliberately NOT aria-live —
+              a self-advancing deck would announce every three seconds. */}
+          <p id={liveId} className="sr-only">
             {items[topIdx].caption}
             {items[topIdx].place ? `, ${items[topIdx].place}` : ''}
           </p>
