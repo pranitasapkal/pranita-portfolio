@@ -96,8 +96,7 @@ export const transporterPanel: CaseStudy = {
           type: 'image',
           frame: 'none',
           src: '/work/transporter-panel/before-chaos.png',
-          alt: 'The pre-panel state — one trip held in five places that never agreed',
-          caption: 'One trip, five records, and he could see only his own.',
+          alt: 'Before the panel: one trip held in five places — the WhatsApp thread, the placement sheet, his own spreadsheet, the email chain, and FinOps matching records by hand. None of them agreed, and he could see only his own.',
         },
         {
           // The reference's problem device (ADR-007): his questions around the
@@ -105,8 +104,10 @@ export const transporterPanel: CaseStudy = {
           // Composition + the seven questions locked with Manav 2026-08-16 (his
           // mock); facts unchanged from the problemTabs block this replaces.
           type: 'problemCards',
+          illustration: '/work/transporter-panel/problem-questions.png',
           illustrationAlt:
             'A fleet owner, hand over his face — the nightly reconciliation mood',
+          composite: true,
           items: [
             {
               quote: 'Which of last night’s trips still needs a truck?',

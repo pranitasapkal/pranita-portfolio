@@ -111,7 +111,7 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
                   ].join(' ')}
                 >
                   <span className="opacity-50">{String(chapter.step).padStart(2, '0')}</span>
-                  <span>{chapter.title}</span>
+                  <span>{chapter.navLabel ?? chapter.title}</span>
                 </a>
               )
             })}

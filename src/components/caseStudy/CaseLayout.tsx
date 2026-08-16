@@ -98,7 +98,9 @@ export function CaseLayout({ cs }: CaseLayoutProps) {
 
         {/* ── CHAPTERS ─────────────────────────────────────────────── */}
         <div className="max-w-5xl mx-auto px-6 md:px-12 py-16">
-          <div className="flex gap-16 items-start">
+          {/* Column on mobile so the chip bar stacks above the chapters and its
+              overflow-x scroll stays bounded; row with the sticky rail on lg. */}
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-stretch lg:items-start">
             {/* Sticky chapter nav — rendered outside the chapters column */}
             <ChapterNav chapters={cs.chapters} />
 

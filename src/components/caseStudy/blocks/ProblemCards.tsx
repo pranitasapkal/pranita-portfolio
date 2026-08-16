@@ -15,6 +15,7 @@ import { useReveal } from './useReveal'
 interface ProblemCardsProps {
   illustration?: string
   illustrationAlt: string
+  composite?: boolean
   punchline?: string
   items: { quote: string; context: string }[]
 }
@@ -37,6 +38,7 @@ function Card({ quote, context, index }: { quote: string; context: string; index
 export function ProblemCards({
   illustration,
   illustrationAlt,
+  composite,
   punchline,
   items,
 }: ProblemCardsProps) {
@@ -44,6 +46,40 @@ export function ProblemCards({
   const splitAt = Math.ceil(items.length / 2)
   const left = items.slice(0, splitAt)
   const right = items.slice(splitAt)
+
+  if (composite && illustration) {
+    // The finished composition carries the questions; alt enumerates them so a
+    // screen reader on desktop loses nothing. Small screens swap to live cards.
+    const compositeAlt = `${illustrationAlt}. Around him, his questions: ${items
+      .map((i) => `“${i.quote}”`)
+      .join(' · ')}`
+    return (
+      <div ref={ref} className="flex flex-col gap-8">
+        <figure className="m-0 hidden lg:block">
+          <img
+            src={illustration}
+            alt={compositeAlt}
+            loading="lazy"
+            className="w-full h-auto block rounded-3xl"
+          />
+        </figure>
+        <div
+          role="list"
+          aria-label="The problems, in their own words"
+          className="lg:hidden flex flex-col gap-10 rounded-3xl bg-pop-blue p-8"
+        >
+          {items.map((item, i) => (
+            <Card key={item.quote} quote={item.quote} context={item.context} index={i} />
+          ))}
+        </div>
+        {punchline && (
+          <p className="font-display font-medium text-lg md:text-xl text-text-hi text-center leading-snug tracking-tight max-w-[40ch] mx-auto">
+            {punchline}
+          </p>
+        )}
+      </div>
+    )
+  }
 
   return (
     // The mock's composition (Manav, 2026-08-16): blue panel, the persona's

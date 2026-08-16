@@ -146,6 +146,7 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
                 key={i}
                 illustration={block.illustration}
                 illustrationAlt={block.illustrationAlt}
+                composite={block.composite}
                 punchline={block.punchline}
                 items={block.items}
               />

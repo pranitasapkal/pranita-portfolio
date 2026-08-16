@@ -249,7 +249,7 @@
   ],
   "/work/transporter-panel/before-chaos.png": [
     1600,
-    621
+    763
   ],
   "/work/transporter-panel/cancelled-remarks.png": [
     1600,
@@ -294,6 +294,10 @@
   "/work/transporter-panel/pending-default.png": [
     1600,
     1260
+  ],
+  "/work/transporter-panel/problem-questions.png": [
+    1600,
+    1066
   ],
   "/work/transporter-panel/raise-dispute-details.png": [
     1600,

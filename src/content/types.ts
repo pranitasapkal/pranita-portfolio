@@ -88,6 +88,12 @@ export type Block =
       type: 'problemCards'
       illustration?: string
       illustrationAlt: string
+      /**
+       * true = `illustration` is a finished composition with the questions baked
+       * in (Manav's mock): desktop renders the image alone, small screens render
+       * the live cards instead — baked text is unreadable at phone widths.
+       */
+      composite?: boolean
       punchline?: string
       items: { quote: string; context: string }[]
     }
