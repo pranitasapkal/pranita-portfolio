@@ -261,10 +261,11 @@ class Component extends DCLogic {
     if (!a) return;
     if (a.hasAttribute("data-back")) {
       e.preventDefault();
-      if (document.referrer && history.length > 1) history.back(); else if (SITE) location.href = SITE;
+      if (window.top !== window) { if (SITE) window.top.location.href = SITE; else history.back(); }
+      else if (document.referrer && history.length > 1) history.back(); else if (SITE) location.href = SITE;
     } else if (a.hasAttribute("data-next")) {
       e.preventDefault();
-      if (SITE) location.href = SITE + "/dojoin";
+      if (SITE) (window.top || window).location.href = SITE + "/dojoin";
     }
   });
 })();
