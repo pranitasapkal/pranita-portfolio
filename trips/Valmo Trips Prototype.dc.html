@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600&display=swap">
+<style>
+html,body{margin:0;background:rgb(242,245,250);color:rgb(39,40,41);-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+button{font:inherit}
+input,textarea{font:inherit;color:inherit}
+a{color:rgb(0,63,152)}
+a:hover{color:rgb(9,45,94)}
+@keyframes vtIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes vtModal{from{opacity:0;transform:translate(-50%,calc(-50% + 8px))}to{opacity:1;transform:translate(-50%,-50%)}}
+@keyframes vtFade{from{opacity:0}to{opacity:1}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="display:flex;min-height:100vh;min-width:1200px;font-family:'Mier B02',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:20px;font-weight:500;color:rgb(39,40,41)">
+
+  <aside style="position:sticky;top:0;align-self:flex-start;flex:none;width:224px;height:100vh;background:rgb(7,32,66);color:rgb(230,235,242);display:flex;flex-direction:column">
+    <div style="height:88px;display:flex;align-items:center;gap:12px;padding:0 9px 16px">
+      <div style="width:42px;height:42px;border-radius:50%;background:rgb(142,150,163) url(assets/proto/payments.png) -1.3px -2.6px/112.875px 73.5px no-repeat;flex:none"></div>
+      <span style="font-weight:600;font-size:13px;line-height:20px;color:rgb(242,245,250);white-space:nowrap">Karan Verma</span>
+    </div>
+    <div style="height:42px;display:flex;align-items:center;gap:4px;padding-left:22px;border-top:1px solid rgba(90,94,102,.5);border-bottom:1px solid rgba(90,94,102,.5)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgb(195,201,212)" stroke-width="1.6"><path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2.5" y="13.5" width="4" height="6.5" rx="2" fill="rgb(195,201,212)"></rect><rect x="17.5" y="13.5" width="4" height="6.5" rx="2" fill="rgb(195,201,212)"></rect></svg>
+      <span style="white-space:nowrap;font-size:12px;line-height:16px;font-weight:500;color:rgb(195,201,212)">Valmo Support</span>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:16px;margin-top:16px">
+      <div style="position:relative;height:36px;display:flex;align-items:center;gap:8px;padding-left:22px;font-size:13px;line-height:20px;color:rgb(230,235,242);cursor:not-allowed" title="Coming soon"><span style="width:24px;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9.5a.5.5 0 0 1-.5.5H15v-6H9v6H3.5a.5.5 0 0 1-.5-.5z" fill="#8E96A3"></path><path d="M2 11.5 12 3.6l10 7.9" fill="none" stroke="#C3C9D4" stroke-width="2" stroke-linecap="round"></path></svg></span><span style="font-weight:400">Home</span></div>
+      <button onClick="{{ goTrips }}" style="position:relative;height:36px;display:flex;align-items:center;gap:6px;padding:0 0 0 22px;border:0;background:{{ navTripsBg }};color:rgb(230,235,242);cursor:pointer;text-align:left;font-size:13px;line-height:20px;font-weight:600"><span style="position:absolute;left:0;top:0;width:4px;height:36px;border-radius:0 4px 4px 0;background:{{ navTripsBar }}"></span><svg width="24" height="24" viewBox="0 0 24 24"><defs><linearGradient id="vtg1" x1="0" y1="1" x2="1" y2="0"><stop offset=".26" stop-color="#3984C2"></stop><stop offset="1" stop-color="#ACDDFF"></stop></linearGradient></defs><rect x="2" y="5" width="12" height="10" rx="1.2" fill="url(#vtg1)"></rect><path d="M14 8h4.2l3.3 3.6V17H14z" fill="#5A9FD6"></path><rect x="2" y="15" width="19.5" height="3" rx=".6" fill="#2F6FA8"></rect><circle cx="6.5" cy="18.5" r="2" fill="#272829" stroke="#C5D7FF" stroke-width="1"></circle><circle cx="17.5" cy="18.5" r="2" fill="#272829" stroke="#C5D7FF" stroke-width="1"></circle></svg>Trips</button>
+      <button onClick="{{ goDisputes }}" style="position:relative;height:36px;display:flex;align-items:center;gap:6px;padding:0 16px 0 22px;border:0;background:{{ navDispBg }};color:rgb(230,235,242);cursor:pointer;text-align:left;font-size:13px;line-height:20px;font-weight:600"><span style="position:absolute;left:0;top:0;width:4px;height:36px;border-radius:0 4px 4px 0;background:{{ navDispBar }}"></span><svg width="24" height="24" viewBox="0 0 24 24"><defs><linearGradient id="vtg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7716F"></stop><stop offset="1" stop-color="#D15454"></stop></linearGradient></defs><path d="M10.7 3.8a1.5 1.5 0 0 1 2.6 0l8.3 14.4A1.5 1.5 0 0 1 20.3 20.5H3.7a1.5 1.5 0 0 1-1.3-2.3z" fill="url(#vtg2)"></path><path d="M12 9v5" stroke="#fff" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="17" r="1.1" fill="#fff"></circle></svg>Disputes
+        <sc-if value="{{ hasOpenDisputes }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:rgb(244,66,64);color:#fff;font-size:11px;display:grid;place-items:center">{{ openDisputes }}</span></sc-if>
+      </button>
+      <div style="position:relative;height:36px;display:flex;align-items:center;gap:8px;padding-left:22px;font-size:13px;line-height:20px;color:rgb(230,235,242);cursor:not-allowed" title="Coming soon"><span style="width:24px;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24"><rect x="2" y="6" width="18" height="11" rx="1.5" transform="rotate(-12 11 11.5)" fill="#44E4AB"></rect><rect x="4" y="8" width="18" height="11" rx="1.5" fill="#E09D79"></rect><circle cx="13" cy="13.5" r="2.4" fill="#FFEDDE"></circle></svg></span><span style="font-weight:400;white-space:nowrap">Contract Management</span></div>
+    </nav>
+    <div style="margin-top:auto;border-top:1px solid rgba(90,94,102,.5);padding:12px 0 12px"><div style="position:relative;height:36px;display:flex;align-items:center;gap:8px;padding-left:22px;font-size:13px;line-height:20px;color:rgb(230,235,242)"><span style="width:24px;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24"><rect x="3" y="3" width="11" height="18" rx="2" fill="#E09D79"></rect><path d="M12 12h9m0 0-3.2-3.2M21 12l-3.2 3.2" fill="none" stroke="#F44240" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="font-weight:400">Log Out</span></div></div>
+    <div style="border-top:1px solid rgba(90,94,102,.5);height:44px;display:flex;align-items:center;padding-left:24px;opacity:.6"><span style="font-weight:800;font-size:19px;line-height:19px;letter-spacing:.04em;color:#fff;font-style:italic;transform:skewX(-6deg)">VALMO</span></div>
+  </aside>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="height:64px;flex:none;background:#fff;display:flex;align-items:center;gap:24px;padding:0 24px;position:sticky;top:0;z-index:20;border-bottom:1px solid rgb(230,235,242)">
+      <h1 style="margin:0;font-size:21px;line-height:28px;font-weight:700">{{ pageTitle }}</h1>
+      <button onClick="{{ openHiw }}" style="margin-left:auto;display:flex;align-items:center;gap:8px;border:0;background:none;color:rgb(60,41,183);font-weight:600;cursor:pointer">
+        <svg width="18" height="13" viewBox="0 0 18 13"><rect width="18" height="13" rx="3" fill="rgb(244,66,64)"></rect><path d="M7 3.5v6l5-3z" fill="#fff"></path></svg>How it works?
+      </button>
+      <label style="display:flex;align-items:center;gap:10px;width:360px;height:36px;padding:0 12px;border:1px solid rgb(195,201,212);border-radius:4px;background:#fff">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgb(90,94,102)" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+        <input value="{{ search }}" onChange="{{ onSearch }}" placeholder="Search by Trip ID" style="flex:1;min-width:0;border:0;outline:0;background:none;font-size:13px">
+        <sc-if value="{{ hasSearch }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clearSearch }}" style="border:0;background:none;color:rgb(142,150,163);cursor:pointer;font-size:16px;line-height:1">×</button></sc-if>
+      </label>
+    </header>
+
+    <sc-if value="{{ isTrips }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:16px 24px 40px;display:grid;gap:16px">
+      <section style="background:#fff;border-radius:8px;padding:20px 20px 24px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+          <div><div style="font-size:17px;line-height:24px;font-weight:700">Trip Management</div><div style="color:rgb(90,94,102)">Manage your trips and monitor performance</div></div>
+          <button onClick="{{ openMissing }}" style="height:36px;padding:0 16px;border:0;border-radius:4px;background:rgb(0,63,152);color:#fff;font-weight:700;font-size:15px;cursor:pointer">Report Missing Trips</button>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+          <button data-hl="cards" onClick="{{ goPending }}" style="text-align:left;padding:0;border:1px solid rgb(230,235,242);border-radius:8px;background:#fff;cursor:pointer;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgb(242,245,250);border-bottom:1px solid rgb(230,235,242);font-size:15px;font-weight:600;white-space:nowrap"><span>Pending Assignment ({{ pCount }})</span><sc-if value="{{ hasRisk }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:4px;padding:0 8px;border-radius:10px;background:rgb(255,237,222);color:rgb(236,118,0);font-size:12px;font-weight:600;white-space:nowrap">⚠ {{ pRisk }} at risk</span></sc-if><span style="margin-left:auto;color:rgb(0,63,152)">›</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;padding:12px 16px"><div style="border-right:1px solid rgb(230,235,242)"><div style="color:rgb(90,94,102)">Unassigned Drivers</div><div style="font-size:17px;line-height:24px;font-weight:700">{{ pNoDriver }}</div></div><div style="padding-left:16px"><div style="color:rgb(90,94,102)">Unassigned Vehicles</div><div style="font-size:17px;line-height:24px;font-weight:700">{{ pNoVehicle }}</div></div></div>
+          </button>
+          <button onClick="{{ goTransit }}" style="text-align:left;padding:0;border:1px solid rgb(230,235,242);border-radius:8px;background:#fff;cursor:pointer;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgb(242,245,250);border-bottom:1px solid rgb(230,235,242);font-size:15px;font-weight:600;white-space:nowrap"><span>In-Transit Trips ({{ tCount }})</span><span style="margin-left:auto;color:rgb(0,63,152)">›</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;padding:12px 16px"><div style="border-right:1px solid rgb(230,235,242)"><div style="color:rgb(90,94,102)">On Time</div><div style="font-size:17px;line-height:24px;font-weight:700">{{ tOnTime }}</div></div><div style="padding-left:16px"><div style="color:rgb(90,94,102)">Delayed / No GPS</div><div style="font-size:17px;line-height:24px;font-weight:700">{{ tDelayed }}</div></div></div>
+          </button>
+          <button onClick="{{ goCompleted }}" style="text-align:left;padding:0;border:1px solid rgb(230,235,242);border-radius:8px;background:#fff;cursor:pointer;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgb(242,245,250);border-bottom:1px solid rgb(230,235,242);font-size:15px;font-weight:600">Completed Trips<span style="margin-left:auto;color:rgb(0,63,152)">›</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;padding:12px 16px"><div style="border-right:1px solid rgb(230,235,242)"><div style="color:rgb(90,94,102)">Pending Confirmation</div><div style="font-size:17px;line-height:24px;font-weight:700">{{ cPendingLabel }}</div></div><div style="padding-left:16px"><div style="color:rgb(90,94,102)">Trips Under Dispute</div><div style="font-size:17px;line-height:24px;font-weight:700">{{ cDisputedLabel }}</div></div></div>
+          </button>
+        </div>
+      </section>
+
+      <section style="background:#fff;border-radius:8px;overflow:visible;padding-bottom:0">
+        <div style="display:flex;gap:8px;padding:0 12px;border-bottom:1px solid rgb(230,235,242)">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+            <button onClick="{{ t.onClick }}" style="position:relative;height:48px;padding:0 16px;border:0;background:none;cursor:pointer;font-size:15px;font-weight:{{ t.weight }};color:{{ t.color }};white-space:nowrap"><span>{{ t.label }} ({{ t.count }})</span><sc-if value="{{ t.active }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:0;right:0;bottom:-1px;height:2px;border-radius:2px 2px 0 0;background:rgb(0,63,152)"></span></sc-if><sc-if value="{{ t.dot }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:8px;top:12px;width:6px;height:6px;border-radius:50%;background:rgb(60,41,183)"></span></sc-if></button>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ isCompleted }}" hint-placeholder-val="{{ false }}">
+          <div data-hl="cfilters" style="display:flex;gap:12px;padding:16px 16px 0;flex-wrap:wrap">
+            <sc-for list="{{ cFilters }}" as="f" hint-placeholder-count="4">
+              <button onClick="{{ f.onClick }}" style="text-align:left;padding:8px 16px;border-radius:8px;border:1px solid {{ f.border }};background:{{ f.bg }};cursor:pointer;display:grid"><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ f.label }}</span><span style="font-size:15px;font-weight:600">{{ f.value }}</span></button>
+            </sc-for>
+          </div>
+          <div data-hl="banner" style="margin:16px 16px 0;display:flex;align-items:center;gap:20px;padding:12px 16px;border-radius:8px;background:rgb(242,245,250)">
+            <div style="flex:none;width:44px;height:44px;border-radius:8px;background:rgb(255,237,222);display:grid;place-items:center;color:rgb(236,118,0);font-size:22px;font-weight:700">₹</div>
+            <div style="flex:none;font-size:15px;line-height:22px;font-weight:700;width:150px">What should I do for my payments?</div>
+            <div style="flex:1;display:grid;gap:2px">
+              <span>• NLH/RLH trips: confirm each trip here, or raise a dispute if something is wrong.</span>
+              <span>• FM Carting / SC-SC / others: follow your existing billing process.</span>
+              <sc-if value="{{ hindiOpen }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Noto Sans Devanagari',sans-serif;color:rgb(90,94,102)">• NLH/RLH ट्रिप: हर ट्रिप को यहाँ कन्फर्म करें, या कुछ गलत हो तो डिस्प्यूट दर्ज करें। FM कार्टिंग / SC-SC: पुराने बिलिंग तरीके से भुगतान होगा।</span></sc-if>
+            </div>
+            <button onClick="{{ toggleHindi }}" style="flex:none;align-self:flex-start;display:flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid rgb(197,215,255);border-radius:4px;background:#fff;color:rgb(0,63,152);font-family:'Noto Sans Devanagari',sans-serif;font-weight:600;cursor:pointer;white-space:nowrap">▸ हिंदी में जानकारी</button>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;align-items:center;gap:12px;padding:16px">
+          <span style="font-weight:500;white-space:nowrap">Filter by :</span>
+          <div data-picker="1" style="position:relative">
+            <button onClick="{{ toggleSrc }}" style="height:36px;display:flex;align-items:center;gap:10px;white-space:nowrap;padding:0 12px;border:1px solid {{ srcBorder }};border-radius:4px;background:#fff;cursor:pointer;color:{{ srcColor }}">{{ srcLabel }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></button>
+            <sc-if value="{{ srcOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:40px;left:0;z-index:30;width:220px;padding:8px;border-radius:8px;background:#fff;box-shadow:0 0 4px rgba(0,0,0,.2),0 1px 4px rgba(0,0,0,.12)">
+                <sc-for list="{{ srcOptions }}" as="o" hint-placeholder-count="4">
+                  <button onClick="{{ o.onClick }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:8px;border:0;border-radius:4px;background:{{ o.bg }};cursor:pointer;text-align:left"><span style="width:16px;height:16px;border-radius:50%;border:{{ o.ring }};flex:none"></span>{{ o.label }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <div style="height:36px;display:flex;align-items:center;gap:10px;white-space:nowrap;padding:0 12px;border:1px solid rgb(195,201,212);border-radius:4px;color:rgb(90,94,102)">Haul Type<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></div>
+          <div style="height:36px;display:flex;align-items:center;gap:10px;white-space:nowrap;padding:0 12px;border:1px solid rgb(195,201,212);border-radius:4px;color:rgb(90,94,102)">{{ timeFilterLabel }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></div>
+          <span style="margin-left:auto;font-weight:500;white-space:nowrap">Sort by :</span>
+          <div style="height:36px;display:flex;align-items:center;gap:10px;white-space:nowrap;padding:0 12px;border:1px solid rgb(195,201,212);border-radius:4px">Newest Trip First<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></div>
+          <button onClick="{{ download }}" style="height:36px;display:flex;align-items:center;gap:8px;white-space:nowrap;padding:0 16px;border:1px solid rgb(0,63,152);border-radius:4px;background:#fff;color:rgb(0,63,152);font-weight:700;font-size:15px;cursor:pointer">Download<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg></button>
+        </div>
+
+        <sc-if value="{{ isPending }}" hint-placeholder-val="{{ false }}">
+          <div data-hl="rule" style="margin:0 16px 12px;display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid rgb(224,157,121);border-radius:4px;background:rgb(255,237,222)">
+            <span style="width:16px;height:16px;border-radius:50%;background:rgb(90,94,102);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;flex:none">!</span>
+            <span style="flex:1">Assign a vehicle and a driver, then Accept. Trips not accepted before placement time are rejected automatically.<sc-if value="{{ hindiOpen }}" hint-placeholder-val="{{ false }}"><span style="display:block;font-family:'Noto Sans Devanagari',sans-serif;color:rgb(90,94,102)">गाड़ी और ड्राइवर चुनें, फिर Accept करें। प्लेसमेंट टाइम से पहले Accept न करने पर ट्रिप अपने-आप रिजेक्ट हो जाएगी।</span></sc-if></span>
+            <button onClick="{{ toggleHindi }}" style="flex:none;padding:2px 10px;border:1px solid rgb(197,215,255);border-radius:4px;background:#fff;color:rgb(0,63,152);font-family:'Noto Sans Devanagari',sans-serif;font-weight:600;cursor:pointer;white-space:nowrap">▸ हिंदी में जानकारी</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasSearchHint }}" hint-placeholder-val="{{ false }}">
+          <div style="margin:0 16px 12px;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:4px;background:rgb(234,240,255);color:rgb(9,45,94)"><span style="flex:1">{{ searchHintText }}</span><button onClick="{{ searchHintGo }}" style="border:0;background:none;color:rgb(0,63,152);font-weight:700;cursor:pointer">{{ searchHintCta }}</button></div>
+        </sc-if>
+
+        <sc-if value="{{ isPending }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:172px minmax(0,1fr) 92px 112px 150px 150px 96px;gap:1px;background:rgb(230,235,242);margin:0 16px 16px;border-radius:8px 8px 0 0;overflow:hidden">
+            <div style="display:contents">
+              <div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Trip ID</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Route Details</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Placement Time</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Expected Earnings</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Vehicle</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Primary Driver</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Action</div>
+            </div>
+            <sc-for list="{{ pendingRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:contents">
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:8px;align-content:start"><span style="white-space:nowrap">{{ r.id }} <span style="color:rgb(195,201,212)">|</span> {{ r.type }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Required Vehicle: {{ r.size }}</span><span data-hl="assignby" style="justify-self:start;padding:2px 8px;border-radius:4px;font-size:12px;line-height:16px;background:{{ r.assignBg }};color:{{ r.assignColor }}">{{ r.assignBy }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:4px;align-content:start"><span style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px">{{ r.from }}<sc-if value="{{ r.hasNodes }}" hint-placeholder-val="{{ false }}"><span style="color:rgb(142,150,163)">–</span><span style="padding:0 6px;border-radius:4px;background:rgb(242,245,250);font-size:11px;white-space:nowrap">{{ r.nodes }} Nodes</span></sc-if><span>→</span>{{ r.to }} <span style="color:rgb(90,94,102);font-size:12px;line-height:16px">| {{ r.haul }}</span></span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.wayIcon }} {{ r.way }} · {{ r.km }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;align-content:start"><span style="white-space:nowrap">{{ r.pDate }},</span><span style="white-space:nowrap">{{ r.pTime }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:2px;align-content:start"><span style="color:rgb(0,63,152);font-weight:600;text-decoration:underline;text-underline-offset:2px">{{ r.earning }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.rfq }}</span></div>
+                <div data-picker="1" style="position:relative;z-index:{{ r.zv }};padding:12px;background:#fff;min-height:92px">
+                  <button data-hl="vpick" onClick="{{ r.toggleV }}" style="width:130px;height:28px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 12px 4px 16px;border:0;box-shadow:inset 0 0 0 .5px rgb(0,63,152),0 0 0 .5px rgb(0,63,152);border-radius:4px;background:#fff;font-size:13px;color:{{ r.vColor }};font-weight:{{ r.vWeight }};cursor:pointer;white-space:nowrap">{{ r.vLabel }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></button>
+                  <sc-if value="{{ r.vOpen }}" hint-placeholder-val="{{ false }}">
+                    <div data-hl="menu" style="position:absolute;top:50px;left:12px;width:260px;padding:10px;border-radius:8px;background:#fff;box-shadow:0 0 4px rgba(0,0,0,.2),0 1px 4px rgba(0,0,0,.12);animation:vtFade .15s ease">
+                      <label style="display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid rgb(195,201,212);border-radius:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(90,94,102)" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input value="{{ pickerQuery }}" onChange="{{ onPickerQuery }}" placeholder="Search by vehicle number" style="flex:1;min-width:0;border:0;outline:0"></label>
+                      <div style="margin-top:6px;max-height:240px;overflow:auto">
+                        <sc-for list="{{ r.vOptions }}" as="o" hint-placeholder-count="4">
+                          <button onClick="{{ o.onClick }}" style="width:100%;display:flex;align-items:flex-start;gap:10px;padding:8px;border:0;border-radius:4px;background:{{ o.bg }};cursor:{{ o.cursor }};text-align:left;color:{{ o.color }}"><span style="margin-top:2px;width:16px;height:16px;border-radius:50%;border:{{ o.ring }};flex:none"></span><span style="display:grid"><span>{{ o.label }}</span><span style="font-size:11px;line-height:16px;color:rgb(142,150,163)">{{ o.sub }}</span></span></button>
+                        </sc-for>
+                        <sc-if value="{{ r.vNone }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 8px;text-align:center;color:rgb(90,94,102)">No vehicle matches “{{ pickerQuery }}”</div></sc-if>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+                <div data-picker="1" style="position:relative;z-index:{{ r.zd }};padding:12px;background:#fff;min-height:92px">
+                  <button data-hl="dpick" onClick="{{ r.toggleD }}" style="width:130px;height:28px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 12px 4px 16px;border:0;box-shadow:inset 0 0 0 .5px rgb(0,63,152),0 0 0 .5px rgb(0,63,152);border-radius:4px;background:#fff;font-size:13px;color:{{ r.dColor }};font-weight:{{ r.dWeight }};cursor:pointer;white-space:nowrap">{{ r.dLabel }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></button>
+                  <sc-if value="{{ r.dOpen }}" hint-placeholder-val="{{ false }}">
+                    <div data-hl="menu" style="position:absolute;top:50px;left:12px;width:260px;padding:10px;border-radius:8px;background:#fff;box-shadow:0 0 4px rgba(0,0,0,.2),0 1px 4px rgba(0,0,0,.12);animation:vtFade .15s ease">
+                      <label style="display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid rgb(195,201,212);border-radius:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(90,94,102)" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input value="{{ pickerQuery }}" onChange="{{ onPickerQuery }}" placeholder="Search by driver name" style="flex:1;min-width:0;border:0;outline:0"></label>
+                      <div style="margin-top:6px;max-height:240px;overflow:auto">
+                        <sc-for list="{{ r.dOptions }}" as="o" hint-placeholder-count="4">
+                          <button onClick="{{ o.onClick }}" style="width:100%;display:flex;align-items:flex-start;gap:10px;padding:8px;border:0;border-radius:4px;background:{{ o.bg }};cursor:{{ o.cursor }};text-align:left;color:{{ o.color }}"><span style="margin-top:2px;width:16px;height:16px;border-radius:50%;border:{{ o.ring }};flex:none"></span><span style="display:grid"><span>{{ o.label }}</span><span style="font-size:11px;line-height:16px;color:rgb(142,150,163)">{{ o.sub }}</span></span></button>
+                        </sc-for>
+                        <sc-if value="{{ r.dNone }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 8px;text-align:center;color:rgb(90,94,102)">No driver matches “{{ pickerQuery }}”</div></sc-if>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:8px;justify-items:center;align-content:center;gap:6px">
+                  <button data-hl="accept" onClick="{{ r.accept }}" title="{{ r.acceptTip }}" style="width:66px;height:28px;padding:4px 12px;border:0;border-radius:4px;font-size:13px;background:{{ r.acceptBg }};color:#fff;font-weight:700;cursor:{{ r.acceptCursor }}">Accept</button>
+                  <button data-hl="rejectbtn" onClick="{{ r.reject }}" style="border:0;background:none;color:rgb(79,79,79);font-weight:600;cursor:pointer">Reject</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ pendingEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:48px;text-align:center;color:rgb(90,94,102)">No trips waiting for assignment.</div></sc-if>
+        </sc-if>
+
+        <sc-if value="{{ isUpcoming }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:172px minmax(0,1fr) 92px 112px 150px 150px 96px;gap:1px;background:rgb(230,235,242);margin:0 16px 16px;border-radius:8px 8px 0 0;overflow:hidden">
+            <div style="display:contents">
+              <div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Trip ID</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Route Details</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Placement Time</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Expected Earnings</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Vehicle</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Primary Driver</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Action</div>
+            </div>
+            <sc-for list="{{ upcomingRows }}" as="r" hint-placeholder-count="3">
+              <div style="display:contents">
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:8px;align-content:start"><span style="white-space:nowrap">{{ r.id }} <span style="color:rgb(195,201,212)">|</span> {{ r.type }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Required Vehicle: {{ r.size }}</span><span style="justify-self:start;padding:2px 8px;border-radius:4px;font-size:12px;line-height:16px;background:rgb(242,245,250);color:rgb(90,94,102)">{{ r.assigned }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:4px;align-content:start"><span style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px">{{ r.from }}<sc-if value="{{ r.hasNodes }}" hint-placeholder-val="{{ false }}"><span style="color:rgb(142,150,163)">–</span><span style="padding:0 6px;border-radius:4px;background:rgb(242,245,250);font-size:11px;white-space:nowrap">{{ r.nodes }} Nodes</span></sc-if><span>→</span>{{ r.to }} <span style="color:rgb(90,94,102);font-size:12px;line-height:16px">| {{ r.haul }}</span></span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.wayIcon }} {{ r.way }} · {{ r.km }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;align-content:start"><span style="white-space:nowrap">{{ r.pDate }},</span><span style="white-space:nowrap">{{ r.pTime }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:2px;align-content:start"><span style="color:rgb(0,63,152);font-weight:600;text-decoration:underline;text-underline-offset:2px">{{ r.earning }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.rfq }}</span></div>
+                <div data-picker="1" style="position:relative;z-index:{{ r.zv }};padding:12px;background:#fff;min-height:92px">
+                  <button onClick="{{ r.toggleV }}" style="width:130px;height:28px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 12px 4px 16px;border:1px solid {{ r.vBorder }};border-radius:4px;background:{{ r.vBg }};color:rgb(0,63,152);font-weight:600;cursor:pointer;white-space:nowrap">{{ r.vLabel }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></button>
+                  <sc-if value="{{ r.vOpen }}" hint-placeholder-val="{{ false }}">
+                    <div data-hl="menu" style="position:absolute;top:50px;left:12px;width:260px;padding:10px;border-radius:8px;background:#fff;box-shadow:0 0 4px rgba(0,0,0,.2),0 1px 4px rgba(0,0,0,.12);animation:vtFade .15s ease">
+                      <label style="display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid rgb(195,201,212);border-radius:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(90,94,102)" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input value="{{ pickerQuery }}" onChange="{{ onPickerQuery }}" placeholder="Search by vehicle number" style="flex:1;min-width:0;border:0;outline:0"></label>
+                      <div style="margin-top:6px;max-height:240px;overflow:auto">
+                        <sc-for list="{{ r.vOptions }}" as="o" hint-placeholder-count="4">
+                          <button onClick="{{ o.onClick }}" style="width:100%;display:flex;align-items:flex-start;gap:10px;padding:8px;border:0;border-radius:4px;background:{{ o.bg }};cursor:{{ o.cursor }};text-align:left;color:{{ o.color }}"><span style="margin-top:2px;width:16px;height:16px;border-radius:50%;border:{{ o.ring }};flex:none"></span><span style="display:grid"><span>{{ o.label }}</span><span style="font-size:11px;line-height:16px;color:rgb(142,150,163)">{{ o.sub }}</span></span></button>
+                        </sc-for>
+                        <sc-if value="{{ r.vNone }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 8px;text-align:center;color:rgb(90,94,102)">No vehicle matches “{{ pickerQuery }}”</div></sc-if>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+                <div data-picker="1" style="position:relative;z-index:{{ r.zd }};padding:12px;background:#fff;min-height:92px">
+                  <button data-hl="upick" onClick="{{ r.toggleD }}" style="width:130px;height:28px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 12px 4px 16px;border:1px solid {{ r.dBorder }};border-radius:4px;background:{{ r.dBg }};color:rgb(0,63,152);font-weight:600;cursor:pointer;white-space:nowrap">{{ r.dLabel }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></button>
+                  <sc-if value="{{ r.dOpen }}" hint-placeholder-val="{{ false }}">
+                    <div data-hl="menu" style="position:absolute;top:50px;left:12px;width:260px;padding:10px;border-radius:8px;background:#fff;box-shadow:0 0 4px rgba(0,0,0,.2),0 1px 4px rgba(0,0,0,.12);animation:vtFade .15s ease">
+                      <label style="display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid rgb(195,201,212);border-radius:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(90,94,102)" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input value="{{ pickerQuery }}" onChange="{{ onPickerQuery }}" placeholder="Search by driver name" style="flex:1;min-width:0;border:0;outline:0"></label>
+                      <div style="margin-top:6px;max-height:240px;overflow:auto">
+                        <sc-for list="{{ r.dOptions }}" as="o" hint-placeholder-count="4">
+                          <button onClick="{{ o.onClick }}" style="width:100%;display:flex;align-items:flex-start;gap:10px;padding:8px;border:0;border-radius:4px;background:{{ o.bg }};cursor:{{ o.cursor }};text-align:left;color:{{ o.color }}"><span style="margin-top:2px;width:16px;height:16px;border-radius:50%;border:{{ o.ring }};flex:none"></span><span style="display:grid"><span>{{ o.label }}</span><span style="font-size:11px;line-height:16px;color:rgb(142,150,163)">{{ o.sub }}</span></span></button>
+                        </sc-for>
+                        <sc-if value="{{ r.dNone }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 8px;text-align:center;color:rgb(90,94,102)">No driver matches “{{ pickerQuery }}”</div></sc-if>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:8px;justify-items:center;align-content:center;gap:6px">
+                  <button data-hl="update" onClick="{{ r.update }}" style="width:66px;height:28px;padding:4px 12px;border:0;border-radius:4px;font-size:13px;background:{{ r.updateBg }};color:#fff;font-weight:700;cursor:{{ r.updateCursor }}">Update</button>
+                  <button onClick="{{ r.cancel }}" style="border:0;background:none;color:rgb(79,79,79);font-weight:600;cursor:pointer">Cancel Trip</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ upcomingEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:48px;text-align:center;color:rgb(90,94,102)">No upcoming trips. Accepted trips show up here.</div></sc-if>
+        </sc-if>
+
+        <sc-if value="{{ isTransit }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:172px minmax(0,1fr) 100px 160px 124px 118px 136px;gap:1px;background:rgb(230,235,242);margin:0 16px 16px;border-radius:8px 8px 0 0;overflow:hidden">
+            <div style="display:contents">
+              <div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Trip ID</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Route Details</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Departure Time</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Live Updates</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Expected Earnings</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Vehicle</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Primary Driver</div>
+            </div>
+            <sc-for list="{{ transitRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:contents">
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:8px;align-content:start"><span style="white-space:nowrap">{{ r.id }} <span style="color:rgb(195,201,212)">|</span> {{ r.type }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Vehicle Size: {{ r.size }}</span><span data-hl="ttag" style="justify-self:start;padding:2px 8px;border-radius:4px;font-size:12px;line-height:16px;background:{{ r.tagBg }};color:{{ r.tagColor }}">{{ r.tag }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:4px;align-content:start"><span style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px">{{ r.from }}<sc-if value="{{ r.hasNodes }}" hint-placeholder-val="{{ false }}"><span style="color:rgb(142,150,163)">–</span><span style="padding:0 6px;border-radius:4px;background:rgb(242,245,250);font-size:11px;white-space:nowrap">{{ r.nodes }} Nodes</span></sc-if><span>→</span>{{ r.to }} <span style="color:rgb(90,94,102);font-size:12px;line-height:16px">| {{ r.haul }}</span></span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.wayIcon }} {{ r.way }} · {{ r.km }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;align-content:start"><span style="white-space:nowrap">{{ r.dDate }},</span><span style="white-space:nowrap">{{ r.dTime }}</span></div>
+                <div data-hl="live" style="padding:12px;background:#fff;min-height:92px;display:grid;align-content:start"><span>{{ r.live1 }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.live2 }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:2px;align-content:start"><span style="color:rgb(0,63,152);font-weight:600;text-decoration:underline;text-underline-offset:2px">{{ r.earning }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.rfq }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px">{{ r.vehicle }}</div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid"><span>{{ r.driver }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.phone }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ transitEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:48px;text-align:center;color:rgb(90,94,102)">No trucks on the road right now.</div></sc-if>
+        </sc-if>
+
+        <sc-if value="{{ isCompleted }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:172px minmax(0,1fr) 88px 88px 160px 170px 132px;gap:1px;background:rgb(230,235,242);margin:0 16px 16px;border-radius:8px 8px 0 0;overflow:hidden">
+            <div style="display:contents">
+              <div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Trip Info</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Route Details</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Placement Time</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Completed Time</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Total Earnings</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Trip Status</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;justify-content:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Action</div>
+            </div>
+            <sc-for list="{{ completedRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:contents">
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:8px;align-content:start"><span style="white-space:nowrap">{{ r.id }} <span style="color:rgb(195,201,212)">|</span> {{ r.type }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.vehicle }} | {{ r.size }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:4px;align-content:start"><span style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px">{{ r.from }}<sc-if value="{{ r.hasNodes }}" hint-placeholder-val="{{ false }}"><span style="color:rgb(142,150,163)">–</span><span style="padding:0 6px;border-radius:4px;background:rgb(242,245,250);font-size:11px;white-space:nowrap">{{ r.nodes }} Nodes</span></sc-if><span>→</span>{{ r.to }} <span style="color:rgb(90,94,102);font-size:12px;line-height:16px">| {{ r.haul }}</span></span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.wayIcon }} {{ r.way }} · {{ r.km }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;align-content:start"><span style="white-space:nowrap">{{ r.pDate }},</span><span style="white-space:nowrap">{{ r.pTime }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;align-content:start"><span style="white-space:nowrap">{{ r.cDate }},</span><span style="white-space:nowrap">{{ r.cTime }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:2px;align-content:start"><sc-if value="{{ r.billed }}" hint-placeholder-val="{{ true }}"><span style="color:rgb(0,63,152);font-weight:600;text-decoration:underline;text-underline-offset:2px">{{ r.earning }}</span></sc-if><span style="color:rgb(90,94,102);font-size:12px;line-height:16px;white-space:nowrap">{{ r.earnSub }}</span></div>
+                <div data-hl="cstatus" style="padding:12px;background:#fff;min-height:92px;display:grid;gap:2px;align-content:start"><span style="color:{{ r.statusColor }};font-weight:{{ r.statusWeight }}">{{ r.status }}</span><span style="color:{{ r.subColor }}">{{ r.statusSub }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:8px;justify-items:center;align-content:center;gap:6px">
+                  <sc-if value="{{ r.canConfirm }}" hint-placeholder-val="{{ false }}"><button data-hl="cconfirm" onClick="{{ r.confirm }}" style="height:28px;padding:4px 12px;border:0;border-radius:4px;background:rgb(0,63,152);color:#fff;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap">Confirm Details</button></sc-if>
+                  <sc-if value="{{ r.isConfirmed }}" hint-placeholder-val="{{ false }}"><span style="height:28px;padding:4px 16px;border:1px solid rgb(195,201,212);border-radius:4px;color:rgb(142,150,163);display:grid;place-items:center">Confirmed</span></sc-if>
+                  <sc-if value="{{ r.canDispute }}" hint-placeholder-val="{{ false }}"><button data-hl="cdispute" onClick="{{ r.dispute }}" style="border:0;background:none;color:rgb(0,63,152);font-weight:700;cursor:pointer">Raise Dispute</button></sc-if>
+                  <sc-if value="{{ r.hasDispute }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.viewDispute }}" style="border:0;background:none;color:rgb(0,63,152);font-weight:700;cursor:pointer">View Dispute</button></sc-if>
+                  <sc-if value="{{ r.isNA }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.moreInfo }}" style="border:0;background:none;color:rgb(0,63,152);font-weight:700;cursor:pointer">More info</button></sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ completedEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:48px;text-align:center;color:rgb(90,94,102)">No trips in this view.</div></sc-if>
+        </sc-if>
+
+        <sc-if value="{{ isCancelled }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:184px minmax(200px,1fr) 110px 120px minmax(260px,1.2fr);gap:1px;background:rgb(230,235,242);margin:0 16px 16px;border-radius:8px 8px 0 0;overflow:hidden">
+            <div style="display:contents">
+              <div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Trip ID</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Route Details</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Placement Time</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Missed Earning</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Remark</div>
+            </div>
+            <sc-for list="{{ cancelledRows }}" as="r" hint-placeholder-count="3">
+              <div style="display:contents">
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:8px;align-content:start"><span style="white-space:nowrap">{{ r.id }} <span style="color:rgb(195,201,212)">|</span> {{ r.type }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Required Vehicle: {{ r.size }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:4px;align-content:start"><span style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px">{{ r.from }}<sc-if value="{{ r.hasNodes }}" hint-placeholder-val="{{ false }}"><span style="color:rgb(142,150,163)">–</span><span style="padding:0 6px;border-radius:4px;background:rgb(242,245,250);font-size:11px;white-space:nowrap">{{ r.nodes }} Nodes</span></sc-if><span>→</span>{{ r.to }} <span style="color:rgb(90,94,102);font-size:12px;line-height:16px">| {{ r.haul }}</span></span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.wayIcon }} {{ r.way }} · {{ r.km }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;align-content:start"><span style="white-space:nowrap">{{ r.pDate }},</span><span style="white-space:nowrap">{{ r.pTime }}</span></div>
+                <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:2px;align-content:start"><span style="font-weight:600">{{ r.earning }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.rfq }}</span></div>
+                <div data-hl="remark" style="padding:12px;background:#fff;min-height:92px;display:grid;gap:2px;align-content:start"><span style="font-weight:600">{{ r.reason }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ r.by }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ cancelledEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:48px;text-align:center;color:rgb(90,94,102)">No cancelled trips.</div></sc-if>
+        </sc-if>
+      </section>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isDisputes }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:16px 24px 40px;display:grid;gap:16px">
+      <section style="background:#fff;border-radius:8px;padding:20px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+          <div><div style="font-size:17px;line-height:24px;font-weight:700">Your disputes</div><div style="color:rgb(90,94,102)">Every disagreement on a trip, with a status you can track instead of a phone call.</div></div>
+          <button onClick="{{ openMissing }}" style="height:36px;padding:0 16px;border:1px solid rgb(0,63,152);border-radius:4px;background:#fff;color:rgb(0,63,152);font-weight:700;cursor:pointer">Report Missing Trip</button>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+          <sc-for list="{{ dStats }}" as="s" hint-placeholder-count="4">
+            <div style="padding:12px 16px;border:1px solid rgb(230,235,242);border-radius:8px"><div style="color:rgb(90,94,102)">{{ s.label }}</div><div style="font-size:17px;line-height:24px;font-weight:700">{{ s.value }}</div></div>
+          </sc-for>
+        </div>
+      </section>
+      <section style="background:#fff;border-radius:8px;overflow:hidden">
+        <div data-hl="dtable" style="display:grid;grid-template-columns:110px 160px minmax(220px,1.5fr) 110px 120px minmax(200px,1.2fr) 110px">
+          <div style="display:contents">
+            <div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Dispute ID</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Trip ID</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Category</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Raised On</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Trip Amount</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Status</div><div style="padding:8px 12px;min-height:48px;display:flex;align-items:center;background:rgb(230,235,242);font-size:12px;line-height:16px;font-weight:600">Action</div>
+          </div>
+          <sc-for list="{{ disputeRows }}" as="d" hint-placeholder-count="3">
+            <div style="display:contents">
+              <div style="padding:12px;background:#fff;min-height:92px;font-weight:600">{{ d.id }}</div>
+              <div style="padding:12px;background:#fff;min-height:92px">{{ d.trip }}</div>
+              <div style="padding:12px;background:#fff;min-height:92px;display:grid"><span>{{ d.cat }}</span><span style="font-family:'Noto Sans Devanagari',sans-serif;color:rgb(90,94,102);font-size:12px">{{ d.catHi }}</span></div>
+              <div style="padding:12px;background:#fff;min-height:92px">{{ d.raised }}</div>
+              <div style="padding:12px;background:#fff;min-height:92px">{{ d.amount }}</div>
+              <div style="padding:12px;background:#fff;min-height:92px;display:grid;gap:4px;align-content:start"><span style="justify-self:start;padding:2px 8px;border-radius:4px;font-size:12px;line-height:16px;background:{{ d.bg }};color:{{ d.color }};font-weight:600">{{ d.status }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ d.note }}</span></div>
+              <div style="padding:12px;background:#fff;min-height:92px"><sc-if value="{{ d.canReopen }}" hint-placeholder-val="{{ false }}"><button onClick="{{ d.reopen }}" style="border:0;background:none;color:rgb(0,63,152);font-weight:700;cursor:pointer;padding:0">Reopen</button></sc-if><sc-if value="{{ d.canView }}" hint-placeholder-val="{{ false }}"><button onClick="{{ d.view }}" style="border:0;background:none;color:rgb(0,63,152);font-weight:700;cursor:pointer;padding:0">View trip</button></sc-if></div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+    </sc-if>
+  </main>
+
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeModal }}" style="position:fixed;inset:0;z-index:50;background:rgba(23,23,23,.5);animation:vtFade .15s ease"></div>
+    <div data-hl="modal" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:51;width:{{ modalWidth }};max-height:88vh;overflow:auto;border-radius:12px;background:#fff;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:vtModal .2s ease">
+      <sc-if value="{{ hasModalHeader }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgb(230,235,242)"><span style="font-size:15px;font-weight:600">{{ modalTitle }}</span><button onClick="{{ closeModal }}" style="border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:rgb(39,40,41)">×</button></div>
+      </sc-if>
+
+      <sc-if value="{{ mReject }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:16px 20px;display:grid;gap:16px">
+          <div style="display:grid;gap:2px"><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ mTrip.id }} · {{ mTrip.route }}</span><span>{{ rejectQuestion }} This can't be undone and may result in:</span></div>
+          <div data-hl="costs" style="display:grid;border:1px solid rgb(255,214,214);border-radius:8px;background:rgb(255,246,246)">
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 14px"><span>Trip cancellation fee</span><span style="font-weight:700">{{ mFee }} from next payout</span></div>
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-top:1px solid rgb(255,214,214)"><span>Performance rating</span><span style="font-weight:700">Fewer trips offered</span></div>
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-top:1px solid rgb(255,214,214)"><span>Scheduled earnings</span><span style="font-weight:700">{{ mTrip.earning }} lost</span></div>
+          </div>
+          <div data-picker="1" style="position:relative">
+            <div style="font-size:12px;color:rgb(90,94,102);margin-bottom:4px">Reason for {{ rejectVerb }}</div>
+            <button data-hl="reasonbtn" onClick="{{ toggleReason }}" style="width:100%;height:40px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border:1px solid {{ reasonBorder }};border-radius:4px;background:#fff;cursor:pointer;color:{{ reasonColor }}">{{ reasonLabel }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></button>
+            <sc-if value="{{ reasonOpen }}" hint-placeholder-val="{{ false }}">
+              <div data-hl="reasons" style="position:absolute;bottom:44px;left:0;right:0;z-index:5;padding:6px;border-radius:8px;background:#fff;box-shadow:0 0 4px rgba(0,0,0,.2),0 1px 4px rgba(0,0,0,.12)">
+                <sc-for list="{{ reasonOptions }}" as="o" hint-placeholder-count="5">
+                  <button onClick="{{ o.onClick }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:8px;border:0;border-radius:4px;background:{{ o.bg }};cursor:pointer;text-align:left"><span style="width:16px;height:16px;border-radius:50%;border:{{ o.ring }};flex:none"></span><span style="display:grid"><span>{{ o.label }}</span><span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:12px;color:rgb(90,94,102)">{{ o.hi }}</span></span></button>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ reasonIsOther }}" hint-placeholder-val="{{ false }}">
+            <textarea value="{{ reasonText }}" onChange="{{ onReasonText }}" placeholder="Tell us what happened (min 10 characters)" style="height:80px;padding:10px 12px;border:1px solid rgb(195,201,212);border-radius:4px;resize:none;outline:0"></textarea>
+          </sc-if>
+          <div style="display:flex;justify-content:flex-end;gap:12px">
+            <button onClick="{{ closeModal }}" style="height:40px;padding:0 20px;white-space:nowrap;border:1px solid rgb(39,40,41);border-radius:4px;background:#fff;font-weight:700;font-size:15px;cursor:pointer">Keep Trip</button>
+            <button onClick="{{ submitReject }}" style="height:40px;padding:0 20px;white-space:nowrap;border:0;border-radius:4px;background:{{ rejectBtnBg }};color:#fff;font-weight:700;font-size:15px;cursor:{{ rejectBtnCursor }}">{{ rejectCta }}</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mConfirm }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:16px 20px;display:grid;gap:14px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;padding:14px;border-radius:8px;background:rgb(242,245,250)">
+            <div style="display:grid"><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Trip</span><span style="font-weight:600">{{ mTrip.id }} | {{ mTrip.type }}</span></div>
+            <div style="display:grid"><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Route</span><span style="font-weight:600">{{ mTrip.route }}</span></div>
+            <div style="display:grid"><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Vehicle</span><span style="font-weight:600">{{ mTrip.vehicle }} | {{ mTrip.size }}</span></div>
+            <div style="display:grid"><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Driver</span><span style="font-weight:600">{{ mTrip.driver }}</span></div>
+            <div style="display:grid"><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Placement · STA / ATA</span><span style="font-weight:600">{{ mTrip.sta }} / {{ mTrip.ata }}</span></div>
+            <div style="display:grid"><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Departure · STD / ATD</span><span style="font-weight:600">{{ mTrip.std }} / {{ mTrip.atd }}</span></div>
+          </div>
+          <div data-hl="breakdown" style="display:grid;border:1px solid rgb(230,235,242);border-radius:8px">
+            <div style="display:flex;justify-content:space-between;padding:10px 14px"><span>{{ mTrip.baseLabel }}</span><span>{{ mTrip.base }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 14px;border-top:1px solid rgb(230,235,242)"><span>Late placement penalty</span><span style="color:{{ mTrip.penColor }}">{{ mTrip.penalty }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 14px;border-top:1px solid rgb(230,235,242);font-weight:700;font-size:15px"><span>You will be paid</span><span>{{ mTrip.earning }}</span></div>
+          </div>
+          <div style="color:rgb(90,94,102)">Confirming starts your payout on these details. You won't be able to raise a dispute on this trip afterwards.</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <button onClick="{{ fromConfirmToDispute }}" style="border:0;background:none;color:rgb(0,63,152);font-weight:700;cursor:pointer;padding:0">Something's wrong? Raise Dispute</button>
+            <div style="display:flex;gap:12px"><button onClick="{{ closeModal }}" style="height:40px;padding:0 20px;white-space:nowrap;border:1px solid rgb(39,40,41);border-radius:4px;background:#fff;font-weight:700;font-size:15px;cursor:pointer">Cancel</button><button onClick="{{ submitConfirm }}" style="height:40px;padding:0 20px;white-space:nowrap;border:0;border-radius:4px;background:rgb(0,63,152);color:#fff;font-weight:700;font-size:15px;cursor:pointer">Confirm</button></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mConfirmDispute }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:28px 28px 22px;display:grid;gap:12px;justify-items:center;text-align:center">
+          <svg width="44" height="40" viewBox="0 0 24 22"><path d="M12 1L23 21H1z" fill="rgb(244,66,64)"></path><path d="M12 8v6M12 17v.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"></path></svg>
+          <div style="font-size:17px;line-height:24px;font-weight:700">You have an active dispute on this trip</div>
+          <div style="color:rgb(90,94,102)">{{ mTrip.id }} · {{ mDispute.cat }} ({{ mDispute.id }}, {{ mDispute.status }})</div>
+          <div data-hl="losses" style="display:grid;gap:6px;text-align:left;width:100%;padding:12px 14px;border-radius:8px;background:rgb(255,246,246)">
+            <span>✕ Your dispute will be dismissed immediately.</span><span>✕ You can't raise a dispute on this trip again.</span><span>✕ You'll be paid {{ mTrip.earning }}, as per the current trip details.</span>
+          </div>
+          <div style="font-weight:600">Are you sure you want to proceed?</div>
+          <div data-hl="cdbtns" style="display:flex;gap:12px;margin-top:4px"><button onClick="{{ closeModal }}" style="height:40px;padding:0 24px;white-space:nowrap;border:1px solid rgb(39,40,41);border-radius:4px;background:#fff;font-weight:700;font-size:15px;cursor:pointer">Close</button><button onClick="{{ submitConfirmDismiss }}" style="height:40px;padding:0 20px;white-space:nowrap;border:0;border-radius:4px;background:rgb(42,103,255);color:#fff;font-weight:700;font-size:15px;cursor:pointer">Confirm &amp; Dismiss</button></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mDisputeForm }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:12px 20px;display:grid;gap:10px">
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:8px 14px;border-radius:8px;background:rgb(242,245,250)"><span><b>{{ mTrip.id }}</b> · {{ mTrip.route }}</span><span>{{ mTrip.earning }}</span></div>
+          <div style="display:grid;gap:2px"><span style="font-weight:600">What is wrong with this trip?</span><span style="font-family:'Noto Sans Devanagari',sans-serif;color:rgb(90,94,102)">इस ट्रिप में क्या गलत है? (एक से ज़्यादा चुन सकते हैं)</span></div>
+          <div data-hl="cats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <sc-for list="{{ catOptions }}" as="c" hint-placeholder-count="7">
+              <button onClick="{{ c.onClick }}" style="display:flex;align-items:flex-start;gap:10px;padding:6px 12px;border:1px solid {{ c.border }};border-radius:8px;background:{{ c.bg }};cursor:pointer;text-align:left"><span style="margin-top:2px;width:16px;height:16px;border-radius:3px;border:{{ c.box }};background:{{ c.boxBg }};flex:none;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800">{{ c.tick }}</span><span style="display:grid"><span style="font-weight:600">{{ c.en }}</span><span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:12px;color:rgb(90,94,102)">{{ c.hi }}</span></span></button>
+            </sc-for>
+          </div>
+          <div style="display:grid;gap:4px"><span style="font-size:12px;color:rgb(90,94,102)">Describe the issue</span><textarea value="{{ dText }}" onChange="{{ onDText }}" placeholder="e.g. Rate on contract is ₹28/km, trip was paid at ₹25/km" style="height:56px;padding:10px 12px;border:1px solid rgb(195,201,212);border-radius:4px;resize:none;outline:0"></textarea><span style="font-size:12px;color:rgb(142,150,163)">{{ dHint }}</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <span style="color:rgb(90,94,102);font-size:12px;line-height:16px">Dispute window open till {{ mTrip.window }}</span>
+            <div style="display:flex;gap:12px"><button onClick="{{ closeModal }}" style="height:40px;padding:0 20px;white-space:nowrap;border:1px solid rgb(39,40,41);border-radius:4px;background:#fff;font-weight:700;font-size:15px;cursor:pointer">Cancel</button><button data-hl="dsubmit" onClick="{{ submitDispute }}" style="height:40px;padding:0 20px;white-space:nowrap;border:0;border-radius:4px;background:{{ dBtnBg }};color:#fff;font-weight:700;font-size:15px;cursor:{{ dBtnCursor }}">Submit Dispute</button></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mMissing }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:16px 20px;display:grid;gap:14px">
+          <div style="color:rgb(90,94,102)">Ran a trip that isn't on your panel? Enter the Trip ID from the challan your driver carries.</div>
+          <div style="display:flex;gap:12px">
+            <div style="flex:1;height:96px;border-radius:6px;background:#FFFDF6;border:1px solid rgb(230,230,230);padding:10px;display:grid;gap:5px;align-content:start;transform:rotate(-1.5deg)"><div style="height:4px;width:60%;background:rgb(230,235,242)"></div><div style="height:4px;background:rgb(242,245,250)"></div><div style="justify-self:start;padding:2px 6px;border:2px solid rgb(244,66,64);border-radius:3px;font-size:10px;line-height:14px;font-weight:700">TRIP ID: TR-2511-0141</div><div style="height:4px;width:80%;background:rgb(242,245,250)"></div></div>
+            <div style="flex:1;height:96px;border-radius:6px;background:#FFFDF6;border:1px solid rgb(230,230,230);padding:10px;display:grid;gap:5px;align-content:start;transform:rotate(1.5deg)"><div style="height:4px;width:40%;background:rgb(230,235,242)"></div><div style="height:4px;width:70%;background:rgb(242,245,250)"></div><div style="height:4px;background:rgb(242,245,250)"></div><div style="justify-self:start;padding:2px 6px;border:2px solid rgb(244,66,64);border-radius:3px;font-size:10px;line-height:14px;font-weight:700">TRIP ID: TR-2511-0137</div></div>
+          </div>
+          <div style="display:grid;gap:4px"><span style="font-size:12px;color:rgb(90,94,102)">Trip ID</span><input value="{{ mId }}" onChange="{{ onMId }}" placeholder="TR-2511-0000" style="height:40px;padding:0 12px;border:1px solid rgb(195,201,212);border-radius:4px;outline:0;text-transform:uppercase"></div>
+          <sc-if value="{{ mExists }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;background:rgb(234,240,255);color:rgb(9,45,94)"><span style="flex:1">This trip is already on your panel, in <b>{{ mExistsTab }}</b>. No need to report it.</span><button onClick="{{ openExisting }}" style="border:0;background:none;color:rgb(0,63,152);font-weight:700;cursor:pointer">Open trip</button></div>
+          </sc-if>
+          <sc-if value="{{ mNew }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <div style="display:grid;gap:4px"><span style="font-size:12px;color:rgb(90,94,102)">From hub</span><input value="{{ mFrom }}" onChange="{{ onMFrom }}" placeholder="BLR" style="height:40px;padding:0 12px;border:1px solid rgb(195,201,212);border-radius:4px;outline:0;text-transform:uppercase"></div>
+              <div style="display:grid;gap:4px"><span style="font-size:12px;color:rgb(90,94,102)">To hub</span><input value="{{ mTo }}" onChange="{{ onMTo }}" placeholder="DLS" style="height:40px;padding:0 12px;border:1px solid rgb(195,201,212);border-radius:4px;outline:0;text-transform:uppercase"></div>
+              <div style="display:grid;gap:4px"><span style="font-size:12px;color:rgb(90,94,102)">Trip date</span><input value="{{ mDate }}" onChange="{{ onMDate }}" placeholder="6 Nov'25" style="height:40px;padding:0 12px;border:1px solid rgb(195,201,212);border-radius:4px;outline:0"></div>
+            </div>
+          </sc-if>
+          <div style="display:flex;justify-content:flex-end;gap:12px"><button onClick="{{ closeModal }}" style="height:40px;padding:0 20px;white-space:nowrap;border:1px solid rgb(39,40,41);border-radius:4px;background:#fff;font-weight:700;font-size:15px;cursor:pointer">Cancel</button><button onClick="{{ submitMissing }}" style="height:40px;padding:0 20px;white-space:nowrap;border:0;border-radius:4px;background:{{ mBtnBg }};color:#fff;font-weight:700;font-size:15px;cursor:{{ mBtnCursor }}">Report Trip</button></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mInfo }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:16px 20px;display:grid;gap:12px">
+          <div>{{ mTrip.id }} is a <b>{{ mTrip.type }}</b> trip. It's paid through your existing billing process, so there's nothing to confirm here.</div>
+          <div style="color:rgb(90,94,102)">Send the signed challan to your Valmo billing contact as usual. Payment follows the regular billing cycle.</div>
+          <div style="display:flex;justify-content:flex-end"><button onClick="{{ closeModal }}" style="height:40px;padding:0 20px;white-space:nowrap;border:0;border-radius:4px;background:rgb(0,63,152);color:#fff;font-weight:700;font-size:15px;cursor:pointer">Ok, Got it</button></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mHiw }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:16px 20px;display:grid;gap:10px">
+          <sc-for list="{{ hiwSteps }}" as="h" hint-placeholder-count="5">
+            <div style="display:flex;gap:12px;padding:10px 12px;border:1px solid rgb(230,235,242);border-radius:8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:rgb(0,63,152);color:#fff;font-weight:700;display:grid;place-items:center">{{ h.n }}</span><span style="display:grid"><span style="font-weight:600">{{ h.t }}</span><span style="color:rgb(90,94,102);font-size:12px;line-height:16px">{{ h.d }}</span></span></div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mSuccess }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:32px 28px 24px;display:grid;gap:10px;justify-items:center;text-align:center">
+          <div style="width:56px;height:56px;border-radius:50%;background:rgb(30,158,90);display:grid;place-items:center"><svg width="28" height="28" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="font-size:17px;line-height:24px;font-weight:700">{{ successTitle }}</div>
+          <div style="color:rgb(90,94,102);max-width:340px">{{ successBody }}</div>
+          <div style="display:flex;gap:12px;margin-top:8px"><button onClick="{{ closeModal }}" style="height:40px;padding:0 20px;white-space:nowrap;border:1px solid rgb(39,40,41);border-radius:4px;background:#fff;font-weight:700;font-size:15px;cursor:pointer">Close</button><button onClick="{{ successGo }}" style="height:40px;padding:0 20px;white-space:nowrap;border:0;border-radius:4px;background:rgb(0,63,152);color:#fff;font-weight:700;font-size:15px;cursor:pointer">{{ successCta }}</button></div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div data-hl="toast" style="position:fixed;left:calc(50% + 112px);bottom:28px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;background:rgb(27,44,55);color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.25);animation:vtIn .2s ease;white-space:nowrap"><span style="width:18px;height:18px;border-radius:50%;background:rgb(30,158,90);display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="3.5" fill="none"></path></svg></span>{{ toast }}<sc-if value="{{ hasToastAction }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toastAction }}" style="margin-left:8px;border:0;background:none;color:rgb(197,215,255);font-weight:700;cursor:pointer">{{ toastActionLabel }}</button></sc-if></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const VEHICLES = [
+  ['DL 01 AB 1230', 32], ['HR 55 AK 4410', 32], ['DL 1L AC 7782', 32], ['KA 01 AH 8812', 32],
+  ['DL 3C AQ 4471', 22], ['UP 16 BT 2290', 24], ['DL 01 AB 1000', 12],
+  ['UP 32 HN 6620', 32], ['HR 26 DK 3307', 32], ['DL 01 AB 1211', 22],
+  ['DL 01 AB 1234', 32], ['HR 38 Z 1102', 32], ['RJ 14 GA 5530', 32], ['MH 04 KX 2291', 32], ['DL 1M BB 9081', 32],
+  ['GJ 05 BV 1170', 32], ['MH 12 RT 8804', 32], ['KA 51 MN 4402', 32]
+];
+const DRIVERS = [
+  ['Ramesh Yadav', '98110 22345'], ['Suresh Kumar', '99580 11872'], ['Rohit Sharma', '98730 44190'], ['Naveen Gupta', '99110 60328'],
+  ['Deepak Rawat', '98999 10457'], ['Sunil Chauhan', '88005 23419'], ['Vikram Joshi', '99104 78812'],
+  ['Imran Khan', '98731 66014'], ['Manoj Singh', '97170 55320'], ['Ajay Verma', '95600 43218'], ['Harish Nair', '90044 31277'], ['Prashant Patel', '90123 45678'],
+  ['Gurpreet Sandhu', '98140 77213'], ['Anil Meena', '94140 38817'], ['Rakesh Pal', '93150 66402']
+];
+const CATS = [
+  ['Wrong trip amount (rate mismatch)', 'ट्रिप रेट गलत है'],
+  ['Wrong billing type', 'बिलिंग गलत है'],
+  ['Wrong vehicle number', 'गाड़ी का नंबर गलत है'],
+  ['Contract ID mismatch / missing', 'कॉन्ट्रैक्ट नंबर गलत है या नहीं दिख रहा'],
+  ['Time related issue', 'समय से जुड़ी दिक्कत'],
+  ['Route changed / additional stops added', 'रास्ता बदला या बीच में और जगह रुकना पड़ा'],
+  ['Other', 'कोई और दिक्कत']
+];
+const REASONS = [
+  ['Vehicle not available', 'गाड़ी उपलब्ध नहीं है'],
+  ['Driver unavailable', 'ड्राइवर उपलब्ध नहीं है'],
+  ['Rate too low for this route', 'इस रूट के लिए रेट कम है'],
+  ['Route conflict with another trip', 'दूसरी ट्रिप से रूट टकरा रहा है'],
+  ['Payment concerns', 'भुगतान को लेकर चिंता'],
+  ['Other', 'कोई और कारण']
+];
+const T = (o) => Object.assign({ nodes: 0, way: 'One way', type: 'Regular', size: 32, rfq: null, vehicle: null, driver: null }, o);
+const rupee = n => '₹' + n.toLocaleString('en-IN');
+function seed() {
+  const trips = [
+    T({ id: 'TR-2511-0412', status: 'pending', from: 'BLR', nodes: 6, to: 'DLS', haul: 'NLH', km: 1200, pDate: "9 Nov'25", pTime: '08:00 AM', earn: 30000, rfq: '001-RFQ-00944', assignBy: 'Assign by: 03:00 AM', tone: 'red' }),
+    T({ id: 'TR-2511-0431', status: 'pending', from: 'SJR', to: 'BYU', haul: 'RLH', km: 200, size: 22, pDate: "9 Nov'25", pTime: '08:00 AM', earn: 10000, rfq: '001-RFQ-00951', assignBy: 'Assign by: 03:00 AM', tone: 'red' }),
+    T({ id: 'TR-2511-0458', status: 'pending', from: 'LKO', to: 'DLS', haul: 'NLH', km: 700, way: 'Two way', pDate: "9 Nov'25", pTime: '10:30 AM', earn: 26000, rfq: '001-RFQ-00963', assignBy: 'Assign by: 05:30 AM', tone: 'orange' }),
+    T({ id: 'TR-2511-0476', status: 'pending', type: 'Adhoc', from: 'SRT', nodes: 2, to: 'MUM', haul: 'RLH', km: 400, pDate: "9 Nov'25", pTime: '06:00 PM', earn: 8800, rate: 22, assignBy: 'Assign by Today', tone: 'grey' }),
+    T({ id: 'TR-2511-0490', status: 'pending', from: 'BLR', to: 'HYD', haul: 'NLH', km: 570, pDate: "10 Nov'25", pTime: '08:00 AM', earn: 18500, rfq: '001-RFQ-00972', assignBy: 'Assign by Tomorrow', tone: 'grey' }),
+    T({ id: 'TR-2511-0388', status: 'upcoming', from: 'BLR', nodes: 4, to: 'DLS', haul: 'NLH', km: 1400, pDate: "9 Nov'25", pTime: '11:00 AM', earn: 35000, rfq: '001-RFQ-00931', vehicle: 'UP 32 HN 6620', driver: 'Deepak Rawat', assigned: 'Assigned Today' }),
+    T({ id: 'TR-2511-0371', status: 'upcoming', from: 'SJR', to: 'BYU', haul: 'RLH', km: 200, size: 22, pDate: "9 Nov'25", pTime: '02:00 PM', earn: 10000, rfq: '001-RFQ-00927', vehicle: 'DL 01 AB 1211', driver: 'Vikram Joshi', assigned: "Assigned on 8 Nov" }),
+    T({ id: 'TR-2511-0364', status: 'upcoming', from: 'LKO', to: 'DLS', haul: 'NLH', km: 700, way: 'Two way', pDate: "9 Nov'25", pTime: '04:00 PM', earn: 26000, rfq: '001-RFQ-00925', vehicle: 'HR 26 DK 3307', driver: 'Sunil Chauhan', assigned: "Assigned on 8 Nov" }),
+    T({ id: 'TR-2511-0352', status: 'transit', from: 'BLR', nodes: 6, to: 'DLS', haul: 'NLH', km: 1200, dDate: "8 Nov'25", dTime: '08:00 AM', earn: 30000, rfq: '001-RFQ-00944', vehicle: 'DL 01 AB 1234', driver: 'Imran Khan', tag: 'On Time', live1: '40 km to DLS', live2: 'New Delhi Hub · 6 min ago' }),
+    T({ id: 'TR-2511-0347', status: 'transit', from: 'SRT', nodes: 2, to: 'MUM', haul: 'RLH', km: 400, dDate: "8 Nov'25", dTime: '06:00 PM', earn: 8800, type: 'Adhoc', rate: 22, vehicle: 'HR 38 Z 1102', driver: 'Manoj Singh', tag: 'No GPS Present', live1: 'Location unavailable', live2: 'Last seen near Vapi · 3 hr ago' }),
+    T({ id: 'TR-2511-0339', status: 'transit', from: 'LKO', to: 'DLS', haul: 'NLH', km: 700, way: 'Two way', dDate: "8 Nov'25", dTime: '02:00 PM', earn: 26000, rfq: '001-RFQ-00925', vehicle: 'RJ 14 GA 5530', driver: 'Ajay Verma', tag: 'Delayed by 1hr', live1: '210 km to DLS', live2: 'Near Agra, NH19 · 4 min ago' }),
+    T({ id: 'TR-2511-0331', status: 'transit', from: 'BLR', to: 'HYD', haul: 'NLH', km: 570, dDate: "8 Nov'25", dTime: '10:00 PM', earn: 18500, rfq: '001-RFQ-00972', vehicle: 'MH 04 KX 2291', driver: 'Harish Nair', tag: 'Delayed by 20min', live1: '95 km to HYD', live2: 'Kurnool bypass · 2 min ago' }),
+    T({ id: 'TR-2511-0326', status: 'transit', from: 'SJR', to: 'BYU', haul: 'RLH', km: 200, size: 32, dDate: "9 Nov'25", dTime: '12:30 AM', earn: 10000, rfq: '001-RFQ-00927', vehicle: 'DL 1M BB 9081', driver: 'Prashant Patel', tag: 'On Time', live1: '62 km to BYU', live2: 'Hosur toll · 1 min ago' }),
+    T({ id: 'TR-2511-0218', status: 'completed', c: 'pending', from: 'BLR', nodes: 6, to: 'DLS', haul: 'NLH', km: 1200, pDate: "2 Nov'25", pTime: '08:00 AM', cDate: "4 Nov'25", cTime: '01:00 AM', earn: 30000, rfq: '001-RFQ-00944', vehicle: 'GJ 05 BV 1170', driver: 'Gurpreet Sandhu', window: '18 Nov', dispute: 'DSP-1043', ata: '08:42 AM', atd: '09:15 AM', penalty: 0 }),
+    T({ id: 'TR-2511-0203', status: 'completed', c: 'confirmed', confirmedOn: '6 Nov', from: 'SRT', nodes: 2, to: 'MUM', haul: 'NLH', km: 400, pDate: "3 Nov'25", pTime: '08:00 AM', cDate: "3 Nov'25", cTime: '08:00 PM', earn: 12000, rfq: '001-RFQ-00939', vehicle: 'MH 12 RT 8804', driver: 'Anil Meena', window: '17 Nov', ata: '07:55 AM', atd: '08:20 AM', penalty: 0 }),
+    T({ id: 'TR-2511-0196', status: 'completed', c: 'pending', type: 'Adhoc', from: 'LKO', to: 'DLS', haul: 'NLH', km: 500, pDate: "4 Nov'25", pTime: '08:00 AM', cDate: "4 Nov'25", cTime: '06:00 PM', earn: 10000, rate: 20, vehicle: 'KA 51 MN 4402', driver: 'Rakesh Pal', window: '18 Nov', ata: '08:05 AM', atd: '08:30 AM', penalty: 0 }),
+    T({ id: 'TR-2511-0188', status: 'completed', c: 'pending', type: 'Adhoc', from: 'SRT', nodes: 2, to: 'MUM', haul: 'RLH', km: 400, pDate: "5 Nov'25", pTime: '08:00 AM', cDate: "5 Nov'25", cTime: '04:00 PM', earn: 8300, rate: 22, vehicle: 'MH 12 RT 8804', driver: 'Anil Meena', window: '19 Nov', ata: '08:50 AM', atd: '09:20 AM', penalty: 500 }),
+    T({ id: 'TR-2511-0177', status: 'completed', c: 'na', type: 'SC-SC', from: 'LKO', to: 'DLS', haul: 'NLH', km: 700, way: 'Two way', pDate: "5 Nov'25", pTime: '08:00 AM', cDate: "6 Nov'25", cTime: '08:00 AM', vehicle: 'DL 01 AB 1234', driver: 'Imran Khan' }),
+    T({ id: 'TR-2511-0169', status: 'completed', c: 'na', type: 'FM Carting', from: 'SJR', to: 'BYU', haul: 'FM', km: 200, pDate: "6 Nov'25", pTime: '08:00 AM', cDate: "6 Nov'25", cTime: '02:00 PM', vehicle: 'DL 1M BB 9081', driver: 'Prashant Patel' }),
+    T({ id: 'TR-2511-0161', status: 'cancelled', from: 'BLR', nodes: 6, to: 'DLS', haul: 'NLH', km: 1200, pDate: "7 Nov'25", pTime: '08:00 AM', earn: 30000, rfq: '001-RFQ-00944', reason: 'Auto cancelled', by: 'No vehicle assigned by placement time' }),
+    T({ id: 'TR-2511-0154', status: 'cancelled', from: 'LKO', to: 'DLS', haul: 'NLH', km: 700, way: 'Two way', pDate: "7 Nov'25", pTime: '10:00 AM', earn: 26000, rfq: '001-RFQ-00925', reason: 'Vehicle not available', by: 'Rejected by you on 6 Nov' }),
+    T({ id: 'TR-2511-0149', status: 'cancelled', from: 'SJR', to: 'BYU', haul: 'RLH', km: 200, pDate: "6 Nov'25", pTime: '02:00 PM', earn: 9500, rfq: '001-RFQ-00927', reason: 'Rate too low for this route', by: 'Rejected by you on 5 Nov · route costs ₹10,400 to run' }),
+    T({ id: 'TR-2511-0142', status: 'cancelled', type: 'Adhoc', from: 'SRT', nodes: 2, to: 'MUM', haul: 'RLH', km: 400, pDate: "5 Nov'25", pTime: '06:00 PM', reason: 'Cancelled at the source', by: 'Cancelled by Valmo hub on 5 Nov' })
+  ];
+  const disputes = [
+    { id: 'DSP-1043', trip: 'TR-2511-0218', cat: 0, raised: "5 Nov'25", amount: 30000, status: 'review' },
+    { id: 'DSP-1031', trip: 'TR-2510-0987', cat: 4, raised: "28 Oct'25", amount: 22000, status: 'rejected', note: 'Can be reopened till 14 Dec' },
+    { id: 'DSP-1019', trip: 'TR-2510-0911', cat: 2, raised: "21 Oct'25", amount: 18500, status: 'resolved', note: '₹2,500 added to your payout' }
+  ];
+  return { trips, disputes, drafts: { 'TR-2511-0490': { vehicle: 'DL 01 AB 1230', driver: 'Ramesh Yadav' } } };
+}
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  state = Object.assign(seed(), { nav: 'trips', tab: 'pending', open: null, pickerQuery: '', modal: null, toast: null, cFilter: 'all', search: '', hindiOpen: false, src: null, srcOpen: false, nextDsp: 1044 });
+  componentDidMount() {
+    this.onDown = e => { if (!e.target.closest('[data-picker]') && (this.state.open || this.state.srcOpen || (this.state.modal && this.state.modal.reasonOpen))) this.setState(s => ({ open: null, srcOpen: false, modal: s.modal ? { ...s.modal, reasonOpen: false } : s.modal })); };
+    document.addEventListener('mousedown', this.onDown);
+    window.__vt = { scene: n => this.scene(n) };
+  }
+  scene(n) {
+    clearTimeout(this.tt);
+    const base = Object.assign(seed(), { nav: 'trips', tab: 'pending', open: null, pickerQuery: '', modal: null, toast: null, cFilter: 'all', search: '', hindiOpen: false, src: null, srcOpen: false, nextDsp: 1044 });
+    const P = 'TR-2511-0412', set = (id, p) => base.trips.map(t => t.id === id ? { ...t, ...p } : t);
+    const dispModal = { type: 'dispute', id: 'TR-2511-0196', cats: [], text: '' };
+    const S = {
+      pending: {},
+      'pending-vehicle': { open: { id: P, f: 'vehicle' } },
+      'pending-assigned': { drafts: { ...base.drafts, [P]: { vehicle: 'KA 01 AH 8812', driver: 'Suresh Kumar' } } },
+      'pending-hindi': { hindiOpen: true },
+      reject: { modal: { type: 'reject', id: P, reason: null, text: '' } },
+      'reject-reasons': { modal: { type: 'reject', id: P, reason: null, text: '', reasonOpen: true } },
+      'reject-done': { trips: set(P, { status: 'cancelled', reason: 'Vehicle not available', by: 'Rejected by you on 9 Nov' }), modal: { type: 'success', title: 'Trip rejected', body: `${P} moved to Cancelled with your reason: “Vehicle not available”.`, cta: 'View Cancelled', go: () => this.setState({ modal: null, tab: 'cancelled' }) } },
+      upcoming: { tab: 'upcoming' },
+      'upcoming-changed': { tab: 'upcoming', drafts: { ...base.drafts, 'TR-2511-0388': { vehicle: 'UP 32 HN 6620', driver: 'Rohit Sharma' } } },
+      transit: { tab: 'transit' }, cancelled: { tab: 'cancelled' },
+      completed: { tab: 'completed' }, 'completed-hindi': { tab: 'completed', hindiOpen: true },
+      confirm: { tab: 'completed', modal: { type: 'confirm', id: 'TR-2511-0196' } },
+      'confirm-dispute': { tab: 'completed', modal: { type: 'confirmDispute', id: 'TR-2511-0218' } },
+      dispute: { tab: 'completed', modal: dispModal },
+      'dispute-filled': { tab: 'completed', modal: { ...dispModal, cats: [0], text: 'Agreed rate is ₹22/km, trip shows ₹20/km' } },
+      'dispute-done': { tab: 'completed', nextDsp: 1045, disputes: [{ id: 'DSP-1044', trip: 'TR-2511-0196', cat: 0, raised: "9 Nov'25", amount: 10000, status: 'review' }, ...base.disputes], modal: { type: 'success', title: 'Dispute raised', body: "DSP-1044 is under review. We'll update the status within 3 working days. You can track it under Disputes.", cta: 'Track dispute', go: () => this.setState({ modal: null, nav: 'disputes' }) } },
+      paid: { tab: 'completed', trips: set('TR-2511-0196', { c: 'confirmed', confirmedOn: '9 Nov' }), modal: { type: 'success', title: 'Trip confirmed', body: 'Payout of ₹10,000 for TR-2511-0196 will be initiated in the next payment cycle.', cta: 'View confirmed trips', go: () => this.setState({ modal: null, cFilter: 'confirmed' }) } },
+      disputes: { nav: 'disputes', disputes: [{ id: 'DSP-1044', trip: 'TR-2511-0196', cat: 0, raised: "9 Nov'25", amount: 10000, status: 'review' }, ...base.disputes] }
+    };
+    this.setState({ ...base, ...(S[n] || {}) });
+  }
+  componentWillUnmount() { document.removeEventListener('mousedown', this.onDown); clearTimeout(this.tt); }
+  toast(text, action, label) { clearTimeout(this.tt); this.setState({ toast: { text, action, label } }); this.tt = setTimeout(() => this.setState({ toast: null }), 3600); }
+  trip(id) { return this.state.trips.find(t => t.id === id); }
+  patch(id, p) { this.setState(s => ({ trips: s.trips.map(t => t.id === id ? { ...t, ...p } : t) })); }
+  busy(kind, exceptId) {
+    const m = {}; this.state.trips.forEach(t => { if ((t.status === 'upcoming' || t.status === 'transit') && t.id !== exceptId && t[kind]) m[t[kind]] = t; }); return m;
+  }
+  route(t) { return `${t.from} → ${t.to} | ${t.haul}`; }
+  common(t) {
+    return { id: t.id, type: t.type, size: t.size + 'ft', from: t.from, to: t.to, haul: t.haul, nodes: t.nodes, hasNodes: t.nodes > 0,
+      way: t.way, wayIcon: t.way === 'Two way' ? '⇄' : '⟶', km: t.km.toLocaleString('en-IN') + ' km', pDate: t.pDate, pTime: t.pTime,
+      earning: t.earn ? rupee(t.earn) : '–', rfq: t.rfq || (t.rate ? `Rate: ₹${t.rate}/km` : 'No RFQ Linked') };
+  }
+  pickers(t, cur) {
+    const { open, pickerQuery } = this.state; const q = pickerQuery.trim().toLowerCase();
+    const bv = this.busy('vehicle', t.id), bd = this.busy('driver', t.id);
+    const vOpen = !!open && open.id === t.id && open.f === 'vehicle', dOpen = !!open && open.id === t.id && open.f === 'driver';
+    const pick = (f, val) => () => {
+      if (t.status === 'pending') this.setState(s => ({ drafts: { ...s.drafts, [t.id]: { ...(s.drafts[t.id] || {}), [f]: val } }, open: null, pickerQuery: '' }));
+      else this.setState(s => ({ drafts: { ...s.drafts, [t.id]: { ...(s.drafts[t.id] || { vehicle: t.vehicle, driver: t.driver }), [f]: val } }, open: null, pickerQuery: '' }));
+    };
+    const vOptions = !vOpen ? [] : VEHICLES.filter(([n]) => !q || n.toLowerCase().replace(/\s/g, '').includes(q.replace(/\s/g, ''))).map(([n, sz]) => {
+      const b = bv[n], wrong = sz !== t.size, dis = !!b || wrong, sel = cur.vehicle === n;
+      return { label: `${n} (${sz}ft)`, sub: b ? `On ${b.id} (${b.status === 'transit' ? 'in transit' : 'upcoming'})` : wrong ? `Trip needs ${t.size}ft` : 'Available',
+        bg: sel ? 'rgb(234,240,255)' : 'transparent', color: dis ? 'rgb(142,150,163)' : 'rgb(39,40,41)', cursor: dis ? 'not-allowed' : 'pointer',
+        ring: sel ? '5px solid rgb(60,41,183)' : '1.5px solid ' + (dis ? 'rgb(195,201,212)' : 'rgb(90,94,102)'), onClick: dis ? () => {} : pick('vehicle', n), dis };
+    }).sort((a, b) => a.dis - b.dis);
+    const dOptions = !dOpen ? [] : DRIVERS.filter(([n]) => !q || n.toLowerCase().includes(q)).map(([n, ph]) => {
+      const b = bd[n], sel = cur.driver === n;
+      return { label: n, sub: b ? `Driving ${b.id}` : ph, bg: sel ? 'rgb(234,240,255)' : 'transparent', color: b ? 'rgb(142,150,163)' : 'rgb(39,40,41)', cursor: b ? 'not-allowed' : 'pointer',
+        ring: sel ? '5px solid rgb(60,41,183)' : '1.5px solid ' + (b ? 'rgb(195,201,212)' : 'rgb(90,94,102)'), onClick: b ? () => {} : pick('driver', n), dis: !!b };
+    }).sort((a, b) => a.dis - b.dis);
+    const tog = f => () => this.setState(s => ({ open: s.open && s.open.id === t.id && s.open.f === f ? null : { id: t.id, f }, pickerQuery: '', srcOpen: false }));
+    return { vOpen, dOpen, vOptions, dOptions, vNone: vOpen && !vOptions.length, dNone: dOpen && !dOptions.length, toggleV: tog('vehicle'), toggleD: tog('driver'), zv: vOpen ? 15 : 1, zd: dOpen ? 15 : 1 };
+  }
+  matches(t) {
+    const q = this.state.search.trim().toUpperCase().replace(/\s/g, '');
+    if (q && !t.id.replace(/-/g, '').includes(q.replace(/-/g, ''))) return false;
+    if (this.state.src && t.from !== this.state.src) return false;
+    return true;
+  }
+  openModal(m) { this.setState({ modal: m, open: null }); }
+  renderVals() {
+    const S = this.state, trips = S.trips;
+    const by = st => trips.filter(t => t.status === st);
+    const pending = by('pending'), upcoming = by('upcoming'), transit = by('transit'), completed = by('completed'), cancelled = by('cancelled');
+    const disputeOf = t => S.disputes.find(d => d.trip === t.id && (d.status === 'review'));
+    const plural = n => n + (n === 1 ? ' Trip' : ' Trips');
+    const draft = t => S.drafts[t.id] || {};
+    const pendDraft = t => ({ vehicle: draft(t).vehicle || null, driver: draft(t).driver || null });
+    const tabKeys = [['pending', 'Pending Assignment', pending], ['upcoming', 'Upcoming', upcoming], ['transit', 'In-Transit', transit], ['completed', 'Completed', completed], ['cancelled', 'Cancelled', cancelled]];
+    const setTab = k => () => this.setState({ tab: k, open: null, srcOpen: false, nav: 'trips' });
+    const tabs = tabKeys.map(([k, l, arr]) => ({ label: l, count: arr.length, active: S.tab === k, color: S.tab === k ? 'rgb(0,63,152)' : 'rgb(90,94,102)', weight: S.tab === k ? 600 : 400, onClick: setTab(k),
+      dot: (k === 'completed' && completed.some(t => t.c === 'pending') && S.tab !== k) || (k === 'transit' && transit.some(t => t.tag !== 'On Time') && S.tab !== k) }));
+    const vis = arr => arr.filter(t => this.matches(t));
+
+    const pendingRows = vis(pending).map(t => {
+      const d = pendDraft(t), ok = d.vehicle && d.driver;
+      const tone = { red: ['rgb(255,236,236)', 'rgb(244,66,64)'], orange: ['rgb(255,237,222)', 'rgb(236,118,0)'], grey: ['rgb(242,245,250)', 'rgb(90,94,102)'] }[t.tone];
+      return { ...this.common(t), ...this.pickers(t, d), assignBy: t.assignBy, assignBg: tone[0], assignColor: tone[1],
+        vLabel: d.vehicle || 'Select vehicle', vColor: d.vehicle ? 'rgb(0,63,152)' : 'rgb(142,150,163)', vWeight: d.vehicle ? 600 : 400,
+        dLabel: d.driver || 'Select driver', dColor: d.driver ? 'rgb(0,63,152)' : 'rgb(142,150,163)', dWeight: d.driver ? 600 : 400,
+        acceptBg: ok ? 'rgb(0,63,152)' : 'rgb(195,201,212)', acceptCursor: ok ? 'pointer' : 'not-allowed', acceptTip: ok ? 'Accept trip' : 'Assign a vehicle and a driver first',
+        accept: () => { if (!ok) return; this.patch(t.id, { status: 'upcoming', vehicle: d.vehicle, driver: d.driver, assigned: 'Assigned Today' }); this.setState(s => { const dr = { ...s.drafts }; delete dr[t.id]; return { drafts: dr }; }); this.toast(`${t.id} accepted · ${d.vehicle}, ${d.driver}`, () => this.setState({ tab: 'upcoming' }), 'View in Upcoming'); },
+        reject: () => this.openModal({ type: 'reject', id: t.id, reason: null, text: '' }) };
+    });
+    const upcomingRows = vis(upcoming).map(t => {
+      const d = S.drafts[t.id] || { vehicle: t.vehicle, driver: t.driver };
+      const vCh = d.vehicle !== t.vehicle, dCh = d.driver !== t.driver, ch = vCh || dCh;
+      return { ...this.common(t), ...this.pickers(t, d), assigned: t.assigned, vLabel: d.vehicle, dLabel: d.driver,
+        vBorder: vCh ? 'rgb(60,41,183)' : 'rgb(195,201,212)', vBg: vCh ? 'rgb(234,240,255)' : '#fff', dBorder: dCh ? 'rgb(60,41,183)' : 'rgb(195,201,212)', dBg: dCh ? 'rgb(234,240,255)' : '#fff',
+        updateBg: ch ? 'rgb(0,63,152)' : 'rgb(195,201,212)', updateCursor: ch ? 'pointer' : 'not-allowed',
+        update: () => { if (!ch) return; this.patch(t.id, { vehicle: d.vehicle, driver: d.driver }); this.setState(s => { const dr = { ...s.drafts }; delete dr[t.id]; return { drafts: dr }; }); this.toast(`${t.id} updated · ${vCh ? d.vehicle : d.driver}`); },
+        cancel: () => this.openModal({ type: 'reject', id: t.id, reason: null, text: '', cancel: true }) };
+    });
+    const tagTone = { 'On Time': ['rgb(234,240,255)', 'rgb(42,103,255)'], 'No GPS Present': ['rgb(255,237,222)', 'rgb(236,118,0)'] };
+    const transitRows = vis(transit).map(t => { const tn = tagTone[t.tag] || ['rgb(255,236,236)', 'rgb(244,66,64)'];
+      const ph = (DRIVERS.find(x => x[0] === t.driver) || [])[1];
+      return { ...this.common(t), dDate: t.dDate || "9 Nov'25", dTime: t.dTime || 'Now', tag: t.tag, tagBg: tn[0], tagColor: tn[1], live1: t.live1, live2: t.live2, vehicle: t.vehicle, driver: t.driver, phone: ph }; });
+
+    const cPend = completed.filter(t => t.c === 'pending'), cConf = completed.filter(t => t.c === 'confirmed'), cNA = completed.filter(t => t.c === 'na');
+    const cDisp = completed.filter(t => disputeOf(t));
+    const pendSum = cPend.reduce((a, t) => a + t.earn, 0);
+    const cf = [['all', 'All', completed.length + ' trips'], ['pending', 'Pending Confirmation', cPend.length ? `${cPend.length} trips worth ${rupee(pendSum)}` : '0 trips'], ['confirmed', 'Confirmed by You', cConf.length + ' trips'], ['disputed', 'Under Dispute', cDisp.length + ' trips'], ['na', 'No Action Needed', cNA.length + ' trips (SC-SC, FM Carting)']];
+    const cFilters = cf.map(([k, l, v]) => ({ label: l, value: v, border: S.cFilter === k ? 'rgb(0,63,152)' : 'rgb(230,235,242)', bg: S.cFilter === k ? 'rgb(234,240,255)' : '#fff', onClick: () => this.setState({ cFilter: k }) }));
+    const cList = { all: completed, pending: cPend, confirmed: cConf, na: cNA, disputed: cDisp }[S.cFilter];
+    const completedRows = vis(cList).map(t => {
+      const dsp = disputeOf(t), base = this.common(t);
+      const r = { ...base, vehicle: t.vehicle, cDate: t.cDate, cTime: t.cTime, billed: t.c !== 'na', earnSub: t.c === 'na' ? 'As per existing Billing' : (t.rfq ? 'Contract ID: ' + t.rfq : `Rate: ₹${t.rate}/km`),
+        canConfirm: t.c === 'pending', isConfirmed: t.c === 'confirmed', canDispute: t.c === 'pending' && !dsp, hasDispute: !!dsp, isNA: t.c === 'na',
+        confirm: () => this.openModal(dsp ? { type: 'confirmDispute', id: t.id } : { type: 'confirm', id: t.id }),
+        dispute: () => this.openModal({ type: 'dispute', id: t.id, cats: [], text: '' }),
+        viewDispute: () => this.setState({ nav: 'disputes', open: null }),
+        moreInfo: () => this.openModal({ type: 'info', id: t.id }) };
+      if (t.c === 'pending') Object.assign(r, dsp ? { status: 'Under Dispute', statusColor: 'rgb(244,66,64)', statusWeight: 600, statusSub: `${dsp.id} · Under review`, subColor: 'rgb(90,94,102)' } : { status: 'Pending Confirmation', statusColor: 'rgb(236,118,0)', statusWeight: 600, statusSub: `Dispute Window Open till ${t.window}`, subColor: 'rgb(90,94,102)' });
+      if (t.c === 'confirmed') Object.assign(r, { status: `Confirmed by you on ${t.confirmedOn}`, statusColor: 'rgb(39,40,41)', statusWeight: 400, statusSub: t.paid ? 'Payout started' : 'Payment will be initiated', subColor: 'rgb(42,103,255)' });
+      if (t.c === 'na') Object.assign(r, { status: 'No action needed on panel', statusColor: 'rgb(39,40,41)', statusWeight: 400, statusSub: 'Follow regular billing process for payment', subColor: 'rgb(90,94,102)' });
+      return r;
+    });
+    const cancelledRows = vis(cancelled).map(t => ({ ...this.common(t), earning: t.earn ? rupee(t.earn) : '–', reason: t.reason, by: t.by }));
+
+    // search hint
+    let hasSearchHint = false, searchHintText = '', searchHintCta = '', searchHintGo = () => {};
+    const sq = S.search.trim();
+    if (sq && S.nav === 'trips') {
+      const curList = { pending, upcoming, transit, completed: cList, cancelled }[S.tab];
+      if (!curList.some(t => this.matches(t))) {
+        const hit = trips.find(t => this.matches({ ...t, from: S.src || t.from }));
+        hasSearchHint = true;
+        if (hit) { const lbl = tabKeys.find(k => k[0] === hit.status)[1]; searchHintText = `${hit.id} isn't in this tab. It's in ${lbl}.`; searchHintCta = `Go to ${lbl}`; searchHintGo = () => this.setState({ tab: hit.status, cFilter: 'all', src: null }); }
+        else { searchHintText = `No trip matches “${sq}”. If you ran it, report it as a missing trip.`; searchHintCta = 'Report Missing Trip'; searchHintGo = () => this.openModal({ type: 'missing', mid: sq.toUpperCase(), from: '', to: '', date: '' }); }
+      }
+    }
+
+    const srcNodes = [...new Set(trips.map(t => t.from))].sort();
+    const srcOptions = [null, ...srcNodes].map(n => ({ label: n || 'All source nodes', bg: S.src === n ? 'rgb(234,240,255)' : 'transparent', ring: S.src === n ? '5px solid rgb(60,41,183)' : '1.5px solid rgb(90,94,102)', onClick: () => this.setState({ src: n, srcOpen: false }) }));
+
+    // modal
+    const M = S.modal, mt = M && M.id ? this.trip(M.id) : null;
+    const closeModal = () => this.setState({ modal: null });
+    const setM = p => this.setState(s => ({ modal: { ...s.modal, ...p } }));
+    let mTrip = {};
+    if (mt) {
+      const ataLate = mt.penalty > 0;
+      mTrip = { id: mt.id, type: mt.type, size: mt.size + 'ft', route: this.route(mt), earning: mt.earn ? rupee(mt.earn) : '–', vehicle: mt.vehicle || '–', driver: mt.driver || '–', window: mt.window || '',
+        sta: mt.pTime, ata: mt.ata || '–', std: mt.pTime ? mt.pTime.replace('08:00', '09:00') : '–', atd: mt.atd || '–',
+        baseLabel: mt.rate ? `${mt.km} km × ₹${mt.rate}/km` : 'Contract rate · ' + (mt.rfq || ''), base: mt.earn ? rupee(mt.earn + (mt.penalty || 0)) : '–',
+        penalty: ataLate ? `−${rupee(mt.penalty)} (placed 50 min late)` : '₹0 · placed on time', penColor: ataLate ? 'rgb(244,66,64)' : 'rgb(90,94,102)' };
+    }
+    const mType = M ? M.type : null;
+    const reasonOk = M && M.reason != null && (REASONS[M.reason][0] !== 'Other' || (M.text || '').trim().length >= 10);
+    const catsOk = M && M.cats && M.cats.length > 0 && (M.text || '').trim().length >= 10;
+    const mid = M && M.mid ? M.mid.trim().toUpperCase() : '';
+    const mHit = mid ? trips.find(t => t.id === mid) : null;
+    const mValidId = /^TR-\d{4}-\d{4}$/.test(mid);
+    const mNew = mType === 'missing' && mValidId && !mHit;
+    const missingOk = mNew && M.from && M.to && M.date;
+    const titles = { reject: M && M.cancel ? 'Cancel Trip' : 'Reject Trip', confirm: 'Confirm Trip Details', dispute: 'Raise Dispute', missing: 'Report Missing Trip', info: 'More info', hiw: 'How it works' };
+    const dsp = mt ? S.disputes.find(d => d.trip === mt.id && d.status === 'review') : null;
+
+    const submitReject = () => {
+      if (!reasonOk) return; const r = REASONS[M.reason][0], why = r === 'Other' ? M.text.trim() : r;
+      this.patch(mt.id, { status: 'cancelled', reason: why, by: `${M.cancel ? 'Cancelled' : 'Rejected'} by you on 9 Nov`, vehicle: null, driver: null });
+      this.setState(s => { const dr = { ...s.drafts }; delete dr[mt.id]; return { drafts: dr, modal: { type: 'success', title: M.cancel ? 'Trip cancelled' : 'Trip rejected', body: `${mt.id} moved to Cancelled with your reason: “${why}”.`, cta: 'View Cancelled', go: () => this.setState({ modal: null, tab: 'cancelled' }) } }; });
+    };
+    const submitConfirm = () => { this.patch(mt.id, { c: 'confirmed', confirmedOn: '9 Nov' }); this.setState({ modal: { type: 'success', title: 'Trip confirmed', body: `Payout of ${rupee(mt.earn)} for ${mt.id} will be initiated in the next payment cycle.`, cta: 'View confirmed trips', go: () => this.setState({ modal: null, cFilter: 'confirmed' }) } }); };
+    const submitConfirmDismiss = () => { this.patch(mt.id, { c: 'confirmed', confirmedOn: '9 Nov' }); this.setState(s => ({ disputes: s.disputes.map(d => d.id === dsp.id ? { ...d, status: 'dismissed', note: 'Dismissed when you confirmed the trip' } : d), modal: null })); this.toast(`${mt.id} confirmed · ${dsp.id} dismissed`); };
+    const submitDispute = () => {
+      if (!catsOk) return; const id = 'DSP-' + S.nextDsp;
+      this.setState(s => ({ nextDsp: s.nextDsp + 1, disputes: [{ id, trip: mt.id, cat: M.cats[0], extra: M.cats.length - 1, raised: "9 Nov'25", amount: mt.earn, status: 'review' }, ...s.disputes],
+        modal: { type: 'success', title: 'Dispute raised', body: `${id} is under review. We'll update the status within 3 working days. You can track it under Disputes.`, cta: 'Track dispute', go: () => this.setState({ modal: null, nav: 'disputes' }) } }));
+    };
+    const submitMissing = () => {
+      if (!missingOk) return; const id = 'DSP-' + S.nextDsp;
+      this.setState(s => ({ nextDsp: s.nextDsp + 1, disputes: [{ id, trip: mid, cat: -1, raised: "9 Nov'25", amount: null, status: 'review', note: `${M.from.toUpperCase()} → ${M.to.toUpperCase()} · ${M.date}` }, ...s.disputes],
+        modal: { type: 'success', title: 'Missing trip reported', body: `${id}: we'll match ${mid} against hub records and add it to your panel once verified.`, cta: 'Track in Disputes', go: () => this.setState({ modal: null, nav: 'disputes' }) } }));
+    };
+
+    // disputes page
+    const dTone = { review: ['Under Review', 'rgb(255,237,222)', 'rgb(236,118,0)'], rejected: ['Rejected', 'rgb(255,236,236)', 'rgb(244,66,64)'], resolved: ['Resolved', 'rgb(227,247,237)', 'rgb(30,128,80)'], dismissed: ['Dismissed', 'rgb(242,245,250)', 'rgb(90,94,102)'] };
+    const disputeRows = S.disputes.map(d => { const tn = dTone[d.status]; const c = d.cat >= 0 ? CATS[d.cat] : ['Missing trip', 'ट्रिप पैनल पर नहीं दिख रही'];
+      const onPanel = trips.find(t => t.id === d.trip);
+      return { id: d.id, trip: d.trip, cat: c[0] + (d.extra ? ` +${d.extra} more` : ''), catHi: c[1], raised: d.raised, amount: d.amount ? rupee(d.amount) : '–', status: tn[0], bg: tn[1], color: tn[2],
+        note: d.note || (d.status === 'review' ? 'Expected update by 12 Nov' : ''), canReopen: d.status === 'rejected', canView: !!onPanel && d.status !== 'rejected',
+        reopen: () => { this.setState(s => ({ disputes: s.disputes.map(x => x.id === d.id ? { ...x, status: 'review', note: 'Reopened by you on 9 Nov' } : x) })); this.toast(`${d.id} reopened`); },
+        view: () => this.setState({ nav: 'trips', tab: onPanel.status, search: onPanel.id, cFilter: 'all' }) }; });
+    const openD = S.disputes.filter(d => d.status === 'review').length;
+
+    return {
+      rootRef: this.rootRef, isTrips: S.nav === 'trips', isDisputes: S.nav === 'disputes', pageTitle: S.nav === 'trips' ? 'Trips' : 'Disputes',
+      goTrips: () => this.setState({ nav: 'trips' }), goDisputes: () => this.setState({ nav: 'disputes', open: null }),
+      navTripsBg: S.nav === 'trips' ? 'rgba(197,215,255,.3)' : 'transparent', navTripsBar: S.nav === 'trips' ? 'rgb(197,215,255)' : 'transparent',
+      navDispBg: S.nav === 'disputes' ? 'rgba(197,215,255,.3)' : 'transparent', navDispBar: S.nav === 'disputes' ? 'rgb(197,215,255)' : 'transparent',
+      hasOpenDisputes: openD > 0, openDisputes: openD,
+      search: S.search, hasSearch: !!S.search, onSearch: e => this.setState({ search: e.target.value }), clearSearch: () => this.setState({ search: '' }),
+      hasSearchHint, searchHintText, searchHintCta, searchHintGo,
+      pCount: pending.length, pRisk: pending.filter(t => t.tone === 'red').length, hasRisk: pending.some(t => t.tone === 'red'),
+      pNoDriver: plural(pending.filter(t => !pendDraft(t).driver).length), pNoVehicle: plural(pending.filter(t => !pendDraft(t).vehicle).length),
+      tCount: transit.length, tOnTime: plural(transit.filter(t => t.tag === 'On Time').length), tDelayed: plural(transit.filter(t => t.tag !== 'On Time').length),
+      cPendingLabel: plural(cPend.length), cDisputedLabel: plural(cDisp.length),
+      goPending: setTab('pending'), goTransit: setTab('transit'), goCompleted: () => this.setState({ tab: 'completed', cFilter: 'pending' }),
+      tabs, isPending: S.tab === 'pending', isUpcoming: S.tab === 'upcoming', isTransit: S.tab === 'transit', isCompleted: S.tab === 'completed', isCancelled: S.tab === 'cancelled',
+      timeFilterLabel: S.tab === 'transit' ? 'Departure Time' : 'Placement Time',
+      srcLabel: S.src ? 'Source: ' + S.src : 'Source Node', srcBorder: S.src ? 'rgb(0,63,152)' : 'rgb(195,201,212)', srcColor: S.src ? 'rgb(0,63,152)' : 'rgb(90,94,102)',
+      srcOpen: S.srcOpen, toggleSrc: () => this.setState(s => ({ srcOpen: !s.srcOpen, open: null })), srcOptions,
+      download: () => this.toast(`Downloading ${tabKeys.find(k => k[0] === S.tab)[1]} trips as CSV`),
+      hindiOpen: S.hindiOpen, toggleHindi: () => this.setState(s => ({ hindiOpen: !s.hindiOpen })),
+      pendingRows, upcomingRows, transitRows, completedRows, cancelledRows, cFilters,
+      pendingEmpty: !pendingRows.length && !hasSearchHint, upcomingEmpty: !upcomingRows.length && !hasSearchHint, transitEmpty: !transitRows.length && !hasSearchHint, completedEmpty: !completedRows.length && !hasSearchHint, cancelledEmpty: !cancelledRows.length && !hasSearchHint,
+      pickerQuery: S.pickerQuery, onPickerQuery: e => this.setState({ pickerQuery: e.target.value }),
+      openMissing: () => this.openModal({ type: 'missing', mid: '', from: '', to: '', date: '' }), openHiw: () => this.openModal({ type: 'hiw' }),
+      modalOpen: !!M, closeModal, modalWidth: mType === 'confirmDispute' || mType === 'success' ? '440px' : mType === 'dispute' ? '640px' : '540px',
+      hasModalHeader: !!M && mType !== 'confirmDispute' && mType !== 'success', modalTitle: M ? titles[mType] || '' : '',
+      mTrip, mFee: mt ? rupee(Math.round((mt.earn || 8000) * 0.05 / 100) * 100) : '',
+      mReject: mType === 'reject', mConfirm: mType === 'confirm', mConfirmDispute: mType === 'confirmDispute', mDisputeForm: mType === 'dispute', mMissing: mType === 'missing', mInfo: mType === 'info', mHiw: mType === 'hiw', mSuccess: mType === 'success',
+      rejectQuestion: M && M.cancel ? 'Are you sure you want to cancel this trip?' : 'Are you sure you want to reject this trip?', rejectVerb: M && M.cancel ? 'cancelling' : 'rejecting', rejectCta: M && M.cancel ? 'Cancel Trip' : 'Reject Trip',
+      reasonOpen: !!(M && M.reasonOpen), toggleReason: () => setM({ reasonOpen: !M.reasonOpen }),
+      reasonLabel: M && M.reason != null ? REASONS[M.reason][0] : 'Select a reason', reasonColor: M && M.reason != null ? 'rgb(39,40,41)' : 'rgb(142,150,163)', reasonBorder: M && M.reasonOpen ? 'rgb(0,63,152)' : 'rgb(195,201,212)',
+      reasonOptions: REASONS.map(([en, hi], i) => ({ label: en, hi, bg: M && M.reason === i ? 'rgb(234,240,255)' : 'transparent', ring: M && M.reason === i ? '5px solid rgb(60,41,183)' : '1.5px solid rgb(90,94,102)', onClick: () => setM({ reason: i, reasonOpen: false }) })),
+      reasonIsOther: !!(M && M.reason != null && REASONS[M.reason][0] === 'Other'), reasonText: M ? M.text || '' : '', onReasonText: e => setM({ text: e.target.value }),
+      rejectBtnBg: reasonOk ? 'rgb(244,66,64)' : 'rgb(195,201,212)', rejectBtnCursor: reasonOk ? 'pointer' : 'not-allowed', submitReject,
+      submitConfirm, fromConfirmToDispute: () => setM({ type: 'dispute', cats: [], text: '' }),
+      mDispute: dsp ? { id: dsp.id, cat: CATS[dsp.cat][0], status: 'under review' } : {}, submitConfirmDismiss,
+      catOptions: CATS.map(([en, hi], i) => { const on = !!(M && M.cats && M.cats.includes(i)); return { en, hi, border: on ? 'rgb(0,63,152)' : 'rgb(230,235,242)', bg: on ? 'rgb(234,240,255)' : '#fff', box: on ? '0' : '1.5px solid rgb(90,94,102)', boxBg: on ? 'rgb(0,63,152)' : '#fff', tick: on ? '✓' : '', onClick: () => setM({ cats: on ? M.cats.filter(x => x !== i) : [...M.cats, i] }) }; }),
+      dText: M ? M.text || '' : '', onDText: e => setM({ text: e.target.value }),
+      dHint: !M || !M.cats || !M.cats.length ? 'Pick at least one category' : (M.text || '').trim().length < 10 ? `${10 - (M.text || '').trim().length} more characters` : 'Ready to submit',
+      dBtnBg: catsOk ? 'rgb(0,63,152)' : 'rgb(195,201,212)', dBtnCursor: catsOk ? 'pointer' : 'not-allowed', submitDispute,
+      mId: M ? M.mid || '' : '', onMId: e => setM({ mid: e.target.value }), mExists: !!mHit && mType === 'missing', mExistsTab: mHit ? tabKeys.find(k => k[0] === mHit.status)[1] : '',
+      openExisting: () => this.setState({ modal: null, nav: 'trips', tab: mHit.status, search: mHit.id, cFilter: 'all', src: null }),
+      mNew, mFrom: M ? M.from || '' : '', mTo: M ? M.to || '' : '', mDate: M ? M.date || '' : '',
+      onMFrom: e => setM({ from: e.target.value }), onMTo: e => setM({ to: e.target.value }), onMDate: e => setM({ date: e.target.value }),
+      mBtnBg: missingOk ? 'rgb(0,63,152)' : 'rgb(195,201,212)', mBtnCursor: missingOk ? 'pointer' : 'not-allowed', submitMissing,
+      successTitle: M ? M.title : '', successBody: M ? M.body : '', successCta: M ? M.cta : '', successGo: M && M.go ? M.go : closeModal,
+      hiwSteps: [
+        { n: 1, t: 'Pending Assignment', d: 'Pick a vehicle of the required size and a driver, then Accept before placement time.' },
+        { n: 2, t: 'Upcoming', d: 'Change the vehicle or driver if plans change. Update stays off until something changes.' },
+        { n: 3, t: 'In-Transit', d: 'See where each truck is. If GPS is missing, the panel says so.' },
+        { n: 4, t: 'Completed', d: 'Check the details and Confirm. Confirming starts your payout.' },
+        { n: 5, t: 'Disputes', d: 'If an amount or detail is wrong, raise a dispute and track its status here.' }
+      ],
+      dStats: [{ label: 'Under Review', value: openD }, { label: 'Resolved', value: S.disputes.filter(d => d.status === 'resolved').length }, { label: 'Rejected (can reopen)', value: S.disputes.filter(d => d.status === 'rejected').length }, { label: 'Total raised', value: S.disputes.length }],
+      disputeRows,
+      hasToast: !!S.toast, toast: S.toast ? S.toast.text : '', hasToastAction: !!(S.toast && S.toast.action), toastAction: () => { const a = S.toast && S.toast.action; this.setState({ toast: null }); a && a(); }, toastActionLabel: S.toast ? S.toast.label || '' : ''
+    };
+  }
+}
+</script>
+</body>
+</html>
