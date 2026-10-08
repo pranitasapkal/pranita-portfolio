@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valmo · Contract Management (Transporter)</title>
+<link rel="icon" href="data:,">
+<style>
+/* Font: 'Mier B02' is the Meesho Crystal typeface named in the Figma source. It is not bundled
+   here; when the family is not installed the system stack below is used instead. */
+
+/* DESIGN TOKENS (Meesho Crystal v1.1.1, values taken from the Figma variables) */
+:root{
+  --font:'Mier B02',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --primary:#003F98; --primary-700:#003276; --navy:#092D5E;
+  --primary-50:#E3EDFF; --primary-100:#C5D7FF;
+  --text-dark:#272829; --text:#5A5E66; --grey-m1:#C3C9D4; --grey-m2:#8E96A3;
+  --grey-l1:#F2F5FA; --grey-l2:#E6EBF2; --white:#FFFFFF;
+  --red:#F44240; --red-bg:#FFEEED; --red-border:#FFCBC9;
+  --amber:#EC7600; --amber-bg:#FFEDDE; --amber-border:#FFD2AB;
+  --green:#43A92C; --green-bg:#E7FBE0;
+  --blue-bg:#E3EDFF;
+  --page:#EEF2F7; --sidebar:#031C40;
+  --fw-book:500; --fw-demi:600; --fw-bold:700;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html.vt-instant *,html.vt-instant *::before,html.vt-instant *::after{transition:none!important;animation:none!important;}
+body{font-family:var(--font);background:var(--page);color:var(--text-dark);display:flex;height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased;font-weight:var(--fw-book);font-size:13px;line-height:20px;}
+button{font-family:inherit;}
+a{color:var(--primary);}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,[data-clickable]:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+.ellipsis{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;}
+.req{color:var(--red);}
+
+/* SIDEBAR */
+.sidebar{width:224px;min-width:224px;background:var(--sidebar);display:flex;flex-direction:column;color:#fff;}
+.sb-user{display:flex;align-items:center;gap:12px;padding:22px 10px 22px 10px;border-bottom:1px solid rgba(255,255,255,.14);}
+.sb-avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 30% 30%,#F7C6D9 0,#E58FB8 45%,#7FB7E6 100%);position:relative;overflow:hidden;}
+.sb-avatar::after{content:'';position:absolute;left:8px;right:8px;bottom:-6px;height:22px;border-radius:50% 50% 0 0;background:#5B8FD6;}
+.sb-name{font-size:13px;font-weight:var(--fw-demi);}
+.sb-support{display:flex;align-items:center;gap:8px;padding:12px 22px;font-size:12px;color:#E6EBF2;border-bottom:1px solid rgba(255,255,255,.14);}
+.sb-nav{flex:1;padding-top:8px;}
+.nav-item{display:flex;align-items:center;gap:12px;height:52px;padding:0 22px;font-size:13px;color:#fff;cursor:pointer;}
+.nav-item.dim{color:#8E96A3;}
+.nav-item:hover{background:rgba(255,255,255,.06);}
+.nav-item.active{background:rgba(255,255,255,.18);font-weight:var(--fw-demi);}
+.nav-ico{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-ico svg{width:22px;height:22px;}
+.sb-bottom{border-top:1px solid rgba(255,255,255,.14);}
+.sb-logout{display:flex;align-items:center;gap:12px;height:62px;padding:0 22px;font-size:13px;cursor:pointer;color:#fff;}
+.sb-logo{border-top:1px solid rgba(255,255,255,.14);padding:12px 22px 14px;font-size:17px;font-weight:800;font-style:italic;letter-spacing:.5px;color:#DCE4F2;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.list-view{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:#fff;height:56px;padding:0 16px;display:flex;align-items:center;gap:20px;flex-shrink:0;}
+.topbar-title{font-size:21px;line-height:28px;font-weight:var(--fw-bold);flex:1;}
+.yt-btn{display:inline-flex;align-items:center;gap:8px;background:none;border:none;font-size:13px;color:var(--text-dark);cursor:pointer;}
+.yt-ico{width:18px;height:13px;border-radius:3px;background:var(--red);position:relative;display:inline-block;}
+.yt-ico::after{content:'';position:absolute;left:7px;top:3.5px;border-style:solid;border-width:3px 0 3px 5px;border-color:transparent transparent transparent #fff;}
+.bell-wrap{position:relative;}
+.bell-btn{position:relative;background:none;border:none;cursor:pointer;padding:6px;color:var(--text);display:inline-flex;}
+.bell-badge{position:absolute;top:0;right:0;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;line-height:1;}
+.bell-dropdown{position:absolute;top:40px;right:0;width:360px;background:#fff;border:1px solid var(--grey-l2);border-radius:8px;box-shadow:0 8px 28px rgba(9,45,94,.16);z-index:400;display:none;overflow:hidden;}
+.bell-dropdown.show{display:block;}
+.bell-item{padding:14px 16px;border-bottom:1px solid var(--grey-l1);}
+.bell-item:last-child{border-bottom:none;}
+.notif-time{font-size:11px;color:var(--grey-m2);display:block;}
+.notif-title{font-size:13px;font-weight:var(--fw-demi);margin:2px 0;}
+.notif-desc{font-size:12px;color:var(--text);margin-bottom:8px;line-height:16px;}
+.search-box{display:flex;align-items:center;gap:8px;border:1px solid var(--grey-m1);border-radius:4px;padding:0 12px;height:32px;width:230px;background:#fff;color:var(--grey-m2);}
+.search-box input{border:none;outline:none;font-size:13px;width:100%;font-family:inherit;color:var(--text-dark);}
+.search-box input::placeholder{color:var(--grey-m2);}
+
+.content-area{flex:1;overflow-y:auto;padding:8px 16px 16px;display:flex;flex-direction:column;gap:8px;}
+
+/* HOW CONTRACTS WORK STRIP */
+.hiw-strip{background:var(--blue-bg);border:1px solid var(--primary-100);border-radius:8px;min-height:62px;padding:8px 14px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.hiw-label{font-size:14px;line-height:19px;font-weight:var(--fw-demi);white-space:nowrap;margin-right:8px;}
+.hiw-step{display:flex;align-items:center;gap:10px;flex:0 1 auto;min-width:0;}
+.hiw-step-txt{font-size:13px;line-height:19px;white-space:nowrap;}
+.hiw-strip .hiw-arrow{margin:0 14px;}
+.hiw-strip .hi-pill{margin-left:auto;}
+.hiw-arrow{color:var(--grey-m2);flex-shrink:0;}
+.hi-pill{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--primary-100);border-radius:4px;padding:3px 10px;font-size:12px;line-height:18px;color:var(--navy);cursor:pointer;white-space:nowrap;flex-shrink:0;font-weight:var(--fw-book);}
+.hi-pill .tri{border-style:solid;border-width:4px 0 4px 6px;border-color:transparent transparent transparent var(--navy);display:inline-block;}
+.hi-pill.tint{background:var(--blue-bg);border-color:var(--blue-bg);}
+
+/* OVERVIEW */
+.overview-card{background:#fff;border-radius:8px;padding:12px;flex-shrink:0;}
+.stat-row{display:flex;gap:12px;}
+.stat-card{border:1px solid var(--grey-l2);border-radius:6px;padding:9px 12px 8px;cursor:pointer;min-width:200px;}
+.stat-card:hover{border-color:var(--primary-100);}
+.stat-title{font-size:15px;line-height:22px;font-weight:var(--fw-book);display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.stat-title .amt{color:var(--amber);}
+.stat-title svg{color:var(--text-dark);}
+.stat-sub{font-size:11px;line-height:16px;color:var(--red);margin-top:4px;}
+.stat-sub .lk{cursor:pointer;}
+.stat-sub .lk:hover{text-decoration:underline;}
+
+/* LIST CARD */
+.list-head{background:#fff;border-radius:8px 8px 0 0;flex-shrink:0;}
+.tabs-bar{display:flex;border-bottom:1px solid var(--grey-l2);padding:0 0;}
+.tab-item{padding:10px 16px 8px;font-size:15px;line-height:20px;color:var(--text);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;}
+.tab-item.active{color:var(--navy);font-weight:var(--fw-demi);border-bottom-color:var(--navy);}
+.chips-row{display:flex;gap:10px;padding:8px 10px;border-bottom:1px solid var(--grey-l2);}
+.chip{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:112px;height:56px;padding:0 12px;border:1px solid var(--grey-m1);border-radius:6px;background:#fff;cursor:pointer;font-size:13px;line-height:18px;color:var(--text);}
+.chip b{font-weight:var(--fw-book);color:var(--text-dark);}
+.chip.selected{border-color:var(--navy);background:#EEF3FB;}
+.filter-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px;}
+.filter-left,.filter-right{display:flex;align-items:center;gap:10px;}
+.f-label{font-size:13px;color:var(--text-dark);}
+.f-ctl{height:32px;border:1px solid var(--grey-m1);border-radius:4px;background:#fff;font-size:13px;color:var(--text);padding:0 30px 0 12px;font-family:inherit;appearance:none;-webkit-appearance:none;cursor:pointer;min-width:115px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23272829' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 10px center;}
+.f-search{height:32px;border:1px solid var(--grey-m1);border-radius:4px;padding:0 10px 0 32px;font-size:13px;width:128px;font-family:inherit;color:var(--text-dark);background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23272829' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='m20 20-3.5-3.5'/></svg>") no-repeat 10px center;}
+.f-search::placeholder{color:var(--text);}
+.dl-btn{height:32px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--navy);border-radius:4px;padding:0 14px;background:#fff;color:var(--navy);font-size:15px;font-weight:var(--fw-book);cursor:pointer;}
+.chip-banner{display:flex;align-items:center;gap:10px;margin:0 10px 10px;padding:8px 10px 8px 16px;border-radius:6px;font-size:12px;line-height:16px;color:var(--text-dark);}
+.chip-banner.warn{background:var(--red-bg);}
+.chip-banner.info{background:var(--blue-bg);}
+.chip-banner .bi{flex-shrink:0;display:inline-flex;}
+.chip-banner .bt{flex:1;}
+.chip-banner b{font-weight:var(--fw-demi);}
+
+/* TABLE */
+.table-wrap{flex-shrink:0;}
+table.list{width:100%;table-layout:fixed;border-collapse:collapse;background:#fff;}
+table.list th{background:var(--grey-l2);height:46px;padding:4px 10px;font-size:12px;line-height:16px;font-weight:var(--fw-book);text-align:left;color:var(--text-dark);}
+table.list th .thi{display:inline-flex;align-items:center;gap:5px;}
+table.list td{padding:12px 10px;vertical-align:top;border-bottom:1px solid var(--grey-l2);border-right:1px solid var(--grey-l2);font-size:13px;line-height:20px;}
+table.list td:last-child{border-right:none;}
+table.list tbody tr:hover td{background:#FAFBFD;}
+.cid{color:var(--text-dark);}
+.deadline{font-size:12px;line-height:16px;margin-top:6px;}
+.deadline.red{color:var(--red);} .deadline.amber{color:var(--amber);} .deadline.grey{color:var(--text);}
+.countdown{font-size:12px;line-height:16px;margin-top:6px;}
+.countdown.red{color:var(--red);} .countdown.amber{color:var(--amber);} .countdown.grey{color:var(--text);}
+.rem-pill{display:inline-flex;align-items:center;gap:5px;background:var(--grey-l1);border:1px solid var(--grey-l2);border-radius:12px;padding:1px 9px;font-size:12px;line-height:18px;color:var(--text-dark);margin-top:6px;}
+.route-line{display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;}
+.route-line .ar{color:var(--text);display:inline-flex;}
+.route-line .dash{display:inline-block;width:12px;height:1px;background:var(--text-dark);}
+.nodes-pill{display:inline-flex;align-items:center;background:var(--grey-l2);border-radius:4px;padding:0 5px;font-size:10px;line-height:16px;}
+.route-sub{display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:var(--text);margin-top:6px;}
+.route-sub svg{flex-shrink:0;}
+.earn{font-weight:var(--fw-book);}
+.earn-note{font-size:12px;line-height:16px;color:var(--amber);margin-top:4px;}
+.strike{text-decoration:line-through;color:var(--grey-m2);}
+.mini-pill{display:inline-block;background:var(--grey-l2);border-radius:10px;padding:0 8px;font-size:11px;line-height:18px;color:var(--text);margin-top:4px;}
+.act-cell{text-align:center;}
+.btn-accept{background:var(--primary);color:#fff;border:none;border-radius:4px;height:28px;padding:0 12px;min-width:66px;font-size:13px;font-weight:var(--fw-book);cursor:pointer;}
+.btn-accept:hover{background:var(--primary-700);}
+.link-act{display:block;margin:8px auto 0;background:none;border:none;color:var(--text);font-size:13px;cursor:pointer;}
+.link-act:hover{color:var(--text-dark);text-decoration:underline;}
+.btn-out{background:#fff;border:1px solid var(--grey-m2);border-radius:4px;height:28px;padding:0 10px;font-size:13px;color:var(--text-dark);cursor:pointer;white-space:nowrap;}
+.btn-out:hover{background:var(--grey-l1);}
+.btn-out.wide{width:100%;max-width:80px;}
+.tag{display:inline-flex;align-items:center;border-radius:10px;padding:0 8px;font-size:11px;line-height:18px;margin-top:6px;}
+.tag.review{background:var(--blue-bg);color:var(--primary);}
+.tag.approved{background:var(--green-bg);color:var(--green);}
+.tag.partial{background:var(--amber-bg);color:var(--amber);}
+.tag.rejected,.tag.ended{background:var(--red-bg);color:var(--red);}
+.row-note{font-size:12px;line-height:16px;color:var(--text);margin-top:6px;}
+.row-note a{color:var(--primary);text-decoration:none;cursor:pointer;}
+.closed-badge{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;background:var(--grey-l2);border-radius:10px;padding:0 8px;font-size:11px;line-height:18px;color:var(--text);margin-top:6px;}
+.closed-badge a{color:var(--primary);text-decoration:none;cursor:pointer;}
+.empty-state{text-align:center;padding:150px 20px 60px;}
+.empty-state .es-t{font-size:13px;font-weight:var(--fw-demi);margin-top:14px;}
+.empty-state .es-s{font-size:13px;color:var(--text);margin-top:2px;}
+.skel-wrap{background:#fff;}
+.skel-row{display:flex;gap:24px;padding:20px 12px;border-bottom:1px solid var(--grey-l2);}
+.shimmer{background:linear-gradient(90deg,#E6EBF2 25%,#F2F5FA 37%,#E6EBF2 63%);background-size:400% 100%;animation:shimmer 1.2s infinite;border-radius:4px;height:12px;}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.tip{position:relative;display:inline-flex;}
+.tip .tip-box{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#fff;color:var(--text-dark);border:1px solid var(--grey-l2);box-shadow:0 4px 16px rgba(9,45,94,.14);font-size:12px;line-height:16px;padding:8px 12px;border-radius:4px;width:230px;opacity:0;pointer-events:none;transition:opacity .15s;z-index:50;font-weight:var(--fw-book);white-space:normal;text-align:left;}
+.tip:hover .tip-box,.tip:focus-within .tip-box{opacity:1;}
+
+/* DETAIL (L2) */
+.detail-view{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.crumb{background:#fff;height:32px;display:flex;align-items:center;gap:8px;padding:0 16px;font-size:12px;color:var(--text-dark);flex-shrink:0;}
+.crumb .last{color:var(--grey-m2);}
+.crumb svg{color:var(--grey-m2);}
+.detail-scroll{flex:1;overflow-y:auto;padding:12px 16px 16px;display:flex;flex-direction:column;gap:12px;}
+.d-head{background:#fff;margin:-4px -16px 0;padding:10px 16px;display:flex;align-items:center;gap:12px;}
+.d-head .back{background:none;border:none;cursor:pointer;color:var(--text-dark);display:inline-flex;padding:4px;}
+.d-head h1{font-size:21px;line-height:28px;font-weight:var(--fw-demi);}
+.pill{font-size:11px;line-height:16px;padding:1px 8px;border-radius:10px;}
+.pill.active{background:var(--green-bg);color:var(--green);}
+.pill.upcoming{background:var(--amber-bg);color:var(--amber);}
+.pill.closed{background:var(--grey-l2);color:var(--text);}
+.card{background:#fff;border-radius:8px;}
+.card-pad{padding:14px 16px 16px;}
+.card-title{font-size:15px;line-height:20px;font-weight:var(--fw-demi);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.ov-box{display:flex;border:1px solid var(--grey-l2);border-radius:6px;margin-top:12px;}
+.ov-box+.ov-box{margin-top:8px;}
+.ov-item{flex:1;display:flex;gap:8px;padding:14px 12px;border-right:1px solid var(--grey-l2);min-width:0;}
+.ov-item:last-child{border-right:none;}
+.ov-item.wide{flex:2;}
+.ov-ico{width:20px;height:20px;color:var(--text-dark);flex-shrink:0;}
+.ov-ico svg{width:20px;height:20px;display:block;}
+.ov-lbl{font-size:13px;line-height:16px;color:var(--text-dark);margin-top:2px;}
+.ov-val{font-size:15px;line-height:22px;font-weight:var(--fw-demi);margin-top:4px;}
+.ov-val .lk{font-size:12px;font-weight:var(--fw-book);color:var(--primary);text-decoration:underline;margin-left:6px;cursor:pointer;}
+.ov-sub{font-size:12px;line-height:16px;color:var(--text);margin-top:4px;}
+.trips-card{overflow:hidden;}
+.trips-card .card-title{padding:12px 16px;border-bottom:1px solid var(--grey-l2);}
+.trips-grid{display:flex;}
+.tp-panel{width:220px;flex-shrink:0;padding:16px 18px;border-right:1px solid var(--grey-l2);}
+.tp-lbl{font-size:12px;display:flex;align-items:center;gap:6px;color:var(--text-dark);}
+.tp-big{font-size:27px;line-height:34px;font-weight:var(--fw-demi);margin:6px 0 10px;}
+.tp-big small{font-size:18px;font-weight:var(--fw-book);color:var(--text);}
+.tp-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 0;border-bottom:1px solid var(--grey-l2);}
+.tp-row:last-child{border-bottom:none;}
+.tp-row .dot{width:7px;height:7px;border-radius:50%;}
+.tp-row b{margin-left:auto;font-weight:var(--fw-book);}
+.dot.done{background:var(--green);} .dot.up{background:var(--primary);} .dot.miss{background:var(--red);}
+table.trips{width:100%;border-collapse:collapse;}
+table.trips th{background:var(--grey-l2);text-align:left;font-size:12px;font-weight:var(--fw-book);padding:12px 14px;}
+table.trips td{font-size:12px;padding:12px 14px;border-bottom:1px solid var(--grey-l2);border-right:1px solid var(--grey-l2);}
+table.trips td:last-child{border-right:none;}
+table.trips td.dt{color:var(--text);}
+table.trips td.tid{font-weight:var(--fw-book);}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:18px;padding:1px 9px;border-radius:12px;}
+.st::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+.st.done{background:var(--green-bg);color:var(--green);} .st.up{background:var(--blue-bg);color:var(--primary);} .st.miss{background:var(--red-bg);color:var(--red);}
+.ds-note{font-size:11px;line-height:16px;background:var(--amber-bg);border-radius:4px;padding:3px 8px;font-weight:var(--fw-book);}
+.ds-note.info{background:var(--blue-bg);}
+.ds-note b{font-weight:var(--fw-demi);}
+table.ds{width:100%;border-collapse:collapse;margin-top:12px;border:1px solid var(--grey-l2);}
+table.ds th{background:var(--grey-l2);text-align:left;font-size:12px;font-weight:var(--fw-book);padding:8px 10px;}
+table.ds td{font-size:12px;line-height:18px;padding:12px 10px;border-right:1px solid var(--grey-l2);vertical-align:top;}
+table.ds td:last-child{border-right:none;text-align:center;}
+.ds-status{font-weight:var(--fw-book);}
+.ds-status.partial{color:var(--amber);} .ds-status.review{color:var(--primary);} .ds-status.approved{color:var(--green);} .ds-status.rejected{color:var(--red);}
+.btn-solid-sm{background:var(--navy);color:#fff;border:none;border-radius:4px;height:28px;padding:0 14px;font-size:13px;cursor:pointer;}
+.link-sm{display:block;margin:8px auto 0;background:none;border:none;font-size:12px;color:var(--text-dark);cursor:pointer;}
+.action-bar{display:none;background:#fff;border-top:1px solid var(--grey-l2);height:62px;padding:0 16px;align-items:center;justify-content:flex-end;gap:24px;flex-shrink:0;}
+.btn-link{background:none;border:none;color:var(--primary);font-size:15px;font-weight:var(--fw-book);cursor:pointer;}
+.btn-link:disabled{color:var(--grey-m1);cursor:not-allowed;}
+.btn-line{background:#fff;border:1px solid var(--grey-m2);border-radius:4px;height:40px;padding:0 14px;font-size:15px;color:var(--text-dark);cursor:pointer;}
+.btn-line:hover{background:var(--grey-l1);}
+
+/* DISPUTE PAGE */
+.dispute-view{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.dp-top{background:#fff;height:56px;padding:0 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.dp-top .back{background:none;border:none;cursor:pointer;display:inline-flex;padding:4px;color:var(--text-dark);}
+.dp-top h1{font-size:21px;line-height:28px;font-weight:var(--fw-demi);flex:1;}
+.dp-hiw{display:inline-flex;align-items:center;gap:8px;background:none;border:none;font-size:13px;cursor:pointer;color:var(--text-dark);}
+.dp-hiw i{width:15px;height:15px;border-radius:50%;background:var(--red);color:#fff;font-size:10px;font-style:normal;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}
+.dp-scroll{flex:1;overflow-y:auto;padding:8px 16px 0;display:flex;flex-direction:column;gap:8px;}
+.coexist{display:flex;align-items:center;gap:24px;background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:6px;padding:10px 16px;}
+.coexist .cq{font-size:14px;line-height:19px;font-weight:var(--fw-demi);width:150px;flex-shrink:0;}
+.coexist ul{display:flex;gap:28px;flex:1;margin:0;padding:0 0 0 14px;}
+.coexist li{font-size:12px;line-height:18px;flex:1;}
+.dp-grid{display:grid;grid-template-columns:470px 1fr;gap:12px;align-items:stretch;flex:1;}
+.dp-panel{background:#fff;padding:20px 20px 24px;}
+.dp-h{font-size:15px;line-height:20px;font-weight:var(--fw-demi);margin-bottom:8px;}
+.dp-lbl{font-size:13px;font-weight:var(--fw-demi);margin:14px 0 8px;display:block;}
+.fl{position:relative;margin-top:16px;}
+.fl>label{position:absolute;top:-8px;left:10px;background:#fff;padding:0 4px;font-size:11px;line-height:14px;color:var(--text);z-index:1;}
+.fl input,.fl textarea{width:100%;height:40px;border:1px solid var(--grey-m1);border-radius:4px;padding:0 12px;font-size:15px;font-family:inherit;color:var(--text-dark);outline:none;background:#fff;}
+.fl input:focus,.fl textarea:focus{border-color:var(--navy);}
+.fl textarea{height:80px;padding:10px 12px;font-size:13px;resize:none;line-height:20px;}
+.fl input:disabled{background:var(--grey-l2);color:var(--text);border-color:var(--grey-l2);}
+.fl input::placeholder,.fl textarea::placeholder{color:var(--grey-m2);}
+.fl .fl-err{font-size:12px;color:var(--red);margin-top:6px;}
+.fl .fl-help{font-size:12px;line-height:16px;color:var(--text);margin-top:6px;padding-left:12px;}
+.fl .fl-help.blue{color:var(--primary);}
+.fl .cnt{text-align:right;font-size:11px;color:var(--grey-m2);margin-top:2px;}
+.c-card{border:1px solid var(--grey-m1);border-radius:6px;padding:12px 14px;margin-top:12px;}
+.c-card .cr{display:flex;justify-content:space-between;gap:12px;}
+.c-card .cl{display:flex;align-items:center;gap:8px;font-size:12px;}
+.c-card .cv{font-size:12px;font-weight:var(--fw-demi);margin:4px 0 0 26px;}
+.c-card .cs{font-size:11px;color:var(--text);margin-left:26px;}
+.c-card .rate{color:var(--primary);font-weight:var(--fw-demi);font-size:14px;}
+.c-card .c3{display:flex;justify-content:space-between;margin-top:12px;}
+.c-card .c3>div .cl{gap:6px;}
+.c-card .c3 .cv{margin-left:26px;}
+.sub-list{display:flex;flex-direction:column;gap:8px;}
+.sub-card{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--grey-m1);border-radius:4px;padding:8px 12px;cursor:pointer;}
+.sub-card input{width:16px;height:16px;accent-color:var(--navy);margin-top:2px;flex-shrink:0;cursor:pointer;}
+.sub-card .en{font-size:12px;line-height:18px;display:block;}
+.sub-card .hi{font-size:12px;line-height:18px;color:var(--text-dark);display:block;}
+.flag-box{background:#EDF3FF;border:1px solid var(--primary-100);border-radius:6px;padding:10px 12px;margin-top:12px;}
+.flag-box .fb-h{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:var(--fw-demi);color:var(--navy);margin-bottom:6px;}
+.flag-box ul{padding-left:16px;}
+.flag-box li{font-size:11px;line-height:16px;color:var(--text-dark);}
+.flag-box b{font-weight:var(--fw-demi);}
+.flag-box.plain .fb-h{margin-bottom:2px;}
+.flag-box.plain p{font-size:11px;line-height:16px;}
+.dd-empty{height:100%;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--grey-m2);font-size:12px;line-height:18px;gap:8px;}
+.dd-sub{font-size:12px;color:var(--text);margin:-4px 0 14px;}
+.dd-item{border:1px solid var(--grey-m1);border-radius:8px;margin-bottom:12px;}
+.dd-item-h{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-size:13px;font-weight:var(--fw-demi);border-bottom:1px solid var(--grey-l2);}
+.dd-item-h button{background:none;border:none;cursor:pointer;color:var(--text-dark);display:inline-flex;}
+.dd-fields{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;padding:4px 16px 16px;}
+.dd-fields .full{grid-column:1/-1;}
+.dd-check{display:flex;align-items:center;gap:8px;font-size:12px;margin-top:14px;}
+.dd-check input{accent-color:var(--navy);width:15px;height:15px;}
+.dd-info{display:flex;gap:8px;background:var(--grey-l1);border-radius:4px;padding:8px 10px;font-size:11px;line-height:16px;margin-top:12px;color:var(--text);}
+.up-h{font-size:15px;font-weight:var(--fw-demi);margin:18px 0 8px;}
+.up-tip{background:#FFF8D9;border:1px solid #F5E2A0;border-radius:4px;padding:6px 10px;font-size:12px;display:flex;align-items:center;gap:6px;}
+.up-lbl{font-size:13px;font-weight:var(--fw-demi);margin:14px 0 8px;}
+.up-box{border:1px dashed var(--grey-m1);border-radius:6px;background:var(--grey-l1);padding:16px;text-align:center;font-size:12px;color:var(--text);cursor:pointer;}
+.up-box b{display:block;color:var(--text-dark);font-weight:var(--fw-book);margin-top:2px;}
+.dp-foot{background:#fff;border-top:1px solid var(--grey-l2);height:62px;padding:0 16px;display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-shrink:0;}
+
+/* CUSTOM SELECT (floating label + listbox, so its open state can be shown) */
+.fsel{position:relative;margin-top:16px;}
+.fsel>label{position:absolute;top:-8px;left:10px;background:#fff;padding:0 4px;font-size:11px;line-height:14px;color:var(--text);z-index:2;}
+.fsel-btn{width:100%;height:40px;border:1px solid var(--grey-m1);border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:15px;color:var(--text-dark);cursor:pointer;text-align:left;}
+.fsel-btn.ph{color:var(--grey-m2);}
+.fsel-btn svg{flex-shrink:0;transition:transform .15s;}
+.fsel.open .fsel-btn svg{transform:rotate(180deg);}
+.fsel-list{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--grey-l2);border-radius:6px;box-shadow:0 8px 24px rgba(9,45,94,.14);padding:8px;z-index:60;list-style:none;}
+.fsel.open .fsel-list{display:block;}
+.fsel-list li{font-size:13px;line-height:20px;padding:6px 14px;border-radius:4px;cursor:pointer;}
+.fsel-list li:hover,.fsel-list li.hl{background:var(--grey-l1);}
+.fsel-list li[aria-selected="true"]{background:var(--grey-l1);font-weight:var(--fw-demi);}
+
+/* TOAST */
+.toast{position:fixed;right:16px;bottom:16px;background:#272829;color:#fff;border-radius:4px;padding:10px 16px;font-size:13px;line-height:20px;display:flex;align-items:center;gap:10px;z-index:1000;opacity:0;transform:translateY(12px);transition:all .25s;pointer-events:none;max-width:560px;}
+.toast.show{opacity:1;transform:none;pointer-events:auto;}
+.toast button{background:none;border:none;color:#fff;text-decoration:underline;font-size:13px;cursor:pointer;padding:0;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(20,26,38,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal{background:#fff;border-radius:8px;width:500px;max-width:96vw;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.m-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--grey-l2);min-height:54px;}
+.m-title{font-size:15px;line-height:20px;font-weight:var(--fw-book);}
+.m-close{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text-dark);display:inline-flex;width:32px;height:32px;align-items:center;justify-content:center;}
+.m-body{padding:16px 16px 20px;}
+.m-foot{display:flex;justify-content:flex-end;gap:10px;padding:12px 16px;border-top:1px solid var(--grey-l2);}
+.m-q{font-size:15px;line-height:20px;font-weight:var(--fw-demi);margin:8px 0 6px;}
+.btn-primary{background:var(--navy);color:#fff;border:1px solid var(--navy);border-radius:4px;height:38px;padding:0 16px;font-size:15px;font-weight:var(--fw-book);cursor:pointer;}
+.btn-primary:hover{background:#071F42;}
+.btn-primary:disabled{background:#fff;color:var(--text-dark);border-color:var(--grey-m2);cursor:not-allowed;}
+.btn-sec{background:#fff;color:var(--navy);border:1px solid var(--navy);border-radius:4px;height:38px;padding:0 16px;font-size:15px;cursor:pointer;}
+.btn-sec:hover{background:var(--grey-l1);}
+.btn-sec:disabled{color:var(--grey-m2);border-color:var(--grey-m1);cursor:not-allowed;}
+.info-card{border:1px solid var(--grey-l2);border-radius:6px;overflow:hidden;}
+.ic-route{background:#EEF2F8;padding:8px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.ic-route .l{font-size:11px;line-height:16px;color:var(--text);}
+.ic-route .v{font-size:13px;line-height:18px;font-weight:var(--fw-book);}
+.ic-route .dir{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:var(--fw-demi);color:var(--navy);cursor:pointer;white-space:nowrap;background:none;border:none;margin-top:8px;}
+.ic-stops{padding:10px 12px 4px;border-top:1px solid var(--grey-l2);}
+.ic-stops .sn{font-size:11px;color:var(--text);margin-bottom:6px;}
+.stop{display:flex;align-items:center;gap:10px;font-size:12px;line-height:22px;}
+.stop .no{width:14px;height:14px;border:1px solid var(--grey-m2);border-radius:50%;font-size:9px;line-height:12px;text-align:center;color:var(--text);flex-shrink:0;}
+.stop .nm{min-width:110px;}
+.stop a{color:var(--primary);text-decoration:underline;}
+.stop .cp{margin-left:auto;color:var(--text);display:inline-flex;}
+.ic-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;padding:10px 12px 12px;}
+.ic-grid .l{font-size:11px;line-height:16px;color:var(--text);}
+.ic-grid .v{font-size:13px;line-height:18px;font-weight:var(--fw-book);margin-top:2px;}
+.loss{background:var(--red-bg);border:1px solid var(--red-border);border-radius:6px;padding:8px 12px;margin-top:10px;font-size:12px;line-height:18px;}
+.loss .lt{font-weight:var(--fw-demi);font-size:12px;}
+.loss .amt{color:var(--red);}
+.loss ul{padding-left:16px;}
+.loss b{font-weight:var(--fw-demi);}
+.note-box{border:1px solid var(--grey-l2);border-radius:6px;padding:8px 12px;margin-top:8px;font-size:11px;line-height:16px;}
+.note-box .nt{font-size:12px;font-weight:var(--fw-demi);margin-bottom:2px;}
+.note-box ul{padding-left:14px;color:var(--text);}
+.note-box b{font-weight:var(--fw-demi);color:var(--text-dark);}
+.note-box .nl{display:flex;gap:6px;margin-top:6px;}
+.note-box .nl .lt{font-size:12px;font-weight:var(--fw-demi);}
+.note-box .amt{color:var(--red);}
+.inline-err{font-size:12px;color:var(--red);margin-top:8px;}
+.rate-grid{background:var(--grey-l1);border:1px solid var(--grey-l2);border-radius:6px;padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-top:10px;}
+.rate-grid .l{font-size:11px;line-height:16px;color:var(--text);}
+.rate-grid .v{font-size:12px;line-height:16px;font-weight:var(--fw-demi);margin-top:2px;}
+.bul{padding-left:14px;margin-top:12px;}
+.bul li{font-size:10.5px;line-height:15px;color:var(--text);}
+.bul b{font-weight:var(--fw-demi);color:var(--text-dark);}
+.chk{display:flex;align-items:center;gap:10px;font-size:12px;margin-top:12px;cursor:pointer;}
+.chk input{width:15px;height:15px;accent-color:var(--navy);}
+.success-body{text-align:center;padding:28px 24px 26px;}
+.success-body h3{font-size:16px;line-height:22px;font-weight:var(--fw-demi);margin-top:12px;}
+.success-body p{font-size:11px;line-height:16px;color:var(--text-dark);margin-top:6px;}
+.success-body b{font-weight:var(--fw-demi);}
+
+/* DRAWERS (floating panels) */
+.drawer-overlay{position:fixed;inset:0;background:rgba(20,26,38,.55);z-index:520;display:none;}
+.drawer-overlay.show{display:block;}
+.drawer{position:fixed;top:15px;right:15px;bottom:15px;width:565px;max-width:calc(100vw - 30px);background:#fff;border-radius:8px;z-index:530;display:flex;flex-direction:column;transform:translateX(110%);transition:transform .25s ease;}
+.drawer:not(.show){visibility:hidden;transition:transform .25s ease,visibility 0s .25s;}
+.drawer.show{transform:none;}
+.dr-body{flex:1;overflow-y:auto;padding:16px;}
+.dr-foot{display:flex;justify-content:flex-end;gap:10px;padding:12px 16px;border-top:1px solid var(--grey-l2);}
+.dr-note{font-size:11px;color:var(--text);padding:12px 16px;border-top:1px solid var(--grey-l2);}
+.rem-card{border:1px solid var(--grey-l2);border-radius:6px;padding:12px 14px;margin-bottom:10px;}
+.rem-card-h{display:flex;justify-content:space-between;align-items:center;padding-bottom:6px;border-bottom:1px solid var(--grey-l2);margin-bottom:6px;}
+.rem-card-h b{font-size:15px;font-weight:var(--fw-book);}
+.rem-card .rem-pill{margin-top:0;font-size:11px;color:var(--text);}
+.rem-row{display:flex;font-size:12px;line-height:22px;}
+.rem-row .rl{width:92px;color:var(--text-dark);}
+.rem-row .rv{font-size:13px;}
+.rem-foot{display:flex;align-items:center;gap:12px;margin-top:6px;}
+.back-link{background:none;border:none;color:var(--primary);font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:0;}
+.acc-title{font-size:15px;line-height:20px;font-weight:var(--fw-book);margin:8px 0 10px;}
+.assign{border-top:1px solid var(--grey-l2);border-bottom:1px solid var(--grey-l2);margin:12px -16px 0;padding:14px 16px;}
+.assign .ah{font-size:15px;display:flex;align-items:center;gap:8px;}
+.assign .opt{font-size:11px;background:var(--grey-l1);border:1px solid var(--grey-l2);border-radius:10px;padding:0 8px;color:var(--text);}
+.assign .as{font-size:12px;color:var(--text-dark);margin:4px 0 10px;}
+.assign .row{display:flex;gap:12px;}
+.assign select{flex:1;height:30px;}
+.tc-box{background:var(--amber-bg);border-radius:6px;padding:12px 16px;margin-top:14px;}
+.tc-box .tt{font-size:15px;margin-bottom:6px;}
+.tc-box ul{padding-left:18px;}
+.tc-box li{font-size:12px;line-height:20px;}
+.tc-box b{font-weight:var(--fw-demi);}
+.tc-check{display:flex;align-items:center;gap:12px;font-size:15px;margin-top:16px;cursor:pointer;}
+.tc-check input{width:19px;height:19px;accent-color:var(--navy);}
+.tc-check a{color:var(--primary);text-decoration:none;}
+
+@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important;} }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" aria-label="Main navigation">
+  <div class="sb-user"><div class="sb-avatar" aria-hidden="true"></div><div class="sb-name">Karan Verma</div></div>
+  <div class="sb-support"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/></svg>Valmo Support</div>
+  <nav class="sb-nav">
+    <div class="nav-item dim" data-clickable role="button" tabindex="0"><span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#8E96A3"><path d="M12 3 2 11h3v9h5v-6h4v6h5v-9h3z"/></svg></span>Home</div>
+    <div class="nav-item" data-clickable role="button" tabindex="0"><span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="1.5" y="6" width="13" height="10" rx="1.5" fill="#7DA7E8"/><path d="M14.5 9h4l3.5 3.6V16h-7.5z" fill="#4F86D9"/><circle cx="6" cy="17.5" r="2" fill="#E6EBF2"/><circle cx="17.5" cy="17.5" r="2" fill="#E6EBF2"/></svg></span>Trips</div>
+    <div class="nav-item" id="navDisputes" data-clickable role="button" tabindex="0" onclick="openDispute('', 'nav')"><span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="5.5" fill="none" stroke="#C3C9D4" stroke-width="3" stroke-dasharray="3 2"/><circle cx="10" cy="10" r="2.6" fill="#C3C9D4"/><circle cx="17" cy="17" r="4.2" fill="#F44240"/><path d="M17 15v2.4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><circle cx="17" cy="19.3" r=".8" fill="#fff"/></svg></span>Disputes</div>
+    <div class="nav-item active" id="navContracts" data-clickable role="button" tabindex="0" onclick="goTo('pending')"><span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4.5" y="3.5" width="15" height="18" rx="2" fill="#F5D7A1"/><rect x="8.5" y="2" width="7" height="4" rx="1.2" fill="#C9864B"/><path d="M8 10h8M8 13.5h8M8 17h5" stroke="#9A6A3B" stroke-width="1.4" stroke-linecap="round"/></svg></span>Contract Management</div>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sb-logout" data-clickable role="button" tabindex="0" onclick="logout()"><span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="11" height="18" rx="1.5" fill="#C9864B"/><circle cx="11" cy="12" r="1" fill="#fff"/><path d="M14 12h7m-3-3 3 3-3 3" stroke="#F44240" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Log Out</div>
+    <div class="sb-logo" aria-label="Valmo">VALMO</div>
+  </div>
+</aside>
+
+<div class="main">
+  <!-- LIST VIEW (L1) -->
+  <div class="list-view" id="listView">
+    <header class="topbar">
+      <div class="topbar-title">Contract Management</div>
+      <button class="yt-btn" onclick="openHiw()"><span class="yt-ico" aria-hidden="true"></span>How it works?</button>
+      <div class="bell-wrap">
+        <button class="bell-btn" onclick="toggleBell(event)" aria-label="Notifications, 3 new">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="bell-badge">3</span>
+        </button>
+        <div class="bell-dropdown" id="bellDropdown" role="menu"></div>
+      </div>
+      <div class="search-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="text" id="searchInput" aria-label="Search by Contract ID" placeholder="Search by Contract ID"></div>
+    </header>
+    <div class="content-area" id="contentArea">
+      <div class="hiw-strip" id="hiwStrip"></div>
+      <div class="overview-card" id="overviewCard" data-hl="overview"><div class="stat-row" id="statRow"></div></div>
+      <div>
+        <div class="list-head">
+          <div class="tabs-bar" id="tabsBar" role="tablist"></div>
+          <div class="chips-row" id="chipsRow" data-hl="chips" style="display:none;"></div>
+          <div class="filter-bar"><div class="filter-left" id="filterLeft"></div><div class="filter-right" id="filterRight"></div></div>
+          <div id="bannerRow"></div>
+        </div>
+        <div class="table-wrap" id="tableWrap"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL VIEW (L2) -->
+  <div class="detail-view" id="detailView">
+    <div class="crumb" id="detailCrumb"></div>
+    <div class="detail-scroll" id="detailScroll"></div>
+    <div class="action-bar" id="detailActionBar"></div>
+  </div>
+
+  <!-- DISPUTE VIEW -->
+  <div class="dispute-view" id="disputeView">
+    <div class="dp-top">
+      <button class="back" onclick="closeDispute()" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg></button>
+      <h1>Dispute</h1>
+      <button class="dp-hiw" onclick="openHiw()"><i aria-hidden="true">!</i>How it works?</button>
+    </div>
+    <div class="dp-scroll" id="disputeScroll"></div>
+    <div class="dp-foot" id="disputeFoot"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- REMINDERS DRAWER -->
+<div class="drawer-overlay" id="remindersOverlay" onclick="closeReminders()"></div>
+<div class="drawer" id="remindersDrawer" role="dialog" aria-modal="true" aria-labelledby="remindersTitle">
+  <div class="m-head"><span class="m-title" id="remindersTitle">Contracts with reminders</span><span class="hi-pill tint" data-clickable role="button" tabindex="0" onclick="openHiw()"><span class="tri"></span>हिंदी में जानकारी</span><button class="m-close" onclick="closeReminders()" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="dr-body" id="remindersBody"></div>
+  <div class="dr-note">Reminders are sent by Valmo when a contract needs urgent action.</div>
+</div>
+
+<!-- ACCEPT DRAWER -->
+<div class="drawer-overlay" id="acceptOverlay" onclick="closeAcceptDrawer()"></div>
+<div class="drawer" id="acceptDrawer" role="dialog" aria-modal="true" aria-labelledby="acceptTitle">
+  <div class="m-head"><span class="m-title" id="acceptTitle">Confirm Contract Acceptance</span><span class="hi-pill tint" data-clickable role="button" tabindex="0" onclick="openHiw()"><span class="tri"></span>हिंदी में जानकारी</span><button class="m-close" onclick="closeAcceptDrawer()" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="dr-body" id="acceptBody"></div>
+  <div class="dr-foot"><button class="btn-sec" onclick="closeAcceptDrawer()">Go Back</button><button class="btn-primary" id="acceptConfirmBtn" onclick="confirmAccept()">Accept Contract</button></div>
+</div>
+
+<!-- REJECT MODAL -->
+<div class="modal-overlay" id="rejectModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="rejectTitle">
+  <div class="m-head"><span class="m-title" id="rejectTitle">Reject Contract</span><span class="hi-pill tint" data-clickable role="button" tabindex="0" onclick="openHiw()"><span class="tri"></span>हिंदी में जानकारी</span><button class="m-close" onclick="closeModal('rejectModal')" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="m-body" id="rejectBody"></div>
+  <div class="m-foot"><button class="btn-sec" onclick="closeModal('rejectModal')">Go Back</button><button class="btn-primary" id="rejectConfirmBtn" onclick="confirmReject()">Confirm Rejection</button></div>
+</div></div>
+
+<!-- TERMINATE MODAL -->
+<div class="modal-overlay" id="terminateModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="terminateTitle">
+  <div class="m-head"><span class="m-title" id="terminateTitle">Terminate Contract</span><span class="hi-pill tint" data-clickable role="button" tabindex="0" onclick="openHiw()"><span class="tri"></span>हिंदी में जानकारी</span><button class="m-close" onclick="closeModal('terminateModal')" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="m-body" id="terminateBody"></div>
+  <div class="m-foot"><button class="btn-sec" onclick="closeModal('terminateModal')">Go Back</button><button class="btn-primary" onclick="confirmTerminate()">Confirm Termination</button></div>
+</div></div>
+
+<!-- REVISED RATE MODAL -->
+<div class="modal-overlay" id="rateModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="rateTitle">
+  <div class="m-head"><span class="m-title" id="rateTitle">Review &amp; Accept Your Revised Rate</span><span class="hi-pill tint" data-clickable role="button" tabindex="0" onclick="openHiw()"><span class="tri"></span>हिंदी में जानकारी</span><button class="m-close" onclick="closeModal('rateModal')" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="m-body" id="rateBody"></div>
+  <div class="m-foot"><button class="btn-sec" data-hl="terminatebtn" onclick="rateToTerminate()">Terminate Contract</button><button class="btn-primary" onclick="confirmAcceptRate()">Accept New Rate</button></div>
+</div></div>
+
+<!-- SUCCESS MODAL (accepted / terminated / dispute raised) -->
+<div class="modal-overlay" id="successModal"><div class="modal" style="width:400px;" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+  <div class="m-head"><span class="m-title" id="successTitle"></span><span id="successHindi"></span><button class="m-close" onclick="closeSuccess()" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div id="successBody"></div>
+  <div class="m-foot" id="successFoot"></div>
+</div></div>
+
+<!-- HOW IT WORKS MODAL -->
+<div class="modal-overlay" id="hiwModal"><div class="modal" style="width:560px;" role="dialog" aria-modal="true" aria-labelledby="hiwTitle">
+  <div class="m-head"><span class="m-title" id="hiwTitle">How Contract Management works</span><button class="m-close" onclick="closeModal('hiwModal')" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="m-body" style="font-size:13px;line-height:20px;color:var(--text);">
+    <p style="margin-bottom:12px;">Your contracts move through four stages. Here is what to do at each one:</p>
+    <ol style="padding-left:18px;display:flex;flex-direction:column;gap:10px;">
+      <li><b>Pending:</b> a new contract from Valmo is waiting. Accept it, or reject it with a reason. If only the rate is wrong, enter your rate and Valmo can resend the contract.</li>
+      <li><b>Upcoming:</b> you accepted it and it has not started yet.</li>
+      <li><b>Active:</b> trips run every day. Raise a dispute if something is wrong; Valmo replies within 5 days. If Valmo approves part of your rate, review and accept the new rate. If you terminate, the contract stays active for 24hrs, then moves to Closed.</li>
+      <li><b>Closed:</b> completed, ended early, cancelled, rejected and no-response contracts stay here for your records.</li>
+    </ol>
+  </div>
+  <div class="m-foot"><button class="btn-primary" onclick="closeModal('hiwModal')">Got it</button></div>
+</div></div>
+
+<script>
+/* ============================================================
+   Contract Management (Transporter) prototype.
+   Sample data only: contract IDs, routes and amounts are invented.
+   The case study drives this page through window.__vt.scene(name).
+   ============================================================ */
+
+// ---- ICONS ----------------------------------------------------------------
+const ICO={
+  chev:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>',
+  down:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
+  up:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>',
+  arrow:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>',
+  oneway:'<svg width="16" height="10" viewBox="0 0 24 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4" cy="7" r="2.6"/><path d="M7 7h14m-4-4 4 4-4 4"/></svg>',
+  twoway:'<svg width="16" height="12" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h17m-4-4 4 4-4 4M21 13H4m4-4-4 4 4 4"/></svg>',
+  info:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></svg>',
+  bell:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+  dl:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 20h14"/></svg>',
+  send:'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3 3 10.5l7.5 3L13.5 21z"/></svg>',
+  copy:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>',
+  close:'<svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>',
+  okc:'<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#fff"/><path d="m7.5 12.3 3 3 6-6.3" stroke="#272829" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+function svgIco(name){
+  const p={
+    trip:'<path d="M5 20 9.5 4M19 20 14.5 4M12 6v2M12 11v2M12 16v2" stroke-linecap="round"/>',
+    route:'<circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M8 5h8a3.5 3.5 0 0 1 0 7H8a3.5 3.5 0 0 0 0 7h8" stroke-linecap="round"/>',
+    truck:'<rect x="1.5" y="6" width="13" height="10" rx="1"/><path d="M14.5 9h4l3.5 3.6V16h-7.5z" stroke-linejoin="round"/><circle cx="6" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/>',
+    calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke-linecap="round"/>',
+    money:'<path d="M9 3h6l-1.5 3h-3z" stroke-linejoin="round"/><path d="M10.5 6C6 8 4 12 4 15.5 4 19 7 21 12 21s8-2 8-5.5C20 12 18 8 13.5 6" stroke-linejoin="round"/><path d="M10 12.5h4M10 15h4M12 12.5c1.2 0 1.6 2.5 0 2.5L10 18" stroke-linecap="round" stroke-linejoin="round"/>',
+    check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/>'
+  }[name]||'';
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">'+p+'</svg>';
+}
+function confettiSvg(){
+  return '<svg width="84" height="84" viewBox="0 0 84 84" aria-hidden="true">'+
+    '<circle cx="42" cy="43" r="22" fill="#E7FBE0"/><circle cx="42" cy="43" r="15" fill="#43A92C"/>'+
+    '<path d="m35 43.5 5 5 9-10" stroke="#fff" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '<path d="M20 22l3 1.5M60 16l-1.5 3.5M70 34l-3.5 .5M14 46l3.5-.5M63 64l-2.5-2.5M24 66l2.5-3M42 8v4M50 74l-.8-3.5" stroke="#F5A623" stroke-width="2.2" stroke-linecap="round"/>'+
+    '<path d="M30 14l1 3.5M72 52l-3.5-1M11 30l3.5 1.5M36 76l1-3.5" stroke="#8C6BF2" stroke-width="2.2" stroke-linecap="round"/>'+
+    '<circle cx="66" cy="24" r="2" fill="#F44240"/><circle cx="17" cy="58" r="2" fill="#2A67FF"/><circle cx="56" cy="74" r="1.8" fill="#43A92C"/><circle cx="24" cy="31" r="1.6" fill="#F44240"/><circle cx="73" cy="44" r="1.6" fill="#2A67FF"/>'+
+  '</svg>';
+}
+function emptySvg(){
+  return '<svg width="64" height="74" viewBox="0 0 64 74" aria-hidden="true"><path d="M6 10h42L33 32v26l-10 6V32z" fill="#D6DCE6"/><path d="M14 4h26l4 6H10z" fill="#EEF1F6"/><rect x="18" y="0" width="16" height="9" rx="1.5" fill="#fff" stroke="#D6DCE6"/><circle cx="40" cy="46" r="11" fill="#fff" stroke="#8E96A3" stroke-width="3"/><path d="m36 42 8 8m0-8-8 8" stroke="#8E96A3" stroke-width="2.4" stroke-linecap="round"/><path d="m48 54 9 10" stroke="#8E96A3" stroke-width="4.5" stroke-linecap="round"/></svg>';
+}
+
+// ---- DATA (rebuilt by seedData so scenes are deterministic) ---------------
+const R={
+  BLR6:{from:'BLR',to:'DLS',nodeCount:6,haulType:'NLH',km:1200,direction:'One way',routeFull:'BLR → A1H → B7HH → CVGF → DLS'},
+  LKO:{from:'LKO',to:'DLS',nodeCount:0,haulType:'NLH',km:700,direction:'Two way',routeFull:'LKO → DLS'},
+  SRT:{from:'SRT',to:'MUM',nodeCount:2,haulType:'RLH',km:400,direction:'One way',routeFull:'SRT → BRD → VAP → MUM'},
+  SJR:{from:'SJR',to:'BYU',nodeCount:0,haulType:'RLH',km:200,direction:'One way',routeFull:'SJR → BYU'},
+  HERO:{from:'BLR',to:'DEL',nodeCount:4,haulType:'NLH',km:1400,direction:'One way',routeFull:'BLR → ABC → QWE → YUI → GHJ → DEL'},
+  HYD:{from:'HYD',to:'MUM',nodeCount:3,haulType:'NLH',km:1100,direction:'One way',routeFull:'HYD → NGL → PUN → MUM'},
+  DEL:{from:'DEL',to:'LKO',nodeCount:3,haulType:'NLH',km:700,direction:'One way',routeFull:'DEL → MRT → AGR → LKO'},
+  PUN:{from:'PUN',to:'BLR',nodeCount:0,haulType:'RLH',km:840,direction:'One way',routeFull:'PUN → BLR'},
+  CHE:{from:'CHE',to:'BLR',nodeCount:0,haulType:'RLH',km:360,direction:'One way',routeFull:'CHE → BLR'},
+  KOL:{from:'KOL',to:'PAT',nodeCount:2,haulType:'NLH',km:600,direction:'One way',routeFull:'KOL → DGP → PAT'},
+  AMD:{from:'AMD',to:'JAI',nodeCount:0,haulType:'RLH',km:640,direction:'Two way',routeFull:'AMD → JAI'}
+};
+const GEN_ROUTES=[R.HYD,R.DEL,R.SJR,R.PUN,R.CHE,R.BLR6,R.KOL,R.LKO,R.AMD,R.SRT];
+const VEH=['20ft','24ft','28ft','32ft','40ft'];
+const PT=['06:00AM','07:00AM','08:00AM','09:00AM','10:00AM'];
+const RATES=[4500,5500,6000,4800,5200,7000,3800];
+function pick(a,i){ return a[((i%a.length)+a.length)%a.length]; }
+function genId(seq){ const s=String(40000000+seq*7919); return 'CR-'+s+'-'+s.slice(2,6); }
+function mk(route, o){ return Object.assign({}, route, {billingType:'Regular', tripsPlanned:30}, o); }
+
+let DATA=null;
+function seedData(){
+  DATA={pending:[],upcoming:[],active:[],closed:[]};
+  const P=DATA.pending;
+  P.push(mk(R.BLR6,{id:'CR-12345678-1234',vehicle:'32ft',period:"1 Apr'26- 30 Apr'26",placementTime:'06:00AM',rate:4500,deadline:'Accept by 3hrs',lvl:'red',reminder:'Reminder · 2h ago',status:'pending'}));
+  P.push(mk(R.BLR6,{id:'CR-98765432-4321',vehicle:'28ft',period:"1 May'26- 30 May'26",placementTime:'07:00AM',rate:5500,deadline:'Accept by 3hrs',lvl:'red',status:'pending'}));
+  P.push(mk(R.LKO,{id:'CR-23456781-2345',vehicle:'32ft',period:"1 Apr'26- 30 Apr'26",placementTime:'06:00AM',rate:4500,deadline:'Accept by 3hrs',lvl:'red',reminder:'Reminded 2h ago',status:'pending'}));
+  P.push(mk(R.SRT,{id:'CR-76543210-4321',vehicle:'40ft',period:"5 May'26- 15 May'26",placementTime:'09:00AM',rate:6000,deadline:'Accept by Tomorrow',lvl:'amber',status:'pending',tripsPlanned:11}));
+  P.push(mk(R.SJR,{id:'CR-34567812-3456',vehicle:'32ft',period:"1 Apr'26- 30 Apr'26",placementTime:'06:00AM',rate:4500,deadline:'Accept by Tomorrow',lvl:'amber',reminder:'Reminded 2h ago',status:'pending'}));
+  P.push(mk(R.LKO,{id:'CR-87654321-4321',vehicle:'28ft',period:"15 May'26- 20 May'26",placementTime:'08:00AM',rate:8000,deadline:'Accept by 10 May',lvl:'amber',status:'pending',tripsPlanned:6}));
+  P.push(mk(R.LKO,{id:'CR-65432198-3210',vehicle:'45ft',period:"10 Apr'26- 20 Apr'26",placementTime:'10:00AM',rate:7000,deadline:'Accept by 24 Apr',lvl:'grey',status:'pending',tripsPlanned:11}));
+  P.push(mk(R.BLR6,{id:'CR-65432198-3211',vehicle:'45ft',period:"10 Apr'26- 20 Apr'26",placementTime:'10:00AM',rate:7000,deadline:'Accept by 24 Apr',lvl:'grey',status:'pending',tripsPlanned:11}));
+  for(let i=0;i<22;i++){
+    P.push(mk(pick(GEN_ROUTES,i),{id:genId(100+i),vehicle:pick(VEH,i),period:pick(["1 May'26- 31 May'26","5 May'26- 4 Jun'26","10 May'26- 9 Jun'26"],i),
+      placementTime:pick(PT,i),rate:pick(RATES,i),deadline:'Accept by '+(25+(i%5))+' Apr',lvl:'grey',status:'pending',billingType:i%3?'Regular':'Adhoc'}));
+  }
+
+  const U=DATA.upcoming;
+  const upRoutes=[R.SRT,R.BLR6,R.LKO,R.BLR6,R.BLR6,R.LKO,R.BLR6,R.LKO,R.SJR];
+  upRoutes.forEach(function(r,i){
+    U.push(mk(r,{id:i===0?'CR-45678123-4567':genId(300+i),vehicle:'32ft',period:"1 Apr'26- 30 Apr'26",placementTime:'06:00AM',rate:4500,startDays:i<4?1:4,
+      acceptedOn:"21 Mar'26",tat:'2 days',billingType:'Regular',status:'upcoming'}));
+  });
+  for(let i=0;i<11;i++){
+    U.push(mk(pick(GEN_ROUTES,i+2),{id:genId(320+i),vehicle:pick(VEH,i),period:pick(["5 May'26- 4 Jun'26","10 May'26- 9 Jun'26"],i),placementTime:pick(PT,i),
+      rate:pick(RATES,i+1),startDays:8+i*2,acceptedOn:"14 Apr'26",tat:'1 day',status:'upcoming'}));
+  }
+
+  const A=DATA.active;
+  const P5="5 May'26- 15 May'26";
+  A.push(mk(R.SRT,{id:'CR-56781234-5678',vehicle:'40ft',period:P5,placementTime:'09:00AM',rate:4500,status:'active',
+    dispute:{id:'DS1234567890',created:"9 Feb'26, 08:00 AM",issue:'Rate not acceptable',doc:'Challan.png',status:'partial',askedRate:6500,approvedRate:5500,appliesFrom:"7 Apr'26",updated:"7 Apr'26, 08:00 AM",valmoNote:'Rate matches the lane distance',rateAccepted:false}}));
+  A.push(mk(R.SJR,{id:'CR-67812345-6781',vehicle:'40ft',period:P5,placementTime:'09:00AM',rate:4500,status:'active',
+    dispute:{id:'DS1234567891',created:"2 Apr'26, 10:00 AM",issue:'Rate not acceptable',doc:'Challan.png',status:'approved',askedRate:5000,approvedRate:5000,appliesFrom:"6 Apr'26",updated:"6 Apr'26, 11:00 AM",valmoNote:'Approved in full'}}));
+  A.push(mk(R.BLR6,{id:'CR-78123456-7812',vehicle:'40ft',period:P5,placementTime:'09:00AM',rate:4500,status:'active',
+    dispute:{id:'DS1234567892',created:"3 Apr'26, 09:30 AM",issue:'Rate not acceptable',doc:'Challan.png',status:'rejected',askedRate:5600,approvedRate:null,updated:"8 Apr'26, 04:00 PM",valmoNote:'Rate is in line with the lane benchmark'}}));
+  A.push(mk(R.SRT,{id:'CR-81234567-8123',vehicle:'40ft',period:P5,placementTime:'09:00AM',rate:6000,status:'active'}));
+  A.push(mk(R.BLR6,{id:'CR-91234567-9123',vehicle:'40ft',period:P5,placementTime:'09:00AM',rate:4500,revisedRate:5500,reissuedFrom:'CR-11122233-1112',status:'active'}));
+  A.push(mk(R.LKO,{id:'CR-10293847-1029',vehicle:'40ft',period:P5,placementTime:'09:00AM',rate:6000,endedEarly:true,endedEarlyBy:'You',activeTill:"15 Apr'26",status:'active'}));
+  A.push(mk(R.SJR,{id:'CR-20394857-2039',vehicle:'40ft',period:P5,placementTime:'09:00AM',rate:6000,status:'active',
+    dispute:{id:'DS1234567893',created:"10 Apr'26, 08:00 AM",issue:'Rate not acceptable',doc:'Challan.png',status:'review',askedRate:6800,approvedRate:null,updated:"10 Apr'26, 08:00 AM"}}));
+  A.push(mk(R.SJR,{id:'CR-30495867-3049',vehicle:'40ft',period:P5,placementTime:'09:00AM',rate:6000,status:'active',
+    dispute:{id:'DS1234567894',created:"11 Apr'26, 09:00 AM",issue:"I don't have this vehicle size available",doc:'Challan.png',status:'review',askedRate:null,approvedRate:null,updated:"11 Apr'26, 09:00 AM"}}));
+  A.push(mk(R.HERO,{id:'CR-12345678-12',vehicle:'32ft',period:"1 Feb'26- 28 Feb'26",placementTime:'06:00AM',rate:4500,status:'active',hero:true,
+    acceptedOn:"21 Mar'26",tat:'2 days',routeName:'Route 123',terminateTill:"21 Feb'26",tripsPlanned:21}));
+  // generated: 5 more disputes (10 total), 7 more ended early (8 total), the rest plain (50 total)
+  const disp=['review','review','review','approved','rejected'];
+  for(let i=0;i<41;i++){
+    const r=pick(GEN_ROUTES,i+1), rate=pick(RATES,i+3);
+    const c=mk(r,{id:genId(400+i),vehicle:pick(VEH,i+3),period:pick(["1 Apr'26- 30 Apr'26","5 Apr'26- 4 May'26"],i),placementTime:pick(PT,i),rate:rate,status:'active',billingType:i%4?'Regular':'Adhoc'});
+    if(i<7){ c.endedEarly=true; c.endedEarlyBy=(i<4?'You':'Valmo'); c.activeTill=pick(["15 Apr'26","16 Apr'26"],i); }
+    else if(i<12){ const st=disp[i-7]; c.dispute={id:'DS12345679'+(10+i),created:"12 Apr'26, 10:00 AM",issue:'Rate not acceptable',doc:'Challan.png',status:st,askedRate:rate+800,approvedRate:st==='approved'?rate+800:null,updated:"14 Apr'26, 10:00 AM",appliesFrom:"14 Apr'26"}; }
+    A.push(c);
+  }
+
+  const C=DATA.closed;
+  const CP="5 May'26- 15 May'26";
+  const closedSeed=[[R.LKO,'continued'],[R.LKO,'Cancelled by Valmo'],[R.BLR6,'Completed'],[R.SJR,'Ended early by You'],[R.SJR,'Ended early by Valmo'],[R.LKO,'No Response'],[R.SJR,'Rejected'],[R.LKO,'Completed'],[R.SJR,'Completed']];
+  closedSeed.forEach(function(s,i){
+    C.push(mk(s[0],{id:i===0?'CR-11122233-1112':genId(700+i),vehicle:'40ft',period:CP,placementTime:'09:00AM',rate:6000,status:'closed',
+      closedReason:s[1],continuedAs:i===0?'CR-91234567-9123':null}));
+  });
+  const reasons=['Completed','Ended early by You','Completed','Ended early by Valmo','Rejected','No Response','Cancelled by Valmo','Completed'];
+  for(let i=0;i<41;i++){
+    C.push(mk(pick(GEN_ROUTES,i+4),{id:genId(720+i),vehicle:pick(VEH,i),period:pick(["1 Jan'26- 31 Jan'26","1 Feb'26- 28 Feb'26","1 Mar'26- 31 Mar'26"],i),
+      placementTime:pick(PT,i),rate:pick(RATES,i+2),status:'closed',closedReason:pick(reasons,i)}));
+  }
+
+  // trips
+  DATA.active.concat(DATA.closed).forEach(function(c,i){
+    const isClosed=c.status==='closed';
+    if(c.hero){ c.trips=heroTrips(); c.pc={completed:18,upcoming:2,missed:1}; return; }
+    const noTrips=isClosed&&(c.closedReason==='Rejected'||c.closedReason==='No Response'||c.closedReason==='Cancelled by Valmo');
+    c.pc=noTrips?{completed:0,upcoming:0,missed:0}:{completed:8+(i%9),upcoming:isClosed?0:2+(i%5),missed:i%3?1:0};
+    c.trips=genTrips(c);
+  });
+}
+function heroTrips(){
+  // 21 trips: 18 completed, 2 upcoming, 1 missed (17 Feb), newest first
+  const t=[];
+  for(let d=21; d>=1; d--){
+    t.push({date:d+" Feb'26",tripId:'TR-123456789-'+(1213+d),status:d>=20?'Upcoming':(d===17?'Missed':'Completed')});
+  }
+  return t;
+}
+function genTrips(c){
+  const pc=c.pc, seq=[];
+  for(let i=0;i<pc.upcoming;i++) seq.push('Upcoming');
+  for(let i=0;i<pc.completed;i++) seq.push('Completed');
+  if(pc.missed) seq.splice(Math.min(3,seq.length),0,'Missed');
+  const mon=c.period.split(' ')[1].slice(0,3);
+  const digits=c.id.replace(/[^0-9]/g,'').slice(0,9);
+  return seq.map(function(st,i){ return {date:(seq.length-i)+' '+mon+"'26",tripId:'TR-'+digits+'-'+(1000+seq.length-i),status:st}; });
+}
+
+// ---- STATE -----------------------------------------------------------------
+let currentTab='pending', activeChip='all', currentContract=null, searchQuery='';
+let loadToken=0, sceneRunning=false;
+let acceptCtx=null;     // {contract, fromReminders, expanded}
+let rejectCtx=null;     // {contract, list, reason, rate, describe, err}
+let terminateCtx=null;  // {contract, reason, err}
+let rateCtx=null;       // {contract, agreed, err}
+let disputeForm=null;   // {category, contractId, contract, subs:{}, trip:{}, detail:{}, text, mode}
+let undoState=null, toastTimer=null, successAfter=null;
+
+// ---- HELPERS ---------------------------------------------------------------
+function inr(n){ const s=String(Math.round(n)); const last3=s.slice(-3), rest=s.slice(0,-3); return rest?rest.replace(/\B(?=(\d{2})+(?!\d))/g,',')+','+last3:last3; }
+function money(n){ return '₹'+inr(n)+'/trip'; }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function spaced(period){ return period.replace("- "," - "); }
+function ptime(p){ return p.replace(/(\d)(AM|PM)$/,'$1 $2'); }
+function findContract(id){ const all=DATA.pending.concat(DATA.upcoming,DATA.active,DATA.closed); for(let i=0;i<all.length;i++) if(all[i].id===id) return all[i]; return null; }
+function awaiting(c){ const d=c.dispute; return !!(d && d.status==='partial' && !d.rateAccepted); }
+function openDisputeOn(c){ const d=c.dispute; return !!(d && (d.status==='review' || awaiting(c))); }
+function thi(label){ return '<span class="thi">'+label+'<span class="tip" tabindex="0" aria-label="More info">'+ICO.info+'<span class="tip-box">'+({
+  'Route Details':'Full route from source to destination, with the stops in between.',
+  'Contract Period':'Start and end dates of this contract.',
+  'Earnings':'What you are paid for each completed trip.',
+  'Amount':'What you were paid for each completed trip.'}[label]||'')+'</span></span></span>'; }
+function routeCell(c){
+  const mid=c.nodeCount>0 ? '<span class="dash"></span><span class="nodes-pill">'+c.nodeCount+' Nodes</span><span class="ar">'+ICO.arrow+'</span>' : '<span class="ar">'+ICO.arrow+'</span>';
+  return '<div class="route-line" title="'+esc(c.routeFull)+'">'+c.from+' '+mid+' '+c.to+' | '+c.haulType+'</div>'+
+    '<div class="route-sub">'+(c.direction==='Two way'?ICO.twoway:ICO.oneway)+c.direction+' · '+c.km+' km</div>';
+}
+
+// ---- OVERLAYS (focus in, Escape to close, focus back out) -------------------
+let overlayStack=[];
+const FOCUSABLE='button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+function focusablesIn(el){ return [].slice.call(el.querySelectorAll(FOCUSABLE)).filter(function(n){ return n.offsetWidth+n.offsetHeight>0; }); }
+function registerOverlay(panel, closeFn){
+  panel.setAttribute('data-hl','modal');
+  overlayStack.push({el:panel,trigger:document.activeElement,close:closeFn});
+  if(sceneRunning) return;
+  setTimeout(function(){ const f=focusablesIn(panel).filter(function(n){ return !n.classList.contains('m-close')&&!n.classList.contains('hi-pill'); }); if(f[0]) f[0].focus({preventScroll:true}); },30);
+}
+function unregisterOverlay(panel){
+  panel.removeAttribute('data-hl');
+  for(let i=overlayStack.length-1;i>=0;i--){ if(overlayStack[i].el===panel){ const t=overlayStack[i].trigger; overlayStack.splice(i,1); if(!sceneRunning && t && document.contains(t) && t.focus) t.focus({preventScroll:true}); return; } }
+}
+document.addEventListener('keydown',function(e){
+  const top=overlayStack[overlayStack.length-1]; if(!top) return;
+  if(e.key==='Escape'){ e.preventDefault(); if(document.querySelector('.fsel.open')){ closeAllDD(); return; } top.close(); return; }
+  if(e.key!=='Tab') return;
+  const f=focusablesIn(top.el); if(!f.length) return;
+  if(!top.el.contains(document.activeElement)){ e.preventDefault(); f[0].focus(); return; }
+  if(e.shiftKey && document.activeElement===f[0]){ e.preventDefault(); f[f.length-1].focus(); }
+  else if(!e.shiftKey && document.activeElement===f[f.length-1]){ e.preventDefault(); f[0].focus(); }
+},true);
+function openModal(id){ const ov=document.getElementById(id); ov.classList.add('show'); registerOverlay(ov.querySelector('.modal'),function(){ closeModal(id); }); }
+function closeModal(id){ const ov=document.getElementById(id); if(!ov.classList.contains('show')) return; ov.classList.remove('show'); unregisterOverlay(ov.querySelector('.modal')); closeAllDD(); }
+// highlight targets that live inside a drawer only exist while that drawer is open
+const DRAWER_HL={reminders:['remindersBody','reminders'],accept:['acceptConfirmBtn','accept']};
+function openDrawer(name, closeFn){ document.getElementById(name+'Overlay').classList.add('show'); const d=document.getElementById(name+'Drawer'); d.classList.add('show'); document.getElementById(DRAWER_HL[name][0]).setAttribute('data-hl',DRAWER_HL[name][1]); registerOverlay(d,closeFn); }
+function closeDrawer(name){ const d=document.getElementById(name+'Drawer'); if(!d.classList.contains('show')) return; document.getElementById(name+'Overlay').classList.remove('show'); d.classList.remove('show'); document.getElementById(DRAWER_HL[name][0]).removeAttribute('data-hl'); unregisterOverlay(d); }
+function closeAllOverlays(){
+  ['rejectModal','terminateModal','rateModal','successModal','hiwModal'].forEach(function(id){ const ov=document.getElementById(id); ov.classList.remove('show'); ov.querySelector('.modal').removeAttribute('data-hl'); });
+  ['reminders','accept'].forEach(function(n){ document.getElementById(n+'Overlay').classList.remove('show'); const d=document.getElementById(n+'Drawer'); d.classList.remove('show'); d.removeAttribute('data-hl'); document.getElementById(DRAWER_HL[n][0]).removeAttribute('data-hl'); });
+  overlayStack=[]; successAfter=null; closeAllDD();
+}
+
+// ---- CUSTOM SELECT -----------------------------------------------------------
+const DD={};
+function ddHtml(id, o){
+  DD[id]={options:o.options,onPick:o.onPick};
+  const val=o.value||'';
+  return '<div class="fsel" id="'+id+'"'+(o.hl?' data-hl="'+o.hl+'"':'')+'>'+
+    (o.label?'<label id="'+id+'-l">'+o.label+(o.required?'<span class="req">*</span>':'')+'</label>':'')+
+    '<button type="button" class="fsel-btn'+(val?'':' ph')+'" aria-haspopup="listbox" aria-expanded="false"'+(o.label?' aria-labelledby="'+id+'-l '+id+'-v"':'')+' onclick="toggleDD(\''+id+'\',event)"><span id="'+id+'-v">'+esc(val||o.placeholder)+'</span>'+ICO.down+'</button>'+
+    '<ul class="fsel-list" role="listbox"'+(o.listHl?' data-hl="'+o.listHl+'"':'')+'>'+o.options.map(function(op,i){
+      return '<li role="option" tabindex="-1" aria-selected="'+(op===val)+'"'+(i===0&&!val&&o.firstHl?' class="hl"':'')+' onclick="pickDD(\''+id+'\','+i+',event)">'+esc(op)+'</li>'; }).join('')+
+    '</ul></div>';
+}
+function toggleDD(id,e){ if(e) e.stopPropagation(); const el=document.getElementById(id); const open=!el.classList.contains('open'); closeAllDD(); if(open){ el.classList.add('open'); el.querySelector('.fsel-btn').setAttribute('aria-expanded','true'); } }
+function openDD(id){ closeAllDD(); const el=document.getElementById(id); if(el){ el.classList.add('open'); el.querySelector('.fsel-btn').setAttribute('aria-expanded','true'); } }
+function closeAllDD(){ document.querySelectorAll('.fsel.open').forEach(function(el){ el.classList.remove('open'); el.querySelector('.fsel-btn').setAttribute('aria-expanded','false'); }); }
+function pickDD(id,i,e){ if(e) e.stopPropagation(); const d=DD[id]; closeAllDD(); if(d&&d.onPick) d.onPick(d.options[i]); }
+document.addEventListener('click',function(e){ if(!e.target.closest('.fsel')) closeAllDD(); if(!e.target.closest('.bell-wrap')) closeBell(); });
+
+// ---- TOAST -------------------------------------------------------------------
+function showToast(msg, opts){
+  opts=opts||{};
+  const t=document.getElementById('toast');
+  t.innerHTML=ICO.okc+'<span>'+msg+'</span>'+(opts.actionLabel?'<button onclick="toastAction()">'+opts.actionLabel+'</button>':'');
+  t.classList.add('show'); t.setAttribute('data-hl','toast');
+  clearTimeout(toastTimer);
+  if(!sceneRunning) toastTimer=setTimeout(hideToast, opts.dur||6000);
+}
+function hideToast(){ const t=document.getElementById('toast'); t.classList.remove('show'); t.removeAttribute('data-hl'); }
+function toastAction(){ if(undoState){ const u=undoState; undoState=null; clearTimeout(u.timer); hideToast(); u.revert(); } }
+function setUndo(revert){ if(undoState) clearTimeout(undoState.timer); undoState={revert:revert,timer:sceneRunning?null:setTimeout(function(){ undoState=null; },10000)}; }
+
+// ---- OVERVIEW / HIW / TABS / CHIPS / FILTERS / BANNER --------------------------
+function renderHIW(){
+  const strip=document.getElementById('hiwStrip');
+  if(currentTab!=='pending'){ strip.style.display='none'; return; }
+  strip.style.display='flex';
+  const arrow='<span class="hiw-arrow" aria-hidden="true">'+ICO.arrow+'</span>';
+  strip.innerHTML='<div class="hiw-label">Here’s how<br>contracts work</div>'+
+    '<div class="hiw-step"><span aria-hidden="true">'+hiwIco(0)+'</span><div class="hiw-step-txt">Accept or reject when a<br>new contract comes in</div></div>'+arrow+
+    '<div class="hiw-step"><span aria-hidden="true">'+hiwIco(1)+'</span><div class="hiw-step-txt">Track your trips once it’s active<br>raise an issue if something’s wrong</div></div>'+arrow+
+    '<div class="hiw-step"><span aria-hidden="true">'+hiwIco(2)+'</span><div class="hiw-step-txt">See your earnings &amp; summary<br>when the contract ends</div></div>'+
+    '<span class="hi-pill" data-clickable role="button" tabindex="0" onclick="openHiw()" style="align-self:flex-start;margin-top:4px;"><span class="tri"></span>हिंदी में जानकारी</span>';
+}
+function hiwIco(i){
+  return ['<svg width="34" height="34" viewBox="0 0 34 34" fill="none"><rect x="5" y="6" width="17" height="21" rx="2" fill="#fff" stroke="#5A5E66" stroke-width="1.3"/><path d="M9 12h9M9 15.5h6" stroke="#5A5E66" stroke-width="1.3" stroke-linecap="round"/><rect x="12" y="2" width="16" height="10" rx="1.5" fill="#E6EBF2"/><circle cx="24" cy="24" r="5" fill="#43A92C"/><path d="m21.8 24 1.5 1.5 2.8-3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="27" r="4" fill="#F44240"/><path d="m10.5 25.5 3 3m0-3-3 3" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><circle cx="29" cy="20" r="2.5" fill="#EC7600"/></svg>',
+    '<svg width="34" height="34" viewBox="0 0 34 34" fill="none"><rect x="6" y="5" width="17" height="22" rx="2" fill="#fff" stroke="#5A5E66" stroke-width="1.3"/><rect x="10.5" y="3" width="8" height="4" rx="1.2" fill="#2A67FF"/><path d="M10 12h9M10 15.5h6" stroke="#5A5E66" stroke-width="1.3" stroke-linecap="round"/><circle cx="23" cy="23" r="6" fill="#fff" stroke="#2A67FF" stroke-width="1.5"/><path d="M23 20v3.2l2 1.3" stroke="#2A67FF" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="27" r="2.5" fill="#F5A623"/></svg>',
+    '<svg width="34" height="34" viewBox="0 0 34 34" fill="none"><rect x="4" y="7" width="22" height="19" rx="2" fill="#fff" stroke="#5A5E66" stroke-width="1.3"/><path d="M4 12h22" stroke="#2A67FF" stroke-width="2"/><path d="M9 5v4M21 5v4" stroke="#5A5E66" stroke-width="1.4" stroke-linecap="round"/><circle cx="25" cy="24" r="5.5" fill="#F5A623"/><path d="M25 21.5v5M23.3 23h3" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><path d="M9 16h4M9 20h7" stroke="#43A92C" stroke-width="1.4" stroke-linecap="round"/></svg>'][i];
+}
+function renderOverview(){
+  // The overview copy mirrors the Figma frames (sample summary values).
+  function card(title, sub, onclick){ return '<div class="stat-card" data-clickable role="button" tabindex="0" onclick="'+onclick+'"><div class="stat-title">'+title+ICO.chev+'</div><div class="stat-sub">'+sub+'</div></div>'; }
+  document.getElementById('statRow').innerHTML=
+    card('10 Pending Contracts worth <span class="amt">₹1,20,000</span>','1 new added · <span class="lk" onclick="event.stopPropagation();openReminders()">3 reminders</span>',"goTo('pending')")+
+    card('3 Contracts Disputed','2 new updates · Action Required',"goTo('active','disp')")+
+    card('2 Contracts Ending Soon','1 new added',"goTo('active','ending')");
+}
+function renderTabs(){
+  function t(k,l,n){ return '<div class="tab-item'+(currentTab===k?' active':'')+'" role="tab" aria-selected="'+(currentTab===k)+'" data-clickable tabindex="0" onclick="switchTab(\''+k+'\')">'+l+' ('+n+')</div>'; }
+  document.getElementById('tabsBar').innerHTML=t('pending','Pending',DATA.pending.length)+t('upcoming','Upcoming',DATA.upcoming.length)+t('active','Active',DATA.active.length)+t('closed','Closed',DATA.closed.length);
+}
+function renderChips(){
+  const row=document.getElementById('chipsRow');
+  if(currentTab!=='active'){ row.style.display='none'; row.innerHTML=''; return; }
+  row.style.display='flex';
+  const chips=[['all','All Active',DATA.active.length],['disp','Under Dispute',DATA.active.filter(function(c){return c.dispute;}).length],['ending','Ending Early',DATA.active.filter(function(c){return c.endedEarly;}).length]];
+  row.innerHTML=chips.map(function(ch){ return '<div class="chip'+(activeChip===ch[0]?' selected':'')+'" data-clickable role="button" tabindex="0" aria-pressed="'+(activeChip===ch[0])+'" onclick="switchActiveChip(\''+ch[0]+'\')"><span>'+ch[1]+'</span><b>'+ch[2]+'</b></div>'; }).join('');
+}
+function renderFilterBar(){
+  const sel=function(label,opts){ return '<select class="f-ctl" aria-label="'+label+'"><option>'+label+'</option>'+opts.map(function(o){return '<option>'+o+'</option>';}).join('')+'</select>'; };
+  const veh=sel('Vehicle Size',['20ft','24ft','28ft','32ft','40ft','45ft']);
+  const more=sel('More Filters',['Haul Type','Billing Type']);
+  const mid= currentTab==='active' ? sel('Dispute Status',['Under review','Approved','Partially approved','Rejected']) : currentTab==='closed' ? sel('All Months',['Jan','Feb','Mar','Apr']) : veh;
+  document.getElementById('filterLeft').innerHTML='<span class="f-label">Filter by :</span><input class="f-search" type="text" aria-label="Filter by source node" placeholder="Source Node">'+mid+more;
+  const sort= currentTab==='upcoming'?'Starting Soonest':currentTab==='closed'?'Newest First':'Most urgent first';
+  document.getElementById('filterRight').innerHTML='<span class="f-label">Sort by :</span>'+sel(sort,[])+'<button class="dl-btn">Download '+ICO.dl+'</button>';
+}
+function renderBanner(){
+  const row=document.getElementById('bannerRow');
+  const hindi='<span class="hi-pill" data-clickable role="button" tabindex="0" onclick="openHiw()"><span class="tri"></span>हिंदी में जानकारी</span>';
+  if(currentTab==='active' && activeChip==='ending'){
+    row.innerHTML='<div class="chip-banner warn" data-hl="banner"><span class="bi" style="color:var(--red);">'+ICO.info+'</span><span class="bt">After termination, these contracts stay active for 24hrs before moving to Closed.</span>'+hindi+'</div>';
+  } else if(currentTab==='active' && activeChip==='disp'){
+    row.innerHTML='<div class="chip-banner info"><span class="bi" style="color:var(--primary);">'+ICO.info+'</span><span class="bt">Trips keep running throughout. You can edit your dispute while under review. <b>Once approved, review and accept the new rate.</b><br>If you don’t agree with the outcome, <b>terminate the contract.</b></span>'+hindi+'</div>';
+  } else row.innerHTML='';
+}
+function renderChrome(){ renderHIW(); renderOverview(); renderTabs(); renderChips(); renderFilterBar(); renderBanner(); renderBell(); }
+
+// ---- TABLES -------------------------------------------------------------------
+const COLS={
+  pending:[18,26,7,15.5,13.5,11,9],
+  upcoming:[12.5,22.5,7,14,13,9.5,11.5].map(function(x){return x*100/90;}),
+  active:[16,24.8,8.9,15.5,8.8,14,12],
+  closed:[21.2,21,7.3,16.7,13.8,10,10]
+};
+function colgroup(t){ return '<colgroup>'+COLS[t].map(function(w){return '<col style="width:'+w+'%">';}).join('')+'</colgroup>'; }
+function skeleton(){ let r=''; for(let i=0;i<6;i++) r+='<div class="skel-row"><div style="flex:1.4"><div class="shimmer" style="width:70%"></div><div class="shimmer" style="width:40%;margin-top:8px"></div></div><div style="flex:2"><div class="shimmer" style="width:80%"></div></div><div style="flex:.6"><div class="shimmer" style="width:60%"></div></div><div style="flex:1.2"><div class="shimmer" style="width:80%"></div></div><div style="flex:1"><div class="shimmer" style="width:60%"></div></div><div style="flex:1"><div class="shimmer" style="width:70%;height:28px"></div></div></div>'; return '<div class="skel-wrap">'+r+'</div>'; }
+function loadTable(){ const my=++loadToken; document.getElementById('tableWrap').innerHTML=skeleton(); setTimeout(function(){ if(my===loadToken) renderTable(); },300); }
+function renderTable(){
+  loadToken++;
+  const w=document.getElementById('tableWrap');
+  w.innerHTML= currentTab==='pending'?renderPending(): currentTab==='upcoming'?renderUpcoming(): currentTab==='active'?renderActive(): renderClosed();
+}
+function filtered(rows){ return searchQuery ? rows.filter(function(c){ return c.id.toLowerCase().indexOf(searchQuery)!==-1; }) : rows; }
+function emptyState(title, sub){ return '<div class="empty-state" data-hl="empty">'+emptySvg()+'<div class="es-t">'+title+'</div><div class="es-s">'+sub+'</div></div>'; }
+function headRow(cols){ return '<thead><tr>'+cols.map(function(c){ return '<th scope="col">'+(/Route Details|Contract Period|Earnings|Amount/.test(c)?thi(c):c)+'</th>'; }).join('')+'</tr></thead>'; }
+function renderPending(){
+  const rows=filtered(DATA.pending);
+  if(!rows.length) return searchQuery ? emptyState('No results','No contract matches “'+esc(searchQuery)+'”.') : emptyState('All caught up','No contracts are waiting for your response.');
+  return '<table class="list">'+colgroup('pending')+headRow(['Contract ID','Route Details','Vehicle Details','Contract Period','Placement Time','Earnings','Action'])+'<tbody>'+
+    rows.map(function(c){
+      return '<tr><td><div class="cid">'+c.id+'</div><div class="deadline '+c.lvl+'" data-hl="deadline">'+c.deadline+'</div>'+(c.reminder?'<span class="rem-pill">'+ICO.bell+c.reminder+'</span>':'')+'</td>'+
+        '<td>'+routeCell(c)+'</td><td>'+c.vehicle+'</td><td>'+c.period+'</td><td>'+c.placementTime+'</td><td class="earn">'+money(c.rate)+'</td>'+
+        '<td class="act-cell"><button class="btn-accept" data-hl="accept" onclick="openAcceptDrawer(\''+c.id+'\')">Accept</button><button class="link-act" data-hl="rejectbtn" onclick="openReject(\''+c.id+'\')">Reject</button></td></tr>';
+    }).join('')+'</tbody></table>';
+}
+function renderUpcoming(){
+  const rows=filtered(DATA.upcoming);
+  if(!rows.length) return emptyState('No upcoming contracts','Contracts you accept stay here until they start.');
+  return '<table class="list">'+colgroup('upcoming')+headRow(['Contract ID','Route Details','Vehicle Details','Contract Period','Placement Time','Earnings','Action'])+'<tbody>'+
+    rows.map(function(c){
+      const lvl=c.startDays<=1?'red':c.startDays<=7?'amber':'grey';
+      const txt=c.startDays===0?'Starts today':'Starts in '+c.startDays+(c.startDays===1?' day':' days');
+      return '<tr><td><div class="cid">'+c.id+'</div><div class="countdown '+lvl+'">'+txt+'</div></td><td>'+routeCell(c)+'</td><td>'+c.vehicle+'</td><td>'+c.period+'</td><td>'+c.placementTime+'</td><td class="earn">'+money(c.rate)+'</td>'+
+        '<td class="act-cell"><button class="btn-out" onclick="viewContract(\''+c.id+'\')">View Details</button></td></tr>';
+    }).join('')+'</tbody></table>';
+}
+function activeStatus(c){
+  if(c.endedEarly) return '<div class="row-note">Active till '+c.activeTill+'</div><span class="tag ended" data-hl="tag">Ended early by '+c.endedEarlyBy+'</span>';
+  if(c.reissuedFrom) return '<div class="row-note" data-hl="tag">Reissued from<br><a onclick="viewContract(\''+c.reissuedFrom+'\')">'+c.reissuedFrom+'</a></div>';
+  const d=c.dispute; if(!d) return '';
+  if(d.status==='partial') return '<span class="tag partial" data-hl="tag">'+(d.rateAccepted?'Dispute partially approved · Rate accepted':'Dispute partially approved')+'</span>';
+  if(d.status==='approved') return '<span class="tag approved" data-hl="tag">Dispute approved</span>';
+  if(d.status==='rejected') return '<span class="tag rejected" data-hl="tag">Dispute rejected</span>';
+  return '<span class="tag review" data-hl="tag">Dispute under review</span>';
+}
+function activeEarn(c){
+  const rate=c.revisedRate||(c.dispute&&c.dispute.rateAccepted?c.dispute.approvedRate:null);
+  if(rate) return '<div class="strike">'+money(c.rate)+'</div><div>'+money(rate)+'</div><span class="mini-pill" data-hl="tag">Updated</span>';
+  if(awaiting(c)) return money(c.rate)+'<div class="earn-note" data-hl="review">Review dispute to<br>accept '+money(c.dispute.approvedRate)+'</div>';
+  return money(c.rate);
+}
+function activeAction(c){
+  const view='<button class="btn-out" onclick="viewContract(\''+c.id+'\')">View Details</button>';
+  const raise='<button class="link-act" data-hl="cdispute" onclick="openDispute(\''+c.id+'\',\'new\')">Raise Dispute</button>';
+  if(awaiting(c)) return '<button class="btn-out" style="min-width:76px;" onclick="openRateModal(\''+c.id+'\')">Review</button><button class="link-act" onclick="viewContract(\''+c.id+'\')">View Details</button>';
+  if(c.dispute && c.dispute.status==='review') return view;
+  return view+raise;
+}
+function renderActive(){
+  let rows=DATA.active;
+  if(activeChip==='disp') rows=rows.filter(function(c){return c.dispute;});
+  else if(activeChip==='ending') rows=rows.filter(function(c){return c.endedEarly;});
+  rows=filtered(rows);
+  if(!rows.length) return emptyState('Nothing here','No active contracts in this view.');
+  return '<table class="list">'+colgroup('active')+headRow(['Contract ID','Route Details','Vehicle Details','Contract Period','Placement Time','Earnings','Action'])+'<tbody>'+
+    rows.map(function(c){
+      return '<tr><td><div class="cid">'+c.id+'</div>'+activeStatus(c)+'</td><td>'+routeCell(c)+'</td><td>'+c.vehicle+'</td><td>'+c.period+'</td><td>'+c.placementTime+'</td><td class="earn">'+activeEarn(c)+'</td>'+
+        '<td class="act-cell">'+activeAction(c)+'</td></tr>';
+    }).join('')+'</tbody></table>';
+}
+function closedBadge(c){
+  if(c.closedReason==='continued') return '<span class="closed-badge" data-hl="status">Continued as <a onclick="viewContract(\''+c.continuedAs+'\')">'+c.continuedAs+'</a></span>';
+  return '<span class="closed-badge" data-hl="status">'+c.closedReason+'</span>';
+}
+function renderClosed(){
+  const rows=filtered(DATA.closed);
+  if(!rows.length) return emptyState('No closed contracts','Completed, ended and rejected contracts appear here.');
+  return '<table class="list">'+colgroup('closed')+headRow(['Contract ID','Route Details','Vehicle Details','Contract Period','Placement Time','Amount','Action'])+'<tbody>'+
+    rows.map(function(c){
+      return '<tr><td><div class="cid">'+c.id+'</div>'+closedBadge(c)+'</td><td>'+routeCell(c)+'</td><td>'+c.vehicle+'</td><td>'+c.period+'</td><td>'+c.placementTime+'</td><td class="earn">'+money(c.rate)+'</td>'+
+        '<td class="act-cell"><button class="btn-out" onclick="viewContract(\''+c.id+'\')">View</button></td></tr>';
+    }).join('')+'</tbody></table>';
+}
+
+// ---- NAVIGATION ---------------------------------------------------------------
+function switchTab(tab){ currentTab=tab; activeChip='all'; showList(); renderChrome(); loadTable(); }
+function switchActiveChip(k){ activeChip=k; renderChips(); renderBanner(); renderTable(); }
+function goTo(tab, chip){ closeAllOverlays(); currentTab=tab; activeChip=chip||'all'; showList(); renderChrome(); if(sceneRunning) renderTable(); else loadTable(); }
+function setNav(which){ document.getElementById('navContracts').classList.toggle('active',which==='contracts'); document.getElementById('navDisputes').classList.toggle('active',which==='disputes'); }
+function showList(){ document.getElementById('detailView').style.display='none'; document.getElementById('disputeView').style.display='none'; document.getElementById('listView').style.display='flex'; setNav('contracts'); }
+
+// ---- SHARED CONTRACT INFO CARD (accept drawer, reject + terminate modals) ------
+function infoCard(c, opts){
+  opts=opts||{};
+  let dir;
+  if(opts.expandable) dir='<button class="dir" onclick="toggleAcceptRoute()">'+(opts.expanded?'Collapse '+ICO.up:'Get Direction '+ICO.down)+'</button>';
+  else dir='<button class="dir" onclick="showToast(\'Opens the route in Maps.\')">Get Direction '+ICO.send+'</button>';
+  let stops='';
+  if(opts.expanded){
+    const list=c.routeFull.split(' → ');
+    stops='<div class="ic-stops"><div class="sn">'+list.length+' stops on this route · Use the coordinates to check entire route on Maps.</div>'+
+      list.map(function(s,i){ return '<div class="stop"><span class="no">'+(i+1)+'</span><span class="nm">'+(i===0&&s==='BLR'?'BLR - Bangalore':s)+'</span>'+(i===0?'<a href="#" onclick="return false;">12.9716, 77.5946</a>':'<a href="#" onclick="return false;">Coordinates not provided</a>')+'<span class="cp">'+ICO.copy+'</span></div>'; }).join('')+'</div>';
+  }
+  const total=opts.totalLabel||('₹'+inr(c.rate*(c.tripsPlanned||30)));
+  return '<div class="info-card">'+
+    '<div class="ic-route"><div><div class="l">Route Details</div><div class="v">'+esc(c.routeFull)+' | '+c.haulType+'</div></div>'+dir+'</div>'+stops+
+    '<div class="ic-grid">'+
+      '<div><div class="l">TAT (per trip)</div><div class="v">1 day</div></div>'+
+      '<div><div class="l">Contract Period</div><div class="v">'+spaced(c.period)+'</div></div>'+
+      '<div><div class="l">Placement Time</div><div class="v">'+ptime(c.placementTime)+' · '+c.direction+'</div></div>'+
+      '<div><div class="l">Vehicles Size</div><div class="v">'+c.vehicle+'</div></div>'+
+      '<div><div class="l">Rate Per Trip</div><div class="v">₹'+inr(c.rate)+'</div></div>'+
+      '<div><div class="l">Total Earning*</div><div class="v">'+total+'</div></div>'+
+    '</div></div>';
+}
+
+// ---- REMINDERS + ACCEPT ---------------------------------------------------------
+function reminderRows(){ return DATA.pending.filter(function(c){ return c.reminder; }); }
+function openReminders(){
+  closeBell();
+  const rows=reminderRows();
+  document.getElementById('remindersTitle').textContent=rows.length+' Contracts with reminders';
+  document.getElementById('remindersBody').innerHTML= rows.length ? rows.map(function(c){
+    const row=function(l,v){ return '<div class="rem-row"><span class="rl">'+l+'</span><span class="rv">'+v+'</span></div>'; };
+    return '<div class="rem-card"><div class="rem-card-h"><b>'+c.id+'</b><span class="rem-pill">'+ICO.bell+c.reminder+'</span></div>'+
+      row('Route',c.from+' → '+c.to+' · '+c.haulType+' · '+(c.nodeCount||2)+' stops')+row('Vehicle Size',c.vehicle)+row('Earning',money(c.rate))+row('Contract Period',c.period.replace("- "," – "))+
+      '<div class="rem-foot"><button class="btn-out" style="height:30px;padding:0 12px;" onclick="openAcceptDrawer(\''+c.id+'\',true)">Review &amp; Accept</button><span class="deadline '+c.lvl+'" style="margin:0;">'+c.deadline.replace('Tomorrow','tomorrow')+'</span></div></div>';
+  }).join('') : emptyState('No reminders','You are all caught up.');
+  if(!document.getElementById('remindersDrawer').classList.contains('show')) openDrawer('reminders',closeReminders);
+}
+function closeReminders(){ closeDrawer('reminders'); }
+function openAcceptDrawer(id, fromReminders){
+  const c=DATA.pending.filter(function(x){return x.id===id;})[0]; if(!c) return;
+  if(fromReminders) closeDrawer('reminders');
+  acceptCtx={contract:c, fromReminders:!!fromReminders, expanded:!fromReminders, agreed:false};
+  renderAcceptBody();
+  openDrawer('accept',closeAcceptDrawer);
+}
+function renderAcceptBody(){
+  const a=acceptCtx, c=a.contract;
+  const left=reminderRows().length-1;
+  const vehOpts=['KA 01 AB1234 · '+c.vehicle,'KA 05 CD5678 · '+c.vehicle];
+  document.getElementById('acceptBody').innerHTML=
+    (a.fromReminders?'<button class="back-link" onclick="backToReminders()">&larr; Back to reminders ('+left+' more left)</button>':'')+
+    '<div class="acc-title">Contract overview '+c.id+'</div>'+
+    infoCard(c,{expandable:true,expanded:a.expanded,totalLabel:'Based on completed trips'})+
+    (a.fromReminders?'<div class="assign"><div class="ah">Assign your vehicles &amp; drivers (applied to all trips) <span class="opt">Optional</span></div><div class="as">Vehicle and driver can be updated anytime before each trip.</div>'+
+      '<div class="row"><select class="f-ctl" aria-label="Select Vehicle"><option>Select Vehicle</option>'+vehOpts.map(function(v){return '<option>'+v+'</option>';}).join('')+'</select><select class="f-ctl" aria-label="Select Driver"><option>Select Driver</option><option>Driver 1</option><option>Driver 2</option></select></div></div>':'')+
+    '<div class="tc-box"><div class="tt">Terms &amp; Conditions:</div><ul>'+
+      '<li>You are <b>paid per completed trip</b>, at the rate shown above.</li>'+
+      '<li>Once accepted, you cannot reject a contract with <b>start date within 7 days</b></li>'+
+      '<li>Valmo reserves the right to pre-close a contract before its end date. In such cases, you will be notified at least <b>3 days in advance.</b></li>'+
+      '<li>Valmo may <b>update placement times</b> during the contract; you’ll be notified in advance.</li>'+
+      '<li>This is a summary. Read the full <b>Terms &amp; Conditions</b> before you accept.</li>'+
+    '</ul></div>'+
+    '<label class="tc-check"><input type="checkbox" id="tcCheck" '+(a.agreed?'checked':'')+' onchange="acceptCtx.agreed=this.checked;updateAcceptBtn()"><span>I have read the <a href="#" onclick="return false;">Terms &amp; Conditions</a></span></label>'+
+    '<div class="inline-err" id="acceptErr" style="display:none;">Tick the box to confirm you have read the Terms &amp; Conditions.</div>';
+  updateAcceptBtn();
+}
+function updateAcceptBtn(){ document.getElementById('acceptConfirmBtn').disabled=!acceptCtx||!acceptCtx.agreed; }
+function toggleAcceptRoute(){ acceptCtx.expanded=!acceptCtx.expanded; renderAcceptBody(); }
+function backToReminders(){ closeAcceptDrawer(); openReminders(); }
+function closeAcceptDrawer(){ closeDrawer('accept'); }
+function confirmAccept(){
+  if(!acceptCtx||!acceptCtx.agreed) return;
+  const c=acceptCtx.contract, idx=DATA.pending.indexOf(c); if(idx<0) return;
+  DATA.pending.splice(idx,1);
+  const up=Object.assign({},c,{status:'upcoming',startDays:5,acceptedOn:"14 Apr'26",tat:'1 day'});
+  DATA.upcoming.unshift(up);
+  closeAcceptDrawer();
+  renderChrome(); renderTable();
+  const start=c.period.split('-')[0].trim();
+  openSuccess({title:'Contract - '+c.id, heading:'Contract Accepted Successfully!',
+    body:c.id+' will stay in the upcoming tab and move to active contracts from the start date '+start,
+    btn:'Close', btnClass:'btn-sec', after:function(){
+      setUndo(function(){ const i=DATA.upcoming.indexOf(up); if(i>=0) DATA.upcoming.splice(i,1); DATA.pending.splice(idx,0,c); renderChrome(); renderTable(); showToast('Acceptance undone. Contract is back in Pending.'); });
+      showToast('Contract '+c.id+' accepted.',{actionLabel:'Undo Action'});
+    }});
+}
+
+// ---- REJECT (pending + upcoming) --------------------------------------------------
+const REASONS=['Rate not acceptable',"I don't have this vehicle size available","I can't serve entire contract period",'Other reason'];
+function openReject(id, list){
+  list=list||'pending';
+  const c=DATA[list].filter(function(x){return x.id===id;})[0]; if(!c) return;
+  rejectCtx={contract:c,list:list,reason:'',rate:'',describe:'',err:false};
+  renderRejectBody();
+  openModal('rejectModal');
+}
+function renderRejectBody(){
+  const r=rejectCtx, c=r.contract, total=c.rate*(c.tripsPlanned||30);
+  const lossAmt= r.list==='upcoming'
+    ? 'Total: <span class="amt">₹'+inr(total)+'</span> · Per Trip: <span class="amt">₹'+inr(c.rate)+'</span>'
+    : 'Per Trip: <span class="amt">₹'+inr(c.rate)+'</span> · Total depends on completed trips';
+  const loss= r.list==='upcoming'
+    ? '<div class="loss" data-hl="loss"><ul><li>You already <b>accepted</b> this contract, <b>rejecting out now may reduce future contracts offered to you.</b></li><li><b>Potential earning loss</b><br>'+lossAmt+'</li></ul></div>'
+    : '<div class="loss" data-hl="loss"><div class="lt">Potential earning loss</div><div>'+lossAmt+'</div></div>';
+  let extra='';
+  if(r.reason==='Rate not acceptable'){
+    extra+='<div class="fl" data-hl="rateinput" style="margin-top:22px;"><label for="rejRate">'+(r.list==='upcoming'?'Enter revised rate':'Enter new rate<span class="req">*</span>')+'</label>'+
+      '<input id="rejRate" inputmode="numeric" placeholder="₹ Enter amount" value="'+esc(r.rate)+'" oninput="rejectCtx.rate=this.value;updateRejectBtn()">'+
+      '<div class="fl-help'+(r.list==='upcoming'?' blue':'')+'">Enter your rate. If accepted, we’ll resend the contract to sign</div></div>';
+  }
+  if(r.reason){
+    extra+='<div class="fl" style="margin-top:20px;"><label for="rejDesc">Describe the issue</label><textarea id="rejDesc" placeholder="Add details so the team can act on your rejection." oninput="rejectCtx.describe=this.value">'+esc(r.describe)+'</textarea></div>';
+  }
+  document.getElementById('rejectBody').innerHTML=
+    '<div class="m-q">Are you sure you want to reject the Contract '+c.id+'?</div>'+
+    infoCard(c,{totalLabel:'Based on completed trips'})+loss+
+    '<div style="margin-top:22px;">'+ddHtml('rejReason',{label:'Reason for Rejecting',required:r.list!=='upcoming',placeholder:'Select the reason',value:r.reason,options:REASONS,listHl:'reasons',firstHl:true,onPick:function(v){ rejectCtx.reason=v; renderRejectBody(); }})+'</div>'+
+    extra+(r.err?'<div class="inline-err">Enter the rate you want for this contract.</div>':'');
+  updateRejectBtn();
+}
+function rejectValid(){ const r=rejectCtx; if(!r||!r.reason) return false; if(r.reason==='Rate not acceptable' && r.list==='pending') return !!String(r.rate).replace(/[^0-9]/g,''); return true; }
+function updateRejectBtn(){ document.getElementById('rejectConfirmBtn').disabled=!rejectValid(); }
+function confirmReject(){
+  if(!rejectValid()) return;
+  const r=rejectCtx, c=r.contract, list=DATA[r.list], idx=list.indexOf(c); if(idx<0) return;
+  list.splice(idx,1);
+  const closed=Object.assign({},c,{status:'closed',closedReason:'Rejected',pc:{completed:0,upcoming:0,missed:0},trips:[]});
+  DATA.closed.unshift(closed);
+  closeModal('rejectModal'); rejectCtx=null;
+  if(r.list==='upcoming'){ currentTab='upcoming'; showList(); }
+  renderChrome(); renderTable();
+  setUndo(function(){ const i=DATA.closed.indexOf(closed); if(i>=0) DATA.closed.splice(i,1); list.splice(idx,0,c); renderChrome(); renderTable(); showToast('Rejection undone. Contract is back in '+(r.list==='upcoming'?'Upcoming':'Pending')+'.'); });
+  showToast('Contract '+c.id+' has been rejected.',{actionLabel:'Undo Action',dur:10000});
+}
+
+// ---- REVISED RATE (partially approved dispute) ------------------------------------
+function openRateModal(id){
+  const c=findContract(id); if(!c||!awaiting(c)) return;
+  rateCtx={contract:c,agreed:false,err:false};
+  renderRateBody();
+  openModal('rateModal');
+}
+function renderRateBody(){
+  const c=rateCtx.contract, d=c.dispute;
+  document.getElementById('rateBody').innerHTML=
+    '<div class="m-q" style="margin-top:12px;">Contract '+c.id+'</div>'+
+    '<div class="rate-grid" data-hl="rates">'+
+      '<div><div class="l">Old Rate</div><div class="v">'+money(c.rate)+'</div></div>'+
+      '<div><div class="l">Requested Rate</div><div class="v">'+money(d.askedRate)+'</div></div>'+
+      '<div><div class="l">New Rate</div><div class="v">'+money(d.approvedRate)+'</div></div>'+
+      '<div><div class="l">Applies to</div><div class="v">All Trips since '+d.appliesFrom+'</div></div>'+
+      '<div><div class="l">Dispute Status</div><div class="v">Partially Approved</div></div>'+
+      '<div data-hl="valmonote"><div class="l">Valmo note</div><div class="v">'+esc(d.valmoNote)+'</div></div>'+
+    '</div>'+
+    '<ul class="bul">'+
+      '<li>The new <b>rate applies only after you accept</b></li>'+
+      '<li><b>After accepting, a new contract with revised rate (₹ '+inr(d.approvedRate)+'/trip)</b> will be generated starting from '+d.appliesFrom+'</li>'+
+      '<li>If you <b>don’t accept, your current rate stays</b> and trips keep running</li>'+
+      '<li>All other terms stay the same <a href="#" onclick="return false;" style="text-decoration:none;">Terms &amp; Conditions.</a></li>'+
+    '</ul>'+
+    '<label class="chk"><input type="checkbox" '+(rateCtx.agreed?'checked':'')+' onchange="rateCtx.agreed=this.checked;rateCtx.err=false;renderRateBody()"><span>I agree to sign the contract with revised rate</span></label>'+
+    (rateCtx.err?'<div class="inline-err">Tick the box to accept the revised rate.</div>':'');
+}
+function confirmAcceptRate(){
+  if(!rateCtx) return;
+  if(!rateCtx.agreed){ rateCtx.err=true; renderRateBody(); return; }
+  const c=rateCtx.contract; c.dispute.rateAccepted=true;
+  closeModal('rateModal'); rateCtx=null;
+  renderChrome(); if(document.getElementById('listView').style.display!=='none') renderTable(); else viewContract(c.id);
+  showToast('New rate accepted. A new contract at '+money(c.dispute.approvedRate)+' starts from '+c.dispute.appliesFrom+'.');
+}
+function rateToTerminate(){ const c=rateCtx&&rateCtx.contract; closeModal('rateModal'); if(c) openTerminate(c.id,true); }
+
+// ---- TERMINATE -----------------------------------------------------------------
+function terminateTill(c){ return c.terminateTill||"16 Apr'26"; }
+function openTerminate(id, force){
+  const c=DATA.active.filter(function(x){return x.id===id;})[0]; if(!c) return;
+  if(!force && (openDisputeOn(c)||c.endedEarly)) return;
+  terminateCtx={contract:c,reason:'',err:false};
+  renderTerminateBody();
+  openModal('terminateModal');
+}
+function renderTerminateBody(){
+  const t=terminateCtx, c=t.contract, till=terminateTill(c);
+  const remaining=Math.max(1,(c.pc&&c.pc.upcoming)||1);
+  document.getElementById('terminateBody').innerHTML=
+    '<div class="m-q">Are you sure you want to terminate '+c.id+'?</div>'+
+    infoCard(c)+
+    '<div class="note-box" data-hl="loss"><div class="nt">Note:</div><ul><li>This contract <b>stays active till '+till+'</b>, After '+till+', the contract will become inactive</li></ul>'+
+      '<div class="nl"><span aria-hidden="true">💰</span><div><div class="lt">Potential earning loss</div>Total: <span class="amt">₹'+inr(c.rate*remaining)+'</span> · Per Trip: <span class="amt">₹'+inr(c.rate)+'</span></div></div></div>'+
+    '<div style="margin-top:14px;">'+ddHtml('termReason',{placeholder:'Select the reason for termination',value:t.reason,options:REASONS,listHl:'reasons',firstHl:true,onPick:function(v){ terminateCtx.reason=v; terminateCtx.err=false; renderTerminateBody(); }})+'</div>'+
+    (t.err?'<div class="inline-err">Select a reason to continue.</div>':'');
+  document.querySelector('#terminateBody .fsel').style.marginTop='0';
+}
+function confirmTerminate(){
+  const t=terminateCtx; if(!t) return;
+  if(!t.reason){ t.err=true; renderTerminateBody(); return; }
+  const c=t.contract; c.endedEarly=true; c.endedEarlyBy='You'; c.activeTill=terminateTill(c);
+  closeModal('terminateModal'); terminateCtx=null;
+  renderChrome();
+  if(document.getElementById('detailView').style.display==='flex') viewContract(c.id); else renderTable();
+  openSuccess({title:'Contract Terminated', heading:'Contract Terminated Successfully!', body:c.id+' will end on <b>'+c.activeTill+'</b>', btn:'Close', btnClass:'btn-sec'});
+}
+
+// ---- SUCCESS MODAL ------------------------------------------------------------------
+function openSuccess(o){
+  document.getElementById('successTitle').textContent=o.title;
+  document.getElementById('successHindi').innerHTML=o.hindi?'<span class="hi-pill tint" data-clickable role="button" tabindex="0" onclick="openHiw()"><span class="tri"></span>हिंदी में जानकारी</span>':'';
+  document.getElementById('successBody').innerHTML='<div class="success-body" data-hl="toast">'+confettiSvg()+'<h3>'+o.heading+'</h3><p>'+o.body+'</p></div>';
+  document.getElementById('successFoot').innerHTML='<button class="'+(o.btnClass||'btn-primary')+'" onclick="closeSuccess()">'+o.btn+'</button>';
+  successAfter=o.after||null;
+  openModal('successModal');
+}
+function closeSuccess(){ const f=successAfter; successAfter=null; closeModal('successModal'); document.getElementById('successBody').innerHTML=''; if(f) f(); }
+
+// ---- DETAIL (L2) ----------------------------------------------------------------------
+function viewContract(id){
+  const c=findContract(id); if(!c) return;
+  currentContract=c;
+  closeAllDD();
+  document.getElementById('listView').style.display='none';
+  document.getElementById('disputeView').style.display='none';
+  document.getElementById('detailView').style.display='flex';
+  setNav('contracts');
+  const tabName={upcoming:'Upcoming Contracts',active:'Active contracts',closed:'Closed contracts',pending:'Pending contracts'}[c.status];
+  const sep='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+  document.getElementById('detailCrumb').innerHTML='<span>'+tabName+'</span>'+sep+(c.dispute&&c.status==='active'?'<span>Under Dispute</span>'+sep:'')+'<span class="last">View</span>';
+  const pill={active:'Active',upcoming:'Upcoming',closed:'Closed',pending:'Pending'}[c.status];
+  let body='<div class="d-head"><button class="back" onclick="closeDetail()" aria-label="Back">'+ICO.back+'</button><h1>'+c.id+'</h1><span class="pill '+c.status+'">'+pill+'</span></div>';
+  body+=overviewCard(c);
+  if(c.dispute && c.status==='active') body+=disputeSummary(c);
+  if(c.status==='active' || (c.status==='closed' && c.trips && c.trips.length)) body+=tripsCard(c);
+  const sc=document.getElementById('detailScroll'); sc.innerHTML=body; sc.scrollTop=0;
+  const bar=document.getElementById('detailActionBar');
+  if(c.status==='active'){
+    bar.style.display='flex';
+    if(openDisputeOn(c)){
+      bar.innerHTML='<span class="tip"><button class="btn-link" disabled>Terminate Contract</button><span class="tip-box" style="left:auto;right:0;transform:none;width:330px;">This contract has an active dispute, wait for the resolution before terminating.</span></span>';
+    } else if(c.endedEarly){
+      bar.innerHTML='<span class="tip"><button class="btn-link" disabled>Terminate Contract</button><span class="tip-box" style="left:auto;right:0;transform:none;">This contract already ends on '+c.activeTill+'.</span></span><button class="btn-line" data-hl="cdispute" onclick="openDispute(\''+c.id+'\',\'new\')">Raise Dispute</button>';
+    } else {
+      bar.innerHTML='<button class="btn-link" data-hl="terminatebtn" onclick="openTerminate(\''+c.id+'\')">Terminate Contract</button><button class="btn-line" data-hl="cdispute" onclick="openDispute(\''+c.id+'\',\'new\')">Raise Dispute</button>';
+    }
+  } else if(c.status==='upcoming'){
+    bar.style.display='flex';
+    bar.innerHTML='<button class="btn-line" onclick="openReject(\''+c.id+'\',\'upcoming\')">Reject Contract</button>';
+  } else { bar.style.display='none'; bar.innerHTML=''; }
+}
+function closeDetail(){ showList(); renderChrome(); renderTable(); currentContract=null; }
+function ovItem(icon,lbl,val,sub,wide){ return '<div class="ov-item'+(wide?' wide':'')+'"><span class="ov-ico">'+svgIco(icon)+'</span><div style="min-width:0;"><div class="ov-lbl">'+lbl+'</div><div class="ov-val">'+val+'</div>'+(sub?'<div class="ov-sub">'+sub+'</div>':'')+'</div></div>'; }
+function toggleL2Route(el){ const s=el.previousElementSibling; const full=s.getAttribute('data-full'), short=s.getAttribute('data-short'); if(el.textContent==='Collapse'){ s.textContent=short; el.textContent='Expand'; } else { s.textContent=full; el.textContent='Collapse'; } }
+function overviewCard(c){
+  const rate=c.revisedRate||(c.dispute&&c.dispute.rateAccepted?c.dispute.approvedRate:null);
+  const earn= rate ? '₹'+inr(rate)+'/ Trip' : '₹'+inr(c.rate)+'/ Trip';
+  const route='<span data-full="'+esc(c.routeFull)+'" data-short="'+esc(c.from+' → '+c.to)+'">'+esc(c.routeFull)+'</span><span class="lk" data-clickable role="button" tabindex="0" onclick="toggleL2Route(this)">Collapse</span>';
+  const routeName=c.routeName||('Route '+(100+(parseInt(c.id.slice(-3),10)||0)%900));
+  return '<div class="card card-pad"><div class="card-title">Contract Overview</div>'+
+    '<div class="ov-box">'+ovItem('trip','Trip Details',c.haulType+' | '+(c.billingType||'Regular'),c.km+'km')+ovItem('route','Route Details',route,routeName,true)+ovItem('truck','Vehicle Size',c.vehicle.replace('ft',' ft'))+'</div>'+
+    '<div class="ov-box">'+ovItem('clock','TAT',c.tat||'2 days')+ovItem('calendar','Contract Period details',spaced(c.period),c.placementTime+' · '+c.direction)+ovItem('money','Earnings',earn)+ovItem('check','Accepted On',c.acceptedOn||"21 Mar'26")+'</div>'+
+  '</div>';
+}
+function tripsCard(c){
+  const pc=c.pc||{completed:0,upcoming:0,missed:0}, total=pc.completed+pc.upcoming+pc.missed;
+  const rows=(c.trips||[]).map(function(t){
+    const cls=t.status==='Completed'?'done':t.status==='Missed'?'miss':'up';
+    return '<tr><td class="dt">'+t.date+'</td><td class="tid">'+t.tripId+'</td><td><span class="st '+cls+'"'+(t.status==='Missed'?' data-hl="missed"':'')+'>'+(t.status==='Missed'?'Missed · Placement failure':t.status)+'</span></td></tr>';
+  }).join('');
+  return '<div class="card trips-card"><div class="card-title">Trips under this contract</div><div class="trips-grid">'+
+    '<div class="tp-panel" data-hl="tripprogress"><div class="tp-lbl">Trip progress <span class="tip" tabindex="0" aria-label="About trip progress">'+ICO.info+'<span class="tip-box">Completed trips out of all trips planned so far under this contract.</span></span></div>'+
+      '<div class="tp-big">'+pc.completed+'<small>/'+total+'</small></div>'+
+      '<div class="tp-row"><span class="dot done"></span>Completed<b>'+pc.completed+'</b></div>'+
+      '<div class="tp-row"><span class="dot up"></span>Upcoming<b>'+pc.upcoming+'</b></div>'+
+      '<div class="tp-row"><span class="dot miss"></span>Missed<b>'+pc.missed+'</b></div></div>'+
+    '<div style="flex:1;min-width:0;"><table class="trips"><colgroup><col style="width:18%"><col style="width:52%"><col style="width:30%"></colgroup><thead><tr><th scope="col">Date</th><th scope="col">Trip ID</th><th scope="col">Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+  '</div></div>';
+}
+function disputeSummary(c){
+  const d=c.dispute;
+  const lbl={partial:'Partially Approved',approved:'Approved',rejected:'Rejected',review:'Under Review'}[d.status];
+  let note='', remark='';
+  if(awaiting(c)){
+    note='<span class="ds-note">If you don’t accept, your current rate stays and trips keep running <b>If you don’t agree with the rate you can terminate the contract</b></span>';
+    remark='<b>Requested Rate: ₹'+inr(d.askedRate)+'</b><br><b>New Rate: ₹'+inr(d.approvedRate)+'/trip</b><br>Accept new rate to apply all Trips starting from '+d.appliesFrom;
+  } else if(d.status==='partial'){
+    remark='<b>New Rate: ₹'+inr(d.approvedRate)+'/trip</b><br>Accepted. Applies to all trips from '+d.appliesFrom;
+  } else if(d.status==='approved'){
+    remark='<b>New Rate: ₹'+inr(d.approvedRate)+'/trip</b><br>Applied to all trips from '+d.appliesFrom;
+  } else if(d.status==='rejected'){
+    note='<span class="ds-note">Your rate stays the same and trips keep running. <b>If you don’t agree, you can raise a new dispute or terminate the contract</b></span>';
+    remark=(d.askedRate?'<b>Requested Rate: ₹'+inr(d.askedRate)+'</b><br>':'')+'Rate stays '+money(c.rate)+'<br>'+esc(d.valmoNote||'');
+  } else {
+    note='<span class="ds-note info">Trips keep running throughout. <b>Valmo will respond within 5 days</b></span>';
+    remark=(d.askedRate?'<b>Requested Rate: ₹'+inr(d.askedRate)+'</b><br>':'')+'Under review by Valmo';
+  }
+  const action= awaiting(c) ? '<button class="btn-solid-sm" onclick="openRateModal(\''+c.id+'\')">Review</button><button class="link-sm" onclick="showToast(\'Opens dispute '+d.id+' in Disputes.\')">View Dispute</button>'
+    : '<button class="link-sm" style="margin-top:0;" onclick="showToast(\'Opens dispute '+d.id+' in Disputes.\')">View Dispute</button>';
+  return '<div class="card card-pad"><div class="card-title">Dispute Summary'+note+'</div>'+
+    '<table class="ds"><colgroup><col style="width:13%"><col style="width:10%"><col style="width:23%"><col style="width:13%"><col style="width:22%"><col style="width:10%"><col style="width:9%"></colgroup>'+
+    '<thead><tr><th scope="col">Dispute ID</th><th scope="col">Created Date</th><th scope="col">Issue Type</th><th scope="col">Dispute Status</th><th scope="col">Remark</th><th scope="col">Updated Date</th><th scope="col" style="text-align:center;">Action</th></tr></thead>'+
+    '<tbody><tr><td>'+d.id+'</td><td>'+d.created.replace(', ',',<br>')+'</td><td>'+esc(d.issue)+'<br>Supporting Doc: <a href="#" onclick="return false;" style="text-decoration:none;font-weight:600;">'+d.doc+'</a></td>'+
+    '<td><span class="ds-status '+d.status+'">'+lbl+'</span></td><td>'+remark+'</td><td>'+d.updated.replace(', ',',<br>')+'</td><td>'+action+'</td></tr></tbody></table></div>';
+}
+
+// ---- DISPUTE PAGE -------------------------------------------------------------------------
+const CONTRACT_SUBS=[
+  {key:'rate',en:'Rate not acceptable',hi:'ये रेट मंज़ूर नहीं है'},
+  {key:'vehicle',en:"I don't have this vehicle size available",hi:'इस साइज़ की गाड़ी मेरे पास नहीं है'},
+  {key:'period',en:"I can't serve entire contract period",hi:'पूरे कॉन्ट्रैक्ट के समय तक गाड़ी नहीं दे पाऊँगा'},
+  {key:'other',en:'Other',hi:'कोई और दिक्कत'}
+];
+const TRIP_SUBS=[
+  {key:'amount',en:'Wrong trip amount (rate mismatch)',hi:'ट्रिप रेट गलत है',title:'Wrong contract amount (rate mismatch)'},
+  {key:'billing',en:'Wrong billing type',hi:'बिलिंग गलत है',title:'Wrong billing type'},
+  {key:'vnum',en:'Wrong vehicle number',hi:'गाड़ी का नंबर गलत है',title:'Vehicle size mismatch'},
+  {key:'cid',en:'Contract ID mismatch / missing',hi:'कॉन्ट्रैक्ट नंबर गलत है या नहीं दिख रहा',title:'Contract ID mismatch / missing'},
+  {key:'time',en:'Time related issue',hi:'समय से जुड़ी दिक्कत',title:'Time/schedule mismatch'},
+  {key:'route',en:'Route changed / additional stops added',hi:'रास्ता बदला या बीच में और जगह रुकना पड़ा',title:'Route changed/addition stops added'},
+  {key:'other',en:'Other',hi:'कोई और दिक्कत',title:'Other'}
+];
+const CATS=['Contract','Existing Trip'];
+function openDispute(id, mode){
+  const c=id?DATA.active.filter(function(x){return x.id===id;})[0]||null:null;
+  closeAllOverlays();
+  disputeForm={category:'',contractId:c?c.id:'',contract:c,subs:{},detail:{},trip:{id:'',subs:{}},text:'',mode:mode};
+  document.getElementById('listView').style.display='none';
+  document.getElementById('detailView').style.display='none';
+  document.getElementById('disputeView').style.display='flex';
+  setNav('disputes');
+  renderDispute();
+  document.getElementById('disputeScroll').scrollTop=0;
+}
+function setDisputeCategory(v){ disputeForm.category=v==='Existing Trip'?'trip':'contract'; disputeForm.subs={}; disputeForm.trip.subs={}; renderDispute(); }
+function onContractIdInput(v){
+  disputeForm.contractId=v.trim();
+  const norm=function(s){ return s.replace(/\s+/g,'').toUpperCase(); };
+  disputeForm.contract=DATA.active.filter(function(x){ return norm(x.id)===norm(v); })[0]||null;
+}
+function contractIdChange(){ renderDispute(); }
+function toggleSub(kind,key){ const s=kind==='trip'?disputeForm.trip.subs:disputeForm.subs; s[key]=!s[key]; renderDispute(); }
+function renderDispute(){
+  const f=disputeForm, c=f.contract;
+  const hindi='<span class="hi-pill" data-clickable role="button" tabindex="0" onclick="openHiw()"><span class="tri"></span>हिंदी में जानकारी</span>';
+  let left='<div class="dp-h">Raise Dispute</div><span class="dp-lbl">Select Dispute Category</span>'+
+    '<div data-hl="cats">'+ddHtml('dCat',{placeholder:'Select dispute category',value:f.category==='trip'?'Existing Trip':f.category==='contract'?'Contract':'',options:CATS,onPick:setDisputeCategory})+'</div>';
+  if(f.category==='contract'){
+    const bad=f.contractId && !c && f.contractId.length>=10;
+    left+='<div class="fl" style="margin-top:24px;"><label for="dCid">Contract ID<span class="req">*</span></label><input id="dCid" value="'+esc(f.contractId)+'" placeholder="Enter Contract ID" oninput="onContractIdInput(this.value)" onchange="contractIdChange()">'+(bad?'<div class="fl-err">No contract found. Check the Contract ID and try again.</div>':'')+'</div>';
+    if(c){
+      left+='<div class="c-card"><div class="cr"><div><div class="cl"><span class="ov-ico" style="width:18px;height:18px;">'+svgIco('route')+'</span>Route Details</div><div class="cv">'+esc(c.routeFull)+'</div><div class="cs">'+c.direction+'</div></div><div class="rate">₹ '+inr(c.rate)+'/ trip</div></div>'+
+        '<div class="c3"><div><div class="cl"><span class="ov-ico" style="width:18px;height:18px;">'+svgIco('calendar')+'</span>Period</div><div class="cv">'+spaced(c.period)+'</div></div>'+
+        '<div><div class="cl"><span class="ov-ico" style="width:18px;height:18px;">'+svgIco('clock')+'</span>Placement Time</div><div class="cv">'+ptime(c.placementTime)+'</div></div>'+
+        '<div><div class="cl"><span class="ov-ico" style="width:18px;height:18px;">'+svgIco('truck')+'</span>Vehicle</div><div class="cv">'+c.vehicle+'</div></div></div></div>';
+      left+='<span class="dp-lbl">Select Dispute Sub-Category</span><div class="sub-list" data-hl="sub">'+CONTRACT_SUBS.map(function(s){
+        return '<label class="sub-card"><input type="checkbox" '+(f.subs[s.key]?'checked':'')+' onchange="toggleSub(\'contract\',\''+s.key+'\')"><span><span class="en">'+esc(s.en)+'</span><span class="hi" lang="hi">'+s.hi+'</span></span></label>'; }).join('')+'</div>';
+      left+='<div class="flag-box"><div class="fb-h">Raising this flags every trip under the contract.'+hindi+'</div><ul>'+
+        '<li>Valmo will respond to your dispute <b>within 5 days.</b></li>'+
+        '<li>Every trip placed <b>after</b> you raise this dispute will get the revised rate.</li>'+
+        '<li>Trips you have <b>already run</b> are not covered, raise a separate dispute for each one.</li>'+
+        '<li>If Valmo approves your <b>full amount,</b> you’ll get a new contract at that rate. It’s already signed, nothing more for you to do.</li>'+
+        '<li>If Valmo approves <b>part of it,</b> review and accept the new rate to apply it.</li></ul></div>';
+    }
+  } else if(f.category==='trip'){
+    left+='<div class="fl" style="margin-top:24px;"><label for="dTid">Trip ID<span class="req">*</span></label><input id="dTid" value="'+esc(f.trip.id)+'" placeholder="Enter Trip ID" oninput="disputeForm.trip.id=this.value;updateDisputeSubmit()"></div>'+
+      '<div class="flag-box plain"><div class="fb-h">Select all issues that apply</div><p>You can select multiple issue types if they’re all related to the same trip.</p></div>'+
+      '<span class="dp-lbl">Select Dispute Sub-Category</span><div class="sub-list" data-hl="sub">'+TRIP_SUBS.map(function(s){
+        return '<label class="sub-card"><input type="checkbox" '+(f.trip.subs[s.key]?'checked':'')+' onchange="toggleSub(\'trip\',\''+s.key+'\')"><span><span class="en">'+esc(s.en)+'</span><span class="hi" lang="hi">'+s.hi+'</span></span></label>'; }).join('')+'</div>';
+  }
+  const coexist='<div class="coexist"><div class="cq">How contract &amp; trip disputes coexist?</div><ul><li>Raise a trip dispute for a one-time issue on that trip.</li><li>Raise a contract dispute if the rate is wrong on every trip.</li><li>Once approved, the contract change applies to all trips, current and future.</li></ul>'+hindi+'</div>';
+  document.getElementById('disputeScroll').innerHTML=coexist+'<div class="dp-grid"><div class="dp-panel">'+left+'</div><div class="dp-panel" id="disputeDetails">'+disputeDetails()+'</div></div>';
+  renderDisputeFoot();
+}
+function fl(label, value, opts){ opts=opts||{}; return '<div class="fl'+(opts.full?' full':'')+'"><label>'+label+(opts.req?'<span class="req">*</span>':'')+'</label><input '+(opts.disabled?'disabled ':'')+'value="'+esc(value||'')+'" placeholder="'+(opts.ph||'')+'"'+(opts.oninput?' oninput="'+opts.oninput+'"':'')+'></div>'; }
+function disputeDetails(){
+  const f=disputeForm, c=f.contract;
+  let items=[];
+  if(f.category==='contract' && c){
+    CONTRACT_SUBS.forEach(function(s){
+      if(!f.subs[s.key]) return;
+      let fields='';
+      if(s.key==='rate') fields=fl('Current Rate',money(c.rate),{disabled:true})+fl('Expected Rate',f.detail.rate||'',{req:true,ph:'₹ Enter amount',oninput:"disputeForm.detail.rate=this.value;updateDisputeSubmit()"});
+      else if(s.key==='vehicle') fields=fl('Current Vehicle Size',c.vehicle,{disabled:true})+fl('Vehicle Size You Can Provide',f.detail.vehicle||'',{req:true,ph:'e.g. 24ft',oninput:"disputeForm.detail.vehicle=this.value"});
+      else if(s.key==='period') fields=fl('Contract Period',spaced(c.period),{disabled:true})+fl('You Can Serve Until',f.detail.period||'',{req:true,ph:"e.g. 20 Apr'26",oninput:"disputeForm.detail.period=this.value"});
+      else fields='<div class="full" style="font-size:12px;color:var(--text);margin-top:12px;">Tell us what went wrong in the details box below.</div>';
+      items.push([s,fields]);
+    });
+  } else if(f.category==='trip'){
+    TRIP_SUBS.forEach(function(s){
+      if(!f.trip.subs[s.key]) return;
+      let fields='';
+      if(s.key==='amount') fields=fl('Current Trip Rate','₹4,500',{disabled:true})+fl('Expected Trip Rate','',{req:true,ph:'₹ Enter amount'})+
+        '<label class="dd-check full"><input type="checkbox">Request for higher rate on contract for future trips</label>'+
+        '<div class="dd-info full">'+ICO.info+'<span>If approved, all future trips from now will get the changed amount. For past trips, raise a dispute manually.</span></div>';
+      else if(s.key==='billing') fields=fl('Current RFQ','RFQ-123456789',{disabled:true})+fl('Expected RFQ','',{req:true,ph:'Enter RFQ'});
+      else if(s.key==='vnum') fields=fl('Current Vehicle','KA 01 AB1234 - 12ft',{disabled:true})+fl('Actual Vehicle Used','',{req:true,ph:'Enter vehicle number'});
+      else if(s.key==='cid') fields=fl('Current Contract ID','',{disabled:true,ph:'Not linked'})+fl('Expected Contract ID','',{req:true,ph:'Enter Contract ID'});
+      else if(s.key==='time') fields=fl('Scheduled Departure',"9 Nov'25, 8:00 AM",{disabled:true})+fl('Actual Departure','',{ph:'Enter time'})+fl('Scheduled Arrival',"10 Nov'25, 8:00 AM",{disabled:true})+fl('Actual Arrival','',{ph:'Enter time'});
+      else if(s.key==='route') fields=fl('Current Route','BLR → DLS → MUM',{disabled:true})+fl('Actual Route','',{ph:'Enter route'});
+      else fields='<div class="full" style="font-size:12px;color:var(--text);margin-top:12px;">Tell us what went wrong in the details box below.</div>';
+      items.push([{key:s.key,en:s.title},fields]);
+    });
+  }
+  if(!items.length) return '<div class="dd-empty"><span style="font-size:22px;" aria-hidden="true">📝</span><p>Select one or more issues on the left<br>to add their details here.</p></div>';
+  const kind=f.category==='trip'?'trip':'contract';
+  return '<div class="dp-h">Dispute Details</div><div class="dd-sub">'+items.length+' Selected</div>'+
+    items.map(function(it,i){ return '<div class="dd-item"><div class="dd-item-h">'+(i+1)+'. '+esc(it[0].en)+'<button onclick="toggleSub(\''+kind+'\',\''+it[0].key+'\')" aria-label="Remove '+esc(it[0].en)+'">'+ICO.close+'</button></div><div class="dd-fields">'+it[1]+'</div></div>'; }).join('')+
+    '<div class="fl" style="margin-top:20px;"><label for="dText">Provide us with more details to help you better<span class="req">*</span></label><textarea id="dText" maxlength="1000" placeholder="Add any details that help us resolve this faster" oninput="disputeForm.text=this.value;document.getElementById(\'dCnt\').textContent=this.value.length+\'/1,000\'">'+esc(f.text)+'</textarea><div class="cnt" id="dCnt">'+f.text.length+'/1,000</div></div>'+
+    '<div class="up-h">Upload Supporting Documents</div><div class="up-tip"><span aria-hidden="true">💡</span>Clear documents help us resolve faster</div>'+
+    '<div class="up-lbl">Proof of Delivery (POD)<span class="req">*</span></div><div class="up-box" data-clickable role="button" tabindex="0" onclick="showToast(\'Opens the file picker.\')">'+ICO.dl.replace('M12 3v12m-5-5 5 5 5-5M5 20h14','M12 21V9m-5 5 5-5 5 5M5 4h14')+'<b>Upload</b>Drag &amp; drop or browse - JPG, PNG, PDF up to 10 MB</div>';
+}
+function disputeValid(){
+  const f=disputeForm; if(!f) return false;
+  if(f.category==='contract') return !!(f.contract && CONTRACT_SUBS.some(function(s){return f.subs[s.key];}));
+  if(f.category==='trip') return !!(f.trip.id.trim() && TRIP_SUBS.some(function(s){return f.trip.subs[s.key];}));
+  return false;
+}
+function renderDisputeFoot(){ document.getElementById('disputeFoot').innerHTML='<button class="btn-sec" onclick="closeDispute()">Cancel</button><button class="btn-primary" id="dSubmit" data-hl="dsubmit" onclick="submitDispute()">Submit</button>'; updateDisputeSubmit(); }
+function updateDisputeSubmit(){ const b=document.getElementById('dSubmit'); if(b) b.disabled=!disputeValid(); }
+function submitDispute(){
+  const f=disputeForm; if(!disputeValid()) return;
+  let body;
+  if(f.category==='contract'){
+    const c=f.contract;
+    const asked=parseInt(String(f.detail.rate||'').replace(/[^0-9]/g,''),10)||null;
+    c.dispute={id:'DS'+(1234567900+DATA.active.indexOf(c)),created:"14 Apr'26, 10:00 AM",issue:CONTRACT_SUBS.filter(function(s){return f.subs[s.key];}).map(function(s){return s.en;})[0],doc:'POD.png',status:'review',askedRate:asked,approvedRate:null,updated:"14 Apr'26, 10:00 AM"};
+    body='Dispute raised for the contract <b>'+c.id+'</b>. Our team is reviewing your case now, expect an update within <b>5 days</b>. View case details in the <b>Disputes section</b>.';
+  } else {
+    body='Your dispute for <b>Trip ID '+esc(f.trip.id)+'</b> has been recorded. Our team is reviewing your case now, expect an update within 24 hours. View case details in the <b>Disputes section</b>.';
+  }
+  const cat=f.category;
+  openSuccess({title:'Raise Dispute',hindi:cat==='contract',heading:'Dispute Raised Successfully!',body:body,btn:'Ok, Got it',btnClass:'btn-primary',after:function(){ disputeForm=null; goTo('active', cat==='contract'?'disp':'all'); }});
+}
+function closeDispute(){ disputeForm=null; showList(); renderChrome(); renderTable(); }
+
+// ---- BELL / HIW / LOGOUT ---------------------------------------------------------------------
+function renderBell(){
+  const a1=DATA.active[0], a6=DATA.active.filter(function(c){return c.endedEarly;})[0];
+  document.getElementById('bellDropdown').innerHTML=
+    '<div class="bell-item"><span class="notif-time">1 min ago</span><div class="notif-title">3 reminders to accept contracts</div><div class="notif-desc">Accept before the deadline so you don’t lose them.</div><button class="btn-solid-sm" onclick="openReminders()">View</button></div>'+
+    (a1&&awaiting(a1)?'<div class="bell-item"><span class="notif-time">1 hr ago</span><div class="notif-title">Your dispute was partially approved</div><div class="notif-desc">'+a1.id+' · Review and accept the new rate</div><button class="btn-solid-sm" onclick="closeBell();viewContract(\''+a1.id+'\')">View</button></div>':'')+
+    (a6?'<div class="bell-item"><span class="notif-time">3 hrs ago</span><div class="notif-title">Contract ending soon</div><div class="notif-desc">'+a6.id+' · Active till '+a6.activeTill+'</div><button class="btn-solid-sm" onclick="closeBell();goTo(\'active\',\'ending\')">View</button></div>':'');
+}
+function toggleBell(e){ if(e) e.stopPropagation(); document.getElementById('bellDropdown').classList.toggle('show'); }
+function closeBell(){ document.getElementById('bellDropdown').classList.remove('show'); }
+function openHiw(){ closeBell(); openModal('hiwModal'); }
+function logout(){ showToast('This is a prototype, so Log Out is turned off.'); }
+
+// ---- SCENE API (used by the case study) --------------------------------------------------------
+function vtReset(){
+  clearTimeout(toastTimer); hideToast();
+  if(undoState&&undoState.timer) clearTimeout(undoState.timer); undoState=null;
+  closeAllOverlays(); closeBell();
+  seedData();
+  currentTab='pending'; activeChip='all'; currentContract=null; searchQuery='';
+  document.getElementById('searchInput').value='';
+  acceptCtx=rejectCtx=terminateCtx=rateCtx=disputeForm=null;
+  showList(); renderChrome(); renderTable();
+}
+function scrollTops(){ ['contentArea','detailScroll','disputeScroll','acceptBody','remindersBody'].forEach(function(id){ const el=document.getElementById(id); if(el) el.scrollTop=0; }); }
+function heroActive(){ return DATA.active.filter(function(c){return c.hero;})[0]; }
+const SCENES={
+  'pending':function(){},
+  'pending-reminders':function(){ openReminders(); },
+  'pending-accept':function(){ openAcceptDrawer(DATA.pending[0].id); acceptCtx.agreed=true; renderAcceptBody(); },
+  'reject':function(){ openReject(DATA.pending[0].id); },
+  'reject-reasons':function(){ openReject(DATA.pending[0].id); openDD('rejReason'); },
+  'reject-rate':function(){ openReject(DATA.pending[0].id); rejectCtx.reason='Rate not acceptable'; rejectCtx.rate='₹5,600'; renderRejectBody(); },
+  'reject-done':function(){ openReject(DATA.pending[0].id); rejectCtx.reason='Rate not acceptable'; rejectCtx.rate='₹5,600'; confirmReject(); },
+  'upcoming':function(){ goTo('upcoming'); },
+  'upcoming-l2':function(){ viewContract(DATA.upcoming[0].id); },
+  'active':function(){ goTo('active','all'); },
+  'active-disputed':function(){ goTo('active','disp'); },
+  'rate-review':function(){ goTo('active','disp'); openRateModal(DATA.active[0].id); },
+  'active-l2':function(){ viewContract(heroActive().id); },
+  'dispute':function(){ openDispute(heroActive().id,'new'); openDD('dCat'); },
+  'dispute-sub':function(){ openDispute(heroActive().id,'new'); disputeForm.category='contract'; disputeForm.subs.rate=true; disputeForm.detail.rate='₹5,200'; renderDispute(); },
+  'dispute-done':function(){ openDispute(heroActive().id,'new'); disputeForm.category='contract'; disputeForm.subs.rate=true; disputeForm.detail.rate='₹5,200'; disputeForm.text='Diesel cost on this lane went up; ₹4,500 does not cover the trip.'; renderDispute(); submitDispute(); },
+  'terminate':function(){ viewContract(heroActive().id); openTerminate(heroActive().id); },
+  'terminate-reasons':function(){ viewContract(heroActive().id); openTerminate(heroActive().id); openDD('termReason'); },
+  'terminated':function(){ const h=heroActive(); viewContract(h.id); openTerminate(h.id); terminateCtx.reason=REASONS[0]; confirmTerminate(); },
+  'ending':function(){ goTo('active','ending'); },
+  'closed':function(){ goTo('closed'); },
+  'empty-pending':function(){ DATA.pending=[]; renderChrome(); renderTable(); }
+};
+window.__vt={
+  scenes:Object.keys(SCENES),
+  scene:function(name){
+    const key=Object.prototype.hasOwnProperty.call(SCENES,name)?name:'pending';
+    const root=document.documentElement;
+    root.classList.add('vt-instant');
+    sceneRunning=true;
+    try{ vtReset(); SCENES[key](); scrollTops(); }
+    finally{ sceneRunning=false; }
+    clearTimeout(window.__vtT); window.__vtT=setTimeout(function(){ root.classList.remove('vt-instant'); },80);
+    return key;
+  }
+};
+
+// ---- INIT ----------------------------------------------------------------------------------------
+seedData();
+document.addEventListener('DOMContentLoaded',function(){
+  renderChrome(); renderTable();
+  document.getElementById('searchInput').addEventListener('input',function(){ searchQuery=this.value.trim().toLowerCase(); renderTable(); });
+  document.addEventListener('keydown',function(e){ if((e.key==='Enter'||e.key===' ') && document.activeElement && document.activeElement.hasAttribute('data-clickable')){ e.preventDefault(); document.activeElement.click(); } });
+});
+</script>
+</body>
+</html>
