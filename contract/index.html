@@ -172,19 +172,25 @@ class Component extends DCLogic {
       };
       let zs = 1;
       const zoom = r => {
-        if (!cam) return; r = null; if (!r) { cam.style.transform = 'none'; zs = 1; return; }
+        if (!cam) return; if (!r) { cam.style.transform = 'none'; zs = 1; return; }
         zs = dark ? Math.min(1.4, Math.max(1.1, VW * 0.5 / Math.max(r[2], 260))) : Math.min(1.28, Math.max(1.0, VW * 0.55 / Math.max(r[2], 300), VH * 0.5 / Math.max(r[3], 1)));
         let tx = -(r[0] + r[2] / 2) * zs + VW / 2, ty = -(r[1] + r[3] / 2) * zs + VH / 2;
         tx = Math.min(0, Math.max(VW - VW * zs, tx)); ty = Math.min(0, Math.max(VH - VH * zs, ty));
         cam.style.transform = `translate(${tx}px,${ty}px) scale(${zs})`;
       };
+      const csc = () => { const s = cur.querySelector('svg'); if (s) { s.style.transformOrigin = '0 0'; s.style.transform = 'scale(' + (1 / zs) + ')'; } };
+      /* Popup steps: fill the frame with the modal so the screen's dimmed backdrop drops out of view. */
+      const zoomFit = m => { zs = Math.max(1, Math.min(1.8, VW * 0.94 / m[2], VH * 0.94 / m[3]));
+        let tx = -(m[0] + m[2] / 2) * zs + VW / 2, ty = -(m[1] + m[3] / 2) * zs + VH / 2;
+        tx = Math.min(0, Math.max(VW - VW * zs, tx)); ty = Math.min(0, Math.max(VH - VH * zs, ty));
+        cam.style.transform = `translate(${tx}px,${ty}px) scale(${zs})`; csc(); };
       const placeRing = (r, t) => {
         if (!r) { ring.style.opacity = 0; ring.dataset.shown = '0'; return; }
         const [x, y, w, h] = r;
         Object.assign(ring.style, { left: x - 6 + 'px', top: y - 6 + 'px', width: w + 12 + 'px', height: h + 12 + 'px', opacity: 1 });
         const dim = this.props.spotlight ?? true;
         ring.style.border = '0'; ring.style.borderRadius = '12px';
-        ring.style.boxShadow = '0 0 0 2px #fff, 0 0 0 6px rgba(21,86,176,.55), 0 18px 40px -10px rgba(15,23,42,.35)' + (dim ? ', 0 0 0 4000px rgba(15,23,42,.18)' : '');
+        ring.style.boxShadow = 'none'; /* Pranita, 2026-10-08: no highlight box or extra dim; the camera zooms in and the cursor points */ Object.assign(cur.style, { opacity: 1, left: (x + Math.min(w * 0.6, w - 10)) + 'px', top: (y + Math.min(h * 0.65, h - 6)) + 'px' });
         tag.style.display = 'none';
         if (ring.dataset.shown !== '1') { ring.style.transition = 'none'; ring.style.transform = 'scale(1.06)'; ring.style.opacity = 0;
           requestAnimationFrame(() => requestAnimationFrame(() => { ring.style.transition = ''; ring.style.transform = 'scale(1)'; ring.style.opacity = 1; })); ring.dataset.shown = '1'; }
@@ -227,7 +233,7 @@ class Component extends DCLogic {
         } else cur.style.opacity = 0;
         later(() => { const changed = go(st.scene);
           later(() => { cur.style.opacity = 0; const r = measure(st.sel);
-            if (cam) { zoom(r); later(() => placeRing(r, st.t), animate && !reduce ? (dark ? 1000 : 500) : 0); }
+            if (cam) { const md = measure('modal'); if (md && md[2] < VW * 0.8) zoomFit(md); else { zoom(r); csc(); } later(() => placeRing(r, st.t), animate && !reduce ? (dark ? 1000 : 500) : 0); }
             else placeRing(r, st.t); }, changed ? 320 : 20);
         }, t0);
         const dur = +(el.dataset.dur || 0) || (st.click ? 4800 : 3600);
