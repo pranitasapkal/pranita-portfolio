@@ -217,12 +217,12 @@ function DeckButton({ label, onClick, big, children, pressed }: any) {
     )
 }
 
-// ── resume: preview free, download behind a short form that emails Pranita who took it ──────────────────────────
+// ── resume: name + a checked email first, then the preview and the download; Pranita gets an email either way ──────
 // Any link on the page that points at a Framer-hosted PDF (the hero's "Download my resume" too) opens this instead.
 // The notification goes through FormSubmit (formsubmit.co), which mails `notify` with the form fields.
 
 const RESUME_NAME = "PranitaSapkal_Resume.pdf"
-const RV_KEY = "pf-resume-reader"
+const RV_KEY = "pf-resume-reader-v2"
 
 async function saveFile(url: string) {
     try {
@@ -239,7 +239,9 @@ async function saveFile(url: string) {
     }
 }
 
-function tell(notify: string, who: { name: string; email: string; company: string }) {
+type Reader = { name: string; email: string; company: string }
+
+function tell(notify: string, who: Reader, what: "opened" | "downloaded") {
     const ctl = new AbortController()
     setTimeout(() => ctl.abort(), 8000)
     return fetch(`https://formsubmit.co/ajax/${notify}`, {
@@ -249,8 +251,9 @@ function tell(notify: string, who: { name: string; email: string; company: strin
             name: who.name,
             email: who.email,
             company: who.company || "Not given",
+            action: what === "opened" ? "Opened the resume" : "Downloaded the PDF",
             page: window.location.href,
-            _subject: `Resume downloaded by ${who.name}`,
+            _subject: what === "opened" ? `${who.name} opened your resume` : `${who.name} downloaded your resume`,
             _template: "table",
             _captcha: "false",
         }),
@@ -258,11 +261,77 @@ function tell(notify: string, who: { name: string; email: string; company: strin
     }).catch(() => null)
 }
 
+// ── email checks: format, common typos, throwaway inboxes, obvious fakes, and a live check that the domain takes mail ──
+
+const TYPOS: Record<string, string> = {
+    "gmial.com": "gmail.com", "gmai.com": "gmail.com", "gamil.com": "gmail.com", "gnail.com": "gmail.com", "gmaill.com": "gmail.com",
+    "gmal.com": "gmail.com", "gmail.co": "gmail.com", "gmail.con": "gmail.com", "gmail.cm": "gmail.com", "gmail.om": "gmail.com",
+    "gmail.in": "gmail.com", "gmail.comm": "gmail.com", "gmail.cmo": "gmail.com", "gmeil.com": "gmail.com", "gmail.c": "gmail.com",
+    "yahoo.co": "yahoo.com", "yaho.com": "yahoo.com", "yahooo.com": "yahoo.com", "yahoo.con": "yahoo.com", "yhoo.com": "yahoo.com",
+    "hotmal.com": "hotmail.com", "hotmial.com": "hotmail.com", "hotmail.co": "hotmail.com", "hotmail.con": "hotmail.com", "homail.com": "hotmail.com",
+    "outlok.com": "outlook.com", "outlook.co": "outlook.com", "outlook.con": "outlook.com", "outllook.com": "outlook.com",
+    "iclod.com": "icloud.com", "icloud.co": "icloud.com", "icoud.com": "icloud.com", "rediffmail.co": "rediffmail.com",
+}
+const THROWAWAY = new Set(
+    ("mailinator.com 10minutemail.com 10minutemail.net guerrillamail.com guerrillamail.net guerrillamailblock.com sharklasers.com grr.la " +
+        "yopmail.com yopmail.net tempmail.com temp-mail.org temp-mail.io tempmail.net tempmailo.com tempr.email trashmail.com trashmail.de " +
+        "getnada.com nada.email dispostable.com maildrop.cc throwawaymail.com fakeinbox.com mintemail.com emailondeck.com mohmal.com " +
+        "mailnesia.com spamgourmet.com mytemp.email burnermail.io moakt.com tmail.ws tmpmail.org tmpmail.net emailfake.com fakemail.net " +
+        "mailpoof.com inboxkitten.com mailcatch.com spambox.us discard.email 33mail.com anonaddy.me getairmail.com dropmail.me minuteinbox.com " +
+        "1secmail.com 1secmail.net 1secmail.org mail.tm mail.gw linshiyouxiang.net emailtemporanea.net crazymailing.com etempmail.com").split(" ")
+)
+const FAKE_LOCAL = /^(test|testing|tester|asdf\w*|qwerty\w*|abc|abcd|abc123|xyz|aaa+|fake|none|no|noemail|nomail|noreply|no-reply|sample|example|dummy|user|email|mail|null|na|n\/a|x+|a|b|123+|1234\w*)$/i
+const FAKE_DOMAIN = /^(example\.(com|org|net)|test\.com|domain\.com|email\.test|abc\.com|xyz\.com|asdf\.com|[^.]+\.(test|invalid|example|localhost|local))$/i
+
+async function dns(name: string, type: "MX" | "A"): Promise<any | null> {
+    const urls = [`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`, `https://dns.google/resolve?name=${encodeURIComponent(name)}&type=${type}`]
+    for (const u of urls) {
+        const ctl = new AbortController()
+        const t = setTimeout(() => ctl.abort(), 4000)
+        try {
+            const r = await fetch(u, { headers: { accept: "application/dns-json" }, signal: ctl.signal })
+            if (r.ok) return await r.json()
+        } catch (_) {
+        } finally {
+            clearTimeout(t)
+        }
+    }
+    return null
+}
+
+// true = the domain takes mail, false = it can't, null = the check couldn't run (offline, blocked); null lets the reader through.
+async function takesMail(domain: string): Promise<boolean | null> {
+    const mx = await dns(domain, "MX")
+    if (!mx) return null
+    if (mx.Status === 3) return false
+    const rec = (mx.Answer || []).filter((a: any) => a.type === 15)
+    if (rec.length) return !rec.every((a: any) => /^0\s+\.?$/.test(String(a.data).trim()))
+    const a = await dns(domain, "A")
+    if (!a) return null
+    return (a.Answer || []).some((x: any) => x.type === 1)
+}
+
+async function checkEmail(raw: string): Promise<{ ok: true } | { ok: false; msg: string; fix?: string }> {
+    const v = raw.trim().toLowerCase()
+    if (!v) return { ok: false, msg: "Add your email so I know who's reading." }
+    const m = v.match(/^([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@((?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24})$/)
+    if (!m || v.length > 254 || m[1].length > 64) return { ok: false, msg: "That doesn't look like an email address. Check it once more." }
+    const [, local, domain] = m
+    const fixDomain = TYPOS[domain] || (/\.(con|cmo|comm|cm|om|vom|xom)$/.test(domain) ? domain.replace(/\.[a-z]+$/, ".com") : "")
+    if (fixDomain) return { ok: false, msg: `Did you mean ${local}@${fixDomain}?`, fix: `${local}@${fixDomain}` }
+    if (THROWAWAY.has(domain)) return { ok: false, msg: "Throwaway inboxes don't work here. Use an email you check." }
+    if (FAKE_LOCAL.test(local) || FAKE_DOMAIN.test(domain)) return { ok: false, msg: "That looks like a placeholder. Use your real email." }
+    const live = await takesMail(domain)
+    if (live === false) return { ok: false, msg: `${domain} can't receive email. Check the part after the @.` }
+    return { ok: true }
+}
+
 function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onClose: () => void; pdf: string; pages: string[]; notify: string }) {
-    const [step, setStep] = useState<"read" | "form" | "done">("read")
-    const [who, setWho] = useState({ name: "", email: "", company: "" })
-    const [err, setErr] = useState<{ name?: string; email?: string }>({})
+    const [step, setStep] = useState<"form" | "read">("form")
+    const [who, setWho] = useState<Reader>({ name: "", email: "", company: "" })
+    const [err, setErr] = useState<{ name?: string; email?: string; fix?: string }>({})
     const [busy, setBusy] = useState(false)
+    const [saved, setSaved] = useState(false)
     const panel = useRef<HTMLDivElement>(null)
     const back = useRef<HTMLElement | null>(null)
     const first = useRef<HTMLInputElement>(null)
@@ -270,20 +339,23 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
     useEffect(() => {
         if (!open) return
         back.current = document.activeElement as HTMLElement
-        setStep("read")
         setErr({})
+        setSaved(false)
+        // someone who already gave a checked email on this device goes straight to the resume
+        let known = false
         try {
-            const saved = JSON.parse(localStorage.getItem(RV_KEY) || "null")
-            if (saved && saved.name && saved.email) setWho(saved)
+            const r = JSON.parse(localStorage.getItem(RV_KEY) || "null")
+            if (r && r.name && r.email) (setWho(r), (known = true))
         } catch (_) {}
+        setStep(known ? "read" : "form")
         const html = document.documentElement
         const prev = html.style.overflow
         html.style.overflow = "hidden"
-        setTimeout(() => panel.current?.querySelector<HTMLElement>("[data-rv-close]")?.focus(), 30)
+        setTimeout(() => (known ? panel.current?.querySelector<HTMLElement>("[data-rv-close]") : first.current)?.focus(), 30)
         const onKey = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose()
             if (e.key !== "Tab" || !panel.current) return
-            const f = [...panel.current.querySelectorAll<HTMLElement>("a[href],button:not([disabled]),input,[tabindex='0']")]
+            const f = [...panel.current.querySelectorAll<HTMLElement>("a[href],button:not([disabled]),input:not([tabindex='-1']),[tabindex='0']")]
             if (!f.length) return
             if (e.shiftKey && document.activeElement === f[0]) (f[f.length - 1].focus(), e.preventDefault())
             else if (!e.shiftKey && document.activeElement === f[f.length - 1]) (f[0].focus(), e.preventDefault())
@@ -296,28 +368,38 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
         }
     }, [open])
 
-    useEffect(() => {
-        if (step === "form") setTimeout(() => first.current?.focus(), 30)
-    }, [step])
-
     if (!open) return null
 
     const submit = async (e: any) => {
         e.preventDefault()
-        if (e.target._honey?.value) return
+        if (busy || e.target._honey?.value) return
         const n: typeof err = {}
-        if (who.name.trim().length < 2) n.name = "Add your name so I know who's reading."
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(who.email.trim())) n.email = "That email doesn't look right."
-        setErr(n)
-        if (n.name || n.email) return
+        const name = who.name.trim()
+        if (name.replace(/[^\p{L}]/gu, "").length < 2) n.name = "Add your name so I know who's reading."
         setBusy(true)
-        const clean = { name: who.name.trim(), email: who.email.trim(), company: who.company.trim() }
+        const res = await checkEmail(who.email)
+        setBusy(false)
+        if (!res.ok) ((n.email = res.msg), (n.fix = res.fix))
+        setErr(n)
+        if (n.name || n.email) {
+            setTimeout(() => panel.current?.querySelector<HTMLElement>("[aria-invalid='true']")?.focus(), 0)
+            return
+        }
+        const clean = { name, email: who.email.trim().toLowerCase(), company: who.company.trim() }
         try {
             localStorage.setItem(RV_KEY, JSON.stringify(clean))
         } catch (_) {}
-        await Promise.all([tell(notify, clean), saveFile(pdf)])
+        setWho(clean)
+        tell(notify, clean, "opened")
+        setStep("read")
+        setTimeout(() => panel.current?.querySelector<HTMLElement>("[data-rv-download]")?.focus(), 30)
+    }
+
+    const download = async () => {
+        setBusy(true)
+        await Promise.all([tell(notify, who, "downloaded"), saveFile(pdf)])
         setBusy(false)
-        setStep("done")
+        setSaved(true)
     }
 
     const field = (key: "name" | "email" | "company", label: string, type: string, auto: string, ref?: any) => (
@@ -326,16 +408,25 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
             <input
                 ref={ref}
                 type={type}
+                name={key}
                 autoComplete={auto}
+                inputMode={key === "email" ? "email" : undefined}
+                spellCheck={key === "email" ? false : undefined}
+                autoCapitalize={key === "email" ? "off" : undefined}
                 value={who[key]}
-                onChange={(e) => setWho({ ...who, [key]: e.target.value })}
+                onChange={(e) => (setWho({ ...who, [key]: e.target.value }), (err as any)[key] && setErr({ ...err, [key]: undefined, ...(key === "email" ? { fix: undefined } : {}) }))}
                 aria-invalid={!!(err as any)[key]}
                 aria-describedby={(err as any)[key] ? `rv-${key}-err` : undefined}
                 style={{ font: `400 16px/1.3 ${SANS}`, color: C.head, background: "rgba(255,255,255,.05)", border: `1px solid ${(err as any)[key] ? "#FF8A80" : "rgba(255,255,255,.18)"}`, borderRadius: 10, padding: "12px 14px", outline: "none", minHeight: 48, boxSizing: "border-box", width: "100%" }}
             />
             {(err as any)[key] && (
-                <span id={`rv-${key}-err`} style={{ font: `400 13px/1.3 ${SANS}`, color: "#FF8A80" }}>
+                <span id={`rv-${key}-err`} role="alert" style={{ font: `400 13px/1.4 ${SANS}`, color: "#FF8A80", display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
                     {(err as any)[key]}
+                    {key === "email" && err.fix && (
+                        <button type="button" className="rv-btn" onClick={() => (setWho({ ...who, email: err.fix! }), setErr({ ...err, email: undefined, fix: undefined }))} style={{ font: `500 12px/1 ${MONO}`, letterSpacing: ".08em", color: C.head, background: "transparent", border: "1px solid rgba(255,255,255,.3)", borderRadius: 999, padding: "0 12px", minHeight: 32, cursor: "pointer" }}>
+                            Use this
+                        </button>
+                    )}
                 </span>
             )}
         </label>
@@ -359,6 +450,8 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
         whiteSpace: "nowrap" as const,
     })
 
+    const shown = pages.filter(Boolean)
+
     return createPortal(
         <div
             onMouseDown={(e) => e.target === e.currentTarget && onClose()}
@@ -371,7 +464,7 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
                 aria-modal="true"
                 aria-labelledby="rv-title"
                 className="rv-panel"
-                style={{ width: "min(980px,100%)", height: "min(92vh,1200px)", background: "#141414", border: `1px solid ${C.line}`, borderRadius: "clamp(0px,2vw,18px)", display: "flex", flexDirection: "column", overflow: "hidden", boxShadow: "0 40px 80px -30px rgba(0,0,0,.9)" }}
+                style={{ width: step === "form" ? "min(560px,100%)" : "min(980px,100%)", height: step === "form" ? "auto" : "min(92vh,1200px)", maxHeight: "100%", background: "#141414", border: `1px solid ${C.line}`, borderRadius: "clamp(0px,2vw,18px)", display: "flex", flexDirection: "column", overflow: "hidden", boxShadow: "0 40px 80px -30px rgba(0,0,0,.9)" }}
             >
                 <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px clamp(14px,2vw,22px)", borderBottom: `1px solid ${C.line}`, flexWrap: "wrap" }}>
                     <div style={{ marginRight: "auto", minWidth: 0 }}>
@@ -379,8 +472,8 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
                         <div style={{ font: `400 11px/1.4 ${MONO}`, letterSpacing: ".12em", textTransform: "uppercase", color: C.dim }}>2 pages · PDF</div>
                     </div>
                     {step === "read" && (
-                        <button type="button" className="rv-btn" onClick={() => setStep("form")} style={pill(true)}>
-                            Download PDF <span aria-hidden="true">↓</span>
+                        <button type="button" data-rv-download className="rv-btn" disabled={busy} onClick={download} style={{ ...pill(true), opacity: busy ? 0.7 : 1 }}>
+                            {busy ? "Preparing…" : saved ? "Downloaded" : "Download PDF"} <span aria-hidden="true">{saved ? "✓" : "↓"}</span>
                         </button>
                     )}
                     <button type="button" data-rv-close className="rv-btn" onClick={onClose} aria-label="Close resume" style={{ ...pill(false), padding: 0, width: 44, justifyContent: "center" }}>
@@ -388,45 +481,43 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
                     </button>
                 </div>
 
-                <div data-lenis-prevent="" style={{ flex: 1, overflowY: "auto", overscrollBehavior: "contain", background: "#1C1C1C", padding: "clamp(12px,3vw,32px)", display: "grid", gap: 20, justifyItems: "center", alignContent: "start" }}>
-                    {step === "form" && (
-                        <form onSubmit={submit} noValidate style={{ width: "min(520px,100%)", display: "grid", gap: 16, padding: "clamp(18px,3vw,28px)", border: `1px solid ${C.line}`, borderRadius: 16, background: "#141414" }}>
-                            <div style={{ font: `500 22px/1.25 ${SANS}`, color: C.head }}>Before you download</div>
-                            <p style={{ margin: 0, font: `400 15px/1.55 ${SANS}`, color: C.dim }}>
-                                I get a note with your name and email, so I know who's reading. That's all I use it for.
-                            </p>
-                            {field("name", "Your name", "text", "name", first)}
-                            {field("email", "Work email", "email", "email")}
-                            {field("company", "Company or role (optional)", "text", "organization")}
-                            <input type="text" name="_honey" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999, width: 1, height: 1, opacity: 0 }} />
-                            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 4 }}>
-                                <button type="submit" disabled={busy} className="rv-btn" style={{ ...pill(true), opacity: busy ? 0.7 : 1 }}>
-                                    {busy ? "Preparing…" : "Download resume"} <span aria-hidden="true">↓</span>
-                                </button>
-                                <button type="button" className="rv-btn" onClick={() => setStep("read")} style={pill(false)}>
-                                    Back to preview
-                                </button>
-                            </div>
-                        </form>
-                    )}
-                    {step === "done" && (
-                        <div role="status" style={{ width: "min(520px,100%)", padding: "18px 22px", border: `1px solid ${C.line}`, borderRadius: 16, background: "#141414", font: `400 15px/1.55 ${SANS}`, color: C.body }}>
-                            Thanks, {who.name.trim().split(" ")[0]}. Your download has started.{" "}
-                            <a href={pdf} target="_blank" rel="noreferrer" style={{ color: C.head }}>
-                                Open it here
-                            </a>{" "}
-                            if it didn't.
+                {step === "form" ? (
+                    <form onSubmit={submit} noValidate style={{ display: "grid", gap: 16, padding: "clamp(20px,3vw,32px)", overflowY: "auto" }}>
+                        <div style={{ font: `500 22px/1.25 ${SANS}`, color: C.head }}>Who's reading?</div>
+                        <p style={{ margin: 0, font: `400 15px/1.55 ${SANS}`, color: C.dim }}>
+                            Add your name and email to open my resume. I get a note so I know who's reading. That's all I use it for.
+                        </p>
+                        {field("name", "Your name", "text", "name", first)}
+                        {field("email", "Email", "email", "email")}
+                        {field("company", "Company or role (optional)", "text", "organization")}
+                        <input type="text" name="_honey" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999, width: 1, height: 1, opacity: 0 }} />
+                        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 4 }}>
+                            <button type="submit" disabled={busy} className="rv-btn" style={{ ...pill(true), opacity: busy ? 0.7 : 1 }}>
+                                {busy ? "Checking email…" : "Open resume"} <span aria-hidden="true">→</span>
+                            </button>
                         </div>
-                    )}
-                    {pages.filter(Boolean).map((src, i) => (
-                        <img key={src} src={src} alt={`Resume, page ${i + 1} of ${pages.filter(Boolean).length}`} loading={i ? "lazy" : "eager"} style={{ width: "100%", maxWidth: 860, height: "auto", aspectRatio: "960 / 1358", background: "#fff", borderRadius: 6, boxShadow: "0 18px 40px -20px rgba(0,0,0,.9)" }} />
-                    ))}
-                    {!pages.filter(Boolean).length && (
-                        <a href={pdf} target="_blank" rel="noreferrer" style={{ color: C.head }}>
-                            Open the PDF
-                        </a>
-                    )}
-                </div>
+                    </form>
+                ) : (
+                    <div data-lenis-prevent="" style={{ flex: 1, overflowY: "auto", overscrollBehavior: "contain", background: "#1C1C1C", padding: "clamp(12px,3vw,32px)", display: "grid", gap: 20, justifyItems: "center", alignContent: "start" }}>
+                        {saved && (
+                            <div role="status" style={{ width: "min(520px,100%)", padding: "14px 18px", border: `1px solid ${C.line}`, borderRadius: 12, background: "#141414", font: `400 15px/1.55 ${SANS}`, color: C.body }}>
+                                Thanks, {who.name.split(" ")[0]}. Your download has started.{" "}
+                                <a href={pdf} target="_blank" rel="noreferrer" data-rv-skip="" style={{ color: C.head }}>
+                                    Open it here
+                                </a>{" "}
+                                if it didn't.
+                            </div>
+                        )}
+                        {shown.map((src, i) => (
+                            <img key={src} src={src} alt={`Resume, page ${i + 1} of ${shown.length}`} loading={i ? "lazy" : "eager"} style={{ width: "100%", maxWidth: 860, height: "auto", aspectRatio: "960 / 1358", background: "#fff", borderRadius: 6, boxShadow: "0 18px 40px -20px rgba(0,0,0,.9)" }} />
+                        ))}
+                        {!shown.length && (
+                            <a href={pdf} target="_blank" rel="noreferrer" data-rv-skip="" style={{ color: C.head }}>
+                                Open the PDF
+                            </a>
+                        )}
+                    </div>
+                )}
             </div>
         </div>,
         document.body
@@ -692,7 +783,7 @@ export default function RadioFooter(props: any) {
         ["LinkedIn", "Work history", linkedin, true],
         ["Behance", "Visual and earlier work", behance, true],
         ["Medium", "Writing", medium, true],
-        ["Resume", "Preview or download", pdf, true],
+        ["Resume", "Read or download", "#resume", true],
     ]
 
     return (
