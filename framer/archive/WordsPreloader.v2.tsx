@@ -170,7 +170,7 @@ export default function WordsPreloader(props) {
 }
 
 WordsPreloader.defaultProps = {
-    words: ["Hello", "नमस्ते", "Bonjour", "Ciao", "Olá", "やあ", "Hallå", "ನಮಸ್ಕಾರ"],
+    words: ["Hello", "नमस्ते", "bonjour", "Ciao", "Olà", "やあ", "Hallå", "ನಮಸ್ಕಾರ"],
     sheetColor: "#FFFFFF",
     textColor: "#000000",
     textOpacity: 0.75,
@@ -188,9 +188,9 @@ addPropertyControls(WordsPreloader, {
         defaultValue: [
             "Hello",
             "नमस्ते",
-            "Bonjour",
+            "bonjour",
             "Ciao",
-            "Olá",
+            "Olà",
             "やあ",
             "Hallå",
             "ನಮಸ್ಕಾರ",

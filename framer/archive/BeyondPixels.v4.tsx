@@ -2,12 +2,12 @@ import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef, useState } from "react"
 
 /**
- * BeyondPixels: the three "Beyond Pixels" rows on Home, opened on HOVER.
+ * BeyondPixels — the three "Beyond Pixels" rows on Home, opened on HOVER.
  * Replaces the click-driven "Beyond accordion" the Framer Agent built.
  *
  * Hover (or keyboard focus) on a row header reveals its caption + marquee; leaving the
  * component collapses everything. On touch devices (no hover) a tap toggles instead.
- * Copy is verbatim from the current site; the words are being rewritten separately.
+ * Copy is verbatim from the current site — the words are being rewritten separately.
  *
  * @framerIntrinsicWidth 1200
  * @framerIntrinsicHeight 640
@@ -15,8 +15,8 @@ import { useEffect, useRef, useState } from "react"
  * @framerSupportedLayoutHeight any-prefer-fixed
  */
 
-// Paintings as 560px-tall WebP (2x the 280px cards), hosted with the case studies on GitHub Pages.
-const ART = "https://pranitasapkal.github.io/pranita-portfolio/assets/home/art"
+const ART =
+    "https://cdn.jsdelivr.net/gh/pranitasapkal/pranita-portfolio@public-main/public/work/art"
 const FU = "https://framerusercontent.com/images"
 
 const CATS = [
@@ -29,7 +29,7 @@ const CATS = [
     "eOLH9n06hFmPx5wktNF7pTTy0.jpg?scale-down-to=1024&width=900&height=1200",
     "6zaAgSE0Iw0DmWMZvOhnKVm22E.jpg?scale-down-to=1024&width=900&height=1200",
     "jcvLLVg1WnLJHor5SxVPXdOlD9k.jpg?scale-down-to=1024&width=900&height=1200",
-].map((f) => [`${FU}/${f.replace("scale-down-to=1024", "scale-down-to=768").replace("?width=750", "?scale-down-to=768&width=750")}`, "Quality control cat"] as [string, string])
+].map((f) => [`${FU}/${f}`, "Quality control cat"] as [string, string])
 
 // [file, alt, width / height of the scan]
 const PAINTINGS: [string, string, number][] = [
@@ -45,7 +45,7 @@ const PAINTINGS: [string, string, number][] = [
     ["kettle.jpg", "Kettle on a wood fire, watercolour", 1035 / 1440],
     ["onions.jpg", "Onions on a table, watercolour", 1035 / 1440],
     ["spice-shelf.jpg", "Spice shelf, watercolour", 900 / 660],
-].map(([f, a, r]) => [`${ART}/${f.replace(".jpg", ".webp")}`, a, r] as [string, string, number])
+].map(([f, a, r]) => [`${ART}/${f}`, a, r] as [string, string, number])
 
 const ROWS: { prompt: string; caption: string; images: any[]; fit?: boolean }[] = [
     {
@@ -55,7 +55,7 @@ const ROWS: { prompt: string; caption: string; images: any[]; fit?: boolean }[] 
     },
     {
         prompt: "WHERE MY MONEY ACTUALLY GOES:",
-        caption: "Plants, cat treats, and fonts I did not need.",
+        caption: "Placeholder: plants, cat treats, and fonts I did not need.",
         images: [],
     },
     {
@@ -69,98 +69,35 @@ const ROWS: { prompt: string; caption: string; images: any[]; fit?: boolean }[] 
 const SANS = '"Geist", "Inter", system-ui, sans-serif'
 const EASE = "cubic-bezier(.65,0,.35,1)"
 
-function Ticker({ images, cardW, cardH, gap, speed, radius, id, fit, active = true }: any) {
+function Ticker({ images, cardW, cardH, gap, speed, radius, id, fit }: any) {
     const row = [...images, ...images]
     // fit: each card takes the image's own proportions at a taller fixed height, so a painting is never cropped
     // and never letterboxed. Otherwise every card is cardW x cardH with the image cropped to fill.
     const h = fit ? Math.round(cardH * 1.25) : cardH
     const w = (r?: number) => (fit && r ? Math.round(h * r) : cardW)
     const track = images.reduce((sum: number, im: any) => sum + w(im[2]) + gap, 0)
-
-    // Drift on its own, and let people drag it either way (mouse, pen or touch). Pauses while hovered or dragged.
-    // Arrow keys move it one card when the strip has focus. Reduced motion: no drift, dragging still works.
-    const trackRef = useRef<HTMLDivElement>(null)
-    const x = useRef(0)
-    const drag = useRef<{ startX: number; startOff: number; moved: boolean; id: number } | null>(null)
-    const hover = useRef(false)
-    const [grabbing, setGrabbing] = useState(false)
-
-    useEffect(() => {
-        // a closed row keeps its strip (so reopening is instant) but stops animating it
-        if (!active) return
-        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        let raf = 0
-        let last = performance.now()
-        const tick = (now: number) => {
-            const dt = Math.min(64, now - last) / 1000
-            last = now
-            if (!reduced && !drag.current && !hover.current) x.current -= speed * dt
-            // wrap into (-track, 0] so the duplicated row loops seamlessly in both directions
-            x.current = ((x.current % track) - track) % track
-            if (trackRef.current) trackRef.current.style.transform = `translate3d(${x.current}px,0,0)`
-            raf = requestAnimationFrame(tick)
-        }
-        raf = requestAnimationFrame(tick)
-        return () => cancelAnimationFrame(raf)
-    }, [speed, track, active])
-
-    const onDown = (e: any) => {
-        if (e.pointerType === "mouse" && e.button !== 0) return
-        drag.current = { startX: e.clientX, startOff: x.current, moved: false, id: e.pointerId }
-        e.currentTarget.setPointerCapture?.(e.pointerId)
-        setGrabbing(true)
-    }
-    const onMove = (e: any) => {
-        const d = drag.current
-        if (!d || d.id !== e.pointerId) return
-        const dx = e.clientX - d.startX
-        if (Math.abs(dx) > 3) d.moved = true
-        x.current = d.startOff + dx
-    }
-    const onUp = (e: any) => {
-        if (!drag.current) return
-        e.currentTarget.releasePointerCapture?.(drag.current.id)
-        drag.current = null
-        setGrabbing(false)
-    }
-    const step = (dir: number) => (x.current += dir * (w(images[0]?.[2]) + gap))
-
     return (
         <div
-            role="region"
-            aria-label="Image strip. Drag, or use the left and right arrow keys, to browse."
-            tabIndex={0}
             className={`bp-wrap-${id}`}
-            onPointerDown={onDown}
-            onPointerMove={onMove}
-            onPointerUp={onUp}
-            onPointerCancel={onUp}
-            onMouseEnter={() => (hover.current = true)}
-            onMouseLeave={() => (hover.current = false)}
-            onKeyDown={(e) => {
-                if (e.key === "ArrowLeft") (step(1), e.preventDefault())
-                if (e.key === "ArrowRight") (step(-1), e.preventDefault())
-            }}
-            onDragStart={(e) => e.preventDefault()}
             style={{
                 width: "100%",
                 overflow: "hidden",
-                cursor: grabbing ? "grabbing" : "grab",
-                touchAction: "pan-y",
-                userSelect: "none",
-                WebkitUserSelect: "none",
-                outlineOffset: 4,
                 WebkitMaskImage:
                     "linear-gradient(to right, transparent 0, black 8%, black 92%, transparent 100%)",
                 maskImage:
                     "linear-gradient(to right, transparent 0, black 8%, black 92%, transparent 100%)",
             }}
         >
-            <div ref={trackRef} style={{ display: "flex", gap, width: "max-content", willChange: "transform" }}>
+            <style>{`
+                @keyframes bp-marquee-${id} { from { transform: translateX(0) } to { transform: translateX(-${track}px) } }
+                .bp-track-${id} { animation: bp-marquee-${id} ${track / speed}s linear infinite; }
+                .bp-wrap-${id}:hover .bp-track-${id} { animation-play-state: paused; }
+                @media (prefers-reduced-motion: reduce) { .bp-track-${id} { animation: none; } }
+            `}</style>
+            <div className={`bp-track-${id}`} style={{ display: "flex", gap, width: "max-content" }}>
                 {row.map(([src, alt, r], i) => (
                     <figure
                         key={`${src}-${i}`}
-                        aria-hidden={i >= images.length}
                         style={{
                             margin: 0,
                             flex: `0 0 ${w(r)}px`,
@@ -174,10 +111,9 @@ function Ticker({ images, cardW, cardH, gap, speed, radius, id, fit, active = tr
                     >
                         <img
                             src={src}
-                            alt={i >= images.length ? "" : alt}
+                            alt={alt}
                             loading="lazy"
-                            draggable={false}
-                            style={{ display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: fit ? "center" : "center 35%", pointerEvents: "none" }}
+                            style={{ display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: fit ? "center" : "center 35%" }}
                         />
                     </figure>
                 ))}
@@ -186,22 +122,7 @@ function Ticker({ images, cardW, cardH, gap, speed, radius, id, fit, active = tr
     )
 }
 
-// Fonts load through a <link> added after hydration. An @import inside a rendered <style> is rewritten by Framer's
-// server render, so the browser's first render no longer matches, React re-renders the whole page on the client,
-// and Framer then shows the desktop navbar on phones.
-function useFonts(href: string) {
-    useEffect(() => {
-        if ([...document.querySelectorAll("link[data-pf-font]")].some((l) => l.getAttribute("data-pf-font") === href)) return
-        const l = document.createElement("link")
-        l.rel = "stylesheet"
-        l.href = href
-        l.setAttribute("data-pf-font", href)
-        document.head.appendChild(l)
-    }, [])
-}
-
 export default function BeyondPixels(props: any) {
-    useFonts("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap")
     const {
         headingColor = "#E0E0E0",
         headingHover = "#FFFFFF",
@@ -218,16 +139,10 @@ export default function BeyondPixels(props: any) {
     const games = [1, 2, 3, 4, 5, 6]
         .map((n) => props[`game${n}`])
         .filter(Boolean)
-        // shown 288px wide, so a 640px copy is sharp on 2x screens and a third of the upload's weight
-        .map((src: string) => [/scale-down-to=/.test(src) ? src : `${src}${src.includes("?") ? "&" : "?"}scale-down-to=640`, "A game I am playing"] as [string, string])
+        .map((src: string) => [src, "A game I am playing"] as [string, string])
     const rows = ROWS.map((r, i) => (i === 1 && games.length ? { ...r, images: games } : r))
 
     const [open, setOpen] = useState<number | null>(null)
-    // a row's strip (and its images) is only built the first time that row opens; closed rows cost nothing
-    const [seen, setSeen] = useState<Record<number, boolean>>({})
-    useEffect(() => {
-        if (open !== null && !seen[open]) setSeen((v) => ({ ...v, [open]: true }))
-    }, [open])
     const [hoverable, setHoverable] = useState(true)
     const [reduced, setReduced] = useState(false)
     const hostRef = useRef<HTMLDivElement>(null)
@@ -245,7 +160,7 @@ export default function BeyondPixels(props: any) {
             onMouseLeave={() => hoverable && setOpen(null)}
             style={{ width: "100%", fontFamily: SANS, WebkitFontSmoothing: "antialiased" }}
         >
-            
+            <style>{`@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap');`}</style>
             {rows.map((r, i) => {
                 const isOpen = open === i
                 return (
@@ -282,10 +197,6 @@ export default function BeyondPixels(props: any) {
                         </button>
                         <div
                             id={`bp-panel-${i}`}
-                            ref={(el) => {
-                                // closed panels are hidden from keyboard and screen readers too (inert), not only from sight
-                                if (el) isOpen ? el.removeAttribute("inert") : el.setAttribute("inert", "")
-                            }}
                             role="region"
                             aria-hidden={!isOpen}
                             style={{
@@ -307,8 +218,8 @@ export default function BeyondPixels(props: any) {
                                     >
                                         {r.caption}
                                     </p>
-                                    {r.images.length > 0 && (isOpen || seen[i]) && (
-                                        <Ticker images={r.images} cardW={cardW} cardH={cardH} gap={gap} speed={speed} radius={radius} id={i} fit={r.fit} active={isOpen} />
+                                    {r.images.length > 0 && (
+                                        <Ticker images={r.images} cardW={cardW} cardH={cardH} gap={gap} speed={speed} radius={radius} id={i} fit={r.fit} />
                                     )}
                                 </div>
                             </div>

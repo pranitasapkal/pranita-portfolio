@@ -133,7 +133,7 @@ class Player {
         const res = (j.results || []).filter((x: any) => x.previewUrl)
         const t = (x: any) => String(x.trackName || "").toLowerCase()
         const want = s.song.toLowerCase()
-        const hit = res.find((x: any) => t(x) === want && x.artistName === s.artist) || res.find((x: any) => t(x).startsWith(want) && !/live|remix|edit/.test(t(x))) || res[0]
+        const hit = res.find((x: any) => t(x) === want && x.artistName === s.artist) || res.find((x: any) => t(x).startsWith(want) && x.artistName === s.artist && !/live|remix|edit/.test(t(x))) || res[0]
         if (hit) {
             this.cache[i] = hit.previewUrl
             ;(STATIONS[i] as any).link = hit.trackViewUrl
@@ -141,10 +141,11 @@ class Player {
         return this.cache[i]
     }
 
-    async play(i: number, override?: string) {
+    // stale(): the visitor has already tuned elsewhere, so this (slower) lookup must not take over the speaker
+    async play(i: number, override?: string, stale: () => boolean = () => false) {
         if (this.ctx.state !== "running") await this.ctx.resume()
         const u = await this.url(i, override)
-        if (!u) return false
+        if (!u || stale()) return false
         if (this.media.src !== u) this.media.src = u
         await this.media.play()
         return true
@@ -230,8 +231,12 @@ const RESUME_NAME = "PranitaSapkal_Resume.pdf"
 const RV_KEY = "pf-resume-reader-v2"
 
 async function saveFile(url: string) {
+    // a stalled download must not leave the button stuck on "Preparing…": after 15s open the file in a tab instead
+    const ctl = new AbortController()
+    const t = setTimeout(() => ctl.abort(), 15000)
     try {
-        const blob = await (await fetch(url)).blob()
+        const blob = await (await fetch(url, { signal: ctl.signal })).blob()
+        clearTimeout(t)
         const a = document.createElement("a")
         a.href = URL.createObjectURL(blob)
         a.download = RESUME_NAME
@@ -240,6 +245,7 @@ async function saveFile(url: string) {
         a.remove()
         setTimeout(() => URL.revokeObjectURL(a.href), 4000)
     } catch (_) {
+        clearTimeout(t)
         window.open(url, "_blank", "noopener")
     }
 }
@@ -285,7 +291,7 @@ const THROWAWAY = new Set(
         "mailpoof.com inboxkitten.com mailcatch.com spambox.us discard.email 33mail.com anonaddy.me getairmail.com dropmail.me minuteinbox.com " +
         "1secmail.com 1secmail.net 1secmail.org mail.tm mail.gw linshiyouxiang.net emailtemporanea.net crazymailing.com etempmail.com").split(" ")
 )
-const FAKE_LOCAL = /^(test|testing|tester|asdf\w*|qwerty\w*|abc|abcd|abc123|xyz|aaa+|fake|none|no|noemail|nomail|noreply|no-reply|sample|example|dummy|user|email|mail|null|na|n\/a|x+|a|b|123+|1234\w*)$/i
+const FAKE_LOCAL = /^(test|testing|tester|asdf\w*|qwerty\w*|abc123|fake|noemail|nomail|noreply|no-reply|example|dummy|null|123+)$/i
 const FAKE_DOMAIN = /^(example\.(com|org|net)|test\.com|domain\.com|email\.test|abc\.com|xyz\.com|asdf\.com|[^.]+\.(test|invalid|example|localhost|local))$/i
 
 async function dns(name: string, type: "MX" | "A"): Promise<any | null> {
@@ -295,7 +301,11 @@ async function dns(name: string, type: "MX" | "A"): Promise<any | null> {
         const t = setTimeout(() => ctl.abort(), 4000)
         try {
             const r = await fetch(u, { headers: { accept: "application/dns-json" }, signal: ctl.signal })
-            if (r.ok) return await r.json()
+            if (r.ok) {
+                const j = await r.json()
+                // 0 = answered, 3 = no such domain; SERVFAIL / REFUSED etc. say nothing, so ask the next resolver
+                if (j.Status === 0 || j.Status === 3) return j
+            }
         } catch (_) {
         } finally {
             clearTimeout(t)
@@ -322,7 +332,7 @@ async function checkEmail(raw: string): Promise<{ ok: true } | { ok: false; msg:
     const m = v.match(/^([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@((?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24})$/)
     if (!m || v.length > 254 || m[1].length > 64) return { ok: false, msg: "That doesn't look like an email address. Check it once more." }
     const [, local, domain] = m
-    if (TYPOS[domain] || /\.(con|cmo|comm|cm|om|vom|xom)$/.test(domain)) return { ok: false, msg: "Check the spelling after the @." }
+    if (TYPOS[domain] || /\.(con|cmo|comm|vom|xom)$/.test(domain)) return { ok: false, msg: "Check the spelling after the @." }
     if (THROWAWAY.has(domain)) return { ok: false, msg: "Throwaway inboxes don't work here. Use an email you check." }
     if (FAKE_LOCAL.test(local) || FAKE_DOMAIN.test(domain)) return { ok: false, msg: "That looks like a placeholder. Use your real email." }
     const live = await takesMail(domain)
@@ -335,6 +345,8 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
     const [who, setWho] = useState<Reader>({ name: "", email: "", company: "" })
     const [err, setErr] = useState<{ name?: string; email?: string }>({})
     const [busy, setBusy] = useState(false)
+    const openRef = useRef(open)
+    openRef.current = open
     const [saved, setSaved] = useState(false)
     const panel = useRef<HTMLDivElement>(null)
     const back = useRef<HTMLElement | null>(null)
@@ -361,6 +373,8 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
             if (e.key !== "Tab" || !panel.current) return
             const f = [...panel.current.querySelectorAll<HTMLElement>("a[href],button:not([disabled]),input:not([tabindex='-1']),[tabindex='0']")]
             if (!f.length) return
+            // focus fell out of the dialog (a click on the preview, a button turning disabled): pull it back in
+            if (!panel.current.contains(document.activeElement)) return (f[0].focus(), e.preventDefault())
             if (e.shiftKey && document.activeElement === f[0]) (f[f.length - 1].focus(), e.preventDefault())
             else if (!e.shiftKey && document.activeElement === f[f.length - 1]) (f[0].focus(), e.preventDefault())
         }
@@ -379,10 +393,12 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
         if (busy || e.target._honey?.value) return
         const n: typeof err = {}
         const name = who.name.trim()
-        if (name.replace(/[^\p{L}]/gu, "").length < 2) n.name = "Add your name so I know who's reading."
+        if (name.replace(/[^\p{L}\p{M}]/gu, "").length < 1) n.name = "Add your name so I know who's reading."
         setBusy(true)
         const res = await checkEmail(who.email)
         setBusy(false)
+        // closed while the email was being checked: do not save, open or notify
+        if (!openRef.current) return
         if (!res.ok) n.email = res.msg
         setErr(n)
         if (n.name || n.email) {
@@ -536,7 +552,22 @@ function ClockBLR() {
 
 // ── the footer ─────────────────────────────────────────────────────────────────────────────────────────────────
 
+// Fonts load through a <link> added after hydration. An @import inside a rendered <style> is rewritten by Framer's
+// server render, so the browser's first render no longer matches, React re-renders the whole page on the client,
+// and Framer then shows the desktop navbar on phones.
+function useFonts(href: string) {
+    useEffect(() => {
+        if ([...document.querySelectorAll("link[data-pf-font]")].some((l) => l.getAttribute("data-pf-font") === href)) return
+        const l = document.createElement("link")
+        l.rel = "stylesheet"
+        l.href = href
+        l.setAttribute("data-pf-font", href)
+        document.head.appendChild(l)
+    }, [])
+}
+
 export default function RadioFooter(props: any) {
+    useFonts("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&family=VT323&display=swap")
     const {
         tv,
         img1,
@@ -636,12 +667,13 @@ export default function RadioFooter(props: any) {
         p.setVolume(vol)
         setLoading(true)
         try {
-            const ok = await p.play(i, tracks[i])
-            if (chRef.current !== i) return
+            const ok = await p.play(i, tracks[i], () => chRef.current !== i)
+            if (chRef.current !== i) return setLoading(false)
             setFailed(!ok)
             setPlaying(ok)
             playingRef.current = ok
         } catch (_) {
+            if (chRef.current !== i) return setLoading(false)
             setFailed(true)
             setPlaying(false)
             playingRef.current = false
@@ -803,8 +835,7 @@ export default function RadioFooter(props: any) {
 
     return (
         <footer ref={footRef} style={{ background: C.bg, color: C.body, width: "100%", fontFamily: SANS, WebkitFontSmoothing: "antialiased", overflow: "hidden" }}>
-            <style>{`@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&family=VT323&display=swap');
-                .rf-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(36px,4.5vw,72px);align-items:center}
+            <style>{`.rf-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(36px,4.5vw,72px);align-items:center}
                 @media(max-width:900px){.rf-grid{grid-template-columns:minmax(0,1fr)}}
                 .rf-btn{transition:transform .18s ${EASE},border-color .2s}
                 .rf-btn:hover{border-color:rgba(255,255,255,.32)}
@@ -895,7 +926,7 @@ export default function RadioFooter(props: any) {
                                     CH {String(ch + 1).padStart(2, "0")}
                                 </div>
                                 <div style={{ position: "absolute", right: "5%", top: "6%", font: `400 clamp(14px,2vw,26px)/1 ${VCR}`, color: "#FFFDF5", textShadow: `0 0 8px rgba(${chan.glow},.95), 0 1px 2px rgba(0,0,0,.8)` }}>
-                                    {loading ? "TUNING…" : playing ? `▶ ${mmss}` : "❚❚ PAUSE"}
+                                    {loading ? "TUNING…" : playing ? `▶ ${mmss}` : elapsed > 0 ? "❚❚ PAUSE" : ""}
                                 </div>
                                 <div style={{ position: "absolute", left: "5%", top: "16%", font: `400 clamp(12px,1.5vw,19px)/1 ${VCR}`, color: "#FFFDF5", textShadow: "0 1px 3px rgba(0,0,0,.9)", textTransform: "uppercase" }}>
                                     {chan.name}
@@ -974,7 +1005,7 @@ export default function RadioFooter(props: any) {
                             <DeckButton label="Previous station" onClick={() => tune(-1)}>
                                 <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2v12M13 2 5 8l8 6V2z" fill="currentColor" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" /></svg>
                             </DeckButton>
-                            <DeckButton big label={playing ? "Pause Pranita FM" : "Play Pranita FM"} pressed={playing} onClick={toggle}>
+                            <DeckButton big label={playing ? "Pause Pranita FM" : "Play Pranita FM"} onClick={toggle}>
                                 {playing ? (
                                     <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="3" width="4.5" height="14" rx="1" fill="currentColor" /><rect x="11.5" y="3" width="4.5" height="14" rx="1" fill="currentColor" /></svg>
                                 ) : (
@@ -984,7 +1015,7 @@ export default function RadioFooter(props: any) {
                             <DeckButton label="Next station: new cat, new song" onClick={() => tune(1)}>
                                 <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 2v12M3 2l8 6-8 6V2z" fill="currentColor" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" /></svg>
                             </DeckButton>
-                            <div role="group" aria-label="Channels" style={{ display: "flex", gap: 10, marginLeft: 8 }}>
+                            <div role="group" aria-label="Channels" style={{ display: "flex", gap: 0, marginLeft: 3 }}>
                                 {STATIONS.map((c, i) => (
                                     <button
                                         key={c.name}
@@ -993,7 +1024,7 @@ export default function RadioFooter(props: any) {
                                         aria-label={`Station ${i + 1}, ${c.name}`}
                                         aria-current={i === ch}
                                         onClick={() => pick(i)}
-                                        style={{ width: 22, height: 22, display: "grid", placeItems: "center", border: 0, background: "none", cursor: "pointer", padding: 0 }}
+                                        style={{ width: 32, height: 44, display: "grid", placeItems: "center", border: 0, background: "none", cursor: "pointer", padding: 0 }}
                                     >
                                         <span style={{ width: 9, height: 9, borderRadius: "50%", background: i === ch ? c.tint : "rgba(255,255,255,.22)", boxShadow: i === ch ? `0 0 10px ${c.tint}` : "none", transition: "background .3s, box-shadow .3s" }} />
                                     </button>
@@ -1023,10 +1054,10 @@ export default function RadioFooter(props: any) {
                             <a href={`mailto:${email}`} className="rf-link" style={{ font: `500 clamp(16px,1.5vw,20px)/1.3 ${SANS}`, color: C.head, textDecoration: "none", overflowWrap: "anywhere", marginRight: "auto" }}>
                                 {email}
                             </a>
-                            <button type="button" className="rf-copy" onClick={copy} aria-label={copied ? "Email copied" : "Copy email address"} style={{ font: `500 11px/1 ${MONO}`, letterSpacing: ".12em", textTransform: "uppercase", color: copied ? "#0E0E0E" : C.head, background: copied ? "#fff" : "transparent", border: `1px solid ${copied ? "#fff" : "rgba(255,255,255,.3)"}`, borderRadius: 999, padding: "10px 14px", cursor: "pointer", transition: "background .2s, color .2s" }}>
+                            <button type="button" className="rf-copy" onClick={copy} aria-label={copied ? "Email copied" : "Copy email address"} style={{ font: `500 11px/1 ${MONO}`, letterSpacing: ".12em", textTransform: "uppercase", color: copied ? "#0E0E0E" : C.head, background: copied ? "#fff" : "transparent", border: `1px solid ${copied ? "#fff" : "rgba(255,255,255,.3)"}`, borderRadius: 999, padding: "0 16px", minHeight: 44, display: "inline-flex", alignItems: "center", cursor: "pointer", transition: "background .2s, color .2s" }}>
                                 {copied ? "Copied" : "Copy"}
                             </button>
-                            <a href={`mailto:${email}`} className="rf-copy" style={{ font: `500 11px/1 ${MONO}`, letterSpacing: ".12em", textTransform: "uppercase", color: "#0E0E0E", background: "#fff", borderRadius: 999, padding: "11px 14px", textDecoration: "none" }}>
+                            <a href={`mailto:${email}`} className="rf-copy" style={{ font: `500 11px/1 ${MONO}`, letterSpacing: ".12em", textTransform: "uppercase", color: "#0E0E0E", background: "#fff", borderRadius: 999, padding: "0 16px", minHeight: 44, display: "inline-flex", alignItems: "center", boxSizing: "border-box", textDecoration: "none" }}>
                                 Write ↗
                             </a>
                         </div>
@@ -1056,9 +1087,9 @@ export default function RadioFooter(props: any) {
                 <div style={{ marginTop: "clamp(48px,6vw,80px)", paddingTop: 20, borderTop: `1px solid ${C.line}`, display: "flex", flexWrap: "wrap", gap: "10px 28px", alignItems: "center", font: `400 12px/1.4 ${MONO}`, letterSpacing: ".12em", textTransform: "uppercase", color: C.dim }}>
                     <span>BLR · <ClockBLR /></span>
                     <span>©{new Date().getFullYear()} Pranita Sapkal</span>
-                    <a href="#" onClick={(e) => (e.preventDefault(), window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }))} className="rf-link" style={{ marginLeft: "auto", color: C.head, textDecoration: "none", padding: "6px 0" }}>
+                    <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })} className="rf-link" style={{ marginLeft: "auto", color: C.head, background: "none", border: 0, cursor: "pointer", font: "inherit", letterSpacing: "inherit", textTransform: "inherit", padding: "0 0 0 12px", minHeight: 44 }}>
                         Back to top ↑
-                    </a>
+                    </button>
                 </div>
             </div>
             <ResumeModal open={resumeOpen} onClose={() => setResumeOpen(false)} pdf={pdf} pages={[resumePage1, resumePage2]} notify={notify} />

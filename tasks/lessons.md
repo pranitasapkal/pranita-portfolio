@@ -93,3 +93,6 @@
 - **Why:** test the path the user takes (click the real link), not a shortcut to the page.
 
 - **Rule:** after changing a layout property on a Framer component's primary (Desktop) variant, check every breakpoint variant live before calling it done. **Context:** 2026-10-09, setting the navbar container to Distribute Start for Desktop also moved the Phone hamburger next to the logo, because Phone had no override. **Why:** primary-variant edits propagate to variants silently.
+
+- **Rule:** never put `@import` (or anything Framer rewrites) inside a `<style>` rendered by a Framer code component; load fonts with a `<link>` in useEffect. **Context:** 2026-10-10, it caused a server/client mismatch that made the whole page client-render and broke the phone navbar. **Why:** Framer hoists @import into a link at SSR, so the hydrated text differs.
+- **Rule:** after changing anything in a Framer layout/template, re-test the phone menu open and close on the live site. **Context:** the overlay "On open" variant on the primary instance controls every breakpoint.

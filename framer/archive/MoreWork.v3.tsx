@@ -186,25 +186,11 @@ function ProjectCard({ c, props }: { c: Card; props: any }) {
 
 // ── page ─────────────────────────────────────────────────────────────────────
 
-// Fonts load through a <link> added after hydration. An @import inside a rendered <style> is rewritten by Framer's
-// server render, so the browser's first render no longer matches, React re-renders the whole page on the client,
-// and Framer then shows the desktop navbar on phones.
-function useFonts(href: string) {
-    useEffect(() => {
-        if ([...document.querySelectorAll("link[data-pf-font]")].some((l) => l.getAttribute("data-pf-font") === href)) return
-        const l = document.createElement("link")
-        l.rel = "stylesheet"
-        l.href = href
-        l.setAttribute("data-pf-font", href)
-        document.head.appendChild(l)
-    }, [])
-}
-
 export default function MoreWork(props: any) {
-    useFonts("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&display=swap")
     return (
         <div style={{ background: C.bg, color: C.body, width: "100%", fontFamily: SANS, WebkitFontSmoothing: "antialiased" }}>
-            <style>{`.mw-card:focus-visible{outline:2px solid #fff;outline-offset:3px}
+            <style>{`@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&display=swap');
+                .mw-card:focus-visible{outline:2px solid #fff;outline-offset:3px}
                 @media(prefers-reduced-motion:reduce){.mw-card *{transition:none!important;transform:none!important}}
                 @media(max-width:1000px){.mw-3{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
                 @media(max-width:640px){.mw-3{grid-template-columns:minmax(0,1fr)!important}}`}</style>

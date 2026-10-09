@@ -36,9 +36,17 @@ export default function TripsPanelCase(props: any) {
 
     useEffect(() => {
         let fallback: any
+        let going = false
         const onMsg = (e: MessageEvent) => {
             const d = e.data
             if (!d || d.type !== "pf-nav" || !frame.current || e.source !== frame.current.contentWindow) return
+            if (going) {
+                // a double click: the first message is already switching the page
+                try {
+                    ;(e.source as Window).postMessage({ type: "pf-nav-ok" }, "*")
+                } catch (_) {}
+                return
+            }
             let path = ""
             try {
                 path = new URL(d.href).pathname.replace(/(.)\/$/, "$1")
@@ -48,11 +56,14 @@ export default function TripsPanelCase(props: any) {
             try {
                 ;(e.source as Window).postMessage({ type: "pf-nav-ok" }, "*")
             } catch (_) {}
+            going = true
             const state = { routeId, localeId: "default" }
             history.pushState(state, "", path)
             dispatchEvent(new PopStateEvent("popstate", { state }))
-            // this component unmounts when the route changes; if it is still here, the router ignored us
-            fallback = setTimeout(() => location.assign(path), 1500)
+            // this component unmounts when the route changes; if it is still here after 5s (slow networks need the
+            // time to fetch the next page), the router ignored us, so load the page normally
+            clearTimeout(fallback)
+            fallback = setTimeout(() => document.visibilityState === "visible" && location.assign(path), 5000)
         }
         addEventListener("message", onMsg)
         return () => {
