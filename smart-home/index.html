@@ -210,17 +210,19 @@ class Component extends DCLogic {
 <script>
 /* Portfolio wiring. SITE = the published Framer site address, e.g. https://pranita.framer.website (empty until it is published). */
 (function(){
-  var SITE = "";
+  var SITE = "https://gray-football-641289.framer.app";
   document.addEventListener("click", function(e){
     var a = e.target.closest && e.target.closest("a[data-back],a[data-next]");
     if (!a) return;
-    if (a.hasAttribute("data-back")) {
+    if (a.hasAttribute("data-back") || a.hasAttribute("data-next")) {
       e.preventDefault();
-      if (window.top !== window) { if (SITE) window.top.location.href = SITE; else history.back(); }
-      else if (document.referrer && history.length > 1) history.back(); else if (SITE) location.href = SITE;
-    } else if (a.hasAttribute("data-next")) {
-      e.preventDefault();
-      if (SITE) (window.top || window).location.href = SITE + "/work/trips-panel";
+      // The page usually runs inside the Framer site's iframe. Navigate that top window, using the parent's own
+      // origin (document.referrer) so a domain change needs no rebuild; SITE is the fallback for direct visits.
+      var framed = window.top !== window, base = SITE;
+      try { if (framed && document.referrer) base = new URL(document.referrer).origin; } catch (_) {}
+      var dest = a.hasAttribute("data-next") ? base + "/work/trips-panel" : base + "/#work";
+      if (!framed && a.hasAttribute("data-back") && document.referrer && new URL(document.referrer).origin === base) { history.back(); return; }
+      (framed ? window.top : window).location.href = dest;
     }
   });
 })();
