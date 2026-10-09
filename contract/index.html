@@ -281,8 +281,17 @@ class Component extends DCLogic {
     e.stopPropagation();
     var href = dest(a);
     if (window.top === window) { location.href = href; return; }
+    // The Framer frame (CaseStudyFrame) answers "pf-nav-ok" and switches the page without reloading the site.
+    // No answer within 400ms (an older frame, the editor): load the whole page instead.
+    var done = false;
+    function ack(ev){ if (ev.data && ev.data.type === "pf-nav-ok") done = true; }
+    window.addEventListener("message", ack);
     try { window.parent.postMessage({ type: "pf-nav", href: href }, "*"); } catch (_) {}
-    try { window.top.location.href = href; } catch (_) { window.open(href, "_top"); }
+    setTimeout(function(){
+      window.removeEventListener("message", ack);
+      if (done) return;
+      try { window.top.location.href = href; } catch (_) { window.open(href, "_top"); }
+    }, 400);
   }, true);
 })();
 </script>
