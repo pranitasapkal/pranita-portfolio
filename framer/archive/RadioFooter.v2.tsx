@@ -36,30 +36,28 @@ const DIAL_CH = { x: 0.9076, y: 0.532, r: 0.0508 }
 const DIAL_VOL = { x: 0.9068, y: 0.7074, r: 0.0508 }
 
 const DEFAULT_TV = "https://framerusercontent.com/images/DJmgEyS6aXK9ScQoQF627rroM.png"
-// Framer's image CDN resizes on request: cap a picture at roughly twice the size it is shown.
-const sd = (u: string, px: number) => (!u || !/framerusercontent\.com\/images\//.test(u) || /scale-down-to=/.test(u) ? u : `${u}${u.includes("?") ? "&" : "?"}scale-down-to=${px}`)
 const YAWN_CAT = "https://framerusercontent.com/images/bqUKyJKKGjk9ArFQc2oVfoiJQ.jpg?scale-down-to=1024"
 
 type Station = { name: string; artist: string; song: string; query: string; tint: string; glow: string; joke: string; sub: string; alt: string; pos: string }
-// Four English classics, one per joke: the fire, the endless sync, the "try it in blue", the grid guard.
+// Song 1 is the one rizzabh.me/party plays. The rest keep the same slow, warm, slightly dramatic vibe.
 const STATIONS: Station[] = [
     {
         name: "This Is Fine FM",
-        artist: "Talking Heads",
-        song: "Burning Down the House",
-        query: "talking heads burning down the house",
+        artist: "Radiohead",
+        song: "No Surprises",
+        query: "radiohead no surprises",
         tint: "#FF8A3D",
         glow: "255,138,61",
         joke: "Prod is on fire. My oat latte is not.",
-        sub: "Calm on the outside. Sev-1 on the inside.",
+        sub: "No alarms. No surprises. One P0.",
         alt: "A cat in sunglasses and a headscarf sips a latte in front of an erupting volcano",
         pos: "center 92%",
     },
     {
         name: "Standup Survivor",
-        artist: "Pink Floyd",
-        song: "Time",
-        query: "pink floyd time",
+        artist: "Cigarettes After Sex",
+        song: "Apocalypse",
+        query: "cigarettes after sex apocalypse",
         tint: "#8FA8FF",
         glow: "143,168,255",
         joke: "When someone says “quick sync” at 6:58 pm.",
@@ -69,9 +67,9 @@ const STATIONS: Station[] = [
     },
     {
         name: "Post-Review Recovery",
-        artist: "Electric Light Orchestra",
-        song: "Mr. Blue Sky",
-        query: "electric light orchestra mr blue sky",
+        artist: "Prateek Kuhad",
+        song: "cold/mess",
+        query: "prateek kuhad cold mess",
         tint: "#E58AA6",
         glow: "229,138,166",
         joke: "Me after “can we just try it in blue?”",
@@ -81,9 +79,9 @@ const STATIONS: Station[] = [
     },
     {
         name: "Guardian of the Grid",
-        artist: "The White Stripes",
-        song: "Seven Nation Army",
-        query: "the white stripes seven nation army",
+        artist: "Tame Impala",
+        song: "Let It Happen",
+        query: "tame impala let it happen",
         tint: "#7FE0B0",
         glow: "127,224,176",
         joke: "Sworn protector of the 8px grid.",
@@ -129,11 +127,8 @@ class Player {
         const s = STATIONS[i]
         const r = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(s.query)}&entity=song&limit=5&country=in`)
         const j = await r.json()
-        // the studio original: exact title and artist first, so "Time" never lands on a live cut or a remix
-        const res = (j.results || []).filter((x: any) => x.previewUrl)
-        const t = (x: any) => String(x.trackName || "").toLowerCase()
-        const want = s.song.toLowerCase()
-        const hit = res.find((x: any) => t(x) === want && x.artistName === s.artist) || res.find((x: any) => t(x).startsWith(want) && !/live|remix|edit/.test(t(x))) || res[0]
+        const want = s.song.toLowerCase().split("/")[0]
+        const hit = (j.results || []).find((x: any) => x.previewUrl && String(x.trackName || "").toLowerCase().includes(want)) || (j.results || [])[0]
         if (hit) {
             this.cache[i] = hit.previewUrl
             ;(STATIONS[i] as any).link = hit.trackViewUrl
@@ -316,13 +311,14 @@ async function takesMail(domain: string): Promise<boolean | null> {
     return (a.Answer || []).some((x: any) => x.type === 1)
 }
 
-async function checkEmail(raw: string): Promise<{ ok: true } | { ok: false; msg: string }> {
+async function checkEmail(raw: string): Promise<{ ok: true } | { ok: false; msg: string; fix?: string }> {
     const v = raw.trim().toLowerCase()
     if (!v) return { ok: false, msg: "Add your email so I know who's reading." }
     const m = v.match(/^([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@((?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24})$/)
     if (!m || v.length > 254 || m[1].length > 64) return { ok: false, msg: "That doesn't look like an email address. Check it once more." }
     const [, local, domain] = m
-    if (TYPOS[domain] || /\.(con|cmo|comm|cm|om|vom|xom)$/.test(domain)) return { ok: false, msg: "Check the spelling after the @." }
+    const fixDomain = TYPOS[domain] || (/\.(con|cmo|comm|cm|om|vom|xom)$/.test(domain) ? domain.replace(/\.[a-z]+$/, ".com") : "")
+    if (fixDomain) return { ok: false, msg: `Did you mean ${local}@${fixDomain}?`, fix: `${local}@${fixDomain}` }
     if (THROWAWAY.has(domain)) return { ok: false, msg: "Throwaway inboxes don't work here. Use an email you check." }
     if (FAKE_LOCAL.test(local) || FAKE_DOMAIN.test(domain)) return { ok: false, msg: "That looks like a placeholder. Use your real email." }
     const live = await takesMail(domain)
@@ -333,7 +329,7 @@ async function checkEmail(raw: string): Promise<{ ok: true } | { ok: false; msg:
 function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onClose: () => void; pdf: string; pages: string[]; notify: string }) {
     const [step, setStep] = useState<"form" | "read">("form")
     const [who, setWho] = useState<Reader>({ name: "", email: "", company: "" })
-    const [err, setErr] = useState<{ name?: string; email?: string }>({})
+    const [err, setErr] = useState<{ name?: string; email?: string; fix?: string }>({})
     const [busy, setBusy] = useState(false)
     const [saved, setSaved] = useState(false)
     const panel = useRef<HTMLDivElement>(null)
@@ -383,7 +379,7 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
         setBusy(true)
         const res = await checkEmail(who.email)
         setBusy(false)
-        if (!res.ok) n.email = res.msg
+        if (!res.ok) ((n.email = res.msg), (n.fix = res.fix))
         setErr(n)
         if (n.name || n.email) {
             setTimeout(() => panel.current?.querySelector<HTMLElement>("[aria-invalid='true']")?.focus(), 0)
@@ -418,14 +414,19 @@ function ResumeModal({ open, onClose, pdf, pages, notify }: { open: boolean; onC
                 spellCheck={key === "email" ? false : undefined}
                 autoCapitalize={key === "email" ? "off" : undefined}
                 value={who[key]}
-                onChange={(e) => (setWho({ ...who, [key]: e.target.value }), (err as any)[key] && setErr({ ...err, [key]: undefined }))}
+                onChange={(e) => (setWho({ ...who, [key]: e.target.value }), (err as any)[key] && setErr({ ...err, [key]: undefined, ...(key === "email" ? { fix: undefined } : {}) }))}
                 aria-invalid={!!(err as any)[key]}
                 aria-describedby={(err as any)[key] ? `rv-${key}-err` : undefined}
                 style={{ font: `400 16px/1.3 ${SANS}`, color: C.head, background: "rgba(255,255,255,.05)", border: `1px solid ${(err as any)[key] ? "#FF8A80" : "rgba(255,255,255,.18)"}`, borderRadius: 10, padding: "12px 14px", outline: "none", minHeight: 48, boxSizing: "border-box", width: "100%" }}
             />
             {(err as any)[key] && (
-                <span id={`rv-${key}-err`} role="alert" style={{ font: `400 13px/1.4 ${SANS}`, color: "#FF8A80", display: "block" }}>
+                <span id={`rv-${key}-err`} role="alert" style={{ font: `400 13px/1.4 ${SANS}`, color: "#FF8A80", display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
                     {(err as any)[key]}
+                    {key === "email" && err.fix && (
+                        <button type="button" className="rv-btn" onClick={() => (setWho({ ...who, email: err.fix! }), setErr({ ...err, email: undefined, fix: undefined }))} style={{ font: `500 12px/1 ${MONO}`, letterSpacing: ".08em", color: C.head, background: "transparent", border: "1px solid rgba(255,255,255,.3)", borderRadius: 999, padding: "0 12px", minHeight: 32, cursor: "pointer" }}>
+                            Use this
+                        </button>
+                    )}
                 </span>
             )}
         </label>
@@ -557,8 +558,8 @@ export default function RadioFooter(props: any) {
         track3,
         track4,
     } = props
-    const tvSrc = sd(tv || DEFAULT_TV, 1600)
-    const imgs = [img1, img2 || YAWN_CAT, img3, img4].map((u) => sd(u, 1024))
+    const tvSrc = tv || DEFAULT_TV
+    const imgs = [img1, img2 || YAWN_CAT, img3, img4]
     const tracks = [track1, track2, track3, track4]
 
     const player = useRef<Player | null>(null)
@@ -583,26 +584,10 @@ export default function RadioFooter(props: any) {
     const playingRef = useRef(false)
     const chan = STATIONS[ch]
 
-    const footRef = useRef<HTMLElement>(null)
     useEffect(() => {
         setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+        imgs.forEach((u) => u && (new Image().src = u))
         return () => player.current?.close()
-    }, [])
-
-    // warm the other three channels only once the footer is about a screen away, not on page open
-    useEffect(() => {
-        const el = footRef.current
-        if (!el || !("IntersectionObserver" in window)) return
-        const io = new IntersectionObserver(
-            (es) => {
-                if (!es.some((e) => e.isIntersecting)) return
-                imgs.forEach((u) => u && (new Image().src = u))
-                io.disconnect()
-            },
-            { rootMargin: "900px 0px" }
-        )
-        io.observe(el)
-        return () => io.disconnect()
     }, [])
 
     // every resume link on the page (the hero button too) opens the viewer instead of a bare file
@@ -802,7 +787,7 @@ export default function RadioFooter(props: any) {
     ]
 
     return (
-        <footer ref={footRef} style={{ background: C.bg, color: C.body, width: "100%", fontFamily: SANS, WebkitFontSmoothing: "antialiased", overflow: "hidden" }}>
+        <footer style={{ background: C.bg, color: C.body, width: "100%", fontFamily: SANS, WebkitFontSmoothing: "antialiased", overflow: "hidden" }}>
             <style>{`@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&family=VT323&display=swap');
                 .rf-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(36px,4.5vw,72px);align-items:center}
                 @media(max-width:900px){.rf-grid{grid-template-columns:minmax(0,1fr)}}
@@ -868,8 +853,6 @@ export default function RadioFooter(props: any) {
                                         <img
                                             src={imgs[ch] || YAWN_CAT}
                                             alt={chan.alt}
-                                            loading="lazy"
-                                            decoding="async"
                                             draggable={false}
                                             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: chan.pos, filter: "contrast(1.08) saturate(1.12) brightness(.95)" }}
                                         />
@@ -932,7 +915,7 @@ export default function RadioFooter(props: any) {
                             </div>
 
                             {/* the TV itself */}
-                            <img src={tvSrc} alt="" loading="lazy" decoding="async" draggable={false} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", userSelect: "none" }} />
+                            <img src={tvSrc} alt="" draggable={false} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", userSelect: "none" }} />
 
                             {/* the printed dials, made real: channel (click) and volume (drag, keys) */}
                             <button

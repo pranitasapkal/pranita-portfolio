@@ -2,12 +2,12 @@ import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef, useState } from "react"
 
 /**
- * BeyondPixels: the three "Beyond Pixels" rows on Home, opened on HOVER.
+ * BeyondPixels — the three "Beyond Pixels" rows on Home, opened on HOVER.
  * Replaces the click-driven "Beyond accordion" the Framer Agent built.
  *
  * Hover (or keyboard focus) on a row header reveals its caption + marquee; leaving the
  * component collapses everything. On touch devices (no hover) a tap toggles instead.
- * Copy is verbatim from the current site; the words are being rewritten separately.
+ * Copy is verbatim from the current site — the words are being rewritten separately.
  *
  * @framerIntrinsicWidth 1200
  * @framerIntrinsicHeight 640
@@ -29,7 +29,7 @@ const CATS = [
     "eOLH9n06hFmPx5wktNF7pTTy0.jpg?scale-down-to=1024&width=900&height=1200",
     "6zaAgSE0Iw0DmWMZvOhnKVm22E.jpg?scale-down-to=1024&width=900&height=1200",
     "jcvLLVg1WnLJHor5SxVPXdOlD9k.jpg?scale-down-to=1024&width=900&height=1200",
-].map((f) => [`${FU}/${f.replace("scale-down-to=1024", "scale-down-to=768").replace("?width=750", "?scale-down-to=768&width=750")}`, "Quality control cat"] as [string, string])
+].map((f) => [`${FU}/${f}`, "Quality control cat"] as [string, string])
 
 // [file, alt, width / height of the scan]
 const PAINTINGS: [string, string, number][] = [
@@ -201,16 +201,10 @@ export default function BeyondPixels(props: any) {
     const games = [1, 2, 3, 4, 5, 6]
         .map((n) => props[`game${n}`])
         .filter(Boolean)
-        // shown 288px wide, so a 640px copy is sharp on 2x screens and a third of the upload's weight
-        .map((src: string) => [/scale-down-to=/.test(src) ? src : `${src}${src.includes("?") ? "&" : "?"}scale-down-to=640`, "A game I am playing"] as [string, string])
+        .map((src: string) => [src, "A game I am playing"] as [string, string])
     const rows = ROWS.map((r, i) => (i === 1 && games.length ? { ...r, images: games } : r))
 
     const [open, setOpen] = useState<number | null>(null)
-    // a row's strip (and its images) is only built the first time that row opens; closed rows cost nothing
-    const [seen, setSeen] = useState<Record<number, boolean>>({})
-    useEffect(() => {
-        if (open !== null && !seen[open]) setSeen((v) => ({ ...v, [open]: true }))
-    }, [open])
     const [hoverable, setHoverable] = useState(true)
     const [reduced, setReduced] = useState(false)
     const hostRef = useRef<HTMLDivElement>(null)
@@ -286,7 +280,7 @@ export default function BeyondPixels(props: any) {
                                     >
                                         {r.caption}
                                     </p>
-                                    {r.images.length > 0 && (isOpen || seen[i]) && (
+                                    {r.images.length > 0 && (
                                         <Ticker images={r.images} cardW={cardW} cardH={cardH} gap={gap} speed={speed} radius={radius} id={i} fit={r.fit} />
                                     )}
                                 </div>

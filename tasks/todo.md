@@ -789,3 +789,9 @@ Cases 03/04 carry only what their Behance gallery shows: no invented research, i
 - [x] Resume (RadioFooter HJTptEX): name + email first, preview and download only after. Email check = format, typo fix ("Did you mean ...@gmail.com?"), throwaway-inbox list, placeholder names, live MX lookup (Cloudflare / Google DNS, lets the reader through if the lookup can't run). Pranita gets two kinds of email: "X opened your resume", "X downloaded your resume". Returning readers on the same device skip the form. Footer Resume link is `#resume` now, so the PDF URL isn't in that link.
 - [ ] The email check can't prove the reader owns the inbox (that needs a one-time code and a backend).
 - [ ] Route ids in CaseStudyFrame ROUTES are hard-coded; a recreated page needs its id re-read (fallback is a normal page load).
+
+## Round 6 (2026-10-09): songs, no typo suggestions, speed
+- [x] Radio: Talking Heads "Burning Down the House", Pink Floyd "Time", ELO "Mr. Blue Sky", The White Stripes "Seven Nation Army" (English, studio originals picked by exact title + artist). Prateek Kuhad and Radiohead removed.
+- [x] Resume email: typo domains get "Check the spelling after the @." with no suggested address and no "Use this" button.
+- [x] Speed, Home first visit 5.5 MB to 2.4 MB: glitch overlay video (5% opacity) 1.5 MB to 109 KB (6s loop, glitch-6s.mp4 on all 3 breakpoints); Beyond rows build their image strips only when opened, cats at scale-down-to=768, games at 640; footer warms channel images only when it is about a screen away, TV capped at 1600.
+- [x] Case pages: 13 PNGs to WebP, 2.7 MB to 0.4 MB (gh-pages bb805fd). A 610 KB PNG in the Trips prototype was a 42px avatar sprite.
