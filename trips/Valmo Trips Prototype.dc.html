@@ -634,7 +634,7 @@ function seed() {
 }
 class Component extends DCLogic {
   rootRef = React.createRef();
-  state = Object.assign(seed(), { nav: 'trips', tab: 'pending', open: null, pickerQuery: '', modal: null, toast: null, cFilter: 'all', search: '', hindiOpen: false, src: null, srcOpen: false, dd: null, haulF: null, timeF: null, sortK: 'newest', dF: 'all', nextDsp: 1044 });
+  state = Object.assign(seed(), { nav: 'trips', tab: 'pending', open: null, pickerQuery: '', modal: null, toast: null, cFilter: 'all', search: '', hindiOpen: false, src: null, srcOpen: false, dd: null, haulF: null, timeF: null, sortK: 'default', dF: 'all', nextDsp: 1044 });
   componentDidMount() {
     this.onDown = e => { if (!e.target.closest('[data-picker]') && (this.state.open || this.state.srcOpen || this.state.dd || (this.state.modal && this.state.modal.reasonOpen))) this.setState(s => ({ open: null, srcOpen: false, dd: null, modal: s.modal ? { ...s.modal, reasonOpen: false } : s.modal })); };
     this.onKey = e => { if (e.key !== 'Escape') return; const S = this.state; if (S.modal && S.modal.reasonOpen) this.setState(s => ({ modal: { ...s.modal, reasonOpen: false } })); else if (S.modal) this.setState({ modal: null }); else if (S.open || S.srcOpen || S.dd) this.setState({ open: null, srcOpen: false, dd: null }); };
@@ -644,7 +644,7 @@ class Component extends DCLogic {
   }
   scene(n) {
     clearTimeout(this.tt);
-    const base = Object.assign(seed(), { nav: 'trips', tab: 'pending', open: null, pickerQuery: '', modal: null, toast: null, cFilter: 'all', search: '', hindiOpen: false, src: null, srcOpen: false, dd: null, haulF: null, timeF: null, sortK: 'newest', dF: 'all', nextDsp: 1044 });
+    const base = Object.assign(seed(), { nav: 'trips', tab: 'pending', open: null, pickerQuery: '', modal: null, toast: null, cFilter: 'all', search: '', hindiOpen: false, src: null, srcOpen: false, dd: null, haulF: null, timeF: null, sortK: 'default', dF: 'all', nextDsp: 1044 });
     const P = 'TR-2511-0412', set = (id, p) => base.trips.map(t => t.id === id ? { ...t, ...p } : t);
     const dispModal = { type: 'dispute', id: 'TR-2511-0196', cats: [], text: '' };
     const S = {
@@ -733,7 +733,7 @@ class Component extends DCLogic {
     const setTab = k => () => this.setState({ tab: k, open: null, srcOpen: false, dd: null, nav: 'trips' });
     const tabs = tabKeys.map(([k, l, arr]) => ({ label: l, count: arr.length, active: S.tab === k, color: S.tab === k ? 'rgb(0,63,152)' : 'rgb(90,94,102)', weight: S.tab === k ? 600 : 400, onClick: setTab(k),
       dot: (k === 'completed' && completed.some(t => t.c === 'pending') && S.tab !== k) || (k === 'transit' && transit.some(t => t.tag !== 'On Time') && S.tab !== k) }));
-    const sorters = { newest: (a, b) => this.stamp(b) - this.stamp(a), oldest: (a, b) => this.stamp(a) - this.stamp(b), earn: (a, b) => (b.earn || 0) - (a.earn || 0) };
+    const sorters = { default: () => 0, newest: (a, b) => this.stamp(b) - this.stamp(a), oldest: (a, b) => this.stamp(a) - this.stamp(b), earn: (a, b) => (b.earn || 0) - (a.earn || 0) };
     const vis = arr => arr.filter(t => this.matches(t) && this.passes(t)).sort(sorters[S.sortK]);
 
     const pendingRows = vis(pending).map(t => {
@@ -804,7 +804,7 @@ class Component extends DCLogic {
     const ddProps = {
       haulOpen: S.dd === 'haul', toggleHaul: togDd('haul'), haulOptions: ddOpt('haul', 'haulF', haulItems, S.haulF), haulLabel: S.haulF ? 'Haul: ' + S.haulF : 'Haul Type', haulBorder: S.haulF ? 'rgb(0,63,152)' : 'rgb(195,201,212)', haulColor: S.haulF ? 'rgb(0,63,152)' : 'rgb(90,94,102)',
       timeOpen: S.dd === 'time', toggleTime: togDd('time'), timeOptions: ddOpt('time', 'timeF', timeItems, S.timeF), timeLabel: S.timeF ? tName + ': ' + timeItems.find(x => x[0] === S.timeF)[1] : tName, timeBorder: S.timeF ? 'rgb(0,63,152)' : 'rgb(195,201,212)', timeColor: S.timeF ? 'rgb(0,63,152)' : 'rgb(90,94,102)',
-      sortOpen: S.dd === 'sort', toggleSort: togDd('sort'), sortOptions: ddOpt('sort', 'sortK', sortItems, S.sortK), sortLabel: sortItems.find(x => x[0] === S.sortK)[1], sortBorder: 'rgb(195,201,212)', sortColor: 'rgb(39,40,41)'
+      sortOpen: S.dd === 'sort', toggleSort: togDd('sort'), sortOptions: ddOpt('sort', 'sortK', sortItems, S.sortK), sortLabel: (sortItems.find(x => x[0] === S.sortK) || sortItems[0])[1], sortBorder: 'rgb(195,201,212)', sortColor: 'rgb(39,40,41)'
     };
     const side = text => () => this.toast(text);
     // modal
