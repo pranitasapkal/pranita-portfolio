@@ -85,7 +85,7 @@ function scene(name){
   current = name; toastEl.classList.remove("on");
   var s = S[name], k = 1280/(s.w||1024);
   [].slice.call(stage.querySelectorAll(".hl,.go")).forEach(function(n){ n.remove(); });
-  img.src = "frames/"+name+".webp";
+  img.src = "frames/"+name+".webp?v=2";
   img.alt = "Contract Management: "+name.replace(/-/g," ");
   Object.keys(s.hl||{}).forEach(function(key){
     var v = s.hl[key], list = (typeof v[0] === "number") ? [v] : v;
@@ -104,7 +104,7 @@ function scene(name){
   return true;
 }
 /* Preload every frame so scene changes are instant inside the reels. */
-Object.keys(S).forEach(function(n){ var i = new Image(); i.src = "frames/"+n+".webp"; });
+Object.keys(S).forEach(function(n){ var i = new Image(); i.src = "frames/"+n+".webp?v=2"; });
 window.__vt = { scene: scene, scenes: Object.keys(S) };
 /* Interactive (lightbox) use: press H to flash the clickable areas. */
 document.addEventListener("keydown", function(e){ if(e.key==="h"||e.key==="H"){ document.body.classList.add("hints"); setTimeout(function(){ document.body.classList.remove("hints"); }, 1200); } });
