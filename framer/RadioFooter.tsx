@@ -40,14 +40,17 @@ const DEFAULT_TV = "https://framerusercontent.com/images/DJmgEyS6aXK9ScQoQF627rr
 const sd = (u: string, px: number) => (!u || !/framerusercontent\.com\/images\//.test(u) || /scale-down-to=/.test(u) ? u : `${u}${u.includes("?") ? "&" : "?"}scale-down-to=${px}`)
 const YAWN_CAT = "https://framerusercontent.com/images/bqUKyJKKGjk9ArFQc2oVfoiJQ.jpg?scale-down-to=1024"
 
-type Station = { name: string; artist: string; song: string; query: string; tint: string; glow: string; joke: string; sub: string; alt: string; pos: string }
+// trackId: an exact Apple Music track, for songs the text search does not find (AJR's "Burn the House Down")
+type Station = { name: string; artist: string; song: string; query: string; trackId?: number; tint: string; glow: string; joke: string; sub: string; alt: string; pos: string }
 // Four English classics, one per joke: the fire, the endless sync, the "try it in blue", the grid guard.
 const STATIONS: Station[] = [
     {
         name: "This Is Fine FM",
-        artist: "Talking Heads",
-        song: "Burning Down the House",
-        query: "talking heads burning down the house",
+        artist: "AJR",
+        song: "Burn the House Down",
+        query: "ajr burn the house down",
+        // Apple's 30-second preview of this track is the chorus (checked 2026-10-10)
+        trackId: 1358729325,
         tint: "#FF8A3D",
         glow: "255,138,61",
         joke: "Prod is on fire. My oat latte is not.",
@@ -127,7 +130,11 @@ class Player {
         if (override) return override
         if (this.cache[i]) return this.cache[i]
         const s = STATIONS[i]
-        const r = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(s.query)}&entity=song&limit=5&country=in`)
+        const r = await fetch(
+            s.trackId
+                ? `https://itunes.apple.com/lookup?id=${s.trackId}&country=in`
+                : `https://itunes.apple.com/search?term=${encodeURIComponent(s.query)}&entity=song&limit=5&country=in`
+        )
         const j = await r.json()
         // the studio original: exact title and artist first, so "Time" never lands on a live cut or a remix
         const res = (j.results || []).filter((x: any) => x.previewUrl)

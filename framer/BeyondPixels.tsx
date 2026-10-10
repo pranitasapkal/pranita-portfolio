@@ -30,6 +30,16 @@ const CATS = [
     "6zaAgSE0Iw0DmWMZvOhnKVm22E.jpg?scale-down-to=1024&width=900&height=1200",
     "jcvLLVg1WnLJHor5SxVPXdOlD9k.jpg?scale-down-to=1024&width=900&height=1200",
 ].map((f) => [`${FU}/${f.replace("scale-down-to=1024", "scale-down-to=768").replace("?width=750", "?scale-down-to=768&width=750")}`, "Quality control cat"] as [string, string])
+    // added 2026-10-10: 768px WebP, location data stripped, hosted with the paintings on GitHub Pages
+    .concat(
+        [
+            ["cat-blue-eyes", "Fluffy grey-and-white cat with blue eyes, looking up"],
+            ["cat-pineapple-toy", "Cat stretched out on the floor, hugging a pineapple toy"],
+            ["cat-window-visitor", "Fluffy cat on the floor while an orange cat looks in through the window"],
+            ["cat-brewery", "Fluffy cat on a ledge, inspecting a brewery's steel tanks"],
+            ["cat-litter-box", "Cat halfway into a covered litter box, tail out"],
+        ].map(([f, a]) => [`https://pranitasapkal.github.io/pranita-portfolio/assets/home/cats/${f}.webp`, a] as [string, string])
+    )
 
 // [file, alt, width / height of the scan]
 const PAINTINGS: [string, string, number][] = [
