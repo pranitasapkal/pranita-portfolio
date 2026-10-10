@@ -99,3 +99,5 @@
 
 - **Rule:** when uploading to a Framer image property by script, find the control inside the same row as its label and re-read every image slot afterwards. **Context:** 2026-10-10, a click aimed at "Resume page 1" landed on "CH2 image" and put the resume on the TV. **Why:** the properties panel can scroll between measuring and clicking.
 - **Rule:** every new Framer page needs Tablet and Phone breakpoints; check `<meta name="viewport">` on each live page. **Context:** six inner pages served width=1200 to phones. **Why:** a page with only a Desktop breakpoint is rendered at desktop width and shrunk.
+
+- **Rule:** when a page feels slow, time each element's first paint on the live site (opacity chain per 40ms) before touching assets; template appear-effect delays are invisible in the network panel. **Context:** 2026-10-10, the hero and navbar waited 4.5-5s on every visit because of delays meant for a loader. **Why:** latency was choreography, not bytes.

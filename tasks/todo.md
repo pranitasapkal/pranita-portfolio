@@ -818,3 +818,8 @@ Cases 03/04 carry only what their Behance gallery shows: no invented research, i
 - [x] All six inner pages (/work/trips-panel, /contract-panel, /dojoin, /smart-home, /graphics, /rooted) had only a Desktop breakpoint, so phones rendered them 1200px wide (viewport width=1200). Added Tablet + Phone breakpoints; all now width=device-width. /graphics linked from Home ("See all graphics and brand work", in-place route switch, routeId CoCI5o9UT).
 - [x] Radio verified live with real clicks: all 4 previews match Apple's studio tracks; rapid Next (warm and cold) lands on the right channel and song.
 - [ ] Optional: /services, /about, /work are empty template pages still published (unlinked).
+
+## Round 9 (2026-10-10): hero and navbar latency
+- [x] Template appear delays were tuned for the old LOADER, so they ran even when the intro is skipped: navbar 5s (every page), PRANITA 4.5s, SAP KAL 4.7s, TV block 4.7s, tagline/resume button 5s, BLR clock 5s. Set to 0.2 / 0.2 / 0.35 / 0.45 / 0.6 / 0.6 (Framer appear effects; navbar instance in Main template, hero layers on Home Desktop; Tablet/Phone inherit).
+- [x] "HI, I'M" (TextScramble, shows its text on mount) got an Appear effect (opacity 0, y 12, delay 0.2) so it arrives with the name.
+- [x] Live, intro skipped: desktop HI 0.31s / name 0.36s / everything settled 1.37s (was ~6s); phone 0.38s / 1.40s; tablet settled 1.38s; case-page navbar 1.0s (was 5.6s). First visit still plays the Hello intro (~3.4s) with the hero already settled underneath.
