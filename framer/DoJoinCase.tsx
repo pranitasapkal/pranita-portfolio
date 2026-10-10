@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import * as Framer from "framer"
 import { addPropertyControls, ControlType } from "framer"
 
 /**
@@ -15,6 +16,10 @@ import { addPropertyControls, ControlType } from "framer"
  * on popstate), so Home appears at once instead of the whole site reloading. No answer, or a path not in ROUTES,
  * and the hosted page loads the URL the slow way itself. Route ids come from the live site; re-read them
  * (history.state.routeId after visiting a page) if a page is recreated.
+ *
+ * Framer's editor preview runs in a sandboxed frame that may not change the top page, and its router ignores the
+ * history trick, so there the page is switched with Framer's own router (useRouter().navigate), and a "pf-section"
+ * event tells RadioFooter which section to land on (the preview does not put the anchor in the URL).
  *
  * @framerIntrinsicWidth 1200
  * @framerIntrinsicHeight 900
@@ -33,6 +38,11 @@ const ROUTES: Record<string, string> = {
 export default function DoJoinCase(props: any) {
     const { src = "https://pranitasapkal.github.io/pranita-portfolio/multi-service/", title = "Multi-Service App case study", topOffset = 96, style } = props
     const frame = useRef<HTMLIFrameElement>(null)
+    // read off the module so a Framer build without useRouter cannot break the import
+    const useRouterHook: any = (Framer as any).useRouter
+    const router: any = typeof useRouterHook === "function" ? useRouterHook() : null
+    const routerRef = useRef<any>(router)
+    routerRef.current = router
     // The hosted page's prototype lightbox asks for the whole screen ({type:"pf-modal", open}); while it is open this
     // frame covers the viewport, above the site navbar, and the page behind stops scrolling.
     const [full, setFull] = useState(false)
@@ -76,7 +86,22 @@ export default function DoJoinCase(props: any) {
                 hash = u.hash
             } catch (_) {}
             const routeId = ROUTES[path]
-            if (!routeId || /(^|\.)framer(canvas)?\.com$/.test(location.hostname)) return
+            if (!routeId) return
+            if (/(^|\.)framer(canvas)?\.com$/.test(location.hostname)) {
+                // the editor preview
+                const r = routerRef.current
+                if (!r || typeof r.navigate !== "function") return
+                try {
+                    ;(e.source as Window).postMessage({ type: "pf-nav-ok" }, "*")
+                } catch (_) {}
+                going = true
+                const id = decodeURIComponent(hash.slice(1))
+                r.navigate(routeId, id || undefined)
+                if (id) setTimeout(() => dispatchEvent(new CustomEvent("pf-section", { detail: id })), 50)
+                // this component unmounts on the route change; if it is still here, let a later click try again
+                setTimeout(() => (going = false), 3000)
+                return
+            }
             try {
                 ;(e.source as Window).postMessage({ type: "pf-nav-ok" }, "*")
             } catch (_) {}

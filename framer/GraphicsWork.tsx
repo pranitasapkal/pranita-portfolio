@@ -1,3 +1,4 @@
+import * as Framer from "framer"
 import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef, useState } from "react"
 
@@ -166,7 +167,24 @@ function useFonts(href: string) {
     }, [])
 }
 
+// Framer's editor preview: a plain link would load the page into the preview's own sandboxed frame and break it, so
+// there the page is switched with Framer's router. The live site keeps the plain link. The "pf-section" event tells
+// RadioFooter which section to land on (the preview keeps no anchor in the URL).
+const inEditor = () => typeof location !== "undefined" && /(^|\.)framer(canvas)?\.com$/.test(location.hostname)
+function useEditorNav() {
+    const hook: any = (Framer as any).useRouter
+    const router: any = typeof hook === "function" ? hook() : null
+    return (e: any, routeId: string, section?: string) => {
+        if (!inEditor() || !router || typeof router.navigate !== "function" || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return false
+        e.preventDefault()
+        router.navigate(routeId, section)
+        if (section) setTimeout(() => dispatchEvent(new CustomEvent("pf-section", { detail: section })), 50)
+        return true
+    }
+}
+
 export default function GraphicsWork(props: any) {
+    const editorNav = useEditorNav()
     useFonts("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&display=swap")
     const { backLabel = "← Work" } = props
     return (
@@ -293,6 +311,7 @@ export default function GraphicsWork(props: any) {
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 28, justifyContent: "space-between", alignItems: "center" }}>
                         <a
                             href="/#work"
+                            onClick={(e) => editorNav(e, "augiA20Il", "work")}
                             style={{
                                 font: `500 12px/1.4 ${MONO}`,
                                 letterSpacing: "0.14em",

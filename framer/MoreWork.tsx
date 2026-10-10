@@ -1,3 +1,4 @@
+import * as Framer from "framer"
 import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef, useState } from "react"
 
@@ -200,7 +201,24 @@ function useFonts(href: string) {
     }, [])
 }
 
+// Framer's editor preview: a plain link would load the page into the preview's own sandboxed frame and break it, so
+// there the page is switched with Framer's router. The live site keeps the plain link. The "pf-section" event tells
+// RadioFooter which section to land on (the preview keeps no anchor in the URL).
+const inEditor = () => typeof location !== "undefined" && /(^|\.)framer(canvas)?\.com$/.test(location.hostname)
+function useEditorNav() {
+    const hook: any = (Framer as any).useRouter
+    const router: any = typeof hook === "function" ? hook() : null
+    return (e: any, routeId: string, section?: string) => {
+        if (!inEditor() || !router || typeof router.navigate !== "function" || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return false
+        e.preventDefault()
+        router.navigate(routeId, section)
+        if (section) setTimeout(() => dispatchEvent(new CustomEvent("pf-section", { detail: section })), 50)
+        return true
+    }
+}
+
 export default function MoreWork(props: any) {
+    const editorNav = useEditorNav()
     useFonts("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&display=swap")
     return (
         <div style={{ background: C.bg, color: C.body, width: "100%", fontFamily: SANS, WebkitFontSmoothing: "antialiased" }}>
@@ -229,6 +247,7 @@ export default function MoreWork(props: any) {
                         href="/graphics"
                         className="mw-card mw-more"
                         onClick={(e) => {
+                            if (editorNav(e, "CoCI5o9UT")) return
                             // switch page inside the running site (Framer's router reads history.state.routeId), no reload
                             if (e.metaKey || e.ctrlKey || e.shiftKey || e.button || /(^|\.)framer(canvas)?\.com$/.test(location.hostname)) return
                             e.preventDefault()

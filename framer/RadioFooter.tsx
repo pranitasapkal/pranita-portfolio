@@ -599,31 +599,60 @@ function useFonts(href: string) {
 // Section links across pages (#work, #about, #contact). After an in-site page change, Framer's jump to the anchor
 // was overridden by the smooth-scroll layer restoring Home's old position (it stopped near 915px, or did not move).
 // The footer sits on every page, so it watches the URL and, when the page changed and the URL has an anchor,
-// re-applies the jump until the section is at the top. Gives up after 2.5s or as soon as the visitor scrolls.
+// re-applies the jump until the section is at the top. Gives up 2.5s after the section appears (5s if it never does)
+// or as soon as the visitor scrolls.
+// Framer's editor preview switches pages without changing the URL, so the URL watch alone misses it there (WORK then
+// needed a second click). It also starts from the click on a section link whose section is not on the current page,
+// and from a "pf-section" event (CaseStudyFrame sends one when Go back leads to a section).
+// The footer is remounted on every page change, so the section still to land on lives outside it (pfPending).
 let pfLastHref = ""
+let pfPending: { id: string; start: number } | null = null
 function useSectionAnchorFix() {
     useEffect(() => {
         if (typeof window === "undefined") return
         let timer: ReturnType<typeof setTimeout> | undefined
-        const stop = () => clearTimeout(timer)
-        const settle = (id: string) => {
-            stop()
-            const start = performance.now()
+        const pause = () => clearTimeout(timer)
+        const stop = () => {
+            pause()
+            pfPending = null
+        }
+        const settle = (id: string, from = performance.now()) => {
+            pause()
+            pfPending = { id, start: from }
+            const start = from
+            let seen = 0
             let ok = 0
             const step = () => {
                 const el = document.getElementById(id)
                 if (el) {
+                    if (!seen) seen = performance.now()
                     const top = el.getBoundingClientRect().top
                     if (Math.abs(top) <= 4) {
-                        if (++ok >= 4) return
+                        if (++ok >= 4) return void (pfPending = null)
                     } else {
                         ok = 0
                         window.scrollTo({ top: window.scrollY + top, behavior: "instant" as ScrollBehavior })
                     }
                 }
-                if (performance.now() - start < 2500) timer = setTimeout(step, 80)
+                const now = performance.now()
+                if (seen ? now - seen < 2500 : now - start < 5000) timer = setTimeout(step, 80)
+                else pfPending = null
             }
             step()
+        }
+        if (pfPending && performance.now() - pfPending.start < 5000) settle(pfPending.id, pfPending.start)
+        const onClick = (e: MouseEvent) => {
+            // no defaultPrevented check: Framer's own links cancel the default to route in place
+            if (e.button || e.metaKey || e.ctrlKey || e.shiftKey) return
+            const a = (e.target as Element | null)?.closest?.("a[href*='#']") as HTMLAnchorElement | null
+            if (!a || (a.target && a.target !== "_self")) return
+            const id = decodeURIComponent((a.getAttribute("href") || "").split("#")[1] || "")
+            // a section on this page: Framer's own jump works
+            if (id && !document.getElementById(id)) settle(id)
+        }
+        const onSection = (e: Event) => {
+            const id = (e as CustomEvent).detail
+            if (typeof id === "string" && id) settle(id)
         }
         const check = () => {
             const href = location.href
@@ -643,9 +672,13 @@ function useSectionAnchorFix() {
         addEventListener("wheel", stop, opts)
         addEventListener("touchstart", stop, opts)
         addEventListener("keydown", stop)
+        document.addEventListener("click", onClick, true)
+        addEventListener("pf-section", onSection)
         return () => {
             clearInterval(iv)
-            stop()
+            pause()
+            document.removeEventListener("click", onClick, true)
+            removeEventListener("pf-section", onSection)
             removeEventListener("wheel", stop)
             removeEventListener("touchstart", stop)
             removeEventListener("keydown", stop)
