@@ -784,7 +784,7 @@ def fold_hero(head):
 AA_GREYS = (("#8A8680", "#6F6B66"), ("#A4A09A", "#726E69"))
 
 
-LIVE_SITE = "https://gray-football-641289.framer.app"  # the published Framer site
+LIVE_SITE = "https://pranitasapkal.framer.website"  # the published Framer site
 
 
 TOP_NAV = """    if (a.hasAttribute("data-back") || a.hasAttribute("data-next")) {

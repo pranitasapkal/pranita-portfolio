@@ -838,3 +838,10 @@ Cases 03/04 carry only what their Behance gallery shows: no invented research, i
 - [x] Preview matrix: 4 cases x (open, Go back, Next, WORK, ABOUT, CONTACT, logo) 28/28; View prototype Trips + Contract; Home navbar 5/5; Graphics open, WORK/ABOUT/CONTACT, ← Work 5/5. Cases 03/04 have no prototype CTA by design.
 - [ ] Publish (her OK), then re-run the live matrix (desktop + phone) because RadioFooter's click trigger also runs live.
 - Note: /rooted is not linked from anywhere on the site (the Rooted card goes to rootedplant.org).
+
+## Round 14 (2026-10-10): new address pranitasapkal.framer.website
+- [x] Free Framer subdomain added (Settings → Domains): https://pranitasapkal.framer.website. gray-football-641289.framer.app stays as the base URL and still works.
+- [x] Case 04 (Smart Home) has no Next project card (gh-pages a2120fa); case pages' fallback address switched (gh-pages dbf474d); build_case.py LIVE_SITE updated.
+- [x] Resume: Portfolio link in her designed PDF repointed (render identical), resume.json + ats.html + generated PDFs rebuilt. Uploaded to Framer: hero Download button (X6bPBRhF9) and RadioFooter "Resume PDF" (layout Main, IaP2oaUuR). Needs a publish to go live.
+- [x] Live matrix on the new address: desktop 31/31; phone 29/31, the 2 fails (menu WORK on /graphics, /rooted) are a test-locator artifact: real taps pass from top and bottom of both pages.
+- [ ] After her publish: confirm the live resume PDF links to pranitasapkal.framer.website.
