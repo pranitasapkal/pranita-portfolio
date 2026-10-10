@@ -68,9 +68,12 @@ export default function ContractPanelCase(props: any) {
                 } catch (_) {}
                 return
             }
-            let path = ""
+            let path = "",
+                hash = ""
             try {
-                path = new URL(d.href).pathname.replace(/(.)\/$/, "$1")
+                const u = new URL(d.href)
+                path = u.pathname.replace(/(.)\/$/, "$1")
+                hash = u.hash
             } catch (_) {}
             const routeId = ROUTES[path]
             if (!routeId || /(^|\.)framer(canvas)?\.com$/.test(location.hostname)) return
@@ -79,12 +82,12 @@ export default function ContractPanelCase(props: any) {
             } catch (_) {}
             going = true
             const state = { routeId, localeId: "default" }
-            history.pushState(state, "", path)
+            history.pushState(state, "", path + hash)
             dispatchEvent(new PopStateEvent("popstate", { state }))
             // this component unmounts when the route changes; if it is still here after 5s (slow networks need the
             // time to fetch the next page), the router ignored us, so load the page normally
             clearTimeout(fallback)
-            fallback = setTimeout(() => document.visibilityState === "visible" && location.assign(path), 5000)
+            fallback = setTimeout(() => document.visibilityState === "visible" && location.assign(path + hash), 5000)
         }
         addEventListener("message", onMsg)
         return () => {

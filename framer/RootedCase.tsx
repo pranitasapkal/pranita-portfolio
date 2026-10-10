@@ -573,7 +573,7 @@ export default function RootedCase(props: any) {
 
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 28, justifyContent: "space-between", alignItems: "center" }}>
                         <a
-                            href="/"
+                            href="/#work"
                             style={{
                                 font: `500 12px/1.4 ${MONO}`,
                                 letterSpacing: "0.14em",
