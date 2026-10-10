@@ -596,7 +596,65 @@ function useFonts(href: string) {
     }, [])
 }
 
+// Section links across pages (#work, #about, #contact). After an in-site page change, Framer's jump to the anchor
+// was overridden by the smooth-scroll layer restoring Home's old position (it stopped near 915px, or did not move).
+// The footer sits on every page, so it watches the URL and, when the page changed and the URL has an anchor,
+// re-applies the jump until the section is at the top. Gives up after 2.5s or as soon as the visitor scrolls.
+let pfLastHref = ""
+function useSectionAnchorFix() {
+    useEffect(() => {
+        if (typeof window === "undefined") return
+        let timer: ReturnType<typeof setTimeout> | undefined
+        const stop = () => clearTimeout(timer)
+        const settle = (id: string) => {
+            stop()
+            const start = performance.now()
+            let ok = 0
+            const step = () => {
+                const el = document.getElementById(id)
+                if (el) {
+                    const top = el.getBoundingClientRect().top
+                    if (Math.abs(top) <= 4) {
+                        if (++ok >= 4) return
+                    } else {
+                        ok = 0
+                        window.scrollTo({ top: window.scrollY + top, behavior: "instant" as ScrollBehavior })
+                    }
+                }
+                if (performance.now() - start < 2500) timer = setTimeout(step, 80)
+            }
+            step()
+        }
+        const check = () => {
+            const href = location.href
+            if (href === pfLastHref) return
+            const prev = pfLastHref
+            pfLastHref = href
+            if (!prev || !location.hash) return
+            let samePage = false
+            try {
+                samePage = new URL(prev).pathname === location.pathname
+            } catch (_) {}
+            if (!samePage) settle(decodeURIComponent(location.hash.slice(1)))
+        }
+        check()
+        const iv = setInterval(check, 100)
+        const opts = { passive: true } as AddEventListenerOptions
+        addEventListener("wheel", stop, opts)
+        addEventListener("touchstart", stop, opts)
+        addEventListener("keydown", stop)
+        return () => {
+            clearInterval(iv)
+            stop()
+            removeEventListener("wheel", stop)
+            removeEventListener("touchstart", stop)
+            removeEventListener("keydown", stop)
+        }
+    }, [])
+}
+
 export default function RadioFooter(props: any) {
+    useSectionAnchorFix()
     useFonts("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&family=VT323&display=swap")
     const {
         tv,
