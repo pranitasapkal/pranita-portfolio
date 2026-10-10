@@ -269,8 +269,8 @@ export const site = {
       title: 'The Secret Sauce of Great UX Design: Empathy',
       blurb:
         'Published on Medium, on why empathy is the foundation every tool, flow, and decision should be built on.',
-      source: 'medium.com/@Pranitasapkal',
-      href: 'https://medium.com/@Pranitasapkal/the-secret-sauce-of-great-ux-design-empathy-5b68e01ee1c0',
+      source: 'medium.com/@sapkalp1997',
+      href: 'https://medium.com/@sapkalp1997/the-secret-sauce-of-great-ux-design-empathy-5b68e01ee1c0',
       ariaLabel:
         'Read essay: The Secret Sauce of Great UX Design: Empathy (opens on Medium)',
     },
@@ -291,7 +291,7 @@ export const site = {
       { label: 'LinkedIn', href: 'https://linkedin.com/in/pranita-sapkal-86364010a' },
       { label: 'Behance', href: 'https://behance.net/pranitasapkal' },
       { label: 'Dribbble', href: 'https://dribbble.com/Pranitas03' },
-      { label: 'Medium', href: 'https://medium.com/@Pranitasapkal' },
+      { label: 'Medium', href: 'https://medium.com/@sapkalp1997' },
     ] as NavLink[],
     footnote:
       '* All metrics are directionally accurate and intentionally fuzzed. No real shipment data appears on this site.',

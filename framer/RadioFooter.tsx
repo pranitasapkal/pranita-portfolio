@@ -552,6 +552,36 @@ function ClockBLR() {
 
 // ── the footer ─────────────────────────────────────────────────────────────────────────────────────────────────
 
+// The site navbar floats over the page with no background. This soft band under it (blur that fades out
+// downwards, no colour of its own) keeps whatever scrolls beneath the logo and links from competing with them,
+// on light sections and dark ones alike. It lives here because the footer is on every page; it mounts after
+// hydration and sits one layer under the navbar (z 8).
+function TopFade() {
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => setMounted(true), [])
+    if (!mounted) return null
+    const mask = "linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%)"
+    return createPortal(
+        <div
+            aria-hidden="true"
+            style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "clamp(96px, 9vw, 120px)",
+                zIndex: 7,
+                pointerEvents: "none",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                maskImage: mask,
+                WebkitMaskImage: mask,
+            }}
+        />,
+        document.body
+    )
+}
+
 // Fonts load through a <link> added after hydration. An @import inside a rendered <style> is rewritten by Framer's
 // server render, so the browser's first render no longer matches, React re-renders the whole page on the client,
 // and Framer then shows the desktop navbar on phones.
@@ -578,8 +608,9 @@ export default function RadioFooter(props: any) {
         linkedin = "https://www.linkedin.com/in/pranita-sapkal-86364010a/",
         behance = "https://www.behance.net/pranitasapkal",
         medium = "https://medium.com/@sapkalp1997",
-        resume = "https://framerusercontent.com/assets/rlHNrrGQt7B0gNqyGpI4YRgurt4.pdf",
+        resume = "",
         resumeFile,
+        topFade = true,
         resumePage1,
         resumePage2,
         notify = "sapkalp1997@gmail.com",
@@ -1092,6 +1123,7 @@ export default function RadioFooter(props: any) {
                     </button>
                 </div>
             </div>
+            {topFade !== false && <TopFade />}
             <ResumeModal open={resumeOpen} onClose={() => setResumeOpen(false)} pdf={pdf} pages={[resumePage1, resumePage2]} notify={notify} />
         </footer>
     )
@@ -1108,10 +1140,11 @@ addPropertyControls(RadioFooter, {
     behance: { type: ControlType.String, title: "Behance", defaultValue: "https://www.behance.net/pranitasapkal" },
     medium: { type: ControlType.String, title: "Medium", defaultValue: "https://medium.com/@sapkalp1997" },
     resumeFile: { type: ControlType.File, title: "Resume PDF", allowedFileTypes: ["pdf"] },
+    topFade: { type: ControlType.Boolean, title: "Top fade", defaultValue: true },
     resumePage1: { type: ControlType.Image, title: "Resume page 1" },
     resumePage2: { type: ControlType.Image, title: "Resume page 2" },
     notify: { type: ControlType.String, title: "Notify on download", defaultValue: "sapkalp1997@gmail.com" },
-    resume: { type: ControlType.String, title: "Resume URL", defaultValue: "https://framerusercontent.com/assets/rlHNrrGQt7B0gNqyGpI4YRgurt4.pdf" },
+    resume: { type: ControlType.String, title: "Resume URL", defaultValue: "" },
     track1: { type: ControlType.File, title: "Full track CH 1 (optional)", allowedFileTypes: ["mp3", "m4a", "wav", "ogg"] },
     track2: { type: ControlType.File, title: "Full track CH 2 (optional)", allowedFileTypes: ["mp3", "m4a", "wav", "ogg"] },
     track3: { type: ControlType.File, title: "Full track CH 3 (optional)", allowedFileTypes: ["mp3", "m4a", "wav", "ogg"] },

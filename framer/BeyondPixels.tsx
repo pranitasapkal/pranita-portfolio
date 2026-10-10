@@ -55,7 +55,7 @@ const ROWS: { prompt: string; caption: string; images: any[]; fit?: boolean }[] 
     },
     {
         prompt: "WHERE MY MONEY ACTUALLY GOES:",
-        caption: "Plants, cat treats, and fonts I did not need.",
+        caption: "Games. Every new release costs me a weekend and most of my wallet.",
         images: [],
     },
     {

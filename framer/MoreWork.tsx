@@ -53,7 +53,7 @@ const CARDS: Card[] = [
         status: "LIVE",
         title: "Yantrava Labs website",
         desc: "I helped design the site for Yantrava Labs, a studio building independent, AI-driven software products.",
-        href: "https://yantrava-website.vercel.app/",
+        href: "https://yantrava.com/",
         cta: "Visit the website",
         // the laptop mockup of the live hero is uploaded in Framer as the "Yantrava cover" property; the tile is the fallback
         cover: { word: "Yantrava Labs", bg: "#1B1B1F", prop: "yantravaImg" },
@@ -204,7 +204,7 @@ export default function MoreWork(props: any) {
     useFonts("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&display=swap")
     return (
         <div style={{ background: C.bg, color: C.body, width: "100%", fontFamily: SANS, WebkitFontSmoothing: "antialiased" }}>
-            <style>{`.mw-card:focus-visible{outline:2px solid #fff;outline-offset:3px}
+            <style>{`.mw-card:focus-visible{outline:2px solid #fff;outline-offset:3px}.mw-more{transition:background .25s,border-color .25s}.mw-more:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.4)}
                 @media(prefers-reduced-motion:reduce){.mw-card *{transition:none!important;transform:none!important}}
                 @media(max-width:1000px){.mw-3{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
                 @media(max-width:640px){.mw-3{grid-template-columns:minmax(0,1fr)!important}}`}</style>
@@ -225,6 +225,22 @@ export default function MoreWork(props: any) {
                             <ProjectCard key={c.title} c={c} props={props} />
                         ))}
                     </Reveal>
+                    <a
+                        href="/graphics"
+                        className="mw-card mw-more"
+                        onClick={(e) => {
+                            // switch page inside the running site (Framer's router reads history.state.routeId), no reload
+                            if (e.metaKey || e.ctrlKey || e.shiftKey || e.button || /(^|\.)framer(canvas)?\.com$/.test(location.hostname)) return
+                            e.preventDefault()
+                            const state = { routeId: "CoCI5o9UT", localeId: "default" }
+                            history.pushState(state, "", "/graphics")
+                            dispatchEvent(new PopStateEvent("popstate", { state }))
+                            scrollTo(0, 0)
+                        }}
+                        style={{ alignSelf: "flex-start", marginTop: 16, display: "inline-flex", alignItems: "center", gap: 10, minHeight: 48, padding: "0 22px", borderRadius: 999, border: "1px solid rgba(255,255,255,.22)", color: C.head, textDecoration: "none", font: `500 12px/1 ${MONO}`, letterSpacing: ".14em", textTransform: "uppercase" }}
+                    >
+                        See all graphics and brand work <span aria-hidden="true">→</span>
+                    </a>
                 </div>
             </section>
         </div>

@@ -843,6 +843,9 @@ def finalize(page, site, next_path):
     m = re.search(r'<script>\s*/\* Portfolio wiring\..*?</script>', page, re.S)
     w = WIRING.replace("__SITE__", site).replace("__NEXT__", next_path)
     page = page[:m.start()] + w + page[m.end():] if m else page.replace("</body>", w + "\n</body>", 1)
+    # Go back is a text link; give it a 44px-tall tap area without changing how it looks
+    if 'id="pf-tap"' not in page:
+        page = page.replace("</head>", '<style id="pf-tap">a[data-back]{display:inline-flex;align-items:center;min-height:44px}</style>\n</head>', 1)
     n = [0]
     def lazy_iframe(mm):
         n[0] += 1

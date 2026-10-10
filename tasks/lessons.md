@@ -96,3 +96,6 @@
 
 - **Rule:** never put `@import` (or anything Framer rewrites) inside a `<style>` rendered by a Framer code component; load fonts with a `<link>` in useEffect. **Context:** 2026-10-10, it caused a server/client mismatch that made the whole page client-render and broke the phone navbar. **Why:** Framer hoists @import into a link at SSR, so the hydrated text differs.
 - **Rule:** after changing anything in a Framer layout/template, re-test the phone menu open and close on the live site. **Context:** the overlay "On open" variant on the primary instance controls every breakpoint.
+
+- **Rule:** when uploading to a Framer image property by script, find the control inside the same row as its label and re-read every image slot afterwards. **Context:** 2026-10-10, a click aimed at "Resume page 1" landed on "CH2 image" and put the resume on the TV. **Why:** the properties panel can scroll between measuring and clicking.
+- **Rule:** every new Framer page needs Tablet and Phone breakpoints; check `<meta name="viewport">` on each live page. **Context:** six inner pages served width=1200 to phones. **Why:** a page with only a Desktop breakpoint is rendered at desktop width and shrunk.

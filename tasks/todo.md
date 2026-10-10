@@ -804,3 +804,17 @@ Cases 03/04 carry only what their Behance gallery shows: no invented research, i
 - [x] Code review fixes: stale-song race on fast tuning, DNS SERVFAIL no longer rejects real emails, .om/.cm and mail@ accepted, Indic names accepted, closing the form mid-check sends nothing, 15s download timeout, focus trap, 44px dots/Copy/Write, case-frame double-click + 5s fallback, closed Beyond rows inert and paused, idle TV no longer says PAUSE, Back to top is a button.
 - [ ] Her calls: Huntment Ride vs DoJoin Ride naming; phone number (+91 80806 05988 vs 8767897103); Contract numbers (case 73 screens/12 flows vs resume 130+/14); case 001 name (Transporter Panel vs Trips panel); Rooted LIVE vs beta; Yantrava URL; Beyond row 2 caption (plants) vs its game images.
 - [ ] /graphics is desktop-only and unlinked. ATS resume in repo still has SetuX, em dashes, old Medium (not public).
+
+## Round 8 (2026-10-10): her calls applied, phones fixed site-wide
+- [x] Phone +91 80806 05988 everywhere (resume.json, both generated resumes; her designed PDF already had it). Medium = medium.com/@sapkalp1997 (the real profile; @Pranitasapkal is empty) in resume.json, ATS and src/content/site.ts. Yantrava = https://yantrava.com (vercel URL was a copy; yantrava.com is blocked only by the office Netskope).
+- [x] ATS + designed resumes rebuilt: no SetuX, no em dashes, LinkedIn casing, portfolio link, Rooted (live).
+- [x] Her designed resume (PranitaSapkal_Resume.pdf): Rooted "(now in beta)" -> "(live)" redrawn in Poppins; preview images v3 uploaded to the footer; hero Download + footer serve the same final PDF (verified byte-identical).
+- [x] Case 001 = "Transporter Panel" on the hosted page (eyebrow, intro, caption, outcomes label, meta) and Smart Home's next-project card. gh-pages db34c47 (also 44px Go back).
+- [x] Rooted = live: /rooted page copy, RootedCase em dashes (17) removed, its font @import moved to useFonts.
+- [x] Beyond row 2 caption: "Games. Every new release costs me a weekend and most of my wallet."
+- [x] Footer CH2 back to the yawning cat (resume image had been uploaded into CH2 by mistake in round 7).
+- [x] Top fade: RadioFooter portals a 96-120px backdrop-blur band (mask fades out, z 7 under the navbar's z 8) on every page.
+- [x] Phone menu button 48x48 (padding 19/12). Go back 44px on case pages.
+- [x] All six inner pages (/work/trips-panel, /contract-panel, /dojoin, /smart-home, /graphics, /rooted) had only a Desktop breakpoint, so phones rendered them 1200px wide (viewport width=1200). Added Tablet + Phone breakpoints; all now width=device-width. /graphics linked from Home ("See all graphics and brand work", in-place route switch, routeId CoCI5o9UT).
+- [x] Radio verified live with real clicks: all 4 previews match Apple's studio tracks; rapid Next (warm and cold) lands on the right channel and song.
+- [ ] Optional: /services, /about, /work are empty template pages still published (unlinked).

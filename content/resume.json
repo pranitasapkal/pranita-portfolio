@@ -6,9 +6,9 @@
     "roleLine": "Product Designer · Logistics Platforms & Systems",
     "location": "Bangalore, India",
     "email": "sapkalp1997@gmail.com",
-    "phone": "+91 8767897103",
+    "phone": "+91 80806 05988",
     "links": {
-      "portfolio": "",
+      "portfolio": "gray-football-641289.framer.app",
       "linkedin": "linkedin.com/in/pranita-sapkal-86364010a",
       "behance": "behance.net/pranitasapkal",
       "dribbble": "dribbble.com/Pranitas03",
@@ -27,11 +27,11 @@
       "roleLine": "Sole designer on Valmo's logistics platform: the systems that plan trips, manage transporters, and run vendor contracts, built with product and engineering from 0→1.",
       "projects": [
         {
-          "name": "Transporter Panel: SetuX",
+          "name": "Transporter Panel",
           "note": "live flagship",
           "bullets": [
             {
-              "text": "Designed SetuX, a unified transporter platform to accept trips, assign vehicles and drivers, track execution, confirm cost, and raise disputes, replacing scattered email and WhatsApp workflows.",
+              "text": "Designed Meesho's unified transporter platform to accept trips, assign vehicles and drivers, track execution, confirm cost, and raise disputes, replacing scattered email and WhatsApp workflows.",
               "priority": 1
             },
             {
@@ -159,7 +159,7 @@
     {
       "name": "Rooted",
       "url": "rootedplant.org",
-      "text": "Designed the product experience for this AI plant-care app (now in beta), spanning plant identification, condition-based watering schedules, and photo-based problem diagnosis."
+      "text": "Designed the product experience for this AI plant-care app (live), spanning plant identification, condition-based watering schedules, and photo-based problem diagnosis."
     },
     {
       "name": "Yantrava",

@@ -129,7 +129,7 @@ function buildDesigned() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>${esc(meta.name)} — Product Designer</title>
+<title>${esc(meta.name)} | Product Designer</title>
 <style>
 @font-face { font-family: 'Archivo Variable'; font-style: normal; font-weight: 100 900; src: url('${F.archivo}') format('woff2'); }
 @font-face { font-family: 'Archivo Expanded'; font-style: normal; font-weight: 400; font-stretch: 75% 125%; src: url('${F.archivoW}') format('woff2'); }
@@ -290,7 +290,7 @@ li::before { content: '\\2013'; position: absolute; left: 0; color: var(--accent
 </div>
 
 <footer class="foot">
-  <span>PRANITA SAPKAL — PRODUCT DESIGNER</span>
+  <span>PRANITA SAPKAL · PRODUCT DESIGNER</span>
   <span>Updated Jul 2026</span>
 </footer>
 
@@ -305,7 +305,7 @@ function buildATS() {
   const expHtml = experience
     .map(job => {
       const locNote = (job.location === 'Remote' && !job.title.includes('Remote')) ? ' (Remote)' : '';
-      const head = `<p class="jh"><strong>${esc(job.org)}</strong> &mdash; ${esc(job.title)}${esc(locNote)}</p>
+      const head = `<p class="jh"><strong>${esc(job.org)}</strong>, ${esc(job.title)}${esc(locNote)}</p>
   <p class="dates">${esc(job.start)} &ndash; ${esc(job.end)}</p>`;
 
       if (Array.isArray(job.projects)) {
@@ -336,20 +336,20 @@ function buildATS() {
 
   const eduHtml = education
     .map(e =>
-      `<p><strong>${esc(e.degree)}</strong> &mdash; ${esc(e.school)} (${esc(e.years)})${e.note ? `, ${esc(e.note)}` : ''}</p>`
+      `<p><strong>${esc(e.degree)}</strong>, ${esc(e.school)} (${esc(e.years)})${e.note ? `, ${esc(e.note)}` : ''}</p>`
     )
     .join('\n');
 
   const linksText = Object.entries(meta.links)
     .filter(([, v]) => v)
-    .map(([k, v]) => `${k.charAt(0).toUpperCase() + k.slice(1)}: ${v}`)
+    .map(([k, v]) => `${({ linkedin: 'LinkedIn' })[k] || k.charAt(0).toUpperCase() + k.slice(1)}: ${v}`)
     .join('  |  ');
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>${esc(meta.name)} &mdash; Resume</title>
+<title>${esc(meta.name)} | Resume</title>
 <style>
 @page { size: A4; margin: 18mm; }
 *, ::before, ::after { margin: 0; padding: 0; box-sizing: border-box; }

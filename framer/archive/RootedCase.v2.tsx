@@ -2,7 +2,7 @@ import { addPropertyControls, ControlType } from "framer"
 import { useEffect, useRef, useState } from "react"
 
 /**
- * Rooted: AI plant care for Yantrava Labs. Case 04.
+ * Rooted — AI plant care for Yantrava Labs. Case 04.
  * Same block format as the Valmo cases: Geist / Geist Mono / Inspiration, light page.
  * Content follows the v2 copy draft in reactive-resume/tasks/case-studies/rooted.md.
  *
@@ -190,7 +190,7 @@ const USERS: [string, string, string][] = [
     [
         "Anxious novices",
         "think in problems",
-        "“The leaf is yellowing. Am I killing it?” They need diagnosis and reassurance, one plant at a time.",
+        "“The leaf is yellowing — am I killing it?” They need diagnosis and reassurance, one plant at a time.",
     ],
     [
         "Collectors",
@@ -224,12 +224,12 @@ const MULTIPLIERS: [string, string][] = [
 
 const SCREENS: [string, string, string][] = [
     ["identify", "Identify", "Photo first. The front door of the product is a “wow” within seconds, not a questionnaire."],
-    ["home", "Today", "The day's care, and the weather that shaped it: the app explains why today's list changed."],
+    ["home", "Today", "The day's care, and the weather that shaped it — the app explains why today's list changed."],
     ["garden", "My Garden", "Sites, plants and photos. Collection pride lives here, one tap from the routine."],
     ["diagnose", "Dr. Rooted", "Diagnosis against a 25-pest library, always paired with what to do next."],
-    ["reminders", "Plant care", "Water, light and toxicity on the plant page: the reference, not the routine."],
+    ["reminders", "Plant care", "Water, light and toxicity on the plant page — the reference, not the routine."],
     ["progress", "Progress", "Growth over time, because the reward for good care is slow and needs showing."],
-    ["swap", "Community & Swap", "Listings by species and distance: plant people trading with plant people in the same city."],
+    ["swap", "Community & Swap", "Listings by species and distance — plant people trading with plant people in the same city."],
     ["languages", "Ten languages", "Localisation as a first-class state, not a late pass over finished screens."],
 ]
 
@@ -242,7 +242,7 @@ const TRADEOFFS: [string, string, string][] = [
     [
         "Participation over verdicts in AI results",
         "A single confident answer, delivered as fact",
-        "One confident-but-wrong identification destroys trust permanently, and raw percentages read as hedging. Ranked candidates plus the distinguishing features to check yourself (leaf shape, underside texture) make the user part of the confirmation. Slightly more friction, much more durable trust.",
+        "One confident-but-wrong identification destroys trust permanently, and raw percentages read as hedging. Ranked candidates plus the distinguishing features to check yourself — leaf shape, underside texture — make the user part of the confirmation. Slightly more friction, much more durable trust.",
     ],
     [
         "Offline honesty over fake liveness",
@@ -252,10 +252,10 @@ const TRADEOFFS: [string, string, string][] = [
 ]
 
 const OUTCOMES = [
-    "Rooted is live on iOS and Android.",
+    "Rooted shipped to closed beta on iOS and Android, with a public waitlist.",
     "The design system carried dark mode and all ten locales without per-screen redesign.",
     "Identification-first onboarding became the product's core activation story.",
-    "Early feedback keeps validating the wedge: people describe it as the first app that explains why today's care list changed.",
+    "Beta feedback keeps validating the wedge: people describe it as the first app that explains why today's care list changed.",
 ]
 
 const NUMBERS: [string, string][] = [
@@ -267,26 +267,13 @@ const NUMBERS: [string, string][] = [
 
 // ── page ─────────────────────────────────────────────────────────────────────
 
-// Fonts load through a <link> added after hydration; an @import inside a rendered <style> makes Framer's server
-// render differ from the browser's, which forces a full client re-render (and the desktop navbar on phones).
-function useFonts(href: string) {
-    useEffect(() => {
-        if ([...document.querySelectorAll("link[data-pf-font]")].some((l) => l.getAttribute("data-pf-font") === href)) return
-        const l = document.createElement("link")
-        l.rel = "stylesheet"
-        l.href = href
-        l.setAttribute("data-pf-font", href)
-        document.head.appendChild(l)
-    }, [])
-}
-
 export default function RootedCase(props: any) {
-    useFonts("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&display=swap")
     const { backLabel = "← Work" } = props
     return (
         <div style={{ background: C.page, color: C.body, width: "100%", fontFamily: SANS, WebkitFontSmoothing: "antialiased" }}>
             <style>
-                {`.rt-grid{display:grid;gap:28px}
+                {`@import url(https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Inspiration&display=swap);
+                  .rt-grid{display:grid;gap:28px}
                   @media(max-width:900px){.rt-2,.rt-3,.rt-4,.rt-split{grid-template-columns:1fr!important}}`}
             </style>
 
@@ -308,13 +295,13 @@ export default function RootedCase(props: any) {
                     </h1>
                     <Body max={800}>
                         Rooted is an AI plant-care app: identification, care scheduling, diagnosis and community, across
-                        iOS and Android, light and dark, in ten languages. I was the sole designer: information
+                        iOS and Android, light and dark, in ten languages. I was the sole designer — information
                         architecture, every flow, the design system, dark mode and localisation-ready layouts.
                     </Body>
                     <div className="rt-grid rt-3" style={{ gridTemplateColumns: "repeat(3,1fr)", gap: 28, marginTop: 12 }}>
-                        <Shot src={img("identify")} alt="Rooted: plant identification" ratio="9 / 16" />
-                        <Shot src={img("home")} alt="Rooted: the Today dashboard" ratio="9 / 16" />
-                        <Shot src={img("garden")} alt="Rooted: My Garden" ratio="9 / 16" />
+                        <Shot src={img("identify")} alt="Rooted — plant identification" ratio="9 / 16" />
+                        <Shot src={img("home")} alt="Rooted — the Today dashboard" ratio="9 / 16" />
+                        <Shot src={img("garden")} alt="Rooted — My Garden" ratio="9 / 16" />
                     </div>
                 </Reveal>
             </Section>
@@ -361,7 +348,7 @@ export default function RootedCase(props: any) {
             <Section>
                 <Reveal style={{ display: "flex", flexDirection: "column", gap: 36 }}>
                     <Label>[information architecture]</Label>
-                    <Title pre="Five spaces, mapped to intent, not to " script="features" />
+                    <Title pre="Five spaces, mapped to intent — not to " script="features" />
                     <div className="rt-grid" style={{ gridTemplateColumns: "1fr", gap: 0 }}>
                         {SPACES.map(([name, q]) => (
                             <div
@@ -383,7 +370,7 @@ export default function RootedCase(props: any) {
                     <Body max={880}>
                         The defining decision: <strong>care tasks live on Today, not inside each plant.</strong> A
                         per-plant model makes a twenty-plant garden a twenty-tap chore. A task-first dashboard makes
-                        daily care a single glance, grouped by action: water these three, mist these two. Plant pages
+                        daily care a single glance — grouped by action: water these three, mist these two. Plant pages
                         stay the reference; Today is the routine.
                     </Body>
                 </Reveal>
@@ -399,12 +386,12 @@ export default function RootedCase(props: any) {
                             <Body dim>
                                 My first onboarding concept front-loaded the science: seven setup questions about pot
                                 type, light and room humidity before the app showed any value. It made the schedule
-                                smarter and the first run worse: in early walkthroughs people visibly lost patience
+                                smarter and the first run worse — in early walkthroughs people visibly lost patience
                                 before ever seeing a plant identified.
                             </Body>
                             <Body dim>
                                 So I inverted it. Identification became the front door: photo first, a result within
-                                seconds, and the environment questions moved after the first plant joins the garden,
+                                seconds, and the environment questions moved after the first plant joins the garden —
                                 asked one at a time, in context. “Where does this one live?” Same data collected. This
                                 single reversal did more for activation than any visual polish.
                             </Body>
@@ -429,7 +416,7 @@ export default function RootedCase(props: any) {
                         <Shot
                             src={img("diagnose")}
                             alt="Dr. Rooted diagnosis"
-                            cap="Dr. Rooted diagnoses against a 25-pest library the same way, always paired with what to do next."
+                            cap="Dr. Rooted diagnoses against a 25-pest library the same way — always paired with what to do next."
                         />
                         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
                             <Body dim>
@@ -439,7 +426,7 @@ export default function RootedCase(props: any) {
                             </Body>
                             <Body dim>
                                 The shipped pattern: ranked candidates with a clear confidence treatment, plus the
-                                distinguishing features to check yourself (leaf shape, underside texture) so the user
+                                distinguishing features to check yourself — leaf shape, underside texture — so the user
                                 participates in the confirmation instead of receiving a verdict. The same principle runs
                                 through diagnosis, which meets people at their most anxious.
                             </Body>
@@ -564,7 +551,7 @@ export default function RootedCase(props: any) {
                     <Label>[what i learned]</Label>
                     <Body max={900}>
                         Designing for AI confidence changed how I present certainty in everything, including the
-                        enterprise work: dashboards make claims too. And being the only designer across a whole
+                        enterprise work — dashboards make claims too. And being the only designer across a whole
                         product taught me the discipline of sequencing: on a small team, the order you design things
                         in <em>is</em> the strategy.
                     </Body>
@@ -585,7 +572,7 @@ export default function RootedCase(props: any) {
                             {backLabel}
                         </a>
                         <span style={{ font: `400 12px/1.4 ${MONO}`, letterSpacing: "0.1em", color: C.label, textTransform: "uppercase" }}>
-                            yantrava labs · live
+                            yantrava labs · closed beta
                         </span>
                     </div>
                 </Reveal>
