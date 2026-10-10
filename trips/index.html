@@ -277,7 +277,7 @@ class Component extends DCLogic {
 }
 </script>
 <script>
-/* Portfolio wiring. Go back = the Framer site's main page; Next project = the next case. The links get real
+/* Portfolio wiring. Go back = the Work section on the Framer site's main page; Next project = the next case. The links get real
    hrefs with target=_top, so they work even if a click handler never runs. The parent page's own origin
    (document.referrer) wins over SITE, so a domain change needs no rebuild; the Framer editor preview is ignored. */
 (function(){
@@ -286,10 +286,11 @@ class Component extends DCLogic {
     var r = document.referrer && new URL(document.referrer);
     if (r && /^https?:$/.test(r.protocol) && r.hostname !== location.hostname && !/(^|\.)framer(canvas)?\.com$/.test(r.hostname)) base = r.origin;
   } catch (_) {}
-  function dest(a){ return a.hasAttribute("data-next") ? base + NEXT : base + "/"; }
+  function dest(a){ return a.hasAttribute("data-next") ? base + NEXT : base + "/#work"; }
   function wire(){ document.querySelectorAll("a[data-back],a[data-next]").forEach(function(a){ if (a.getAttribute("href") !== dest(a)) { a.href = dest(a); a.target = "_top"; } }); }
   wire();
-  new MutationObserver(wire).observe(document.documentElement, { childList: true, subtree: true });
+  new MutationObserver(wire).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["href", "target"] });
+  addEventListener("DOMContentLoaded", wire); addEventListener("load", wire); setTimeout(wire, 1500);
   document.addEventListener("click", function(e){
     var a = e.target.closest && e.target.closest("a[data-back],a[data-next]");
     if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
@@ -298,7 +299,7 @@ class Component extends DCLogic {
     var href = dest(a);
     if (window.top === window) { location.href = href; return; }
     // The Framer frame (CaseStudyFrame) answers "pf-nav-ok" and switches the page without reloading the site.
-    // No answer within 400ms (an older frame, the editor): load the whole page instead.
+    // No answer within 1s (an older frame, the editor): load the whole page instead.
     var done = false;
     function ack(ev){ if (ev.data && ev.data.type === "pf-nav-ok") done = true; }
     window.addEventListener("message", ack);
@@ -307,7 +308,7 @@ class Component extends DCLogic {
       window.removeEventListener("message", ack);
       if (done) return;
       try { window.top.location.href = href; } catch (_) { window.open(href, "_top"); }
-    }, 400);
+    }, 1000);
   }, true);
 })();
 </script>
