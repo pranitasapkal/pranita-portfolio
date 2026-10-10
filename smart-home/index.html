@@ -67,8 +67,8 @@ class Component extends DCLogic {
   }
   setupProto() {
     const lb = document.querySelector('[data-lightbox]'), fr = document.querySelector('[data-lbframe]'); if (!lb) return;
-    const open = () => { if (!fr.src) fr.src = 'Valmo%20Trips%20Prototype.dc.html'; lb.style.display = 'flex'; document.body.style.overflow = 'hidden'; };
-    const close = () => { lb.style.display = 'none'; document.body.style.overflow = ''; };
+    const open = () => { try { parent.postMessage({ type: 'pf-modal', open: true }, '*'); } catch (_) {} if (!fr.src) fr.src = 'Valmo%20Trips%20Prototype.dc.html'; lb.style.display = 'flex'; document.body.style.overflow = 'hidden'; };
+    const close = () => { try { parent.postMessage({ type: 'pf-modal', open: false }, '*'); } catch (_) {} lb.style.display = 'none'; document.body.style.overflow = ''; };
     document.querySelectorAll('[data-openproto]').forEach(b => b.addEventListener('click', open));
     document.querySelectorAll('[data-closeproto]').forEach(b => b.addEventListener('click', close));
     lb.addEventListener('click', e => { if (e.target === lb) close(); });
