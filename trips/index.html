@@ -281,7 +281,7 @@ class Component extends DCLogic {
    hrefs with target=_top, so they work even if a click handler never runs. The parent page's own origin
    (document.referrer) wins over SITE, so a domain change needs no rebuild; the Framer editor preview is ignored. */
 (function(){
-  var SITE = "https://pranitasapkal.framer.website", NEXT = "/contract-panel", base = SITE;
+  var SITE = "https://pranita-portfolio-site.vercel.app", NEXT = "/contract-panel", base = SITE;
   try {
     var r = document.referrer && new URL(document.referrer);
     if (r && /^https?:$/.test(r.protocol) && r.hostname !== location.hostname && !/(^|\.)framer(canvas)?\.com$/.test(r.hostname)) base = r.origin;
