@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { addPropertyControls, ControlType } from "framer"
 
 /**
@@ -33,6 +33,27 @@ const ROUTES: Record<string, string> = {
 export default function DoJoinCase(props: any) {
     const { src = "https://pranitasapkal.github.io/pranita-portfolio/multi-service/", title = "Multi-Service App case study", topOffset = 96, style } = props
     const frame = useRef<HTMLIFrameElement>(null)
+    // The hosted page's prototype lightbox asks for the whole screen ({type:"pf-modal", open}); while it is open this
+    // frame covers the viewport, above the site navbar, and the page behind stops scrolling.
+    const [full, setFull] = useState(false)
+    useEffect(() => {
+        const onMsg = (e: MessageEvent) => {
+            const d = e.data
+            if (!d || d.type !== "pf-modal" || !frame.current || e.source !== frame.current.contentWindow) return
+            setFull(!!d.open)
+        }
+        addEventListener("message", onMsg)
+        return () => removeEventListener("message", onMsg)
+    }, [])
+    useEffect(() => {
+        if (!full) return
+        const html = document.documentElement
+        const prev = html.style.overflow
+        html.style.overflow = "hidden"
+        return () => {
+            html.style.overflow = prev
+        }
+    }, [full])
 
     useEffect(() => {
         let fallback: any
@@ -73,7 +94,19 @@ export default function DoJoinCase(props: any) {
     }, [])
 
     return (
-        <div style={{ position: "relative", maxWidth: "100vw", height: "100vh", background: "#FFFFFF", paddingTop: topOffset, boxSizing: "border-box", ...style, width: "100vw" }}>
+        <div
+            style={{
+                position: "relative",
+                maxWidth: "100vw",
+                height: "100vh",
+                background: "#FFFFFF",
+                paddingTop: topOffset,
+                boxSizing: "border-box",
+                ...style,
+                width: "100vw",
+                ...(full ? { position: "fixed", inset: 0, zIndex: 2147483000, paddingTop: 0, height: "100vh" } : null),
+            }}
+        >
             {src ? (
                 <iframe
                     ref={frame}

@@ -843,6 +843,12 @@ def finalize(page, site, next_path):
     m = re.search(r'<script>\s*/\* Portfolio wiring\..*?</script>', page, re.S)
     w = WIRING.replace("__SITE__", site).replace("__NEXT__", next_path)
     page = page[:m.start()] + w + page[m.end():] if m else page.replace("</body>", w + "\n</body>", 1)
+    # Prototype lightbox: 20% smaller than full, a solid backdrop so the page never shows through, and it asks the
+    # Framer frame (CaseStudyFrame) to cover the whole screen while open, so the site's navbar is hidden too.
+    page = page.replace("width:min(100%,calc((100vh - 170px) * 1280 / 820))", "width:min(80%,calc((100vh - 170px) * 1024 / 820))")
+    page = page.replace("background:rgba(18,18,18,.86);padding:clamp(16px,3vw,40px)", "background:#0c0c0c;padding:clamp(16px,3vw,40px)")
+    page = re.sub(r"(const open = \(\) => \{ )(?!try)", r"\1try { parent.postMessage({ type: 'pf-modal', open: true }, '*'); } catch (_) {} ", page)
+    page = re.sub(r"(const close = \(\) => \{ )(?!try)", r"\1try { parent.postMessage({ type: 'pf-modal', open: false }, '*'); } catch (_) {} ", page)
     # Go back is a text link; give it a 44px-tall tap area without changing how it looks
     if 'id="pf-tap"' not in page:
         page = page.replace("</head>", '<style id="pf-tap">a[data-back]{display:inline-flex;align-items:center;min-height:44px}</style>\n</head>', 1)
