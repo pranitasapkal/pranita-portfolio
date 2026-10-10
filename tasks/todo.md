@@ -823,3 +823,7 @@ Cases 03/04 carry only what their Behance gallery shows: no invented research, i
 - [x] Template appear delays were tuned for the old LOADER, so they ran even when the intro is skipped: navbar 5s (every page), PRANITA 4.5s, SAP KAL 4.7s, TV block 4.7s, tagline/resume button 5s, BLR clock 5s. Set to 0.2 / 0.2 / 0.35 / 0.45 / 0.6 / 0.6 (Framer appear effects; navbar instance in Main template, hero layers on Home Desktop; Tablet/Phone inherit).
 - [x] "HI, I'M" (TextScramble, shows its text on mount) got an Appear effect (opacity 0, y 12, delay 0.2) so it arrives with the name.
 - [x] Live, intro skipped: desktop HI 0.31s / name 0.36s / everything settled 1.37s (was ~6s); phone 0.38s / 1.40s; tablet settled 1.38s; case-page navbar 1.0s (was 5.6s). First visit still plays the Hello intro (~3.4s) with the hero already settled underneath.
+
+## Round 10 (2026-10-10): tab icon, share image, plugins line
+- [x] Removed "I also build the tools I use: eight Figma plugins..." (component section-about gBxn3Sps_, second text-wrapper hidden in the primary variant; all six variants inherit). Philosophy line kept as is (her call).
+- [x] Tab icon was the template author's photo; social share image was the template's "ERIC COLE / Software Engineer" card on every page. Replaced in Site settings > Site images (favicon light + dark, apple touch icon = yawning cat face; social preview = new card) and Home page social preview. Sources in public/brand/ (card rendered from social-preview.source.html, 2400x1260).
